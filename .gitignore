@@ -1,0 +1,18 @@
+# Java / Spring Boot
+target/
+*.log
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# IntelliJ
+.idea/
+*.iml
+
+# Node / React
+node_modules/
+
+# OS
+.DS_Store
