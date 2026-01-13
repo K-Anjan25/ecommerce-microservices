@@ -6,12 +6,15 @@ import jakarta.validation.Valid;
 import com.ecommerce.order_service.repository.OrderRepository;
 import org.springframework.web.bind.annotation.*;
 import com.ecommerce.order_service.exception.OrderNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/api/v1/orders")
 public class OrderController {
 
     private final OrderRepository orderRepository;
@@ -34,8 +37,9 @@ public class OrderController {
 
     // GET: Fetch all Orders
     @GetMapping
-    public List<Order> getAllOrders() {
-        return orderRepository.findAll();
+    public Page<Order> getAllOrders(
+            @PageableDefault(size = 5, sort = "id") Pageable pageable) {
+        return orderRepository.findAll(pageable);
     }
 
     @GetMapping("/{id}")
@@ -74,5 +78,7 @@ public class OrderController {
         orderRepository.delete(existingOrder);
         return "Order deleted with id: " + id;
     }
+
+
 
 }
