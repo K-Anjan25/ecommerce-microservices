@@ -1,0 +1,99 @@
+import React from "react";
+import SearchIcon from "@mui/icons-material/Search";
+import {
+  Box,
+  FormControl,
+  InputAdornment,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
+} from "@mui/material";
+import { Category } from "../../types/category";
+import "./style.css";
+type SearchBarProps = {
+  onChangeSearchValue: (value: string) => void;
+  searchValue: string;
+  onChangeSortBy: (value: string) => void;
+  sortBy: string;
+  onChangeFilter: (value: string) => void;
+  filter: string;
+  categories: Category[];
+};
+
+function SearchBar({
+  onChangeSearchValue,
+  searchValue,
+  filter,
+  onChangeFilter,
+  onChangeSortBy,
+  sortBy,
+  categories,
+}: SearchBarProps) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChangeSearchValue(e.target.value);
+  };
+
+  const handleChangeSortBy = (event: SelectChangeEvent<string>) => {
+    onChangeSortBy(event.target.value as string);
+  };
+
+  const handleChangeFilter = (event: SelectChangeEvent<string>) => {
+    onChangeFilter(event.target.value as string);
+  };
+
+  return (
+    <Box className="container">
+      <TextField
+        id="filled-search"
+        type="search"
+        variant="outlined"
+        className="without-padding"
+        style={{ flex: 0.2, margin: "0.4rem 0" }}
+        fullWidth
+        size="small"
+        value={searchValue}
+        onChange={handleChange}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon />
+            </InputAdornment>
+          ),
+        }}
+      />
+      <FormControl
+        variant="outlined"
+        size="small"
+        style={{ flex: 0.075, margin: "0.4rem 0" }}
+        fullWidth
+      >
+        <InputLabel>Sort By</InputLabel>
+        <Select label="Months" value={sortBy} onChange={handleChangeSortBy}>
+          <MenuItem value={""}>Sort</MenuItem>
+          <MenuItem value={"DATE_DESC"}>Date DESC</MenuItem>
+          <MenuItem value={"DATE_ASC"}>Date ASC</MenuItem>
+          <MenuItem value={"PRICE_DESC"}>Price DESC</MenuItem>
+          <MenuItem value={"PRICE_ASC"}>Price ASC</MenuItem>
+        </Select>
+      </FormControl>
+      <FormControl
+        variant="outlined"
+        size="small"
+        style={{ flex: 0.075, margin: "0.4rem 0" }}
+        fullWidth
+      >
+        <InputLabel>Filter</InputLabel>
+        <Select label="Months" value={filter} onChange={handleChangeFilter}>
+          <MenuItem value={""}>All Categories</MenuItem>
+          {categories.map((category) => (
+            <MenuItem value={category.name}>{category.name}</MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </Box>
+  );
+}
+
+export default SearchBar;

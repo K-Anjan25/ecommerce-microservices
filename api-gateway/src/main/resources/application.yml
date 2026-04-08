@@ -1,0 +1,66 @@
+# server.port=8080
+# spring.application.name=api-gateway
+
+# eureka.client.service-url.default-zone=http://localhost:8761/eureka/
+# spring.cloud.gateway.discovery.locator.enabled=true
+# spring.cloud.gateway.discovery.locator.lower-case-service-id=true
+
+server:
+  port: 8889
+  error:
+    include-message: always
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: inventory-service
+          uri: lb://inventory-service
+          predicates:
+            - Path=/v1/inventories/**
+
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/v1/orders/**
+          filters:
+            - AuthFilter
+
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/user/**
+
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/v1/products/**,/v1/categories/**,/v1/comments/**
+            - Method=POST,PUT,DELETE
+          filters:
+            - AuthFilter
+
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/v1/products/**,/v1/categories/**,/v1/comments/**
+            - Method=GET
+
+        - id: file-service
+          uri: lb://file-service
+          predicates:
+            - Path=/file/**
+      discovery:
+        locator:
+          enabled: true
+  main:
+    web-application-type: reactive
+
+eureka:
+  client:
+    register-with-eureka: true
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+  instance:
+    prefer-ip-address: true

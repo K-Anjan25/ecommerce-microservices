@@ -1,0 +1,4972 @@
+[
+  {
+    "state_name": "JAMMU & KASHMIR",
+    "id": "01",
+    "population": "12,541,302",
+    "region": "India",
+    "area_sq_km": "222,236",
+    "male_population_percentage": "52.95%",
+    "male_population": "6,640,662",
+    "female_population_percentage": "47.05%",
+    "female_population": "5,900,640",
+    "districts": [
+      {
+        "district_name": "Kupwara",
+        "population": "870,354",
+        "male_population": "474,190",
+        "female_population": "396,164",
+        "area_sq_km": "2,379"
+      },
+      {
+        "district_name": "Badgam",
+        "population": "753,745",
+        "male_population": "398,041",
+        "female_population": "355,704",
+        "area_sq_km": "1,361"
+      },
+      {
+        "district_name": "Leh(Ladakh)",
+        "population": "133,487",
+        "male_population": "78,971",
+        "female_population": "54,516",
+        "area_sq_km": "45,110"
+      },
+      {
+        "district_name": "Kargil",
+        "population": "140,802",
+        "male_population": "77,785",
+        "female_population": "63,017",
+        "area_sq_km": "14,036"
+      },
+      {
+        "district_name": "Punch",
+        "population": "476,835",
+        "male_population": "251,899",
+        "female_population": "224,936",
+        "area_sq_km": "1,674"
+      },
+      {
+        "district_name": "Rajouri",
+        "population": "642,415",
+        "male_population": "345,351",
+        "female_population": "297,064",
+        "area_sq_km": "2,630"
+      },
+      {
+        "district_name": "Kathua",
+        "population": "616,435",
+        "male_population": "326,109",
+        "female_population": "290,326",
+        "area_sq_km": "2,502"
+      },
+      {
+        "district_name": "Baramula",
+        "population": "1,008,039",
+        "male_population": "534,733",
+        "female_population": "473,306",
+        "area_sq_km": "4,243"
+      },
+      {
+        "district_name": "Bandipore",
+        "population": "392,232",
+        "male_population": "207,680",
+        "female_population": "184,552",
+        "area_sq_km": "345"
+      },
+      {
+        "district_name": "Srinagar",
+        "population": "1,236,829",
+        "male_population": "651,124",
+        "female_population": "585,705",
+        "area_sq_km": "1,979"
+      },
+      {
+        "district_name": "Ganderbal",
+        "population": "297,446",
+        "male_population": "158,720",
+        "female_population": "138,726",
+        "area_sq_km": "259"
+      },
+      {
+        "district_name": "Pulwama",
+        "population": "560,440",
+        "male_population": "293,064",
+        "female_population": "267,376",
+        "area_sq_km": "1,086"
+      },
+      {
+        "district_name": "Shupiyan",
+        "population": "266,215",
+        "male_population": "136,480",
+        "female_population": "129,735",
+        "area_sq_km": "312"
+      },
+      {
+        "district_name": "Anantnag",
+        "population": "1,078,692",
+        "male_population": "559,767",
+        "female_population": "518,925",
+        "area_sq_km": "3,574"
+      },
+      {
+        "district_name": "Kulgam",
+        "population": "424,483",
+        "male_population": "217,620",
+        "female_population": "206,863",
+        "area_sq_km": "410"
+      },
+      {
+        "district_name": "Doda",
+        "population": "409,936",
+        "male_population": "213,641",
+        "female_population": "196,295",
+        "area_sq_km": "8,912"
+      },
+      {
+        "district_name": "Ramban",
+        "population": "283,713",
+        "male_population": "149,132",
+        "female_population": "134,581",
+        "area_sq_km": "1,329"
+      },
+      {
+        "district_name": "Kishtwar",
+        "population": "230,696",
+        "male_population": "120,165",
+        "female_population": "110,531",
+        "area_sq_km": "1,644"
+      },
+      {
+        "district_name": "Udhampur",
+        "population": "554,985",
+        "male_population": "296,784",
+        "female_population": "258,201",
+        "area_sq_km": "2,637"
+      },
+      {
+        "district_name": "Reasi",
+        "population": "314,667",
+        "male_population": "166,461",
+        "female_population": "148,206",
+        "area_sq_km": "1,719"
+      },
+      {
+        "district_name": "Jammu",
+        "population": "1,529,958",
+        "male_population": "813,821",
+        "female_population": "716,137",
+        "area_sq_km": "2,342"
+      },
+      {
+        "district_name": "Samba",
+        "population": "318,898",
+        "male_population": "169,124",
+        "female_population": "149,774",
+        "area_sq_km": "904"
+      }
+    ],
+    "info": "Total Households: 2,119,718. Population Density: 124 per sq. km."
+  },
+  {
+    "state_name": "HIMACHAL PRADESH",
+    "id": "02",
+    "population": "6,864,602",
+    "region": "India",
+    "area_sq_km": "55,673",
+    "male_population_percentage": "50.72%",
+    "male_population": "3,481,873",
+    "female_population_percentage": "49.28%",
+    "female_population": "3,382,729",
+    "districts": [
+      {
+        "district_name": "Chamba",
+        "population": "519,080",
+        "male_population": "261,320",
+        "female_population": "257,760",
+        "area_sq_km": "6,522"
+      },
+      {
+        "district_name": "Kangra",
+        "population": "1,510,075",
+        "male_population": "750,591",
+        "female_population": "759,484",
+        "area_sq_km": "5,739"
+      },
+      {
+        "district_name": "Lahul & Spiti",
+        "population": "31,564",
+        "male_population": "16,588",
+        "female_population": "14,976",
+        "area_sq_km": "13,841"
+      },
+      {
+        "district_name": "Kullu",
+        "population": "437,903",
+        "male_population": "225,452",
+        "female_population": "212,451",
+        "area_sq_km": "5,503"
+      },
+      {
+        "district_name": "Mandi",
+        "population": "999,777",
+        "male_population": "498,065",
+        "female_population": "501,712",
+        "area_sq_km": "3,950"
+      },
+      {
+        "district_name": "Hamirpur",
+        "population": "454,768",
+        "male_population": "217,070",
+        "female_population": "237,698",
+        "area_sq_km": "1,117"
+      },
+      {
+        "district_name": "Una",
+        "population": "521,173",
+        "male_population": "263,692",
+        "female_population": "257,481",
+        "area_sq_km": "1,539"
+      },
+      {
+        "district_name": "Bilaspur",
+        "population": "381,956",
+        "male_population": "192,764",
+        "female_population": "189,192",
+        "area_sq_km": "1,167"
+      },
+      {
+        "district_name": "Solan",
+        "population": "580,320",
+        "male_population": "308,754",
+        "female_population": "271,566",
+        "area_sq_km": "1,936"
+      },
+      {
+        "district_name": "Sirmaur",
+        "population": "529,855",
+        "male_population": "276,289",
+        "female_population": "253,566",
+        "area_sq_km": "2,825"
+      },
+      {
+        "district_name": "Shimla",
+        "population": "814,010",
+        "male_population": "425,039",
+        "female_population": "388,971",
+        "area_sq_km": "5,131"
+      },
+      {
+        "district_name": "Kinnaur",
+        "population": "84,121",
+        "male_population": "46,249",
+        "female_population": "37,872",
+        "area_sq_km": "6,400"
+      }
+    ],
+    "info": "Total Households: 1,483,280. Population Density: 123 per sq. km."
+  },
+  {
+    "state_name": "PUNJAB",
+    "id": "03",
+    "population": "27,743,338",
+    "region": "India",
+    "area_sq_km": "50,362",
+    "male_population_percentage": "52.77%",
+    "male_population": "14,639,465",
+    "female_population_percentage": "47.23%",
+    "female_population": "13,103,873",
+    "districts": [
+      {
+        "district_name": "Gurdaspur",
+        "population": "2,298,323",
+        "male_population": "1,212,617",
+        "female_population": "1,085,706",
+        "area_sq_km": "3,550"
+      },
+      {
+        "district_name": "Kapurthala",
+        "population": "815,168",
+        "male_population": "426,311",
+        "female_population": "388,857",
+        "area_sq_km": "1,633"
+      },
+      {
+        "district_name": "Jalandhar",
+        "population": "2,193,590",
+        "male_population": "1,145,211",
+        "female_population": "1,048,379",
+        "area_sq_km": "2,624"
+      },
+      {
+        "district_name": "Hoshiarpur",
+        "population": "1,586,625",
+        "male_population": "809,057",
+        "female_population": "777,568",
+        "area_sq_km": "3,386"
+      },
+      {
+        "district_name": "Shahid Bhagat Singh Nagar",
+        "population": "612,310",
+        "male_population": "313,291",
+        "female_population": "299,019",
+        "area_sq_km": "1,282"
+      },
+      {
+        "district_name": "Fatehgarh Sahib",
+        "population": "600,163",
+        "male_population": "320,795",
+        "female_population": "279,368",
+        "area_sq_km": "1,180"
+      },
+      {
+        "district_name": "Ludhiana",
+        "population": "3,498,739",
+        "male_population": "1,867,816",
+        "female_population": "1,630,923",
+        "area_sq_km": "3,578"
+      },
+      {
+        "district_name": "Moga",
+        "population": "995,746",
+        "male_population": "525,920",
+        "female_population": "469,826",
+        "area_sq_km": "2,242"
+      },
+      {
+        "district_name": "Firozpur",
+        "population": "2,029,074",
+        "male_population": "1,071,637",
+        "female_population": "957,437",
+        "area_sq_km": "5,305"
+      },
+      {
+        "district_name": "Muktsar",
+        "population": "901,896",
+        "male_population": "475,622",
+        "female_population": "426,274",
+        "area_sq_km": "2,593"
+      },
+      {
+        "district_name": "Faridkot",
+        "population": "617,508",
+        "male_population": "326,671",
+        "female_population": "290,837",
+        "area_sq_km": "1,458"
+      },
+      {
+        "district_name": "Bathinda",
+        "population": "1,388,525",
+        "male_population": "743,197",
+        "female_population": "645,328",
+        "area_sq_km": "3,353"
+      },
+      {
+        "district_name": "Mansa",
+        "population": "769,751",
+        "male_population": "408,732",
+        "female_population": "361,019",
+        "area_sq_km": "2,198"
+      },
+      {
+        "district_name": "Patiala",
+        "population": "1,895,686",
+        "male_population": "1,002,522",
+        "female_population": "893,164",
+        "area_sq_km": "3,325"
+      },
+      {
+        "district_name": "Amritsar",
+        "population": "2,490,656",
+        "male_population": "1,318,408",
+        "female_population": "1,172,248",
+        "area_sq_km": "2,683"
+      },
+      {
+        "district_name": "Tarn Taran",
+        "population": "1,119,627",
+        "male_population": "589,369",
+        "female_population": "530,258",
+        "area_sq_km": "2,414"
+      },
+      {
+        "district_name": "Rupnagar",
+        "population": "684,627",
+        "male_population": "357,485",
+        "female_population": "327,142",
+        "area_sq_km": "1,356"
+      },
+      {
+        "district_name": "Sahibzada Ajit Singh Nagar",
+        "population": "994,628",
+        "male_population": "529,253",
+        "female_population": "465,375",
+        "area_sq_km": "1,094"
+      },
+      {
+        "district_name": "Sangrur",
+        "population": "1,655,169",
+        "male_population": "878,029",
+        "female_population": "777,140",
+        "area_sq_km": "3,625"
+      },
+      {
+        "district_name": "Barnala",
+        "population": "595,527",
+        "male_population": "317,522",
+        "female_population": "278,005",
+        "area_sq_km": "1,482"
+      }
+    ],
+    "info": "Total Households: 5,513,071. Population Density: 551 per sq. km."
+  },
+  {
+    "state_name": "CHANDIGARH",
+    "id": "04",
+    "population": "1,055,450",
+    "region": "India",
+    "area_sq_km": "114",
+    "male_population_percentage": "55.02%",
+    "male_population": "580,663",
+    "female_population_percentage": "44.98%",
+    "female_population": "474,787",
+    "districts": [
+      {
+        "district_name": "Chandigarh",
+        "population": "1,055,450",
+        "male_population": "580,663",
+        "female_population": "474,787",
+        "area_sq_km": "114"
+      }
+    ],
+    "info": "Total Households: 241,173. Population Density: 9,258 per sq. km."
+  },
+  {
+    "state_name": "UTTARAKHAND",
+    "id": "05",
+    "population": "10,086,292",
+    "region": "India",
+    "area_sq_km": "53,483",
+    "male_population_percentage": "50.94%",
+    "male_population": "5,137,773",
+    "female_population_percentage": "49.06%",
+    "female_population": "4,948,519",
+    "districts": [
+      {
+        "district_name": "Uttarkashi",
+        "population": "330,086",
+        "male_population": "168,597",
+        "female_population": "161,489",
+        "area_sq_km": "8,016"
+      },
+      {
+        "district_name": "Chamoli",
+        "population": "391,605",
+        "male_population": "193,991",
+        "female_population": "197,614",
+        "area_sq_km": "8,029"
+      },
+      {
+        "district_name": "Rudraprayag",
+        "population": "242,285",
+        "male_population": "114,589",
+        "female_population": "127,696",
+        "area_sq_km": "1,984"
+      },
+      {
+        "district_name": "Tehri Garhwal",
+        "population": "618,931",
+        "male_population": "297,986",
+        "female_population": "320,945",
+        "area_sq_km": "3,642"
+      },
+      {
+        "district_name": "Dehradun",
+        "population": "1,696,694",
+        "male_population": "892,199",
+        "female_population": "804,495",
+        "area_sq_km": "3,088"
+      },
+      {
+        "district_name": "Garhwal",
+        "population": "687,271",
+        "male_population": "326,829",
+        "female_population": "360,442",
+        "area_sq_km": "5,329"
+      },
+      {
+        "district_name": "Pithoragarh",
+        "population": "483,439",
+        "male_population": "239,306",
+        "female_population": "244,133",
+        "area_sq_km": "7,090"
+      },
+      {
+        "district_name": "Bageshwar",
+        "population": "259,898",
+        "male_population": "124,326",
+        "female_population": "135,572",
+        "area_sq_km": "2,241"
+      },
+      {
+        "district_name": "Almora",
+        "population": "622,506",
+        "male_population": "291,081",
+        "female_population": "331,425",
+        "area_sq_km": "3,144"
+      },
+      {
+        "district_name": "Champawat",
+        "population": "259,648",
+        "male_population": "131,125",
+        "female_population": "128,523",
+        "area_sq_km": "1,766"
+      },
+      {
+        "district_name": "Nainital",
+        "population": "954,605",
+        "male_population": "493,666",
+        "female_population": "460,939",
+        "area_sq_km": "4,251"
+      },
+      {
+        "district_name": "Udham Singh Nagar",
+        "population": "1,648,902",
+        "male_population": "858,783",
+        "female_population": "790,119",
+        "area_sq_km": "2,542"
+      },
+      {
+        "district_name": "Hardwar",
+        "population": "1,890,422",
+        "male_population": "1,005,295",
+        "female_population": "885,127",
+        "area_sq_km": "2,360"
+      }
+    ],
+    "info": "Total Households: 2,056,975. Population Density: 189 per sq. km."
+  },
+  {
+    "state_name": "HARYANA",
+    "id": "06",
+    "population": "25,351,462",
+    "region": "India",
+    "area_sq_km": "44,212",
+    "male_population_percentage": "53.23%",
+    "male_population": "13,494,734",
+    "female_population_percentage": "46.77%",
+    "female_population": "11,856,728",
+    "districts": [
+      {
+        "district_name": "Panchkula",
+        "population": "561,293",
+        "male_population": "299,679",
+        "female_population": "261,614",
+        "area_sq_km": "897"
+      },
+      {
+        "district_name": "Ambala",
+        "population": "1,128,350",
+        "male_population": "598,703",
+        "female_population": "529,647",
+        "area_sq_km": "1,573"
+      },
+      {
+        "district_name": "Yamunanagar",
+        "population": "1,214,205",
+        "male_population": "646,718",
+        "female_population": "567,487",
+        "area_sq_km": "1,767"
+      },
+      {
+        "district_name": "Kurukshetra",
+        "population": "964,655",
+        "male_population": "510,976",
+        "female_population": "453,679",
+        "area_sq_km": "1,529"
+      },
+      {
+        "district_name": "Kaithal",
+        "population": "1,074,304",
+        "male_population": "571,003",
+        "female_population": "503,301",
+        "area_sq_km": "2,316"
+      },
+      {
+        "district_name": "Karnal",
+        "population": "1,505,324",
+        "male_population": "797,712",
+        "female_population": "707,612",
+        "area_sq_km": "2,519"
+      },
+      {
+        "district_name": "Panipat",
+        "population": "1,205,437",
+        "male_population": "646,857",
+        "female_population": "558,580",
+        "area_sq_km": "1,267"
+      },
+      {
+        "district_name": "Sonipat",
+        "population": "1,450,001",
+        "male_population": "781,299",
+        "female_population": "668,702",
+        "area_sq_km": "2,122"
+      },
+      {
+        "district_name": "Jind",
+        "population": "1,334,152",
+        "male_population": "713,006",
+        "female_population": "621,146",
+        "area_sq_km": "2,702"
+      },
+      {
+        "district_name": "Fatehabad",
+        "population": "942,011",
+        "male_population": "495,360",
+        "female_population": "446,651",
+        "area_sq_km": "2,538"
+      },
+      {
+        "district_name": "Sirsa",
+        "population": "1,295,189",
+        "male_population": "682,582",
+        "female_population": "612,607",
+        "area_sq_km": "4,277"
+      },
+      {
+        "district_name": "Hisar",
+        "population": "1,743,931",
+        "male_population": "931,562",
+        "female_population": "812,369",
+        "area_sq_km": "3,983"
+      },
+      {
+        "district_name": "Bhiwani",
+        "population": "1,634,445",
+        "male_population": "866,672",
+        "female_population": "767,773",
+        "area_sq_km": "4,778"
+      },
+      {
+        "district_name": "Rohtak",
+        "population": "1,061,204",
+        "male_population": "568,479",
+        "female_population": "492,725",
+        "area_sq_km": "1,745"
+      },
+      {
+        "district_name": "Jhajjar",
+        "population": "958,405",
+        "male_population": "514,667",
+        "female_population": "443,738",
+        "area_sq_km": "1,834"
+      },
+      {
+        "district_name": "Mahendragarh",
+        "population": "922,088",
+        "male_population": "486,665",
+        "female_population": "435,423",
+        "area_sq_km": "1,899"
+      },
+      {
+        "district_name": "Rewari",
+        "population": "900,332",
+        "male_population": "474,335",
+        "female_population": "425,997",
+        "area_sq_km": "1,594"
+      },
+      {
+        "district_name": "Gurgaon",
+        "population": "1,514,432",
+        "male_population": "816,690",
+        "female_population": "697,742",
+        "area_sq_km": "1,258"
+      },
+      {
+        "district_name": "Mewat",
+        "population": "1,089,263",
+        "male_population": "571,162",
+        "female_population": "518,101",
+        "area_sq_km": "1,507"
+      },
+      {
+        "district_name": "Faridabad",
+        "population": "1,809,733",
+        "male_population": "966,110",
+        "female_population": "843,623",
+        "area_sq_km": "741"
+      },
+      {
+        "district_name": "Palwal",
+        "population": "1,042,708",
+        "male_population": "554,497",
+        "female_population": "488,211",
+        "area_sq_km": "1,359"
+      }
+    ],
+    "info": "Total Households: 4,857,524. Population Density: 573 per sq. km."
+  },
+  {
+    "state_name": "NCT OF DELHI",
+    "id": "07",
+    "population": "16,787,941",
+    "region": "India",
+    "area_sq_km": "1,483",
+    "male_population_percentage": "53.53%",
+    "male_population": "8,987,326",
+    "female_population_percentage": "46.47%",
+    "female_population": "7,800,615",
+    "districts": [
+      {
+        "district_name": "North West",
+        "population": "3,656,539",
+        "male_population": "1,960,922",
+        "female_population": "1,695,617",
+        "area_sq_km": "443"
+      },
+      {
+        "district_name": "North",
+        "population": "887,978",
+        "male_population": "475,002",
+        "female_population": "412,976",
+        "area_sq_km": "61"
+      },
+      {
+        "district_name": "North East",
+        "population": "2,241,624",
+        "male_population": "1,188,425",
+        "female_population": "1,053,199",
+        "area_sq_km": "62"
+      },
+      {
+        "district_name": "East",
+        "population": "1,709,346",
+        "male_population": "907,500",
+        "female_population": "801,846",
+        "area_sq_km": "63"
+      },
+      {
+        "district_name": "New Delhi",
+        "population": "142,004",
+        "male_population": "77,942",
+        "female_population": "64,062",
+        "area_sq_km": "35"
+      },
+      {
+        "district_name": "Central",
+        "population": "582,320",
+        "male_population": "307,821",
+        "female_population": "274,499",
+        "area_sq_km": "21"
+      },
+      {
+        "district_name": "West",
+        "population": "2,543,243",
+        "male_population": "1,356,240",
+        "female_population": "1,187,003",
+        "area_sq_km": "130"
+      },
+      {
+        "district_name": "South West",
+        "population": "2,292,958",
+        "male_population": "1,246,046",
+        "female_population": "1,046,912",
+        "area_sq_km": "421"
+      },
+      {
+        "district_name": "South",
+        "population": "2,731,929",
+        "male_population": "1,467,428",
+        "female_population": "1,264,501",
+        "area_sq_km": "247"
+      }
+    ],
+    "info": "Total Households: 3,435,999. Population Density: 11,320 per sq. km."
+  },
+  {
+    "state_name": "RAJASTHAN",
+    "id": "08",
+    "population": "68,548,437",
+    "region": "India",
+    "area_sq_km": "342,239",
+    "male_population_percentage": "51.86%",
+    "male_population": "35,550,997",
+    "female_population_percentage": "48.14%",
+    "female_population": "32,997,440",
+    "districts": [
+      {
+        "district_name": "Ganganagar",
+        "population": "1,969,168",
+        "male_population": "1,043,340",
+        "female_population": "925,828",
+        "area_sq_km": "10,978"
+      },
+      {
+        "district_name": "Hanumangarh",
+        "population": "1,774,692",
+        "male_population": "931,184",
+        "female_population": "843,508",
+        "area_sq_km": "9,656"
+      },
+      {
+        "district_name": "Bikaner",
+        "population": "2,363,937",
+        "male_population": "1,240,801",
+        "female_population": "1,123,136",
+        "area_sq_km": "30,239"
+      },
+      {
+        "district_name": "Churu",
+        "population": "2,039,547",
+        "male_population": "1,051,446",
+        "female_population": "988,101",
+        "area_sq_km": "13,835"
+      },
+      {
+        "district_name": "Jhunjhunun",
+        "population": "2,137,045",
+        "male_population": "1,095,896",
+        "female_population": "1,041,149",
+        "area_sq_km": "5,928"
+      },
+      {
+        "district_name": "Alwar",
+        "population": "3,674,179",
+        "male_population": "1,939,026",
+        "female_population": "1,735,153",
+        "area_sq_km": "8,380"
+      },
+      {
+        "district_name": "Bharatpur",
+        "population": "2,548,462",
+        "male_population": "1,355,726",
+        "female_population": "1,192,736",
+        "area_sq_km": "5,066"
+      },
+      {
+        "district_name": "Dhaulpur",
+        "population": "1,206,516",
+        "male_population": "653,647",
+        "female_population": "552,869",
+        "area_sq_km": "3,033"
+      },
+      {
+        "district_name": "Karauli",
+        "population": "1,458,248",
+        "male_population": "783,639",
+        "female_population": "674,609",
+        "area_sq_km": "5,524"
+      },
+      {
+        "district_name": "Sawai Madhopur",
+        "population": "1,335,551",
+        "male_population": "704,031",
+        "female_population": "631,520",
+        "area_sq_km": "4,498"
+      },
+      {
+        "district_name": "Dausa",
+        "population": "1,634,409",
+        "male_population": "857,787",
+        "female_population": "776,622",
+        "area_sq_km": "3,432"
+      },
+      {
+        "district_name": "Jaipur",
+        "population": "6,626,178",
+        "male_population": "3,468,507",
+        "female_population": "3,157,671",
+        "area_sq_km": "11,143"
+      },
+      {
+        "district_name": "Sikar",
+        "population": "2,677,333",
+        "male_population": "1,374,990",
+        "female_population": "1,302,343",
+        "area_sq_km": "7,732"
+      },
+      {
+        "district_name": "Nagaur",
+        "population": "3,307,743",
+        "male_population": "1,696,325",
+        "female_population": "1,611,418",
+        "area_sq_km": "17,718"
+      },
+      {
+        "district_name": "Jodhpur",
+        "population": "3,687,165",
+        "male_population": "1,923,928",
+        "female_population": "1,763,237",
+        "area_sq_km": "22,850"
+      },
+      {
+        "district_name": "Jaisalmer",
+        "population": "669,919",
+        "male_population": "361,708",
+        "female_population": "308,211",
+        "area_sq_km": "38,401"
+      },
+      {
+        "district_name": "Barmer",
+        "population": "2,603,751",
+        "male_population": "1,369,022",
+        "female_population": "1,234,729",
+        "area_sq_km": "28,387"
+      },
+      {
+        "district_name": "Jalor",
+        "population": "1,828,730",
+        "male_population": "936,634",
+        "female_population": "892,096",
+        "area_sq_km": "10,640"
+      },
+      {
+        "district_name": "Sirohi",
+        "population": "1,036,346",
+        "male_population": "534,231",
+        "female_population": "502,115",
+        "area_sq_km": "5,136"
+      },
+      {
+        "district_name": "Pali",
+        "population": "2,037,573",
+        "male_population": "1,025,422",
+        "female_population": "1,012,151",
+        "area_sq_km": "12,387"
+      },
+      {
+        "district_name": "Ajmer",
+        "population": "2,583,052",
+        "male_population": "1,324,085",
+        "female_population": "1,258,967",
+        "area_sq_km": "8,481"
+      },
+      {
+        "district_name": "Tonk",
+        "population": "1,421,326",
+        "male_population": "728,136",
+        "female_population": "693,190",
+        "area_sq_km": "7,194"
+      },
+      {
+        "district_name": "Bundi",
+        "population": "1,110,906",
+        "male_population": "577,160",
+        "female_population": "533,746",
+        "area_sq_km": "5,776"
+      },
+      {
+        "district_name": "Bhilwara",
+        "population": "2,408,523",
+        "male_population": "1,220,736",
+        "female_population": "1,187,787",
+        "area_sq_km": "10,455"
+      },
+      {
+        "district_name": "Rajsamand",
+        "population": "1,156,597",
+        "male_population": "581,339",
+        "female_population": "575,258",
+        "area_sq_km": "4,655"
+      },
+      {
+        "district_name": "Dungarpur",
+        "population": "1,388,552",
+        "male_population": "696,532",
+        "female_population": "692,020",
+        "area_sq_km": "3,770"
+      },
+      {
+        "district_name": "Banswara",
+        "population": "1,797,485",
+        "male_population": "907,754",
+        "female_population": "889,731",
+        "area_sq_km": "4,522"
+      },
+      {
+        "district_name": "Chittaurgarh",
+        "population": "1,544,338",
+        "male_population": "783,171",
+        "female_population": "761,167",
+        "area_sq_km": "7,822"
+      },
+      {
+        "district_name": "Kota",
+        "population": "1,951,014",
+        "male_population": "1,021,161",
+        "female_population": "929,853",
+        "area_sq_km": "5,217"
+      },
+      {
+        "district_name": "Baran",
+        "population": "1,222,755",
+        "male_population": "633,945",
+        "female_population": "588,810",
+        "area_sq_km": "6,992"
+      },
+      {
+        "district_name": "Jhalawar",
+        "population": "1,411,129",
+        "male_population": "725,143",
+        "female_population": "685,986",
+        "area_sq_km": "6,219"
+      },
+      {
+        "district_name": "Udaipur",
+        "population": "3,068,420",
+        "male_population": "1,566,801",
+        "female_population": "1,501,619",
+        "area_sq_km": "11,724"
+      },
+      {
+        "district_name": "Pratapgarh",
+        "population": "867,848",
+        "male_population": "437,744",
+        "female_population": "430,104",
+        "area_sq_km": "4,449"
+      }
+    ],
+    "info": "Total Households: 12,711,146. Population Density: 200 per sq. km."
+  },
+  {
+    "state_name": "UTTAR PRADESH",
+    "id": "09",
+    "population": "199,812,341",
+    "region": "India",
+    "area_sq_km": "240,928",
+    "male_population_percentage": "52.29%",
+    "male_population": "104,480,510",
+    "female_population_percentage": "47.71%",
+    "female_population": "95,331,831",
+    "districts": [
+      {
+        "district_name": "Saharanpur",
+        "population": "3,466,382",
+        "male_population": "1,834,106",
+        "female_population": "1,632,276",
+        "area_sq_km": "3,689"
+      },
+      {
+        "district_name": "Muzaffarnagar",
+        "population": "4,143,512",
+        "male_population": "2,193,434",
+        "female_population": "1,950,078",
+        "area_sq_km": "4,008"
+      },
+      {
+        "district_name": "Bijnor",
+        "population": "3,682,713",
+        "male_population": "1,921,215",
+        "female_population": "1,761,498",
+        "area_sq_km": "4,561"
+      },
+      {
+        "district_name": "Moradabad",
+        "population": "4,772,006",
+        "male_population": "2,503,186",
+        "female_population": "2,268,820",
+        "area_sq_km": "3,718"
+      },
+      {
+        "district_name": "Rampur",
+        "population": "2,335,819",
+        "male_population": "1,223,889",
+        "female_population": "1,111,930",
+        "area_sq_km": "2,367"
+      },
+      {
+        "district_name": "Jyotiba Phule Nagar",
+        "population": "1,840,221",
+        "male_population": "963,449",
+        "female_population": "876,772",
+        "area_sq_km": "2,249"
+      },
+      {
+        "district_name": "Meerut",
+        "population": "3,443,689",
+        "male_population": "1,825,743",
+        "female_population": "1,617,946",
+        "area_sq_km": "2,559"
+      },
+      {
+        "district_name": "Baghpat",
+        "population": "1,303,048",
+        "male_population": "700,070",
+        "female_population": "602,978",
+        "area_sq_km": "1,321"
+      },
+      {
+        "district_name": "Ghaziabad",
+        "population": "4,681,645",
+        "male_population": "2,488,834",
+        "female_population": "2,192,811",
+        "area_sq_km": "1,179"
+      },
+      {
+        "district_name": "Gautam Buddha Nagar",
+        "population": "1,648,115",
+        "male_population": "890,214",
+        "female_population": "757,901",
+        "area_sq_km": "1,282"
+      },
+      {
+        "district_name": "Bulandshahr",
+        "population": "3,499,171",
+        "male_population": "1,845,260",
+        "female_population": "1,653,911",
+        "area_sq_km": "4,512"
+      },
+      {
+        "district_name": "Aligarh",
+        "population": "3,673,889",
+        "male_population": "1,951,996",
+        "female_population": "1,721,893",
+        "area_sq_km": "3,650"
+      },
+      {
+        "district_name": "Mahamaya Nagar",
+        "population": "1,564,708",
+        "male_population": "836,127",
+        "female_population": "728,581",
+        "area_sq_km": "1,840"
+      },
+      {
+        "district_name": "Mathura",
+        "population": "2,547,184",
+        "male_population": "1,367,125",
+        "female_population": "1,180,059",
+        "area_sq_km": "3,340"
+      },
+      {
+        "district_name": "Agra",
+        "population": "4,418,797",
+        "male_population": "2,364,953",
+        "female_population": "2,053,844",
+        "area_sq_km": "4,041"
+      },
+      {
+        "district_name": "Firozabad",
+        "population": "2,498,156",
+        "male_population": "1,332,046",
+        "female_population": "1,166,110",
+        "area_sq_km": "2,407"
+      },
+      {
+        "district_name": "Mainpuri",
+        "population": "1,868,529",
+        "male_population": "993,377",
+        "female_population": "875,152",
+        "area_sq_km": "2,760"
+      },
+      {
+        "district_name": "Budaun",
+        "population": "3,681,896",
+        "male_population": "1,967,759",
+        "female_population": "1,714,137",
+        "area_sq_km": "5,168"
+      },
+      {
+        "district_name": "Bareilly",
+        "population": "4,448,359",
+        "male_population": "2,357,665",
+        "female_population": "2,090,694",
+        "area_sq_km": "4,120"
+      },
+      {
+        "district_name": "Pilibhit",
+        "population": "2,031,007",
+        "male_population": "1,072,002",
+        "female_population": "959,005",
+        "area_sq_km": "3,686"
+      },
+      {
+        "district_name": "Shahjahanpur",
+        "population": "3,006,538",
+        "male_population": "1,606,403",
+        "female_population": "1,400,135",
+        "area_sq_km": "4,388"
+      },
+      {
+        "district_name": "Kheri",
+        "population": "4,021,243",
+        "male_population": "2,123,187",
+        "female_population": "1,898,056",
+        "area_sq_km": "7,680"
+      },
+      {
+        "district_name": "Sitapur",
+        "population": "4,483,992",
+        "male_population": "2,375,264",
+        "female_population": "2,108,728",
+        "area_sq_km": "5,743"
+      },
+      {
+        "district_name": "Hardoi",
+        "population": "4,092,845",
+        "male_population": "2,191,442",
+        "female_population": "1,901,403",
+        "area_sq_km": "5,986"
+      },
+      {
+        "district_name": "Unnao",
+        "population": "3,108,367",
+        "male_population": "1,630,087",
+        "female_population": "1,478,280",
+        "area_sq_km": "4,558"
+      },
+      {
+        "district_name": "Lucknow",
+        "population": "4,589,838",
+        "male_population": "2,394,476",
+        "female_population": "2,195,362",
+        "area_sq_km": "2,528"
+      },
+      {
+        "district_name": "Rae Bareli",
+        "population": "3,405,559",
+        "male_population": "1,752,542",
+        "female_population": "1,653,017",
+        "area_sq_km": "4,609"
+      },
+      {
+        "district_name": "Farrukhabad",
+        "population": "1,885,204",
+        "male_population": "1,006,240",
+        "female_population": "878,964",
+        "area_sq_km": "2,181"
+      },
+      {
+        "district_name": "Kannauj",
+        "population": "1,656,616",
+        "male_population": "881,776",
+        "female_population": "774,840",
+        "area_sq_km": "2,093"
+      },
+      {
+        "district_name": "Etawah",
+        "population": "1,581,810",
+        "male_population": "845,856",
+        "female_population": "735,954",
+        "area_sq_km": "2,311"
+      },
+      {
+        "district_name": "Auraiya",
+        "population": "1,379,545",
+        "male_population": "740,040",
+        "female_population": "639,505",
+        "area_sq_km": "2,016"
+      },
+      {
+        "district_name": "Kanpur Dehat",
+        "population": "1,796,184",
+        "male_population": "963,255",
+        "female_population": "832,929",
+        "area_sq_km": "3,021"
+      },
+      {
+        "district_name": "Kanpur Nagar",
+        "population": "4,581,268",
+        "male_population": "2,459,806",
+        "female_population": "2,121,462",
+        "area_sq_km": "3,155"
+      },
+      {
+        "district_name": "Jalaun",
+        "population": "1,689,974",
+        "male_population": "906,092",
+        "female_population": "783,882",
+        "area_sq_km": "4,565"
+      },
+      {
+        "district_name": "Jhansi",
+        "population": "1,998,603",
+        "male_population": "1,057,436",
+        "female_population": "941,167",
+        "area_sq_km": "5,024"
+      },
+      {
+        "district_name": "Lalitpur",
+        "population": "1,221,592",
+        "male_population": "641,011",
+        "female_population": "580,581",
+        "area_sq_km": "5,039"
+      },
+      {
+        "district_name": "Hamirpur",
+        "population": "1,104,285",
+        "male_population": "593,537",
+        "female_population": "510,748",
+        "area_sq_km": "4,021"
+      },
+      {
+        "district_name": "Mahoba",
+        "population": "875,958",
+        "male_population": "466,358",
+        "female_population": "409,600",
+        "area_sq_km": "3,144"
+      },
+      {
+        "district_name": "Banda",
+        "population": "1,799,410",
+        "male_population": "965,876",
+        "female_population": "833,534",
+        "area_sq_km": "4,408"
+      },
+      {
+        "district_name": "Chitrakoot",
+        "population": "991,730",
+        "male_population": "527,721",
+        "female_population": "464,009",
+        "area_sq_km": "3,216"
+      },
+      {
+        "district_name": "Fatehpur",
+        "population": "2,632,733",
+        "male_population": "1,384,722",
+        "female_population": "1,248,011",
+        "area_sq_km": "4,152"
+      },
+      {
+        "district_name": "Pratapgarh",
+        "population": "3,209,141",
+        "male_population": "1,606,085",
+        "female_population": "1,603,056",
+        "area_sq_km": "3,717"
+      },
+      {
+        "district_name": "Kaushambi",
+        "population": "1,599,596",
+        "male_population": "838,485",
+        "female_population": "761,111",
+        "area_sq_km": "1,779"
+      },
+      {
+        "district_name": "Allahabad",
+        "population": "5,954,391",
+        "male_population": "3,131,807",
+        "female_population": "2,822,584",
+        "area_sq_km": "5,482"
+      },
+      {
+        "district_name": "Bara Banki",
+        "population": "3,260,699",
+        "male_population": "1,707,073",
+        "female_population": "1,553,626",
+        "area_sq_km": "4,402"
+      },
+      {
+        "district_name": "Faizabad",
+        "population": "2,470,996",
+        "male_population": "1,259,628",
+        "female_population": "1,211,368",
+        "area_sq_km": "2,341"
+      },
+      {
+        "district_name": "Ambedkar Nagar",
+        "population": "2,397,888",
+        "male_population": "1,212,410",
+        "female_population": "1,185,478",
+        "area_sq_km": "2,350"
+      },
+      {
+        "district_name": "Sultanpur",
+        "population": "3,797,117",
+        "male_population": "1,914,586",
+        "female_population": "1,882,531",
+        "area_sq_km": "4,436"
+      },
+      {
+        "district_name": "Bahraich",
+        "population": "3,487,731",
+        "male_population": "1,843,884",
+        "female_population": "1,643,847",
+        "area_sq_km": "5,237"
+      },
+      {
+        "district_name": "Shrawasti",
+        "population": "1,117,361",
+        "male_population": "593,897",
+        "female_population": "523,464",
+        "area_sq_km": "1,640"
+      },
+      {
+        "district_name": "Balrampur",
+        "population": "2,148,665",
+        "male_population": "1,114,721",
+        "female_population": "1,033,944",
+        "area_sq_km": "3,349"
+      },
+      {
+        "district_name": "Gonda",
+        "population": "3,433,919",
+        "male_population": "1,787,146",
+        "female_population": "1,646,773",
+        "area_sq_km": "4,003"
+      },
+      {
+        "district_name": "Siddharthnagar",
+        "population": "2,559,297",
+        "male_population": "1,295,095",
+        "female_population": "1,264,202",
+        "area_sq_km": "2,895"
+      },
+      {
+        "district_name": "Basti",
+        "population": "2,464,464",
+        "male_population": "1,255,272",
+        "female_population": "1,209,192",
+        "area_sq_km": "2,688"
+      },
+      {
+        "district_name": "Sant Kabir Nagar",
+        "population": "1,715,183",
+        "male_population": "869,656",
+        "female_population": "845,527",
+        "area_sq_km": "1,646"
+      },
+      {
+        "district_name": "Mahrajganj",
+        "population": "2,684,703",
+        "male_population": "1,381,754",
+        "female_population": "1,302,949",
+        "area_sq_km": "2,952"
+      },
+      {
+        "district_name": "Gorakhpur",
+        "population": "4,440,895",
+        "male_population": "2,277,777",
+        "female_population": "2,163,118",
+        "area_sq_km": "3,321"
+      },
+      {
+        "district_name": "Kushinagar",
+        "population": "3,564,544",
+        "male_population": "1,818,055",
+        "female_population": "1,746,489",
+        "area_sq_km": "2,905"
+      },
+      {
+        "district_name": "Deoria",
+        "population": "3,100,946",
+        "male_population": "1,537,436",
+        "female_population": "1,563,510",
+        "area_sq_km": "2,540"
+      },
+      {
+        "district_name": "Azamgarh",
+        "population": "4,613,913",
+        "male_population": "2,285,004",
+        "female_population": "2,328,909",
+        "area_sq_km": "4,054"
+      },
+      {
+        "district_name": "Mau",
+        "population": "2,205,968",
+        "male_population": "1,114,709",
+        "female_population": "1,091,259",
+        "area_sq_km": "1,713"
+      },
+      {
+        "district_name": "Ballia",
+        "population": "3,239,774",
+        "male_population": "1,672,902",
+        "female_population": "1,566,872",
+        "area_sq_km": "2,981"
+      },
+      {
+        "district_name": "Jaunpur",
+        "population": "4,494,204",
+        "male_population": "2,220,465",
+        "female_population": "2,273,739",
+        "area_sq_km": "4,038"
+      },
+      {
+        "district_name": "Ghazipur",
+        "population": "3,620,268",
+        "male_population": "1,855,075",
+        "female_population": "1,765,193",
+        "area_sq_km": "3,377"
+      },
+      {
+        "district_name": "Chandauli",
+        "population": "1,952,756",
+        "male_population": "1,017,905",
+        "female_population": "934,851",
+        "area_sq_km": "2,541"
+      },
+      {
+        "district_name": "Varanasi",
+        "population": "3,676,841",
+        "male_population": "1,921,857",
+        "female_population": "1,754,984",
+        "area_sq_km": "1,535"
+      },
+      {
+        "district_name": "Sant Ravidas Nagar (Bhadohi)",
+        "population": "1,578,213",
+        "male_population": "807,099",
+        "female_population": "771,114",
+        "area_sq_km": "1,015"
+      },
+      {
+        "district_name": "Mirzapur",
+        "population": "2,496,970",
+        "male_population": "1,312,302",
+        "female_population": "1,184,668",
+        "area_sq_km": "4,405"
+      },
+      {
+        "district_name": "Sonbhadra",
+        "population": "1,862,559",
+        "male_population": "971,344",
+        "female_population": "891,215",
+        "area_sq_km": "6,905"
+      },
+      {
+        "district_name": "Etah",
+        "population": "1,774,480",
+        "male_population": "947,339",
+        "female_population": "827,141",
+        "area_sq_km": "2,431"
+      },
+      {
+        "district_name": "Kanshiram Nagar",
+        "population": "1,436,719",
+        "male_population": "764,165",
+        "female_population": "672,554",
+        "area_sq_km": "1,955"
+      }
+    ],
+    "info": "Total Households: 33,448,035. Population Density: 829 per sq. km."
+  },
+  {
+    "state_name": "BIHAR",
+    "id": "10",
+    "population": "104,099,452",
+    "region": "India",
+    "area_sq_km": "94,163",
+    "male_population_percentage": "52.14%",
+    "male_population": "54,278,157",
+    "female_population_percentage": "47.86%",
+    "female_population": "49,821,295",
+    "districts": [
+      {
+        "district_name": "Pashchim Champaran",
+        "population": "3,935,042",
+        "male_population": "2,061,110",
+        "female_population": "1,873,932",
+        "area_sq_km": "5,228"
+      },
+      {
+        "district_name": "Purba Champaran",
+        "population": "5,099,371",
+        "male_population": "2,681,209",
+        "female_population": "2,418,162",
+        "area_sq_km": "3,968"
+      },
+      {
+        "district_name": "Sheohar",
+        "population": "656,246",
+        "male_population": "346,673",
+        "female_population": "309,573",
+        "area_sq_km": "349"
+      },
+      {
+        "district_name": "Sitamarhi",
+        "population": "3,423,574",
+        "male_population": "1,803,252",
+        "female_population": "1,620,322",
+        "area_sq_km": "2,294"
+      },
+      {
+        "district_name": "Madhubani",
+        "population": "4,487,379",
+        "male_population": "2,329,313",
+        "female_population": "2,158,066",
+        "area_sq_km": "3,501"
+      },
+      {
+        "district_name": "Supaul",
+        "population": "2,229,076",
+        "male_population": "1,155,283",
+        "female_population": "1,073,793",
+        "area_sq_km": "2,425"
+      },
+      {
+        "district_name": "Araria",
+        "population": "2,811,569",
+        "male_population": "1,463,333",
+        "female_population": "1,348,236",
+        "area_sq_km": "2,830"
+      },
+      {
+        "district_name": "Kishanganj",
+        "population": "1,690,400",
+        "male_population": "866,970",
+        "female_population": "823,430",
+        "area_sq_km": "1,884"
+      },
+      {
+        "district_name": "Purnia",
+        "population": "3,264,619",
+        "male_population": "1,699,370",
+        "female_population": "1,565,249",
+        "area_sq_km": "3,229"
+      },
+      {
+        "district_name": "Katihar",
+        "population": "3,071,029",
+        "male_population": "1,600,430",
+        "female_population": "1,470,599",
+        "area_sq_km": "3,057"
+      },
+      {
+        "district_name": "Madhepura",
+        "population": "2,001,762",
+        "male_population": "1,047,559",
+        "female_population": "954,203",
+        "area_sq_km": "1,788"
+      },
+      {
+        "district_name": "Saharsa",
+        "population": "1,900,661",
+        "male_population": "997,174",
+        "female_population": "903,487",
+        "area_sq_km": "1,687"
+      },
+      {
+        "district_name": "Darbhanga",
+        "population": "3,937,385",
+        "male_population": "2,059,949",
+        "female_population": "1,877,436",
+        "area_sq_km": "2,279"
+      },
+      {
+        "district_name": "Muzaffarpur",
+        "population": "4,801,062",
+        "male_population": "2,527,497",
+        "female_population": "2,273,565",
+        "area_sq_km": "3,172"
+      },
+      {
+        "district_name": "Gopalganj",
+        "population": "2,562,012",
+        "male_population": "1,267,666",
+        "female_population": "1,294,346",
+        "area_sq_km": "2,033"
+      },
+      {
+        "district_name": "Siwan",
+        "population": "3,330,464",
+        "male_population": "1,675,090",
+        "female_population": "1,655,374",
+        "area_sq_km": "2,219"
+      },
+      {
+        "district_name": "Saran",
+        "population": "3,951,862",
+        "male_population": "2,022,821",
+        "female_population": "1,929,041",
+        "area_sq_km": "2,641"
+      },
+      {
+        "district_name": "Vaishali",
+        "population": "3,495,021",
+        "male_population": "1,844,535",
+        "female_population": "1,650,486",
+        "area_sq_km": "2,036"
+      },
+      {
+        "district_name": "Samastipur",
+        "population": "4,261,566",
+        "male_population": "2,230,003",
+        "female_population": "2,031,563",
+        "area_sq_km": "2,904"
+      },
+      {
+        "district_name": "Begusarai",
+        "population": "2,970,541",
+        "male_population": "1,567,660",
+        "female_population": "1,402,881",
+        "area_sq_km": "1,918"
+      },
+      {
+        "district_name": "Khagaria",
+        "population": "1,666,886",
+        "male_population": "883,786",
+        "female_population": "783,100",
+        "area_sq_km": "1,486"
+      },
+      {
+        "district_name": "Bhagalpur",
+        "population": "3,037,766",
+        "male_population": "1,615,663",
+        "female_population": "1,422,103",
+        "area_sq_km": "2,569"
+      },
+      {
+        "district_name": "Banka",
+        "population": "2,034,763",
+        "male_population": "1,067,140",
+        "female_population": "967,623",
+        "area_sq_km": "3,020"
+      },
+      {
+        "district_name": "Munger",
+        "population": "1,367,765",
+        "male_population": "729,041",
+        "female_population": "638,724",
+        "area_sq_km": "1,419"
+      },
+      {
+        "district_name": "Lakhisarai",
+        "population": "1,000,912",
+        "male_population": "526,345",
+        "female_population": "474,567",
+        "area_sq_km": "1,228"
+      },
+      {
+        "district_name": "Sheikhpura",
+        "population": "636,342",
+        "male_population": "329,743",
+        "female_population": "306,599",
+        "area_sq_km": "689"
+      },
+      {
+        "district_name": "Nalanda",
+        "population": "2,877,653",
+        "male_population": "1,497,060",
+        "female_population": "1,380,593",
+        "area_sq_km": "2,355"
+      },
+      {
+        "district_name": "Patna",
+        "population": "5,838,465",
+        "male_population": "3,078,512",
+        "female_population": "2,759,953",
+        "area_sq_km": "3,202"
+      },
+      {
+        "district_name": "Bhojpur",
+        "population": "2,728,407",
+        "male_population": "1,430,380",
+        "female_population": "1,298,027",
+        "area_sq_km": "2,395"
+      },
+      {
+        "district_name": "Buxar",
+        "population": "1,706,352",
+        "male_population": "887,977",
+        "female_population": "818,375",
+        "area_sq_km": "1,703"
+      },
+      {
+        "district_name": "Kaimur (Bhabua)",
+        "population": "1,626,384",
+        "male_population": "847,006",
+        "female_population": "779,378",
+        "area_sq_km": "3,332"
+      },
+      {
+        "district_name": "Rohtas",
+        "population": "2,959,918",
+        "male_population": "1,543,546",
+        "female_population": "1,416,372",
+        "area_sq_km": "3,881"
+      },
+      {
+        "district_name": "Aurangabad",
+        "population": "2,540,073",
+        "male_population": "1,318,684",
+        "female_population": "1,221,389",
+        "area_sq_km": "3,305"
+      },
+      {
+        "district_name": "Gaya",
+        "population": "4,391,418",
+        "male_population": "2,266,566",
+        "female_population": "2,124,852",
+        "area_sq_km": "4,976"
+      },
+      {
+        "district_name": "Nawada",
+        "population": "2,219,146",
+        "male_population": "1,144,668",
+        "female_population": "1,074,478",
+        "area_sq_km": "2,494"
+      },
+      {
+        "district_name": "Jamui",
+        "population": "1,760,405",
+        "male_population": "916,064",
+        "female_population": "844,341",
+        "area_sq_km": "3,098"
+      },
+      {
+        "district_name": "Jehanabad",
+        "population": "1,125,313",
+        "male_population": "585,582",
+        "female_population": "539,731",
+        "area_sq_km": "931"
+      },
+      {
+        "district_name": "Arwal",
+        "population": "700,843",
+        "male_population": "363,497",
+        "female_population": "337,346",
+        "area_sq_km": "638"
+      }
+    ],
+    "info": "Total Households: 18,913,565. Population Density: 1,106 per sq. km."
+  },
+  {
+    "state_name": "SIKKIM",
+    "id": "11",
+    "population": "610,577",
+    "region": "India",
+    "area_sq_km": "7,096",
+    "male_population_percentage": "52.91%",
+    "male_population": "323,070",
+    "female_population_percentage": "47.09%",
+    "female_population": "287,507",
+    "districts": [
+      {
+        "district_name": "North  District",
+        "population": "43,709",
+        "male_population": "24,730",
+        "female_population": "18,979",
+        "area_sq_km": "4,226"
+      },
+      {
+        "district_name": "West District",
+        "population": "136,435",
+        "male_population": "70,238",
+        "female_population": "66,197",
+        "area_sq_km": "1,166"
+      },
+      {
+        "district_name": "South District",
+        "population": "146,850",
+        "male_population": "76,670",
+        "female_population": "70,180",
+        "area_sq_km": "750"
+      },
+      {
+        "district_name": "East District",
+        "population": "283,583",
+        "male_population": "151,432",
+        "female_population": "132,151",
+        "area_sq_km": "954"
+      }
+    ],
+    "info": "Total Households: 129,006. Population Density: 86 per sq. km."
+  },
+  {
+    "state_name": "ARUNACHAL PRADESH",
+    "id": "12",
+    "population": "1,383,727",
+    "region": "India",
+    "area_sq_km": "83,743",
+    "male_population_percentage": "51.59%",
+    "male_population": "713,912",
+    "female_population_percentage": "48.41%",
+    "female_population": "669,815",
+    "districts": [
+      {
+        "district_name": "Tawang",
+        "population": "49,977",
+        "male_population": "29,151",
+        "female_population": "20,826",
+        "area_sq_km": "2,172"
+      },
+      {
+        "district_name": "West Kameng",
+        "population": "83,947",
+        "male_population": "46,155",
+        "female_population": "37,792",
+        "area_sq_km": "7,422"
+      },
+      {
+        "district_name": "East Kameng",
+        "population": "78,690",
+        "male_population": "38,775",
+        "female_population": "39,915",
+        "area_sq_km": "4,134"
+      },
+      {
+        "district_name": "Papum Pare",
+        "population": "176,573",
+        "male_population": "89,182",
+        "female_population": "87,391",
+        "area_sq_km": "3,462"
+      },
+      {
+        "district_name": "Upper Subansiri",
+        "population": "83,448",
+        "male_population": "41,758",
+        "female_population": "41,690",
+        "area_sq_km": "7,032"
+      },
+      {
+        "district_name": "West Siang",
+        "population": "112,274",
+        "male_population": "58,168",
+        "female_population": "54,106",
+        "area_sq_km": "8,325"
+      },
+      {
+        "district_name": "East Siang",
+        "population": "99,214",
+        "male_population": "50,116",
+        "female_population": "49,098",
+        "area_sq_km": "3,603"
+      },
+      {
+        "district_name": "Upper Siang",
+        "population": "35,320",
+        "male_population": "18,699",
+        "female_population": "16,621",
+        "area_sq_km": "6,590"
+      },
+      {
+        "district_name": "Changlang",
+        "population": "148,226",
+        "male_population": "76,948",
+        "female_population": "71,278",
+        "area_sq_km": "4,662"
+      },
+      {
+        "district_name": "Tirap",
+        "population": "111,975",
+        "male_population": "57,604",
+        "female_population": "54,371",
+        "area_sq_km": "2,362"
+      },
+      {
+        "district_name": "Lower Subansiri",
+        "population": "83,030",
+        "male_population": "41,843",
+        "female_population": "41,187",
+        "area_sq_km": "3,508"
+      },
+      {
+        "district_name": "Kurung Kumey",
+        "population": "92,076",
+        "male_population": "45,318",
+        "female_population": "46,758",
+        "area_sq_km": "6,040"
+      },
+      {
+        "district_name": "Dibang Valley",
+        "population": "8,004",
+        "male_population": "4,414",
+        "female_population": "3,590",
+        "area_sq_km": "9,129"
+      },
+      {
+        "district_name": "Lower Dibang Valley",
+        "population": "54,080",
+        "male_population": "28,053",
+        "female_population": "26,027",
+        "area_sq_km": "3,899"
+      },
+      {
+        "district_name": "Lohit",
+        "population": "145,726",
+        "male_population": "76,221",
+        "female_population": "69,505",
+        "area_sq_km": "5,212"
+      },
+      {
+        "district_name": "Anjaw",
+        "population": "21,167",
+        "male_population": "11,507",
+        "female_population": "9,660",
+        "area_sq_km": "6,190"
+      }
+    ],
+    "info": "Total Households: 270,577. Population Density: 17 per sq. km."
+  },
+  {
+    "state_name": "NAGALAND",
+    "id": "13",
+    "population": "1,978,502",
+    "region": "India",
+    "area_sq_km": "16,579",
+    "male_population_percentage": "51.79%",
+    "male_population": "1,024,649",
+    "female_population_percentage": "48.21%",
+    "female_population": "953,853",
+    "districts": [
+      {
+        "district_name": "Mon",
+        "population": "250,260",
+        "male_population": "131,753",
+        "female_population": "118,507",
+        "area_sq_km": "1,786"
+      },
+      {
+        "district_name": "Mokokchung",
+        "population": "194,622",
+        "male_population": "101,092",
+        "female_population": "93,530",
+        "area_sq_km": "1,615"
+      },
+      {
+        "district_name": "Zunheboto",
+        "population": "140,757",
+        "male_population": "71,217",
+        "female_population": "69,540",
+        "area_sq_km": "1,255"
+      },
+      {
+        "district_name": "Wokha",
+        "population": "166,343",
+        "male_population": "84,505",
+        "female_population": "81,838",
+        "area_sq_km": "1,628"
+      },
+      {
+        "district_name": "Dimapur",
+        "population": "378,811",
+        "male_population": "197,394",
+        "female_population": "181,417",
+        "area_sq_km": "927"
+      },
+      {
+        "district_name": "Phek",
+        "population": "163,418",
+        "male_population": "83,743",
+        "female_population": "79,675",
+        "area_sq_km": "2,026"
+      },
+      {
+        "district_name": "Tuensang",
+        "population": "196,596",
+        "male_population": "101,933",
+        "female_population": "94,663",
+        "area_sq_km": "2,536"
+      },
+      {
+        "district_name": "Longleng",
+        "population": "50,484",
+        "male_population": "26,502",
+        "female_population": "23,982",
+        "area_sq_km": "562"
+      },
+      {
+        "district_name": "Kiphire",
+        "population": "74,004",
+        "male_population": "37,830",
+        "female_population": "36,174",
+        "area_sq_km": "1,130"
+      },
+      {
+        "district_name": "Kohima",
+        "population": "267,988",
+        "male_population": "138,966",
+        "female_population": "129,022",
+        "area_sq_km": "1,463"
+      },
+      {
+        "district_name": "Peren",
+        "population": "95,219",
+        "male_population": "49,714",
+        "female_population": "45,505",
+        "area_sq_km": "1,651"
+      }
+    ],
+    "info": "Total Households: 396,002. Population Density: 119 per sq. km."
+  },
+  {
+    "state_name": "MANIPUR",
+    "id": "14",
+    "population": "2,855,794",
+    "region": "India",
+    "area_sq_km": "22,327",
+    "male_population_percentage": "50.37%",
+    "male_population": "1,438,586",
+    "female_population_percentage": "49.63%",
+    "female_population": "1,417,208",
+    "districts": [
+      {
+        "district_name": "Senapati",
+        "population": "479,148",
+        "male_population": "247,323",
+        "female_population": "231,825",
+        "area_sq_km": "3,271"
+      },
+      {
+        "district_name": "Tamenglong",
+        "population": "140,651",
+        "male_population": "72,371",
+        "female_population": "68,280",
+        "area_sq_km": "4,391"
+      },
+      {
+        "district_name": "Churachandpur",
+        "population": "274,143",
+        "male_population": "138,820",
+        "female_population": "135,323",
+        "area_sq_km": "4,570"
+      },
+      {
+        "district_name": "Bishnupur",
+        "population": "237,399",
+        "male_population": "118,782",
+        "female_population": "118,617",
+        "area_sq_km": "496"
+      },
+      {
+        "district_name": "Thoubal",
+        "population": "422,168",
+        "male_population": "210,845",
+        "female_population": "211,323",
+        "area_sq_km": "514"
+      },
+      {
+        "district_name": "Imphal West",
+        "population": "517,992",
+        "male_population": "255,054",
+        "female_population": "262,938",
+        "area_sq_km": "519"
+      },
+      {
+        "district_name": "Imphal East",
+        "population": "456,113",
+        "male_population": "226,094",
+        "female_population": "230,019",
+        "area_sq_km": "709"
+      },
+      {
+        "district_name": "Ukhrul",
+        "population": "183,998",
+        "male_population": "94,718",
+        "female_population": "89,280",
+        "area_sq_km": "4,544"
+      },
+      {
+        "district_name": "Chandel",
+        "population": "144,182",
+        "male_population": "74,579",
+        "female_population": "69,603",
+        "area_sq_km": "3,313"
+      }
+    ],
+    "info": "Total Households: 557,859. Population Density: 127 per sq. km."
+  },
+  {
+    "state_name": "MIZORAM",
+    "id": "15",
+    "population": "1,097,206",
+    "region": "India",
+    "area_sq_km": "21,081",
+    "male_population_percentage": "50.61%",
+    "male_population": "555,339",
+    "female_population_percentage": "49.39%",
+    "female_population": "541,867",
+    "districts": [
+      {
+        "district_name": "Mamit",
+        "population": "86,364",
+        "male_population": "44,828",
+        "female_population": "41,536",
+        "area_sq_km": "3,025"
+      },
+      {
+        "district_name": "Kolasib",
+        "population": "83,955",
+        "male_population": "42,918",
+        "female_population": "41,037",
+        "area_sq_km": "1,382"
+      },
+      {
+        "district_name": "Aizawl",
+        "population": "400,309",
+        "male_population": "199,270",
+        "female_population": "201,039",
+        "area_sq_km": "3,576"
+      },
+      {
+        "district_name": "Champhai",
+        "population": "125,745",
+        "male_population": "63,388",
+        "female_population": "62,357",
+        "area_sq_km": "3,185"
+      },
+      {
+        "district_name": "Serchhip",
+        "population": "64,937",
+        "male_population": "32,851",
+        "female_population": "32,086",
+        "area_sq_km": "1,421"
+      },
+      {
+        "district_name": "Lunglei",
+        "population": "161,428",
+        "male_population": "82,891",
+        "female_population": "78,537",
+        "area_sq_km": "4,536"
+      },
+      {
+        "district_name": "Lawngtlai",
+        "population": "117,894",
+        "male_population": "60,599",
+        "female_population": "57,295",
+        "area_sq_km": "2,557"
+      },
+      {
+        "district_name": "Saiha",
+        "population": "56,574",
+        "male_population": "28,594",
+        "female_population": "27,980",
+        "area_sq_km": "1,399"
+      }
+    ],
+    "info": "Total Households: 222,853. Population Density: 52 per sq. km."
+  },
+  {
+    "state_name": "TRIPURA",
+    "id": "16",
+    "population": "3,673,917",
+    "region": "India",
+    "area_sq_km": "10,486",
+    "male_population_percentage": "51.02%",
+    "male_population": "1,874,376",
+    "female_population_percentage": "48.98%",
+    "female_population": "1,799,541",
+    "districts": [
+      {
+        "district_name": "West Tripura",
+        "population": "1,725,739",
+        "male_population": "879,428",
+        "female_population": "846,311",
+        "area_sq_km": "2,993"
+      },
+      {
+        "district_name": "South Tripura",
+        "population": "876,001",
+        "male_population": "447,544",
+        "female_population": "428,457",
+        "area_sq_km": "3,057"
+      },
+      {
+        "district_name": "Dhalai",
+        "population": "378,230",
+        "male_population": "194,544",
+        "female_population": "183,686",
+        "area_sq_km": "2,400"
+      },
+      {
+        "district_name": "North Tripura",
+        "population": "693,947",
+        "male_population": "352,860",
+        "female_population": "341,087",
+        "area_sq_km": "2,036"
+      }
+    ],
+    "info": "Total Households: 855,556. Population Density: 350 per sq. km."
+  },
+  {
+    "state_name": "MEGHALAYA",
+    "id": "17",
+    "population": "2,966,889",
+    "region": "India",
+    "area_sq_km": "22,429",
+    "male_population_percentage": "50.28%",
+    "male_population": "1,491,832",
+    "female_population_percentage": "49.72%",
+    "female_population": "1,475,057",
+    "districts": [
+      {
+        "district_name": "West Garo Hills",
+        "population": "643,291",
+        "male_population": "324,159",
+        "female_population": "319,132",
+        "area_sq_km": "3,677"
+      },
+      {
+        "district_name": "East Garo Hills",
+        "population": "317,917",
+        "male_population": "161,223",
+        "female_population": "156,694",
+        "area_sq_km": "2,603"
+      },
+      {
+        "district_name": "South Garo Hills",
+        "population": "142,334",
+        "male_population": "73,170",
+        "female_population": "69,164",
+        "area_sq_km": "1,887"
+      },
+      {
+        "district_name": "West Khasi Hills",
+        "population": "383,461",
+        "male_population": "193,715",
+        "female_population": "189,746",
+        "area_sq_km": "5,247"
+      },
+      {
+        "district_name": "Ribhoi",
+        "population": "258,840",
+        "male_population": "132,531",
+        "female_population": "126,309",
+        "area_sq_km": "2,448"
+      },
+      {
+        "district_name": "East Khasi Hills",
+        "population": "825,922",
+        "male_population": "410,749",
+        "female_population": "415,173",
+        "area_sq_km": "2,748"
+      },
+      {
+        "district_name": "Jaintia Hills",
+        "population": "395,124",
+        "male_population": "196,285",
+        "female_population": "198,839",
+        "area_sq_km": "3,819"
+      }
+    ],
+    "info": "Total Households: 548,059. Population Density: 132 per sq. km."
+  },
+  {
+    "state_name": "ASSAM",
+    "id": "18",
+    "population": "31,205,576",
+    "region": "India",
+    "area_sq_km": "78,438",
+    "male_population_percentage": "51.08%",
+    "male_population": "15,939,443",
+    "female_population_percentage": "48.92%",
+    "female_population": "15,266,133",
+    "districts": [
+      {
+        "district_name": "Kokrajhar",
+        "population": "887,142",
+        "male_population": "452,905",
+        "female_population": "434,237",
+        "area_sq_km": "3,296"
+      },
+      {
+        "district_name": "Dhubri",
+        "population": "1,949,258",
+        "male_population": "997,848",
+        "female_population": "951,410",
+        "area_sq_km": "2,176"
+      },
+      {
+        "district_name": "Goalpara",
+        "population": "1,008,183",
+        "male_population": "513,292",
+        "female_population": "494,891",
+        "area_sq_km": "1,824"
+      },
+      {
+        "district_name": "Barpeta",
+        "population": "1,693,622",
+        "male_population": "867,004",
+        "female_population": "826,618",
+        "area_sq_km": "2,282"
+      },
+      {
+        "district_name": "Morigaon",
+        "population": "957,423",
+        "male_population": "486,651",
+        "female_population": "470,772",
+        "area_sq_km": "1,551"
+      },
+      {
+        "district_name": "Nagaon",
+        "population": "2,823,768",
+        "male_population": "1,439,112",
+        "female_population": "1,384,656",
+        "area_sq_km": "3,973"
+      },
+      {
+        "district_name": "Sonitpur",
+        "population": "1,924,110",
+        "male_population": "983,904",
+        "female_population": "940,206",
+        "area_sq_km": "5,204"
+      },
+      {
+        "district_name": "Lakhimpur",
+        "population": "1,042,137",
+        "male_population": "529,674",
+        "female_population": "512,463",
+        "area_sq_km": "2,277"
+      },
+      {
+        "district_name": "Dhemaji",
+        "population": "686,133",
+        "male_population": "351,249",
+        "female_population": "334,884",
+        "area_sq_km": "3,237"
+      },
+      {
+        "district_name": "Tinsukia",
+        "population": "1,327,929",
+        "male_population": "680,231",
+        "female_population": "647,698",
+        "area_sq_km": "3,790"
+      },
+      {
+        "district_name": "Dibrugarh",
+        "population": "1,326,335",
+        "male_population": "676,434",
+        "female_population": "649,901",
+        "area_sq_km": "3,381"
+      },
+      {
+        "district_name": "Sivasagar",
+        "population": "1,151,050",
+        "male_population": "589,216",
+        "female_population": "561,834",
+        "area_sq_km": "2,668"
+      },
+      {
+        "district_name": "Jorhat",
+        "population": "1,092,256",
+        "male_population": "556,805",
+        "female_population": "535,451",
+        "area_sq_km": "2,851"
+      },
+      {
+        "district_name": "Golaghat",
+        "population": "1,066,888",
+        "male_population": "543,161",
+        "female_population": "523,727",
+        "area_sq_km": "3,502"
+      },
+      {
+        "district_name": "Karbi Anglong",
+        "population": "956,313",
+        "male_population": "490,167",
+        "female_population": "466,146",
+        "area_sq_km": "10,434"
+      },
+      {
+        "district_name": "Dima Hasao",
+        "population": "214,102",
+        "male_population": "110,802",
+        "female_population": "103,300",
+        "area_sq_km": "4,888"
+      },
+      {
+        "district_name": "Cachar",
+        "population": "1,736,617",
+        "male_population": "886,284",
+        "female_population": "850,333",
+        "area_sq_km": "3,786"
+      },
+      {
+        "district_name": "Karimganj",
+        "population": "1,228,686",
+        "male_population": "625,864",
+        "female_population": "602,822",
+        "area_sq_km": "1,809"
+      },
+      {
+        "district_name": "Hailakandi",
+        "population": "659,296",
+        "male_population": "337,890",
+        "female_population": "321,406",
+        "area_sq_km": "1,327"
+      },
+      {
+        "district_name": "Bongaigaon",
+        "population": "738,804",
+        "male_population": "375,818",
+        "female_population": "362,986",
+        "area_sq_km": "1,093"
+      },
+      {
+        "district_name": "Chirang",
+        "population": "482,162",
+        "male_population": "244,860",
+        "female_population": "237,302",
+        "area_sq_km": "1,923"
+      },
+      {
+        "district_name": "Kamrup",
+        "population": "1,517,542",
+        "male_population": "778,461",
+        "female_population": "739,081",
+        "area_sq_km": "3,105"
+      },
+      {
+        "district_name": "Kamrup Metropolitan",
+        "population": "1,253,938",
+        "male_population": "647,585",
+        "female_population": "606,353",
+        "area_sq_km": "955"
+      },
+      {
+        "district_name": "Nalbari",
+        "population": "771,639",
+        "male_population": "396,006",
+        "female_population": "375,633",
+        "area_sq_km": "1,052"
+      },
+      {
+        "district_name": "Baksa",
+        "population": "950,075",
+        "male_population": "481,330",
+        "female_population": "468,745",
+        "area_sq_km": "2,457"
+      },
+      {
+        "district_name": "Darrang",
+        "population": "928,500",
+        "male_population": "475,273",
+        "female_population": "453,227",
+        "area_sq_km": "1,585"
+      },
+      {
+        "district_name": "Udalguri",
+        "population": "831,668",
+        "male_population": "421,617",
+        "female_population": "410,051",
+        "area_sq_km": "2,012"
+      }
+    ],
+    "info": "Total Households: 6,406,471. Population Density: 397 per sq. km."
+  },
+  {
+    "state_name": "WEST BENGAL",
+    "id": "19",
+    "population": "91,276,115",
+    "region": "India",
+    "area_sq_km": "88,752",
+    "male_population_percentage": "51.28%",
+    "male_population": "46,809,027",
+    "female_population_percentage": "48.72%",
+    "female_population": "44,467,088",
+    "districts": [
+      {
+        "district_name": "Darjiling",
+        "population": "1,846,823",
+        "male_population": "937,259",
+        "female_population": "909,564",
+        "area_sq_km": "3,149"
+      },
+      {
+        "district_name": "Jalpaiguri",
+        "population": "3,872,846",
+        "male_population": "1,983,064",
+        "female_population": "1,889,782",
+        "area_sq_km": "6,227"
+      },
+      {
+        "district_name": "Koch Bihar",
+        "population": "2,819,086",
+        "male_population": "1,451,542",
+        "female_population": "1,367,544",
+        "area_sq_km": "3,387"
+      },
+      {
+        "district_name": "Uttar Dinajpur",
+        "population": "3,007,134",
+        "male_population": "1,551,066",
+        "female_population": "1,456,068",
+        "area_sq_km": "3,140"
+      },
+      {
+        "district_name": "Dakshin Dinajpur",
+        "population": "1,676,276",
+        "male_population": "857,199",
+        "female_population": "819,077",
+        "area_sq_km": "2,219"
+      },
+      {
+        "district_name": "Maldah",
+        "population": "3,988,845",
+        "male_population": "2,051,541",
+        "female_population": "1,937,304",
+        "area_sq_km": "3,733"
+      },
+      {
+        "district_name": "Murshidabad",
+        "population": "7,103,807",
+        "male_population": "3,627,564",
+        "female_population": "3,476,243",
+        "area_sq_km": "5,324"
+      },
+      {
+        "district_name": "Birbhum",
+        "population": "3,502,404",
+        "male_population": "1,790,920",
+        "female_population": "1,711,484",
+        "area_sq_km": "4,545"
+      },
+      {
+        "district_name": "Barddhaman",
+        "population": "7,717,563",
+        "male_population": "3,966,889",
+        "female_population": "3,750,674",
+        "area_sq_km": "7,024"
+      },
+      {
+        "district_name": "Nadia",
+        "population": "5,167,600",
+        "male_population": "2,653,768",
+        "female_population": "2,513,832",
+        "area_sq_km": "3,927"
+      },
+      {
+        "district_name": "North Twenty Four Parganas",
+        "population": "10,009,781",
+        "male_population": "5,119,389",
+        "female_population": "4,890,392",
+        "area_sq_km": "4,094"
+      },
+      {
+        "district_name": "Hugli",
+        "population": "5,519,145",
+        "male_population": "2,814,653",
+        "female_population": "2,704,492",
+        "area_sq_km": "3,149"
+      },
+      {
+        "district_name": "Bankura",
+        "population": "3,596,674",
+        "male_population": "1,838,095",
+        "female_population": "1,758,579",
+        "area_sq_km": "6,882"
+      },
+      {
+        "district_name": "Puruliya",
+        "population": "2,930,115",
+        "male_population": "1,496,996",
+        "female_population": "1,433,119",
+        "area_sq_km": "6,259"
+      },
+      {
+        "district_name": "Haora",
+        "population": "4,850,029",
+        "male_population": "2,500,819",
+        "female_population": "2,349,210",
+        "area_sq_km": "1,467"
+      },
+      {
+        "district_name": "Kolkata",
+        "population": "4,496,694",
+        "male_population": "2,356,766",
+        "female_population": "2,139,928",
+        "area_sq_km": "185"
+      },
+      {
+        "district_name": "South Twenty Four Parganas",
+        "population": "8,161,961",
+        "male_population": "4,173,778",
+        "female_population": "3,988,183",
+        "area_sq_km": "9,960"
+      },
+      {
+        "district_name": "Paschim Medinipur",
+        "population": "5,913,457",
+        "male_population": "3,007,885",
+        "female_population": "2,905,572",
+        "area_sq_km": "9,368"
+      },
+      {
+        "district_name": "Purba Medinipur",
+        "population": "5,095,875",
+        "male_population": "2,629,834",
+        "female_population": "2,466,041",
+        "area_sq_km": "4,712"
+      }
+    ],
+    "info": "Total Households: 20,380,315. Population Density: 1,028 per sq. km."
+  },
+  {
+    "state_name": "JHARKHAND",
+    "id": "20",
+    "population": "32,988,134",
+    "region": "India",
+    "area_sq_km": "79,716",
+    "male_population_percentage": "51.32%",
+    "male_population": "16,930,315",
+    "female_population_percentage": "48.68%",
+    "female_population": "16,057,819",
+    "districts": [
+      {
+        "district_name": "Garhwa",
+        "population": "1,322,784",
+        "male_population": "683,575",
+        "female_population": "639,209",
+        "area_sq_km": "4,093"
+      },
+      {
+        "district_name": "Chatra",
+        "population": "1,042,886",
+        "male_population": "533,935",
+        "female_population": "508,951",
+        "area_sq_km": "3,718"
+      },
+      {
+        "district_name": "Kodarma",
+        "population": "716,259",
+        "male_population": "367,222",
+        "female_population": "349,037",
+        "area_sq_km": "2,540"
+      },
+      {
+        "district_name": "Giridih",
+        "population": "2,445,474",
+        "male_population": "1,258,098",
+        "female_population": "1,187,376",
+        "area_sq_km": "4,962"
+      },
+      {
+        "district_name": "Deoghar",
+        "population": "1,492,073",
+        "male_population": "775,022",
+        "female_population": "717,051",
+        "area_sq_km": "2,477"
+      },
+      {
+        "district_name": "Godda",
+        "population": "1,313,551",
+        "male_population": "677,927",
+        "female_population": "635,624",
+        "area_sq_km": "2,266"
+      },
+      {
+        "district_name": "Sahibganj",
+        "population": "1,150,567",
+        "male_population": "589,391",
+        "female_population": "561,176",
+        "area_sq_km": "2,063"
+      },
+      {
+        "district_name": "Pakur",
+        "population": "900,422",
+        "male_population": "452,661",
+        "female_population": "447,761",
+        "area_sq_km": "1,811"
+      },
+      {
+        "district_name": "Dhanbad",
+        "population": "2,684,487",
+        "male_population": "1,405,956",
+        "female_population": "1,278,531",
+        "area_sq_km": "2,040"
+      },
+      {
+        "district_name": "Bokaro",
+        "population": "2,062,330",
+        "male_population": "1,072,807",
+        "female_population": "989,523",
+        "area_sq_km": "2,883"
+      },
+      {
+        "district_name": "Lohardaga",
+        "population": "461,790",
+        "male_population": "232,629",
+        "female_population": "229,161",
+        "area_sq_km": "1,502"
+      },
+      {
+        "district_name": "Purbi Singhbhum",
+        "population": "2,293,919",
+        "male_population": "1,176,902",
+        "female_population": "1,117,017",
+        "area_sq_km": "3,562"
+      },
+      {
+        "district_name": "Palamu",
+        "population": "1,939,869",
+        "male_population": "1,006,302",
+        "female_population": "933,567",
+        "area_sq_km": "4,393"
+      },
+      {
+        "district_name": "Latehar",
+        "population": "726,978",
+        "male_population": "369,666",
+        "female_population": "357,312",
+        "area_sq_km": "4,291"
+      },
+      {
+        "district_name": "Hazaribagh",
+        "population": "1,734,495",
+        "male_population": "890,881",
+        "female_population": "843,614",
+        "area_sq_km": "3,555"
+      },
+      {
+        "district_name": "Ramgarh",
+        "population": "949,443",
+        "male_population": "494,230",
+        "female_population": "455,213",
+        "area_sq_km": "1,341"
+      },
+      {
+        "district_name": "Dumka",
+        "population": "1,321,442",
+        "male_population": "668,514",
+        "female_population": "652,928",
+        "area_sq_km": "3,761"
+      },
+      {
+        "district_name": "Jamtara",
+        "population": "791,042",
+        "male_population": "404,830",
+        "female_population": "386,212",
+        "area_sq_km": "1,811"
+      },
+      {
+        "district_name": "Ranchi",
+        "population": "2,914,253",
+        "male_population": "1,494,937",
+        "female_population": "1,419,316",
+        "area_sq_km": "5,097"
+      },
+      {
+        "district_name": "Khunti",
+        "population": "531,885",
+        "male_population": "266,335",
+        "female_population": "265,550",
+        "area_sq_km": "2,535"
+      },
+      {
+        "district_name": "Gumla",
+        "population": "1,025,213",
+        "male_population": "514,390",
+        "female_population": "510,823",
+        "area_sq_km": "5,360"
+      },
+      {
+        "district_name": "Simdega",
+        "population": "599,578",
+        "male_population": "300,309",
+        "female_population": "299,269",
+        "area_sq_km": "3,774"
+      },
+      {
+        "district_name": "Pashchimi Singhbhum",
+        "population": "1,502,338",
+        "male_population": "749,385",
+        "female_population": "752,953",
+        "area_sq_km": "7,223"
+      },
+      {
+        "district_name": "Saraikela-Kharsawan",
+        "population": "1,065,056",
+        "male_population": "544,411",
+        "female_population": "520,645",
+        "area_sq_km": "2,657"
+      }
+    ],
+    "info": "Total Households: 6,254,781. Population Density: 413 per sq. km."
+  },
+  {
+    "state_name": "ODISHA",
+    "id": "21",
+    "population": "41,974,218",
+    "region": "India",
+    "area_sq_km": "155,707",
+    "male_population_percentage": "50.54%",
+    "male_population": "21,212,136",
+    "female_population_percentage": "49.46%",
+    "female_population": "20,762,082",
+    "districts": [
+      {
+        "district_name": "Bargarh",
+        "population": "1,481,255",
+        "male_population": "749,161",
+        "female_population": "732,094",
+        "area_sq_km": "5,837"
+      },
+      {
+        "district_name": "Jharsuguda",
+        "population": "579,505",
+        "male_population": "296,690",
+        "female_population": "282,815",
+        "area_sq_km": "2,114"
+      },
+      {
+        "district_name": "Sambalpur",
+        "population": "1,041,099",
+        "male_population": "526,877",
+        "female_population": "514,222",
+        "area_sq_km": "6,624"
+      },
+      {
+        "district_name": "Debagarh",
+        "population": "312,520",
+        "male_population": "158,230",
+        "female_population": "154,290",
+        "area_sq_km": "2,940"
+      },
+      {
+        "district_name": "Sundargarh",
+        "population": "2,093,437",
+        "male_population": "1,061,147",
+        "female_population": "1,032,290",
+        "area_sq_km": "9,712"
+      },
+      {
+        "district_name": "Kendujhar",
+        "population": "1,801,733",
+        "male_population": "906,487",
+        "female_population": "895,246",
+        "area_sq_km": "8,303"
+      },
+      {
+        "district_name": "Mayurbhanj",
+        "population": "2,519,738",
+        "male_population": "1,256,213",
+        "female_population": "1,263,525",
+        "area_sq_km": "10,418"
+      },
+      {
+        "district_name": "Baleshwar",
+        "population": "2,320,529",
+        "male_population": "1,185,787",
+        "female_population": "1,134,742",
+        "area_sq_km": "3,806"
+      },
+      {
+        "district_name": "Bhadrak",
+        "population": "1,506,337",
+        "male_population": "760,260",
+        "female_population": "746,077",
+        "area_sq_km": "2,505"
+      },
+      {
+        "district_name": "Kendrapara",
+        "population": "1,440,361",
+        "male_population": "717,814",
+        "female_population": "722,547",
+        "area_sq_km": "2,644"
+      },
+      {
+        "district_name": "Jagatsinghapur",
+        "population": "1,136,971",
+        "male_population": "577,865",
+        "female_population": "559,106",
+        "area_sq_km": "1,668"
+      },
+      {
+        "district_name": "Cuttack",
+        "population": "2,624,470",
+        "male_population": "1,352,760",
+        "female_population": "1,271,710",
+        "area_sq_km": "3,932"
+      },
+      {
+        "district_name": "Jajapur",
+        "population": "1,827,192",
+        "male_population": "926,034",
+        "female_population": "901,158",
+        "area_sq_km": "2,899"
+      },
+      {
+        "district_name": "Dhenkanal",
+        "population": "1,192,811",
+        "male_population": "612,593",
+        "female_population": "580,218",
+        "area_sq_km": "4,452"
+      },
+      {
+        "district_name": "Anugul",
+        "population": "1,273,821",
+        "male_population": "655,718",
+        "female_population": "618,103",
+        "area_sq_km": "6,375"
+      },
+      {
+        "district_name": "Nayagarh",
+        "population": "962,789",
+        "male_population": "502,636",
+        "female_population": "460,153",
+        "area_sq_km": "3,890"
+      },
+      {
+        "district_name": "Khordha",
+        "population": "2,251,673",
+        "male_population": "1,167,137",
+        "female_population": "1,084,536",
+        "area_sq_km": "2,813"
+      },
+      {
+        "district_name": "Puri",
+        "population": "1,698,730",
+        "male_population": "865,380",
+        "female_population": "833,350",
+        "area_sq_km": "3,479"
+      },
+      {
+        "district_name": "Ganjam",
+        "population": "3,529,031",
+        "male_population": "1,779,218",
+        "female_population": "1,749,813",
+        "area_sq_km": "8,206"
+      },
+      {
+        "district_name": "Gajapati",
+        "population": "577,817",
+        "male_population": "282,882",
+        "female_population": "294,935",
+        "area_sq_km": "4,325"
+      },
+      {
+        "district_name": "Kandhamal",
+        "population": "733,110",
+        "male_population": "359,945",
+        "female_population": "373,165",
+        "area_sq_km": "8,021"
+      },
+      {
+        "district_name": "Baudh",
+        "population": "441,162",
+        "male_population": "221,625",
+        "female_population": "219,537",
+        "area_sq_km": "3,098"
+      },
+      {
+        "district_name": "Subarnapur",
+        "population": "610,183",
+        "male_population": "311,312",
+        "female_population": "298,871",
+        "area_sq_km": "2,337"
+      },
+      {
+        "district_name": "Balangir",
+        "population": "1,648,997",
+        "male_population": "830,097",
+        "female_population": "818,900",
+        "area_sq_km": "6,575"
+      },
+      {
+        "district_name": "Nuapada",
+        "population": "610,382",
+        "male_population": "301,962",
+        "female_population": "308,420",
+        "area_sq_km": "3,852"
+      },
+      {
+        "district_name": "Kalahandi",
+        "population": "1,576,869",
+        "male_population": "787,101",
+        "female_population": "789,768",
+        "area_sq_km": "7,920"
+      },
+      {
+        "district_name": "Rayagada",
+        "population": "967,911",
+        "male_population": "471,960",
+        "female_population": "495,951",
+        "area_sq_km": "7,073"
+      },
+      {
+        "district_name": "Nabarangapur",
+        "population": "1,220,946",
+        "male_population": "604,812",
+        "female_population": "616,134",
+        "area_sq_km": "5,291"
+      },
+      {
+        "district_name": "Koraput",
+        "population": "1,379,647",
+        "male_population": "678,809",
+        "female_population": "700,838",
+        "area_sq_km": "8,807"
+      },
+      {
+        "district_name": "Malkangiri",
+        "population": "613,192",
+        "male_population": "303,624",
+        "female_population": "309,568",
+        "area_sq_km": "5,791"
+      }
+    ],
+    "info": "Total Households: 9,637,820. Population Density: 269 per sq. km."
+  },
+  {
+    "state_name": "CHHATTISGARH",
+    "id": "22",
+    "population": "25,545,198",
+    "region": "India",
+    "area_sq_km": "135,192",
+    "male_population_percentage": "50.24%",
+    "male_population": "12,832,895",
+    "female_population_percentage": "49.76%",
+    "female_population": "12,712,303",
+    "districts": [
+      {
+        "district_name": "Koriya",
+        "population": "658,917",
+        "male_population": "334,737",
+        "female_population": "324,180",
+        "area_sq_km": "6,604"
+      },
+      {
+        "district_name": "Surguja",
+        "population": "2,359,886",
+        "male_population": "1,193,129",
+        "female_population": "1,166,757",
+        "area_sq_km": "15,732"
+      },
+      {
+        "district_name": "Jashpur",
+        "population": "851,669",
+        "male_population": "424,747",
+        "female_population": "426,922",
+        "area_sq_km": "5,838"
+      },
+      {
+        "district_name": "Raigarh",
+        "population": "1,493,984",
+        "male_population": "750,278",
+        "female_population": "743,706",
+        "area_sq_km": "7,086"
+      },
+      {
+        "district_name": "Korba",
+        "population": "1,206,640",
+        "male_population": "612,915",
+        "female_population": "593,725",
+        "area_sq_km": "6,598"
+      },
+      {
+        "district_name": "Janjgir - Champa",
+        "population": "1,619,707",
+        "male_population": "815,717",
+        "female_population": "803,990",
+        "area_sq_km": "3,853"
+      },
+      {
+        "district_name": "Bilaspur",
+        "population": "2,663,629",
+        "male_population": "1,351,574",
+        "female_population": "1,312,055",
+        "area_sq_km": "8,272"
+      },
+      {
+        "district_name": "Kabeerdham",
+        "population": "822,526",
+        "male_population": "412,058",
+        "female_population": "410,468",
+        "area_sq_km": "4,235"
+      },
+      {
+        "district_name": "Rajnandgaon",
+        "population": "1,537,133",
+        "male_population": "762,855",
+        "female_population": "774,278",
+        "area_sq_km": "8,070"
+      },
+      {
+        "district_name": "Durg",
+        "population": "3,343,872",
+        "male_population": "1,682,101",
+        "female_population": "1,661,771",
+        "area_sq_km": "8,535"
+      },
+      {
+        "district_name": "Raipur",
+        "population": "4,063,872",
+        "male_population": "2,048,186",
+        "female_population": "2,015,686",
+        "area_sq_km": "12,383"
+      },
+      {
+        "district_name": "Mahasamund",
+        "population": "1,032,754",
+        "male_population": "511,967",
+        "female_population": "520,787",
+        "area_sq_km": "4,790"
+      },
+      {
+        "district_name": "Dhamtari",
+        "population": "799,781",
+        "male_population": "397,897",
+        "female_population": "401,884",
+        "area_sq_km": "4,084"
+      },
+      {
+        "district_name": "Uttar Bastar Kanker",
+        "population": "748,941",
+        "male_population": "373,338",
+        "female_population": "375,603",
+        "area_sq_km": "7,161"
+      },
+      {
+        "district_name": "Bastar",
+        "population": "1,413,199",
+        "male_population": "698,487",
+        "female_population": "714,712",
+        "area_sq_km": "10,470"
+      },
+      {
+        "district_name": "Narayanpur",
+        "population": "139,820",
+        "male_population": "70,104",
+        "female_population": "69,716",
+        "area_sq_km": "4,653"
+      },
+      {
+        "district_name": "Dakshin Bastar Dantewada",
+        "population": "533,638",
+        "male_population": "264,142",
+        "female_population": "269,496",
+        "area_sq_km": "8,298"
+      },
+      {
+        "district_name": "Bijapur",
+        "population": "255,230",
+        "male_population": "128,663",
+        "female_population": "126,567",
+        "area_sq_km": "8,530"
+      }
+    ],
+    "info": "Total Households: 5,650,724. Population Density: 188 per sq. km."
+  },
+  {
+    "state_name": "MADHYA PRADESH",
+    "id": "23",
+    "population": "72,626,809",
+    "region": "India",
+    "area_sq_km": "308,252",
+    "male_population_percentage": "51.79%",
+    "male_population": "37,612,306",
+    "female_population_percentage": "48.21%",
+    "female_population": "35,014,503",
+    "districts": [
+      {
+        "district_name": "Sheopur",
+        "population": "687,861",
+        "male_population": "361,784",
+        "female_population": "326,077",
+        "area_sq_km": "6,606"
+      },
+      {
+        "district_name": "Morena",
+        "population": "1,965,970",
+        "male_population": "1,068,417",
+        "female_population": "897,553",
+        "area_sq_km": "4,989"
+      },
+      {
+        "district_name": "Bhind",
+        "population": "1,703,005",
+        "male_population": "926,843",
+        "female_population": "776,162",
+        "area_sq_km": "4,459"
+      },
+      {
+        "district_name": "Gwalior",
+        "population": "2,032,036",
+        "male_population": "1,090,327",
+        "female_population": "941,709",
+        "area_sq_km": "4,560"
+      },
+      {
+        "district_name": "Datia",
+        "population": "786,754",
+        "male_population": "420,157",
+        "female_population": "366,597",
+        "area_sq_km": "2,902"
+      },
+      {
+        "district_name": "Shivpuri",
+        "population": "1,726,050",
+        "male_population": "919,795",
+        "female_population": "806,255",
+        "area_sq_km": "10,066"
+      },
+      {
+        "district_name": "Tikamgarh",
+        "population": "1,445,166",
+        "male_population": "760,355",
+        "female_population": "684,811",
+        "area_sq_km": "5,048"
+      },
+      {
+        "district_name": "Chhatarpur",
+        "population": "1,762,375",
+        "male_population": "936,121",
+        "female_population": "826,254",
+        "area_sq_km": "8,687"
+      },
+      {
+        "district_name": "Panna",
+        "population": "1,016,520",
+        "male_population": "533,480",
+        "female_population": "483,040",
+        "area_sq_km": "7,135"
+      },
+      {
+        "district_name": "Sagar",
+        "population": "2,378,458",
+        "male_population": "1,256,257",
+        "female_population": "1,122,201",
+        "area_sq_km": "10,252"
+      },
+      {
+        "district_name": "Damoh",
+        "population": "1,264,219",
+        "male_population": "661,873",
+        "female_population": "602,346",
+        "area_sq_km": "7,306"
+      },
+      {
+        "district_name": "Satna",
+        "population": "2,228,935",
+        "male_population": "1,157,495",
+        "female_population": "1,071,440",
+        "area_sq_km": "7,502"
+      },
+      {
+        "district_name": "Rewa",
+        "population": "2,365,106",
+        "male_population": "1,225,100",
+        "female_population": "1,140,006",
+        "area_sq_km": "6,314"
+      },
+      {
+        "district_name": "Umaria",
+        "population": "644,758",
+        "male_population": "330,674",
+        "female_population": "314,084",
+        "area_sq_km": "4,076"
+      },
+      {
+        "district_name": "Neemuch",
+        "population": "826,067",
+        "male_population": "422,653",
+        "female_population": "403,414",
+        "area_sq_km": "4,256"
+      },
+      {
+        "district_name": "Mandsaur",
+        "population": "1,340,411",
+        "male_population": "682,851",
+        "female_population": "657,560",
+        "area_sq_km": "5,535"
+      },
+      {
+        "district_name": "Ratlam",
+        "population": "1,455,069",
+        "male_population": "738,241",
+        "female_population": "716,828",
+        "area_sq_km": "4,861"
+      },
+      {
+        "district_name": "Ujjain",
+        "population": "1,986,864",
+        "male_population": "1,016,289",
+        "female_population": "970,575",
+        "area_sq_km": "6,091"
+      },
+      {
+        "district_name": "Shajapur",
+        "population": "1,512,681",
+        "male_population": "780,520",
+        "female_population": "732,161",
+        "area_sq_km": "6,195"
+      },
+      {
+        "district_name": "Dewas",
+        "population": "1,563,715",
+        "male_population": "805,359",
+        "female_population": "758,356",
+        "area_sq_km": "7,020"
+      },
+      {
+        "district_name": "Dhar",
+        "population": "2,185,793",
+        "male_population": "1,112,725",
+        "female_population": "1,073,068",
+        "area_sq_km": "8,153"
+      },
+      {
+        "district_name": "Indore",
+        "population": "3,276,697",
+        "male_population": "1,699,627",
+        "female_population": "1,577,070",
+        "area_sq_km": "3,898"
+      },
+      {
+        "district_name": "Khargone (West Nimar)",
+        "population": "1,873,046",
+        "male_population": "953,121",
+        "female_population": "919,925",
+        "area_sq_km": "8,025"
+      },
+      {
+        "district_name": "Barwani",
+        "population": "1,385,881",
+        "male_population": "699,340",
+        "female_population": "686,541",
+        "area_sq_km": "5,427"
+      },
+      {
+        "district_name": "Rajgarh",
+        "population": "1,545,814",
+        "male_population": "790,212",
+        "female_population": "755,602",
+        "area_sq_km": "6,153"
+      },
+      {
+        "district_name": "Vidisha",
+        "population": "1,458,875",
+        "male_population": "769,568",
+        "female_population": "689,307",
+        "area_sq_km": "7,371"
+      },
+      {
+        "district_name": "Bhopal",
+        "population": "2,371,061",
+        "male_population": "1,236,130",
+        "female_population": "1,134,931",
+        "area_sq_km": "2,772"
+      },
+      {
+        "district_name": "Sehore",
+        "population": "1,311,332",
+        "male_population": "683,743",
+        "female_population": "627,589",
+        "area_sq_km": "6,578"
+      },
+      {
+        "district_name": "Raisen",
+        "population": "1,331,597",
+        "male_population": "700,358",
+        "female_population": "631,239",
+        "area_sq_km": "8,466"
+      },
+      {
+        "district_name": "Betul",
+        "population": "1,575,362",
+        "male_population": "799,236",
+        "female_population": "776,126",
+        "area_sq_km": "10,043"
+      },
+      {
+        "district_name": "Harda",
+        "population": "570,465",
+        "male_population": "294,838",
+        "female_population": "275,627",
+        "area_sq_km": "3,334"
+      },
+      {
+        "district_name": "Hoshangabad",
+        "population": "1,241,350",
+        "male_population": "648,725",
+        "female_population": "592,625",
+        "area_sq_km": "6,703"
+      },
+      {
+        "district_name": "Katni",
+        "population": "1,292,042",
+        "male_population": "662,013",
+        "female_population": "630,029",
+        "area_sq_km": "4,950"
+      },
+      {
+        "district_name": "Jabalpur",
+        "population": "2,463,289",
+        "male_population": "1,277,278",
+        "female_population": "1,186,011",
+        "area_sq_km": "5,211"
+      },
+      {
+        "district_name": "Narsimhapur",
+        "population": "1,091,854",
+        "male_population": "568,810",
+        "female_population": "523,044",
+        "area_sq_km": "5,133"
+      },
+      {
+        "district_name": "Dindori",
+        "population": "704,524",
+        "male_population": "351,913",
+        "female_population": "352,611",
+        "area_sq_km": "7,470"
+      },
+      {
+        "district_name": "Mandla",
+        "population": "1,054,905",
+        "male_population": "525,272",
+        "female_population": "529,633",
+        "area_sq_km": "5,800"
+      },
+      {
+        "district_name": "Chhindwara",
+        "population": "2,090,922",
+        "male_population": "1,064,468",
+        "female_population": "1,026,454",
+        "area_sq_km": "11,815"
+      },
+      {
+        "district_name": "Seoni",
+        "population": "1,379,131",
+        "male_population": "695,879",
+        "female_population": "683,252",
+        "area_sq_km": "8,758"
+      },
+      {
+        "district_name": "Balaghat",
+        "population": "1,701,698",
+        "male_population": "842,178",
+        "female_population": "859,520",
+        "area_sq_km": "9,229"
+      },
+      {
+        "district_name": "Guna",
+        "population": "1,241,519",
+        "male_population": "649,362",
+        "female_population": "592,157",
+        "area_sq_km": "6,390"
+      },
+      {
+        "district_name": "Ashoknagar",
+        "population": "845,071",
+        "male_population": "443,837",
+        "female_population": "401,234",
+        "area_sq_km": "4,674"
+      },
+      {
+        "district_name": "Shahdol",
+        "population": "1,066,063",
+        "male_population": "540,021",
+        "female_population": "526,042",
+        "area_sq_km": "6,205"
+      },
+      {
+        "district_name": "Anuppur",
+        "population": "749,237",
+        "male_population": "379,114",
+        "female_population": "370,123",
+        "area_sq_km": "3,747"
+      },
+      {
+        "district_name": "Sidhi",
+        "population": "1,127,033",
+        "male_population": "575,912",
+        "female_population": "551,121",
+        "area_sq_km": "4,851"
+      },
+      {
+        "district_name": "Singrauli",
+        "population": "1,178,273",
+        "male_population": "613,637",
+        "female_population": "564,636",
+        "area_sq_km": "5,675"
+      },
+      {
+        "district_name": "Jhabua",
+        "population": "1,025,048",
+        "male_population": "515,023",
+        "female_population": "510,025",
+        "area_sq_km": "3,600"
+      },
+      {
+        "district_name": "Alirajpur",
+        "population": "728,999",
+        "male_population": "362,542",
+        "female_population": "366,457",
+        "area_sq_km": "3,182"
+      },
+      {
+        "district_name": "Khandwa (East Nimar)",
+        "population": "1,310,061",
+        "male_population": "674,329",
+        "female_population": "635,732",
+        "area_sq_km": "7,352"
+      },
+      {
+        "district_name": "Burhanpur",
+        "population": "757,847",
+        "male_population": "388,504",
+        "female_population": "369,343",
+        "area_sq_km": "3,427"
+      }
+    ],
+    "info": "Total Households: 15,093,256. Population Density: 235 per sq. km."
+  },
+  {
+    "state_name": "GUJARAT",
+    "id": "24",
+    "population": "60,439,692",
+    "region": "India",
+    "area_sq_km": "196,244",
+    "male_population_percentage": "52.10%",
+    "male_population": "31,491,260",
+    "female_population_percentage": "47.90%",
+    "female_population": "28,948,432",
+    "districts": [
+      {
+        "district_name": "Kachchh ^",
+        "population": "2,092,371",
+        "male_population": "1,096,737",
+        "female_population": "995,634",
+        "area_sq_km": "45,674"
+      },
+      {
+        "district_name": "Banas Kantha",
+        "population": "3,120,506",
+        "male_population": "1,610,379",
+        "female_population": "1,510,127",
+        "area_sq_km": "10,743"
+      },
+      {
+        "district_name": "Patan",
+        "population": "1,343,734",
+        "male_population": "694,397",
+        "female_population": "649,337",
+        "area_sq_km": "5,792"
+      },
+      {
+        "district_name": "Mahesana",
+        "population": "2,035,064",
+        "male_population": "1,056,520",
+        "female_population": "978,544",
+        "area_sq_km": "4,401"
+      },
+      {
+        "district_name": "Sabar Kantha",
+        "population": "2,428,589",
+        "male_population": "1,244,231",
+        "female_population": "1,184,358",
+        "area_sq_km": "7,394"
+      },
+      {
+        "district_name": "Gandhinagar",
+        "population": "1,391,753",
+        "male_population": "723,864",
+        "female_population": "667,889",
+        "area_sq_km": "2,140"
+      },
+      {
+        "district_name": "Ahmadabad",
+        "population": "7,214,225",
+        "male_population": "3,788,051",
+        "female_population": "3,426,174",
+        "area_sq_km": "8,107"
+      },
+      {
+        "district_name": "Surendranagar",
+        "population": "1,756,268",
+        "male_population": "909,917",
+        "female_population": "846,351",
+        "area_sq_km": "10,423"
+      },
+      {
+        "district_name": "Rajkot",
+        "population": "3,804,558",
+        "male_population": "1,974,445",
+        "female_population": "1,830,113",
+        "area_sq_km": "11,198"
+      },
+      {
+        "district_name": "Jamnagar",
+        "population": "2,160,119",
+        "male_population": "1,114,192",
+        "female_population": "1,045,927",
+        "area_sq_km": "14,184"
+      },
+      {
+        "district_name": "Porbandar",
+        "population": "585,449",
+        "male_population": "300,209",
+        "female_population": "285,240",
+        "area_sq_km": "2,316"
+      },
+      {
+        "district_name": "Junagadh",
+        "population": "2,743,082",
+        "male_population": "1,404,356",
+        "female_population": "1,338,726",
+        "area_sq_km": "8,831"
+      },
+      {
+        "district_name": "Amreli",
+        "population": "1,514,190",
+        "male_population": "771,049",
+        "female_population": "743,141",
+        "area_sq_km": "7,397"
+      },
+      {
+        "district_name": "Bhavnagar",
+        "population": "2,880,365",
+        "male_population": "1,490,201",
+        "female_population": "1,390,164",
+        "area_sq_km": "10,034"
+      },
+      {
+        "district_name": "Anand",
+        "population": "2,092,745",
+        "male_population": "1,087,224",
+        "female_population": "1,005,521",
+        "area_sq_km": "3,204"
+      },
+      {
+        "district_name": "Kheda",
+        "population": "2,299,885",
+        "male_population": "1,185,727",
+        "female_population": "1,114,158",
+        "area_sq_km": "3,953"
+      },
+      {
+        "district_name": "Panch Mahals",
+        "population": "2,390,776",
+        "male_population": "1,226,961",
+        "female_population": "1,163,815",
+        "area_sq_km": "5,231"
+      },
+      {
+        "district_name": "Dohad",
+        "population": "2,127,086",
+        "male_population": "1,068,651",
+        "female_population": "1,058,435",
+        "area_sq_km": "3,642"
+      },
+      {
+        "district_name": "Vadodara",
+        "population": "4,165,626",
+        "male_population": "2,153,736",
+        "female_population": "2,011,890",
+        "area_sq_km": "7,546"
+      },
+      {
+        "district_name": "Narmada",
+        "population": "590,297",
+        "male_population": "301,086",
+        "female_population": "289,211",
+        "area_sq_km": "2,817"
+      },
+      {
+        "district_name": "Bharuch",
+        "population": "1,551,019",
+        "male_population": "805,707",
+        "female_population": "745,312",
+        "area_sq_km": "6,509"
+      },
+      {
+        "district_name": "The Dangs",
+        "population": "228,291",
+        "male_population": "113,821",
+        "female_population": "114,470",
+        "area_sq_km": "1,765"
+      },
+      {
+        "district_name": "Navsari",
+        "population": "1,329,672",
+        "male_population": "678,165",
+        "female_population": "651,507",
+        "area_sq_km": "2,246"
+      },
+      {
+        "district_name": "Valsad",
+        "population": "1,705,678",
+        "male_population": "887,222",
+        "female_population": "818,456",
+        "area_sq_km": "3,008"
+      },
+      {
+        "district_name": "Surat",
+        "population": "6,081,322",
+        "male_population": "3,402,224",
+        "female_population": "2,679,098",
+        "area_sq_km": "4,549"
+      },
+      {
+        "district_name": "Tapi",
+        "population": "807,022",
+        "male_population": "402,188",
+        "female_population": "404,834",
+        "area_sq_km": "3,139"
+      }
+    ],
+    "info": "Total Households: 12,248,428. Population Density: 307 per sq. km."
+  },
+  {
+    "state_name": "DAMAN & DIU",
+    "id": "25",
+    "population": "243,247",
+    "region": "India",
+    "area_sq_km": "111",
+    "male_population_percentage": "61.79%",
+    "male_population": "150,301",
+    "female_population_percentage": "38.21%",
+    "female_population": "92,946",
+    "districts": [
+      {
+        "district_name": "Diu",
+        "population": "52,074",
+        "male_population": "25,642",
+        "female_population": "26,432",
+        "area_sq_km": "39"
+      },
+      {
+        "district_name": "Daman",
+        "population": "191,173",
+        "male_population": "124,659",
+        "female_population": "66,514",
+        "area_sq_km": "72"
+      }
+    ],
+    "info": "Total Households: 60,956. Population Density: 2,191 per sq. km."
+  },
+  {
+    "state_name": "DADRA & NAGAR HAVELI",
+    "id": "26",
+    "population": "343,709",
+    "region": "India",
+    "area_sq_km": "491",
+    "male_population_percentage": "56.37%",
+    "male_population": "193,760",
+    "female_population_percentage": "43.63%",
+    "female_population": "149,949",
+    "districts": [
+      {
+        "district_name": "Dadra & Nagar Haveli",
+        "population": "343,709",
+        "male_population": "193,760",
+        "female_population": "149,949",
+        "area_sq_km": "491"
+      }
+    ],
+    "info": "Total Households: 76,458. Population Density: 700 per sq. km."
+  },
+  {
+    "state_name": "MAHARASHTRA",
+    "id": "27",
+    "population": "112,374,333",
+    "region": "India",
+    "area_sq_km": "307,713",
+    "male_population_percentage": "51.83%",
+    "male_population": "58,243,056",
+    "female_population_percentage": "48.17%",
+    "female_population": "54,131,277",
+    "districts": [
+      {
+        "district_name": "Nandurbar",
+        "population": "1,648,295",
+        "male_population": "833,170",
+        "female_population": "815,125",
+        "area_sq_km": "5,955"
+      },
+      {
+        "district_name": "Dhule",
+        "population": "2,050,862",
+        "male_population": "1,054,031",
+        "female_population": "996,831",
+        "area_sq_km": "7,195"
+      },
+      {
+        "district_name": "Jalgaon",
+        "population": "4,229,917",
+        "male_population": "2,197,365",
+        "female_population": "2,032,552",
+        "area_sq_km": "11,765"
+      },
+      {
+        "district_name": "Buldana",
+        "population": "2,586,258",
+        "male_population": "1,337,560",
+        "female_population": "1,248,698",
+        "area_sq_km": "9,661"
+      },
+      {
+        "district_name": "Akola",
+        "population": "1,813,906",
+        "male_population": "932,334",
+        "female_population": "881,572",
+        "area_sq_km": "5,672"
+      },
+      {
+        "district_name": "Washim",
+        "population": "1,197,160",
+        "male_population": "620,302",
+        "female_population": "576,858",
+        "area_sq_km": "4,901"
+      },
+      {
+        "district_name": "Amravati",
+        "population": "2,888,445",
+        "male_population": "1,480,768",
+        "female_population": "1,407,677",
+        "area_sq_km": "12,210"
+      },
+      {
+        "district_name": "Wardha",
+        "population": "1,300,774",
+        "male_population": "668,385",
+        "female_population": "632,389",
+        "area_sq_km": "6,309"
+      },
+      {
+        "district_name": "Nagpur",
+        "population": "4,653,570",
+        "male_population": "2,384,975",
+        "female_population": "2,268,595",
+        "area_sq_km": "9,892"
+      },
+      {
+        "district_name": "Bhandara",
+        "population": "1,200,334",
+        "male_population": "605,520",
+        "female_population": "594,814",
+        "area_sq_km": "4,087"
+      },
+      {
+        "district_name": "Gondiya",
+        "population": "1,322,507",
+        "male_population": "661,554",
+        "female_population": "660,953",
+        "area_sq_km": "5,234"
+      },
+      {
+        "district_name": "Gadchiroli",
+        "population": "1,072,942",
+        "male_population": "541,328",
+        "female_population": "531,614",
+        "area_sq_km": "14,412"
+      },
+      {
+        "district_name": "Chandrapur",
+        "population": "2,204,307",
+        "male_population": "1,123,834",
+        "female_population": "1,080,473",
+        "area_sq_km": "11,443"
+      },
+      {
+        "district_name": "Yavatmal",
+        "population": "2,772,348",
+        "male_population": "1,419,965",
+        "female_population": "1,352,383",
+        "area_sq_km": "13,582"
+      },
+      {
+        "district_name": "Nanded",
+        "population": "3,361,292",
+        "male_population": "1,730,075",
+        "female_population": "1,631,217",
+        "area_sq_km": "10,528"
+      },
+      {
+        "district_name": "Hingoli",
+        "population": "1,177,345",
+        "male_population": "606,294",
+        "female_population": "571,051",
+        "area_sq_km": "4,827"
+      },
+      {
+        "district_name": "Parbhani",
+        "population": "1,836,086",
+        "male_population": "942,870",
+        "female_population": "893,216",
+        "area_sq_km": "6,214"
+      },
+      {
+        "district_name": "Jalna ###",
+        "population": "1,959,046",
+        "male_population": "1,011,473",
+        "female_population": "947,573",
+        "area_sq_km": "7,694"
+      },
+      {
+        "district_name": "Aurangabad ###",
+        "population": "3,701,282",
+        "male_population": "1,924,469",
+        "female_population": "1,776,813",
+        "area_sq_km": "10,130"
+      },
+      {
+        "district_name": "Nashik",
+        "population": "6,107,187",
+        "male_population": "3,157,186",
+        "female_population": "2,950,001",
+        "area_sq_km": "15,530"
+      },
+      {
+        "district_name": "Thane",
+        "population": "11,060,148",
+        "male_population": "5,865,078",
+        "female_population": "5,195,070",
+        "area_sq_km": "9,558"
+      },
+      {
+        "district_name": "Mumbai Suburban",
+        "population": "9,356,962",
+        "male_population": "5,031,323",
+        "female_population": "4,325,639",
+        "area_sq_km": "446"
+      },
+      {
+        "district_name": "Mumbai",
+        "population": "3,085,411",
+        "male_population": "1,684,608",
+        "female_population": "1,400,803",
+        "area_sq_km": "157"
+      },
+      {
+        "district_name": "Raigarh",
+        "population": "2,634,200",
+        "male_population": "1,344,345",
+        "female_population": "1,289,855",
+        "area_sq_km": "7,152"
+      },
+      {
+        "district_name": "Pune",
+        "population": "9,429,408",
+        "male_population": "4,924,105",
+        "female_population": "4,505,303",
+        "area_sq_km": "15,643"
+      },
+      {
+        "district_name": "Ahmadnagar",
+        "population": "4,543,159",
+        "male_population": "2,342,825",
+        "female_population": "2,200,334",
+        "area_sq_km": "17,048"
+      },
+      {
+        "district_name": "Bid",
+        "population": "2,585,049",
+        "male_population": "1,349,106",
+        "female_population": "1,235,943",
+        "area_sq_km": "10,693"
+      },
+      {
+        "district_name": "Latur",
+        "population": "2,454,196",
+        "male_population": "1,273,140",
+        "female_population": "1,181,056",
+        "area_sq_km": "7,157"
+      },
+      {
+        "district_name": "Osmanabad",
+        "population": "1,657,576",
+        "male_population": "861,535",
+        "female_population": "796,041",
+        "area_sq_km": "7,569"
+      },
+      {
+        "district_name": "Solapur",
+        "population": "4,317,756",
+        "male_population": "2,227,852",
+        "female_population": "2,089,904",
+        "area_sq_km": "14,895"
+      },
+      {
+        "district_name": "Satara",
+        "population": "3,003,741",
+        "male_population": "1,510,842",
+        "female_population": "1,492,899",
+        "area_sq_km": "10,480"
+      },
+      {
+        "district_name": "Ratnagiri",
+        "population": "1,615,069",
+        "male_population": "761,121",
+        "female_population": "853,948",
+        "area_sq_km": "8,208"
+      },
+      {
+        "district_name": "Sindhudurg",
+        "population": "849,651",
+        "male_population": "417,332",
+        "female_population": "432,319",
+        "area_sq_km": "5,207"
+      },
+      {
+        "district_name": "Kolhapur",
+        "population": "3,876,001",
+        "male_population": "1,980,658",
+        "female_population": "1,895,343",
+        "area_sq_km": "7,685"
+      },
+      {
+        "district_name": "Sangli",
+        "population": "2,822,143",
+        "male_population": "1,435,728",
+        "female_population": "1,386,415",
+        "area_sq_km": "8,572"
+      }
+    ],
+    "info": "Total Households: 24,421,519. Population Density: 365 per sq. km."
+  },
+  {
+    "state_name": "ANDHRA PRADESH",
+    "id": "28",
+    "population": "84,580,777",
+    "region": "India",
+    "area_sq_km": "275,045",
+    "male_population_percentage": "50.18%",
+    "male_population": "42,442,146",
+    "female_population_percentage": "49.82%",
+    "female_population": "42,138,631",
+    "districts": [
+      {
+        "district_name": "Adilabad",
+        "population": "2,741,239",
+        "male_population": "1,369,597",
+        "female_population": "1,371,642",
+        "area_sq_km": "16,105"
+      },
+      {
+        "district_name": "Nizamabad",
+        "population": "2,551,335",
+        "male_population": "1,250,641",
+        "female_population": "1,300,694",
+        "area_sq_km": "7,956"
+      },
+      {
+        "district_name": "Karimnagar",
+        "population": "3,776,269",
+        "male_population": "1,880,800",
+        "female_population": "1,895,469",
+        "area_sq_km": "11,823"
+      },
+      {
+        "district_name": "Medak",
+        "population": "3,033,288",
+        "male_population": "1,523,030",
+        "female_population": "1,510,258",
+        "area_sq_km": "9,699"
+      },
+      {
+        "district_name": "Hyderabad",
+        "population": "3,943,323",
+        "male_population": "2,018,575",
+        "female_population": "1,924,748",
+        "area_sq_km": "216"
+      },
+      {
+        "district_name": "Rangareddy",
+        "population": "5,296,741",
+        "male_population": "2,701,008",
+        "female_population": "2,595,733",
+        "area_sq_km": "7,492"
+      },
+      {
+        "district_name": "Mahbubnagar",
+        "population": "4,053,028",
+        "male_population": "2,050,386",
+        "female_population": "2,002,642",
+        "area_sq_km": "18,432"
+      },
+      {
+        "district_name": "Nalgonda",
+        "population": "3,488,809",
+        "male_population": "1,759,772",
+        "female_population": "1,729,037",
+        "area_sq_km": "14,240"
+      },
+      {
+        "district_name": "Warangal",
+        "population": "3,512,576",
+        "male_population": "1,759,281",
+        "female_population": "1,753,295",
+        "area_sq_km": "12,846"
+      },
+      {
+        "district_name": "Khammam",
+        "population": "2,797,370",
+        "male_population": "1,390,988",
+        "female_population": "1,406,382",
+        "area_sq_km": "16,029"
+      },
+      {
+        "district_name": "Srikakulam",
+        "population": "2,703,114",
+        "male_population": "1,341,738",
+        "female_population": "1,361,376",
+        "area_sq_km": "5,837"
+      },
+      {
+        "district_name": "Vizianagaram",
+        "population": "2,344,474",
+        "male_population": "1,161,477",
+        "female_population": "1,182,997",
+        "area_sq_km": "6,539"
+      },
+      {
+        "district_name": "Visakhapatnam",
+        "population": "4,290,589",
+        "male_population": "2,138,910",
+        "female_population": "2,151,679",
+        "area_sq_km": "11,161"
+      },
+      {
+        "district_name": "East Godavari",
+        "population": "5,154,296",
+        "male_population": "2,569,688",
+        "female_population": "2,584,608",
+        "area_sq_km": "10,807"
+      },
+      {
+        "district_name": "West Godavari",
+        "population": "3,936,966",
+        "male_population": "1,964,918",
+        "female_population": "1,972,048",
+        "area_sq_km": "7,742"
+      },
+      {
+        "district_name": "Krishna",
+        "population": "4,517,398",
+        "male_population": "2,267,375",
+        "female_population": "2,250,023",
+        "area_sq_km": "8,727"
+      },
+      {
+        "district_name": "Guntur",
+        "population": "4,887,813",
+        "male_population": "2,440,521",
+        "female_population": "2,447,292",
+        "area_sq_km": "11,391"
+      },
+      {
+        "district_name": "Prakasam",
+        "population": "3,397,448",
+        "male_population": "1,714,764",
+        "female_population": "1,682,684",
+        "area_sq_km": "17,626"
+      },
+      {
+        "district_name": "Sri Potti Sriramulu Nellore",
+        "population": "2,963,557",
+        "male_population": "1,492,974",
+        "female_population": "1,470,583",
+        "area_sq_km": "13,076"
+      },
+      {
+        "district_name": "Y.S.R.",
+        "population": "2,882,469",
+        "male_population": "1,451,777",
+        "female_population": "1,430,692",
+        "area_sq_km": "15,359"
+      },
+      {
+        "district_name": "Kurnool",
+        "population": "4,053,463",
+        "male_population": "2,039,227",
+        "female_population": "2,014,236",
+        "area_sq_km": "17,658"
+      },
+      {
+        "district_name": "Anantapur",
+        "population": "4,081,148",
+        "male_population": "2,064,495",
+        "female_population": "2,016,653",
+        "area_sq_km": "19,130"
+      },
+      {
+        "district_name": "Chittoor",
+        "population": "4,174,064",
+        "male_population": "2,090,204",
+        "female_population": "2,083,860",
+        "area_sq_km": "15,152"
+      }
+    ],
+    "info": "Total Households: 21,022,588. Population Density: 307 per sq. km."
+  },
+  {
+    "state_name": "KARNATAKA",
+    "id": "29",
+    "population": "61,095,297",
+    "region": "India",
+    "area_sq_km": "191,791",
+    "male_population_percentage": "50.69%",
+    "male_population": "30,966,657",
+    "female_population_percentage": "49.31%",
+    "female_population": "30,128,640",
+    "districts": [
+      {
+        "district_name": "Belgaum",
+        "population": "4,779,661",
+        "male_population": "2,423,063",
+        "female_population": "2,356,598",
+        "area_sq_km": "13,433"
+      },
+      {
+        "district_name": "Bagalkot",
+        "population": "1,889,752",
+        "male_population": "950,111",
+        "female_population": "939,641",
+        "area_sq_km": "6,552"
+      },
+      {
+        "district_name": "Bijapur",
+        "population": "2,177,331",
+        "male_population": "1,111,022",
+        "female_population": "1,066,309",
+        "area_sq_km": "10,498"
+      },
+      {
+        "district_name": "Bidar",
+        "population": "1,703,300",
+        "male_population": "870,665",
+        "female_population": "832,635",
+        "area_sq_km": "5,448"
+      },
+      {
+        "district_name": "Raichur",
+        "population": "1,928,812",
+        "male_population": "964,511",
+        "female_population": "964,301",
+        "area_sq_km": "8,442"
+      },
+      {
+        "district_name": "Koppal",
+        "population": "1,389,920",
+        "male_population": "699,926",
+        "female_population": "689,994",
+        "area_sq_km": "5,570"
+      },
+      {
+        "district_name": "Gadag",
+        "population": "1,064,570",
+        "male_population": "537,147",
+        "female_population": "527,423",
+        "area_sq_km": "4,657"
+      },
+      {
+        "district_name": "Dharwad",
+        "population": "1,847,023",
+        "male_population": "937,206",
+        "female_population": "909,817",
+        "area_sq_km": "4,260"
+      },
+      {
+        "district_name": "Uttara Kannada",
+        "population": "1,437,169",
+        "male_population": "726,256",
+        "female_population": "710,913",
+        "area_sq_km": "10,277"
+      },
+      {
+        "district_name": "Haveri",
+        "population": "1,597,668",
+        "male_population": "819,128",
+        "female_population": "778,540",
+        "area_sq_km": "4,823"
+      },
+      {
+        "district_name": "Bellary",
+        "population": "2,452,595",
+        "male_population": "1,236,954",
+        "female_population": "1,215,641",
+        "area_sq_km": "8,461"
+      },
+      {
+        "district_name": "Chitradurga",
+        "population": "1,659,456",
+        "male_population": "840,843",
+        "female_population": "818,613",
+        "area_sq_km": "8,436"
+      },
+      {
+        "district_name": "Davanagere",
+        "population": "1,945,497",
+        "male_population": "986,400",
+        "female_population": "959,097",
+        "area_sq_km": "5,924"
+      },
+      {
+        "district_name": "Shimoga",
+        "population": "1,752,753",
+        "male_population": "877,415",
+        "female_population": "875,338",
+        "area_sq_km": "8,478"
+      },
+      {
+        "district_name": "Udupi",
+        "population": "1,177,361",
+        "male_population": "562,131",
+        "female_population": "615,230",
+        "area_sq_km": "3,582"
+      },
+      {
+        "district_name": "Chikmagalur",
+        "population": "1,137,961",
+        "male_population": "566,622",
+        "female_population": "571,339",
+        "area_sq_km": "7,202"
+      },
+      {
+        "district_name": "Tumkur",
+        "population": "2,678,980",
+        "male_population": "1,350,594",
+        "female_population": "1,328,386",
+        "area_sq_km": "10,597"
+      },
+      {
+        "district_name": "Bangalore",
+        "population": "9,621,551",
+        "male_population": "5,022,661",
+        "female_population": "4,598,890",
+        "area_sq_km": "2,196"
+      },
+      {
+        "district_name": "Mandya",
+        "population": "1,805,769",
+        "male_population": "905,085",
+        "female_population": "900,684",
+        "area_sq_km": "4,962"
+      },
+      {
+        "district_name": "Hassan",
+        "population": "1,776,421",
+        "male_population": "883,667",
+        "female_population": "892,754",
+        "area_sq_km": "6,814"
+      },
+      {
+        "district_name": "Dakshina Kannada",
+        "population": "2,089,649",
+        "male_population": "1,034,714",
+        "female_population": "1,054,935",
+        "area_sq_km": "4,861"
+      },
+      {
+        "district_name": "Kodagu",
+        "population": "554,519",
+        "male_population": "274,608",
+        "female_population": "279,911",
+        "area_sq_km": "4,102"
+      },
+      {
+        "district_name": "Mysore",
+        "population": "3,001,127",
+        "male_population": "1,511,600",
+        "female_population": "1,489,527",
+        "area_sq_km": "6,307"
+      },
+      {
+        "district_name": "Chamarajanagar",
+        "population": "1,020,791",
+        "male_population": "512,231",
+        "female_population": "508,560",
+        "area_sq_km": "5,648"
+      },
+      {
+        "district_name": "Gulbarga",
+        "population": "2,566,326",
+        "male_population": "1,301,755",
+        "female_population": "1,264,571",
+        "area_sq_km": "10,954"
+      },
+      {
+        "district_name": "Yadgir",
+        "population": "1,174,271",
+        "male_population": "590,329",
+        "female_population": "583,942",
+        "area_sq_km": "5,270"
+      },
+      {
+        "district_name": "Kolar",
+        "population": "1,536,401",
+        "male_population": "776,396",
+        "female_population": "760,005",
+        "area_sq_km": "3,979"
+      },
+      {
+        "district_name": "Chikkaballapura",
+        "population": "1,255,104",
+        "male_population": "636,437",
+        "female_population": "618,667",
+        "area_sq_km": "4,244"
+      },
+      {
+        "district_name": "Bangalore Rural",
+        "population": "990,923",
+        "male_population": "509,172",
+        "female_population": "481,751",
+        "area_sq_km": "2,298"
+      },
+      {
+        "district_name": "Ramanagara",
+        "population": "1,082,636",
+        "male_population": "548,008",
+        "female_population": "534,628",
+        "area_sq_km": "3,516"
+      }
+    ],
+    "info": "Total Households: 13,357,027. Population Density: 319 per sq. km."
+  },
+  {
+    "state_name": "GOA",
+    "id": "30",
+    "population": "1,458,545",
+    "region": "India",
+    "area_sq_km": "3,702",
+    "male_population_percentage": "50.68%",
+    "male_population": "739,140",
+    "female_population_percentage": "49.32%",
+    "female_population": "719,405",
+    "districts": [
+      {
+        "district_name": "North Goa",
+        "population": "818,008",
+        "male_population": "416,677",
+        "female_population": "401,331",
+        "area_sq_km": "1,736"
+      },
+      {
+        "district_name": "South Goa",
+        "population": "640,537",
+        "male_population": "322,463",
+        "female_population": "318,074",
+        "area_sq_km": "1,966"
+      }
+    ],
+    "info": "Total Households: 343,611. Population Density: 394 per sq. km."
+  },
+  {
+    "state_name": "LAKSHADWEEP",
+    "id": "31",
+    "population": "64,473",
+    "region": "India",
+    "area_sq_km": "30",
+    "male_population_percentage": "51.37%",
+    "male_population": "33,123",
+    "female_population_percentage": "48.63%",
+    "female_population": "31,350",
+    "districts": [
+      {
+        "district_name": "Lakshadweep",
+        "population": "64,473",
+        "male_population": "33,123",
+        "female_population": "31,350",
+        "area_sq_km": "30"
+      }
+    ],
+    "info": "Total Households: 11,574. Population Density: 2,149 per sq. km."
+  },
+  {
+    "state_name": "KERALA",
+    "id": "32",
+    "population": "33,406,061",
+    "region": "India",
+    "area_sq_km": "38,852",
+    "male_population_percentage": "47.98%",
+    "male_population": "16,027,412",
+    "female_population_percentage": "52.02%",
+    "female_population": "17,378,649",
+    "districts": [
+      {
+        "district_name": "Kasaragod",
+        "population": "1,307,375",
+        "male_population": "628,613",
+        "female_population": "678,762",
+        "area_sq_km": "1,989"
+      },
+      {
+        "district_name": "Kannur",
+        "population": "2,523,003",
+        "male_population": "1,181,446",
+        "female_population": "1,341,557",
+        "area_sq_km": "2,961"
+      },
+      {
+        "district_name": "Wayanad",
+        "population": "817,420",
+        "male_population": "401,684",
+        "female_population": "415,736",
+        "area_sq_km": "2,130"
+      },
+      {
+        "district_name": "Kozhikode",
+        "population": "3,086,293",
+        "male_population": "1,470,942",
+        "female_population": "1,615,351",
+        "area_sq_km": "2,345"
+      },
+      {
+        "district_name": "Malappuram",
+        "population": "4,112,920",
+        "male_population": "1,960,328",
+        "female_population": "2,152,592",
+        "area_sq_km": "3,554"
+      },
+      {
+        "district_name": "Palakkad",
+        "population": "2,809,934",
+        "male_population": "1,359,478",
+        "female_population": "1,450,456",
+        "area_sq_km": "4,482"
+      },
+      {
+        "district_name": "Thrissur",
+        "population": "3,121,200",
+        "male_population": "1,480,763",
+        "female_population": "1,640,437",
+        "area_sq_km": "3,027"
+      },
+      {
+        "district_name": "Ernakulam",
+        "population": "3,282,388",
+        "male_population": "1,619,557",
+        "female_population": "1,662,831",
+        "area_sq_km": "3,063"
+      },
+      {
+        "district_name": "Idukki",
+        "population": "1,108,974",
+        "male_population": "552,808",
+        "female_population": "556,166",
+        "area_sq_km": "4,356"
+      },
+      {
+        "district_name": "Kottayam",
+        "population": "1,974,551",
+        "male_population": "968,289",
+        "female_population": "1,006,262",
+        "area_sq_km": "2,206"
+      },
+      {
+        "district_name": "Alappuzha",
+        "population": "2,127,789",
+        "male_population": "1,013,142",
+        "female_population": "1,114,647",
+        "area_sq_km": "1,415"
+      },
+      {
+        "district_name": "Pathanamthitta",
+        "population": "1,197,412",
+        "male_population": "561,716",
+        "female_population": "635,696",
+        "area_sq_km": "2,652"
+      },
+      {
+        "district_name": "Kollam",
+        "population": "2,635,375",
+        "male_population": "1,246,968",
+        "female_population": "1,388,407",
+        "area_sq_km": "2,483"
+      },
+      {
+        "district_name": "Thiruvananthapuram",
+        "population": "3,301,427",
+        "male_population": "1,581,678",
+        "female_population": "1,719,749",
+        "area_sq_km": "2,189"
+      }
+    ],
+    "info": "Total Households: 7,853,754. Population Density: 860 per sq. km."
+  },
+  {
+    "state_name": "TAMIL NADU",
+    "id": "33",
+    "population": "72,147,030",
+    "region": "India",
+    "area_sq_km": "130,060",
+    "male_population_percentage": "50.09%",
+    "male_population": "36,137,975",
+    "female_population_percentage": "49.91%",
+    "female_population": "36,009,055",
+    "districts": [
+      {
+        "district_name": "Thiruvallur",
+        "population": "3,728,104",
+        "male_population": "1,876,062",
+        "female_population": "1,852,042",
+        "area_sq_km": "3,394"
+      },
+      {
+        "district_name": "Chennai",
+        "population": "4,646,732",
+        "male_population": "2,335,844",
+        "female_population": "2,310,888",
+        "area_sq_km": "175"
+      },
+      {
+        "district_name": "Kancheepuram",
+        "population": "3,998,252",
+        "male_population": "2,012,958",
+        "female_population": "1,985,294",
+        "area_sq_km": "4,482"
+      },
+      {
+        "district_name": "Vellore",
+        "population": "3,936,331",
+        "male_population": "1,961,688",
+        "female_population": "1,974,643",
+        "area_sq_km": "6,075"
+      },
+      {
+        "district_name": "Tiruvannamalai",
+        "population": "2,464,875",
+        "male_population": "1,235,889",
+        "female_population": "1,228,986",
+        "area_sq_km": "6,188"
+      },
+      {
+        "district_name": "Viluppuram",
+        "population": "3,458,873",
+        "male_population": "1,740,819",
+        "female_population": "1,718,054",
+        "area_sq_km": "7,194"
+      },
+      {
+        "district_name": "Salem",
+        "population": "3,482,056",
+        "male_population": "1,781,571",
+        "female_population": "1,700,485",
+        "area_sq_km": "5,236"
+      },
+      {
+        "district_name": "Namakkal",
+        "population": "1,726,601",
+        "male_population": "869,280",
+        "female_population": "857,321",
+        "area_sq_km": "3,419"
+      },
+      {
+        "district_name": "Erode",
+        "population": "2,251,744",
+        "male_population": "1,129,868",
+        "female_population": "1,121,876",
+        "area_sq_km": "5,759"
+      },
+      {
+        "district_name": "The Nilgiris",
+        "population": "735,394",
+        "male_population": "360,143",
+        "female_population": "375,251",
+        "area_sq_km": "2,564"
+      },
+      {
+        "district_name": "Dindigul",
+        "population": "2,159,775",
+        "male_population": "1,080,938",
+        "female_population": "1,078,837",
+        "area_sq_km": "6,036"
+      },
+      {
+        "district_name": "Karur",
+        "population": "1,064,493",
+        "male_population": "528,184",
+        "female_population": "536,309",
+        "area_sq_km": "2,904"
+      },
+      {
+        "district_name": "Tiruchirappalli",
+        "population": "2,722,290",
+        "male_population": "1,352,284",
+        "female_population": "1,370,006",
+        "area_sq_km": "4,509"
+      },
+      {
+        "district_name": "Perambalur",
+        "population": "565,223",
+        "male_population": "282,157",
+        "female_population": "283,066",
+        "area_sq_km": "1,756"
+      },
+      {
+        "district_name": "Ariyalur",
+        "population": "754,894",
+        "male_population": "374,703",
+        "female_population": "380,191",
+        "area_sq_km": "1,940"
+      },
+      {
+        "district_name": "Cuddalore",
+        "population": "2,605,914",
+        "male_population": "1,311,697",
+        "female_population": "1,294,217",
+        "area_sq_km": "3,702"
+      },
+      {
+        "district_name": "Nagapattinam",
+        "population": "1,616,450",
+        "male_population": "798,127",
+        "female_population": "818,323",
+        "area_sq_km": "2,568"
+      },
+      {
+        "district_name": "Thiruvarur",
+        "population": "1,264,277",
+        "male_population": "626,693",
+        "female_population": "637,584",
+        "area_sq_km": "2,274"
+      },
+      {
+        "district_name": "Thanjavur",
+        "population": "2,405,890",
+        "male_population": "1,182,416",
+        "female_population": "1,223,474",
+        "area_sq_km": "3,410"
+      },
+      {
+        "district_name": "Pudukkottai",
+        "population": "1,618,345",
+        "male_population": "803,188",
+        "female_population": "815,157",
+        "area_sq_km": "4,644"
+      },
+      {
+        "district_name": "Sivaganga",
+        "population": "1,339,101",
+        "male_population": "668,672",
+        "female_population": "670,429",
+        "area_sq_km": "4,233"
+      },
+      {
+        "district_name": "Madurai",
+        "population": "3,038,252",
+        "male_population": "1,526,475",
+        "female_population": "1,511,777",
+        "area_sq_km": "3,710"
+      },
+      {
+        "district_name": "Theni",
+        "population": "1,245,899",
+        "male_population": "625,683",
+        "female_population": "620,216",
+        "area_sq_km": "2,868"
+      },
+      {
+        "district_name": "Virudhunagar",
+        "population": "1,942,288",
+        "male_population": "967,709",
+        "female_population": "974,579",
+        "area_sq_km": "4,240"
+      },
+      {
+        "district_name": "Ramanathapuram",
+        "population": "1,353,445",
+        "male_population": "682,658",
+        "female_population": "670,787",
+        "area_sq_km": "4,103"
+      },
+      {
+        "district_name": "Thoothukkudi",
+        "population": "1,750,176",
+        "male_population": "865,021",
+        "female_population": "885,155",
+        "area_sq_km": "4,745"
+      },
+      {
+        "district_name": "Tirunelveli",
+        "population": "3,077,233",
+        "male_population": "1,520,912",
+        "female_population": "1,556,321",
+        "area_sq_km": "6,693"
+      },
+      {
+        "district_name": "Kanniyakumari",
+        "population": "1,870,374",
+        "male_population": "926,345",
+        "female_population": "944,029",
+        "area_sq_km": "1,683"
+      },
+      {
+        "district_name": "Dharmapuri",
+        "population": "1,506,843",
+        "male_population": "774,303",
+        "female_population": "732,540",
+        "area_sq_km": "4,497"
+      },
+      {
+        "district_name": "Krishnagiri",
+        "population": "1,879,809",
+        "male_population": "960,232",
+        "female_population": "919,577",
+        "area_sq_km": "5,129"
+      },
+      {
+        "district_name": "Coimbatore",
+        "population": "3,458,045",
+        "male_population": "1,729,297",
+        "female_population": "1,728,748",
+        "area_sq_km": "4,731"
+      },
+      {
+        "district_name": "Tiruppur",
+        "population": "2,479,052",
+        "male_population": "1,246,159",
+        "female_population": "1,232,893",
+        "area_sq_km": "5,187"
+      }
+    ],
+    "info": "Total Households: 18,524,982. Population Density: 555 per sq. km."
+  },
+  {
+    "state_name": "PUDUCHERRY",
+    "id": "34",
+    "population": "1,247,953",
+    "region": "India",
+    "area_sq_km": "490",
+    "male_population_percentage": "49.08%",
+    "male_population": "612,511",
+    "female_population_percentage": "50.92%",
+    "female_population": "635,442",
+    "districts": [
+      {
+        "district_name": "Yanam",
+        "population": "55,626",
+        "male_population": "27,301",
+        "female_population": "28,325",
+        "area_sq_km": "30"
+      },
+      {
+        "district_name": "Puducherry",
+        "population": "950,289",
+        "male_population": "468,258",
+        "female_population": "482,031",
+        "area_sq_km": "294"
+      },
+      {
+        "district_name": "Mahe",
+        "population": "41,816",
+        "male_population": "19,143",
+        "female_population": "22,673",
+        "area_sq_km": "9"
+      },
+      {
+        "district_name": "Karaikal",
+        "population": "200,222",
+        "male_population": "97,809",
+        "female_population": "102,413",
+        "area_sq_km": "157"
+      }
+    ],
+    "info": "Total Households: 302,450. Population Density: 2,547 per sq. km."
+  },
+  {
+    "state_name": "ANDAMAN & NICOBAR ISLANDS",
+    "id": "35",
+    "population": "380,581",
+    "region": "India",
+    "area_sq_km": "8,249",
+    "male_population_percentage": "53.31%",
+    "male_population": "202,871",
+    "female_population_percentage": "46.69%",
+    "female_population": "177,710",
+    "districts": [
+      {
+        "district_name": "Nicobars",
+        "population": "36,842",
+        "male_population": "20,727",
+        "female_population": "16,115",
+        "area_sq_km": "1,841"
+      },
+      {
+        "district_name": "North  & Middle Andaman",
+        "population": "105,597",
+        "male_population": "54,861",
+        "female_population": "50,736",
+        "area_sq_km": "3,736"
+      },
+      {
+        "district_name": "South Andaman",
+        "population": "238,142",
+        "male_population": "127,283",
+        "female_population": "110,859",
+        "area_sq_km": "2,672"
+      }
+    ],
+    "info": "Total Households: 94,551. Population Density: 46 per sq. km."
+  }
+]

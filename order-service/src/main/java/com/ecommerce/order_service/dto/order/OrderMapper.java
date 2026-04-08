@@ -1,0 +1,49 @@
+package com.ecommerce.order_service.dto.order;
+
+import com.ecommerce.order_service.dto.orderAddress.OrderAddressMapper;
+import com.ecommerce.order_service.dto.orderItem.OrderItemMapper;
+import com.ecommerce.order_service.model.Order;
+import com.ecommerce.order_service.model.OrderStatus;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@Component
+@RequiredArgsConstructor
+public class OrderMapper {
+
+    private final OrderAddressMapper orderAddressMapper;
+    private final OrderItemMapper orderItemMapper;
+
+    public OrderDto orderToOrderDto(Order order){
+        return OrderDto.builder()
+                .id(order.getId())
+                .customerId(order.getCustomerId())
+                .orderStatus(order.getOrderStatus())
+                .address(orderAddressMapper.orderAddressToOrderAddressDto(order.getAddress()))
+                .items(order.getItems()
+                        .stream()
+                        .map(orderItemMapper::orderToOrderItemDto)
+                        .collect(Collectors.toList()))
+                .createdDate(order.getCreatedDate())
+                .build();
+    }
+
+    public Order orderRequestToOrder(CreateOrderRequest createOrderRequest){
+        return Order.builder()
+                .customerId(UUID.fromString((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal()))
+                .orderStatus(OrderStatus.PENDING)
+                .address(orderAddressMapper.orderAddressRequestToOrderAddress(createOrderRequest.getAddress()))
+                .items(createOrderRequest.getItems()
+                        .stream()
+                        .map(orderItemMapper::orderItemRequestToOrderItem)
+                        .collect(Collectors.toList()))
+                .build();
+    }
+
+}

@@ -1,24 +1,257 @@
-version: "3.9"
 
 services:
-  order-service:
-    build:
-      context: ./order-service
-    container_name: order-service
-    ports:
-      - "8080:8080"
-    depends_on:
-      - payment-service
-
-  payment-service:
-    build: ./payment-service
-    ports:
-      - "8082:8082"
+  postgres:
+    container_name: postgres
+    image: postgres
     environment:
-      SPRING_PROFILES_ACTIVE: docker
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      # POSTGRES_DB: user
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+      - ecommerce-network
+    restart: unless-stopped
+
+  eureka-server:
+    container_name: eureka-server
+    image: ecommerce/eureka-server
+    build: ./eureka-server
+    ports:
+      - "8761:8761"
+    environment:
+      - EUREKA_URI=http://eureka-server:8761/eureka
     networks:
       - ecommerce-network
 
+  api-gateway:
+    container_name: api-gateway
+    image: ecommerce/api-gateway
+    build: ./api-gateway
+    ports:
+      - "8889:8889"
+    depends_on:
+      - eureka-server
+    environment:
+      - EUREKA_URI=http://eureka-server:8761/eureka
+    networks:
+      - ecommerce-network
+
+  user-service:
+    container_name: user-service
+    image: ecommerce/user-service
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_APPLICATION_NAME=user-service
+      - EUREKA_URI=http://eureka-server:8761/eureka
+      - spring.datasource.url=jdbc:postgresql://postgres:5432/user
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+    depends_on:
+      - postgres
+      - eureka-server
+      - rabbitmq
+    networks:
+      - postgres
+      - ecommerce-network
+
+  product-service:
+    container_name: product-service
+    image: ecommerce/product-service
+    build:
+      context: ./product-service
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_APPLICATION_NAME=product-service
+      - EUREKA_URI=http://eureka-server:8761/eureka
+      - spring.datasource.url=jdbc:postgresql://postgres:5432/product
+      - SPRING_ELASTICSEARCH_REST_URIS=http://elasticsearch:9200
+    depends_on:
+      postgres:
+        condition: service_started
+      eureka-server:
+        condition: service_started
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - postgres
+      - ecommerce-network
+
+  order-service:
+    container_name: order-service
+    image: ecommerce/order-service
+    build:
+      context: ./order-service
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_APPLICATION_NAME=order-service
+      - EUREKA_URI=http://eureka-server:8761/eureka
+      - spring.datasource.url=jdbc:postgresql://postgres:5432/order
+    depends_on:
+      - postgres
+      - eureka-server
+    networks:
+      - postgres
+      - ecommerce-network
+
+  notification-service:
+    container_name: notification-service
+    image: ecommerce/notification-service
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_APPLICATION_NAME=notification-service
+      - EUREKA_URI= http://eureka-server:8761/eureka
+    depends_on:
+      - eureka-server
+      - api-gateway
+      - rabbitmq
+    networks:
+      - ecommerce-network
+
+  file-service:
+    container_name: file-service
+    image: ecommerce/file-service
+    build:
+      context: ./file-service
+      dockerfile: Dockerfile
+    ports:
+      - "8086:8086"
+    environment:
+      - SPRING_APPLICATION_NAME=file-service
+      - EUREKA_URI= http://eureka-server:8761/eureka
+    depends_on:
+      - eureka-server
+      - api-gateway
+    networks:
+      - ecommerce-network
+
+  inventory-service:
+    container_name: inventory-service
+    image: ecommerce/inventory-service
+    build:
+      context: ./inventory-service
+      dockerfile: Dockerfile
+    ports:
+      - "8088:8088"
+    environment:
+      - SPRING_APPLICATION_NAME=inventory-service
+      - EUREKA_URI=http://eureka-server:8761/eureka
+      - spring.datasource.url=jdbc:postgresql://postgres:5432/inventory
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+    depends_on:
+      - postgres
+      - eureka-server
+      - rabbitmq
+
+    networks:
+      - postgres
+      - ecommerce-network
+
+  elasticsearch:
+    image: elasticsearch:7.17.7
+    container_name: elasticsearch
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m   # ✅ FIX
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - ecommerce-network
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=rootuser
+      - MONGO_INITDB_ROOT_PASSWORD=rootpass
+    
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    restart: always
+    ports:
+      - 9081:8081
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=rootuser
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=rootpass
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+    
+
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    networks:
+      - postgres
+
+  # Infrastructure Services
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - spring
+
+  rabbitmq:
+    image: rabbitmq:3.9.11-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - spring
+      - ecommerce-network
+
 networks:
+  postgres:
+    driver: bridge
   ecommerce-network:
     driver: bridge
+  default:
+    name: mongo-network
+  spring:
+    driver: bridge
+  
+
+volumes:
+  postgres:
+  pgadmin:
+  esdata:
+  mongodb:
