@@ -51,6 +51,13 @@ spring:
           uri: lb://file-service
           predicates:
             - Path=/file/**
+
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/v1/payments/**
+          filters:
+            - AuthFilter
       discovery:
         locator:
           enabled: true

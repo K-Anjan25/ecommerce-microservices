@@ -1,23 +1,29 @@
 package com.ecommerce.payment_service.dto;
 
+import com.ecommerce.payment_service.model.PaymentProvider;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.util.UUID;
+
+@Getter
+@Setter
 public class PaymentRequest {
 
-    private Long orderId;
-    private double amount;
+    @NotNull
+    private UUID orderId;
 
-    public Long getOrderId() {
-        return orderId;
-    }
+    @NotNull
+    @DecimalMin(value = "0.1")
+    private BigDecimal amount;
 
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
-    }
+    @NotBlank
+    private String currency;
 
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
+    @NotNull
+    private PaymentProvider provider;
 }

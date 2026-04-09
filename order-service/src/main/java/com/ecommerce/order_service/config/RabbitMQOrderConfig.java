@@ -1,4 +1,4 @@
-package com.ecommerce.payment_service.config;
+package com.ecommerce.order_service.config;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RabbitMQPaymentConfig {
+public class RabbitMQOrderConfig {
 
     @Value("${rabbitmq.exchanges.internal}")
     private String internalExchange;
@@ -21,7 +21,7 @@ public class RabbitMQPaymentConfig {
     private String paymentStatusRoutingKey;
 
     @Bean
-    public TopicExchange paymentTopicExchange() {
+    public TopicExchange orderTopicExchange() {
         return new TopicExchange(internalExchange);
     }
 
@@ -32,6 +32,6 @@ public class RabbitMQPaymentConfig {
 
     @Bean
     public Binding paymentStatusBinding() {
-        return BindingBuilder.bind(paymentStatusQueue()).to(paymentTopicExchange()).with(paymentStatusRoutingKey);
+        return BindingBuilder.bind(paymentStatusQueue()).to(orderTopicExchange()).with(paymentStatusRoutingKey);
     }
 }

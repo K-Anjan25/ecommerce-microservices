@@ -1,31 +1,17 @@
-# spring.application.name=payment-service
-# server.port=8083
-
-# spring.datasource.url=jdbc:h2:mem:paymentdb
-# spring.datasource.driver-class-name=org.h2.Driver
-# spring.datasource.username=sa
-# spring.datasource.password=
-
-# spring.h2.console.enabled=true
-
-# spring.jpa.hibernate.ddl-auto=update
-# spring.jpa.show-sql=true
-# spring.jpa.defer-datasource-initialization=true
-
 server:
-  port: 8185  # Standard port for payment in this project
+  port: 8082
 
 spring:
   application:
     name: payment-service
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/order
+    url: jdbc:postgresql://localhost:5432/payment
     username: postgres
     password: root
   rabbitmq:
-    host: localhost
-    port: 5672
+    host: ${SPRING_RABBITMQ_HOST:rabbitmq}
+    port: ${SPRING_RABBITMQ_PORT:5672}
 
   jpa:
     hibernate:
@@ -38,11 +24,19 @@ spring:
 
 rabbitmq:
   exchanges:
-    internal: payment.exchange
+    internal: order.exchange
   queues:
-    payment: payment.queue
+    payment-status: payment.status.queue
   routing-keys:
-    payment: payment.routing.key
+    payment-status: payment.status.updated
+
+payment:
+  providers:
+    stripe:
+      secret-key: ${STRIPE_SECRET_KEY:}
+    razorpay:
+      key-id: ${RAZORPAY_KEY_ID:}
+      key-secret: ${RAZORPAY_KEY_SECRET:}
 
 eureka:
   client:

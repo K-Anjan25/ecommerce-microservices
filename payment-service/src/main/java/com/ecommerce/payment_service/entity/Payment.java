@@ -1,7 +1,28 @@
 package com.ecommerce.payment_service.entity;
 
-import jakarta.persistence.*;
+import com.ecommerce.payment_service.model.PaymentProvider;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Payment {
 
@@ -9,39 +30,29 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long orderId;
-    private double amount;
+    @Column(nullable = false, unique = true)
+    private UUID orderId;
+
+    @Column(nullable = false, precision = 19, scale = 2)
+    private BigDecimal amount;
+
+    @Column(nullable = false, length = 10)
+    private String currency;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private PaymentProvider provider;
+
+    @Column(nullable = false, length = 30)
     private String status;
 
-    public Long getId() {
-        return id;
-    }
+    @Column(length = 255)
+    private String transactionId;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Column(length = 500)
+    private String failureReason;
 
-    public Long getOrderId() {
-        return orderId;
-    }
+    private LocalDateTime createdAt;
 
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
-    }
-
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    private LocalDateTime updatedAt;
 }

@@ -21,6 +21,7 @@
         <module>api-gateway</module>
         <module>notification-service</module>
         <module>file-service</module>
+        <module>payment-service</module>
     </modules>
 
 
@@ -90,6 +91,11 @@
             <dependency>
                 <groupId>com.ecommerce</groupId>
                 <artifactId>file-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ecommerce</groupId>
+                <artifactId>payment-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

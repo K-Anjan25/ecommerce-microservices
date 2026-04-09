@@ -10,6 +10,7 @@ import com.ecommerce.order_service.dto.order.CreateOrderRequest;
 import com.ecommerce.order_service.dto.orderItem.CreateOrderItemRequest;
 import com.ecommerce.order_service.exception.ProductNotInStockException;
 import com.ecommerce.order_service.model.Order;
+import com.ecommerce.order_service.model.OrderStatus;
 import com.ecommerce.order_service.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,6 +57,18 @@ public class OrderService {
         Page<Order> orders = orderRepository.findAll(paging);
         return new Pagination<>(orders.stream().map(orderMapper::orderToOrderDto).collect(Collectors.toList()),
                 orders.getTotalElements());
+    }
+
+    public void applyPaymentStatus(UUID orderId, String paymentStatus) {
+        orderRepository.findById(orderId).ifPresent(order -> {
+            if ("SUCCESS".equalsIgnoreCase(paymentStatus)) {
+                order.setOrderStatus(OrderStatus.PAID);
+            } else if ("FAILED".equalsIgnoreCase(paymentStatus)) {
+                order.setOrderStatus(OrderStatus.CANCELLED);
+            }
+            orderRepository.save(order);
+            log.info("Order {} updated to {} after payment status {}", orderId, order.getOrderStatus(), paymentStatus);
+        });
     }
 
 }

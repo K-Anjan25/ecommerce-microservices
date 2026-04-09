@@ -8,6 +8,9 @@ spring:
     password: root
   application:
     name: order-service
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST:rabbitmq}
+    port: ${SPRING_RABBITMQ_PORT:5672}
 
   jpa:
     hibernate:
@@ -17,6 +20,14 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
     generate-ddl: true
+
+rabbitmq:
+  exchanges:
+    internal: order.exchange
+  queues:
+    payment-status: payment.status.queue
+  routing-keys:
+    payment-status: payment.status.updated
 
 eureka:
   client:

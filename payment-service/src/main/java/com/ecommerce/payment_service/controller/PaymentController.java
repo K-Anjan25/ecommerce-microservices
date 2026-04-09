@@ -1,35 +1,33 @@
 package com.ecommerce.payment_service.controller;
 
-import com.ecommerce.payment_service.entity.Payment;
 import com.ecommerce.payment_service.dto.PaymentRequest;
-import com.ecommerce.payment_service.repository.PaymentRepository;
-import org.springframework.web.bind.annotation.*;
-import java.util.List; 
+import com.ecommerce.payment_service.dto.PaymentResponse;
+import com.ecommerce.payment_service.service.PaymentService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/payments")
+@RequestMapping("/v1/payments")
+@RequiredArgsConstructor
+@Slf4j
 public class PaymentController {
 
-    private final PaymentRepository paymentRepository;
-
-    public PaymentController(PaymentRepository paymentRepository) {
-        this.paymentRepository = paymentRepository;
-    }
+    private final PaymentService paymentService;
 
     @PostMapping
-    public Payment makePayment(@RequestBody PaymentRequest request) {
-        Payment payment = new Payment();
-        payment.setOrderId(request.getOrderId());
-        payment.setAmount(request.getAmount());
-        payment.setStatus("SUCCESS");
-        return paymentRepository.save(payment);
+    public ResponseEntity<PaymentResponse> makePayment(@Valid @RequestBody PaymentRequest request) {
+        log.info("payment request received for order {}", request.getOrderId());
+        return new ResponseEntity<>(paymentService.processPayment(request), HttpStatus.CREATED);
     }
-
-    @GetMapping
-    public List<Payment> getAllPayments() {
-        return paymentRepository.findAll();
-    }
-
 
     @GetMapping("/test")
     public String test() {
