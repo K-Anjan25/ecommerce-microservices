@@ -15,6 +15,7 @@ export interface Order {
 export interface CreateOrderRequest {
   items: OrderItem[];
   address: OrderAdress;
+  paymentId?: string;
 }
 
 interface OrderAdress {

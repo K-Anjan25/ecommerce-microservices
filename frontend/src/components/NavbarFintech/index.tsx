@@ -70,7 +70,9 @@ const NavbarFintech = ({ className }: NavbarFintechProps) => {
         dispatch(logout());
         break;
       case "Profile":
-        navigate(`/profile/${user.userId}`);
+        if (user?.userId) {
+          navigate(`/profile/${user.userId}`);
+        }
         break;
       case "Account":
         navigate("/account");
@@ -144,7 +146,7 @@ const NavbarFintech = ({ className }: NavbarFintechProps) => {
             </Button>
 
             {/* User Section */}
-            {user.isLogedIn ? (
+            {user?.isLogedIn ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -155,13 +157,13 @@ const NavbarFintech = ({ className }: NavbarFintechProps) => {
                     )}
                   >
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={user.profileImageURL ?? ""} alt={`${user.firstName} ${user.lastName}`} />
+                      <AvatarImage src={user?.profileImageURL ?? ""} alt={`${user?.firstName ?? ""} ${user?.lastName ?? ""}`} />
                       <AvatarFallback className="bg-electric-500 text-white text-xs">
-                        {user.firstName?.at(0)?.toUpperCase()}
-                        {user.lastName?.at(0)?.toUpperCase()}
+                        {user?.firstName?.at(0)?.toUpperCase()}
+                        {user?.lastName?.at(0)?.toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="hidden lg:block font-medium">{user.firstName}</span>
+                    <span className="hidden lg:block font-medium">{user?.firstName}</span>
                     <ChevronDown className="h-4 w-4 opacity-60" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -169,9 +171,9 @@ const NavbarFintech = ({ className }: NavbarFintechProps) => {
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none">
-                        {user.firstName} {user.lastName}
+                        {user?.firstName} {user?.lastName}
                       </p>
-                      <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                      <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
@@ -261,21 +263,21 @@ const NavbarFintech = ({ className }: NavbarFintechProps) => {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="border-t border-border bg-background pb-4 pt-2 md:hidden animate-fade-in">
-            {user.isLogedIn ? (
+            {user?.isLogedIn ? (
               <div className="space-y-1 px-2">
                 <div className="flex items-center gap-3 px-3 py-3 border-b border-border mb-2">
                   <Avatar className="h-10 w-10">
-                    <AvatarImage src={user.profileImageURL ?? ""} alt={`${user.firstName} ${user.lastName}`} />
+                    <AvatarImage src={user?.profileImageURL ?? ""} alt={`${user?.firstName ?? ""} ${user?.lastName ?? ""}`} />
                     <AvatarFallback className="bg-electric-500 text-white">
-                      {user.firstName?.at(0)?.toUpperCase()}
-                      {user.lastName?.at(0)?.toUpperCase()}
+                      {user?.firstName?.at(0)?.toUpperCase()}
+                      {user?.lastName?.at(0)?.toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div>
                     <p className="font-medium text-foreground">
-                      {user.firstName} {user.lastName}
+                      {user?.firstName} {user?.lastName}
                     </p>
-                    <p className="text-sm text-muted-foreground">{user.email}</p>
+                    <p className="text-sm text-muted-foreground">{user?.email}</p>
                   </div>
                 </div>
                 {settings.map((setting) => (

@@ -84,9 +84,9 @@ const CheckoutPage = () => {
   };
 
   // Calculate totals
-  const subtotal = parseFloat(calculateTotalPriceOfCartItems(items));
-  const taxAmount = subtotal * TAX_RATE;
-  const total = subtotal + taxAmount;
+  const subtotal = Number(calculateTotalPriceOfCartItems(items));
+  const taxAmount = Math.round(subtotal * TAX_RATE * 100) / 100;
+  const total = Math.round((subtotal + taxAmount) * 100) / 100;
   const itemCount = calculateCountOfCartItems(items);
 
   // Form handling
@@ -109,6 +109,7 @@ const CheckoutPage = () => {
       setDistricts(getDistricts(form.values.state));
       form.setFieldValue("district", "");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values.state]);
 
   // Session storage for form persistence
@@ -121,6 +122,7 @@ const CheckoutPage = () => {
         setDistricts(getDistricts(parsed.state));
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -206,8 +208,8 @@ const CheckoutPage = () => {
         setIsProcessingPayment(false);
       },
       prefill: {
-        name: user?.firstName ? `${user.firstName} ${user.lastName}` : "",
-        email: user?.email || "",
+        name: user?.firstName ? `${user.firstName} ${user.lastName ?? ""}` : "",
+        email: user?.email ?? "",
       },
       notes: {
         address: form.values.addressDetail,

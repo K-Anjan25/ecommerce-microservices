@@ -13,6 +13,7 @@ export function formatCurrency(amount: number, currency: string = "INR"): string
   }).format(amount);
 }
 
-export function formatPrice(amount: number): string {
-  return `₹${amount.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+export function formatPrice(amount: number | string): string {
+  const numAmount = typeof amount === "string" ? parseFloat(amount) : amount;
+  return `₹${numAmount.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
