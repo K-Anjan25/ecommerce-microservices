@@ -79,7 +79,7 @@ function Cart() {
     },
   });
 
-  let statesAndDistrict = require("../../db_english.json");
+  let statesAndDistrict = require("../../formdata.json");
 
   const states = statesAndDistrict.map((state: any) => {
     return { name: state.state_name, id: state.state_name };
