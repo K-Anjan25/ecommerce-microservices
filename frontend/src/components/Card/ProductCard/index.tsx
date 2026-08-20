@@ -109,6 +109,25 @@ const ProductCard = ({ product }: CardProps) => {
           <Typography className="price-text text-3xl">
             {formatPrice(product?.unitPrice ?? 0)}
           </Typography>
+          {(product?.quantityInStock ?? -1) >= 0 && (
+            <Chip
+              size="small"
+              label={
+                (product?.quantityInStock ?? 0) <= 0
+                  ? "Out of stock"
+                  : product!.quantityInStock! <= 5
+                  ? `Low stock · ${product?.quantityInStock} left`
+                  : `In stock · ${product?.quantityInStock} available`
+              }
+              className={`w-fit ${
+                (product?.quantityInStock ?? 0) <= 0
+                  ? "!bg-rose-100 !text-rose-700"
+                  : product!.quantityInStock! <= 5
+                  ? "!bg-amber-100 !text-amber-800"
+                  : "!bg-emerald-100 !text-emerald-700"
+              }`}
+            />
+          )}
           <Divider />
           <Typography className="text-ink-soft">{product?.description}</Typography>
 

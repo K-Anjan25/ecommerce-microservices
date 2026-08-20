@@ -1,6 +1,6 @@
 import { AccountForm } from "../types/account";
 import { ProfileForm } from "../types/profile";
-import { Login, UserCredentials } from "../types/user";
+import { Login, UserCredentials, AdminUser } from "../types/user";
 import { api } from "./axios";
 
 const getUserById = async (customerId: string) => {
@@ -27,9 +27,27 @@ const updatePassword = async (account: AccountForm) => {
   return data;
 };
 
+const getAllUsers = async () => {
+  const { data } = await api.get<AdminUser[]>(`/user/all`);
+  return data;
+};
+
+const disableUser = async (userId: string) => {
+  const { data } = await api.put(`/user/disable/${userId}`);
+  return data;
+};
+
+const enableUser = async (userId: string) => {
+  const { data } = await api.put(`/user/enable/${userId}`);
+  return data;
+};
+
 export const UserApi = {
   getUserById,
   resetPassword,
   updateUser,
   updatePassword,
+  getAllUsers,
+  disableUser,
+  enableUser,
 };

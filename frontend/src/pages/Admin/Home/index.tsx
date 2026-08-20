@@ -1,7 +1,8 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Chip, Typography } from "@mui/material";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import CategoryIcon from "@mui/icons-material/Category";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -24,6 +25,18 @@ function Home() {
         pageNo: 0,
         pageSize: 1,
       })
+  );
+
+  const { data: allProducts } = useQuery(["admin:products", "lowstock"], () =>
+    ProductApi.getProductsByPagination({
+      ...PRODUCT_ADMIN_PARAM,
+      pageNo: 0,
+      pageSize: 100,
+    })
+  );
+
+  const lowStock = (allProducts?.data ?? []).filter(
+    (p) => (p.quantityInStock ?? 999) <= 5
   );
 
   const { data: orders, isLoading: ordersLoading } = useQuery(
@@ -87,6 +100,36 @@ function Home() {
           </Box>
         ))}
       </div>
+
+      {lowStock.length > 0 && (
+        <Box className="panel border-amber-200 bg-amber-50/60 p-6">
+          <Box className="mb-3 flex items-center gap-2">
+            <WarningAmberIcon className="text-amber-600" />
+            <Typography variant="h6" className="font-semibold text-amber-900">
+              Low stock alert
+            </Typography>
+            <Chip
+              size="small"
+              label={`${lowStock.length} product${lowStock.length > 1 ? "s" : ""}`}
+              className="!bg-amber-200 !font-semibold !text-amber-900"
+            />
+          </Box>
+          <Box className="flex flex-wrap gap-2">
+            {lowStock.slice(0, 8).map((product) => (
+              <Chip
+                key={product.id}
+                label={`${product.name} (${product.quantityInStock ?? 0} left)`}
+                className={
+                  (product.quantityInStock ?? 0) <= 0
+                    ? "!bg-rose-100 !font-medium !text-rose-700"
+                    : "!bg-white !font-medium !text-amber-800"
+                }
+                onClick={() => navigate(`/admin/addEditProduct/${product.id}`)}
+              />
+            ))}
+          </Box>
+        </Box>
+      )}
 
       <div>
         <Typography variant="h6" className="mb-4 font-semibold text-ink">

@@ -267,4 +267,19 @@ public class UserService implements UserDetailsService {
         return new UserCredential(user.getId(),user.getFirstName(),user.getLastName(),user.getEmail());
     }
 
+    public List<AdminUserDto> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(user -> new AdminUserDto(user.getId(), user.getFirstName(), user.getLastName(),
+                        user.getEmail(), user.getRole(), user.isActive(), user.isNotLocked(),
+                        user.getJoinDate(), user.getLastLoginDate(), user.getProfileImageUrl()))
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    public User setUserActive(UUID userId, boolean active) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(NO_USER_FOUND_BY_EMAIL + userId));
+        user.setActive(active);
+        return userRepository.save(user);
+    }
+
 }

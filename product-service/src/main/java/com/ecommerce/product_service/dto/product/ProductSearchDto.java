@@ -18,4 +18,5 @@ public class ProductSearchDto{
     private String description;
     private LocalDate createdDate;
     private String imageUrl;
+    private Integer quantityInStock;
 }

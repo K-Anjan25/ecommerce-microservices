@@ -25,4 +25,5 @@ public class ProductDto {
     private LocalDateTime createdDate;
     private String imageUrl;
     private List<CommentDto> comments;
+    private Integer quantityInStock;
 }

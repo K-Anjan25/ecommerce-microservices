@@ -14,6 +14,7 @@ interface BaseProduct {
   unitPrice: number;
   description: string;
   imageUrl: string;
+  quantityInStock?: number;
 }
 export interface ProductAdminParam {
   pageNo: number;

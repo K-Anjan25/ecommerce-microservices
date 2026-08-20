@@ -3,6 +3,7 @@ package com.ecommerce.product_service.dto.product;
 
 import com.ecommerce.product_service.dto.category.CategoryMapper;
 import com.ecommerce.product_service.dto.comment.CommentMapper;
+import com.ecommerce.product_service.inventory.repository.InventoryRepository;
 import com.ecommerce.product_service.model.Comment;
 import com.ecommerce.product_service.model.Product;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,14 @@ import java.util.List;
 public class ProductMapper {
     private final CategoryMapper categoryMapper;
     private final CommentMapper commentMapper;
+    private final InventoryRepository inventoryRepository;
+
+    private Integer stockOf(Product product) {
+        return inventoryRepository.getByProductId(product.getId()) == null
+                ? null
+                : inventoryRepository.getByProductId(product.getId()).getQuantity();
+    }
+
     public ProductDto productToProductDto(Product product){
         return ProductDto.builder()
                 .name(product.getName())
@@ -25,6 +34,7 @@ public class ProductMapper {
                 .category(categoryMapper.categoryToCategoryDto(product.getCategory()))
                 .createdDate(product.getCreatedDate())
                 .imageUrl(product.getImageUrl())
+                .quantityInStock(stockOf(product))
                 .comments(product.getComments() == null ? List.of() : product.getComments().stream().map(commentMapper::commentToCommentDto).collect(Collectors.toList()))
                 .build();
     }
@@ -41,6 +51,7 @@ public class ProductMapper {
                 .categoryName(product.getCategory() == null ? null : product.getCategory().getName())
                 .createdDate(product.getCreatedDate() == null ? null : product.getCreatedDate().toLocalDate())
                 .imageUrl(product.getImageUrl())
+                .quantityInStock(stockOf(product))
                 .build();
     }
 

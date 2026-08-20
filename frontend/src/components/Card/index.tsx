@@ -71,6 +71,23 @@ const Card = ({ product, onClick }: CardProps) => {
             className="absolute left-3 top-3 !bg-white/90 !font-semibold !text-brand shadow-sm backdrop-blur"
           />
         )}
+        <Chip
+          size="small"
+          label={
+            (product.quantityInStock ?? 0) <= 0
+              ? "Out of stock"
+              : product.quantityInStock! <= 5
+              ? `Low stock · ${product.quantityInStock}`
+              : `In stock · ${product.quantityInStock}`
+          }
+          className={`absolute right-3 top-3 shadow-sm backdrop-blur ${
+            (product.quantityInStock ?? 0) <= 0
+              ? "!bg-rose-100/90 !text-rose-700"
+              : product.quantityInStock! <= 5
+              ? "!bg-amber-100/90 !text-amber-800"
+              : "!bg-emerald-100/90 !text-emerald-700"
+          }`}
+        />
       </Box>
 
       <Box className="flex flex-1 flex-col gap-1 p-4">

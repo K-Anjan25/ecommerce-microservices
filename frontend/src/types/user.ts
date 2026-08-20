@@ -18,6 +18,19 @@ export interface UserCredentials {
   email: string;
 }
 
+export interface AdminUser {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+  active: boolean;
+  locked: boolean;
+  joinDate: string;
+  lastLoginDate: string | null;
+  profileImageUrl: string | null;
+}
+
 export interface LoginForm {
   email: string;
   password: string;

@@ -77,6 +77,28 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserCredentialsById(userId));
     }
 
+    @GetMapping("/all")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_SUPER_ADMIN')")
+    public ResponseEntity<java.util.List<AdminUserDto>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @PutMapping("/disable/{userId}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_SUPER_ADMIN')")
+    public ResponseEntity<HttpResponse> disableUser(@PathVariable UUID userId) {
+        userService.setUserActive(userId, false);
+        return new ResponseEntity<>(new HttpResponse(OK.value(), OK, OK.getReasonPhrase().toUpperCase(),
+                DISABLE_USER_RES), OK);
+    }
+
+    @PutMapping("/enable/{userId}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_SUPER_ADMIN')")
+    public ResponseEntity<HttpResponse> enableUser(@PathVariable UUID userId) {
+        userService.setUserActive(userId, true);
+        return new ResponseEntity<>(new HttpResponse(OK.value(), OK, OK.getReasonPhrase().toUpperCase(),
+                ENABLE_USER_RES), OK);
+    }
+
     @PostMapping("/add")
     public ResponseEntity<String> addUser(@RequestBody AddUserRequest user)  {
         userService.addNewUser(user);
