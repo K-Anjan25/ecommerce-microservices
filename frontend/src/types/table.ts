@@ -1,5 +1,3 @@
-import { Category } from "./category";
-
 export interface Column {
   id: string | number;
   label: string;
@@ -11,13 +9,13 @@ export class ProductRow {
   id: string;
   productName: string;
   categoryName: string;
-  unitPrice: number;
+  unitPrice: number | string;
   createdDate: string;
   constructor(
     id: string,
     productName: string,
     categoryName: string,
-    unitPrice: number,
+    unitPrice: number | string,
     createdDate: string
   ) {
     this.productName = productName;

@@ -50,7 +50,7 @@ export const refreshToken = () => async (dispatch: UserDispatch) => {
   try {
     const { data } = await api.get<RefreshToken>("/user/token/refresh", {
       headers: {
-        "refresh-token": localStorage.getItem("refresh-token"),
+        "refresh-token": `Bearer ${localStorage.getItem("refresh-token")}`,
       },
     });
     setToken(data);

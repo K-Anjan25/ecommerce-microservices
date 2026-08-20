@@ -11,7 +11,7 @@ const validationSchema = (isEdit: boolean) =>
       is: () => !isEdit,
       then: yup
         .number()
-        .min(0, "Password should be of minimum 0")
+        .min(0, "Stock cannot be negative")
         .required("quantityInStock is required"),
       otherwise: yup.number().notRequired(),
     }),
@@ -32,7 +32,9 @@ const initialValues = (isEdit: boolean = true): ProductForm => {
   };
 };
 
-export default {
+const productForm = {
   validationSchema,
   initialValues,
 };
+
+export default productForm;

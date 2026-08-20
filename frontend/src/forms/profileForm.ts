@@ -15,7 +15,9 @@ const initialValues: ProfileForm = {
   profileImageURL: "",
 };
 
-export default {
+const profileForm = {
   validationSchema,
   initialValues,
 };
+
+export default profileForm;

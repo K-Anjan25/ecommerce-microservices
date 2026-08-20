@@ -1,47 +1,26 @@
 package com.ecommerce.product_service.service;
 
-import com.ecommerce.event_bus.RabbitMQMessageProducer;
-import com.ecommerce.event_bus.dto.DeleteInventoryRequest;
-import com.ecommerce.event_bus.dto.InventoryRequest;
 import com.ecommerce.product_service.dto.Pagination;
 import com.ecommerce.product_service.dto.comment.CommentDto;
 import com.ecommerce.product_service.dto.comment.CommentMapper;
 import com.ecommerce.product_service.dto.product.*;
 import com.ecommerce.product_service.enumeration.Sort;
 import com.ecommerce.product_service.exception.ProductNotFoundException;
+import com.ecommerce.product_service.inventory.service.InventoryService;
 import com.ecommerce.product_service.model.Category;
 import com.ecommerce.product_service.model.Product;
-import com.ecommerce.product_service.model.ProductModel;
-import com.ecommerce.product_service.repository.ProductElasticRepository;
 import com.ecommerce.product_service.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Lazy;
-import org.elasticsearch.common.unit.Fuzziness;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.Operator;
-
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.sort.SortBuilders;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-
-import org.springframework.data.elasticsearch.core.SearchHit;
-import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 @Service
 @Slf4j
@@ -51,10 +30,7 @@ public class ProductService {
     private final CategoryService categoryService;
     private final ProductMapper productMapper;
     private final CommentMapper commentMapper;
-    @Lazy
-    private final ProductElasticRepository productElasticRepository;
-    private final RabbitMQMessageProducer rabbitMQMessageProducer;
-    private final ElasticsearchOperations elasticsearchOperations;
+    private final InventoryService inventoryService;
 
     public Pagination<ProductDto> getAllProducts(int pageNo, int pageSize) {
         Pageable paging = PageRequest.of(pageNo, pageSize);
@@ -109,19 +85,9 @@ public class ProductService {
 
         Product savedProduct = productRepository.save(product);
 
-        // create to inventory service
-        InventoryRequest inventoryRequest = new InventoryRequest(savedProduct.getId()
-                ,createProductRequest.getQuantityInStock());
-        rabbitMQMessageProducer.publish(
-                inventoryRequest,
-                "inventory.exchange",
-                "create.inventory.routing-key"
-        );
-
-        saveProductToElastic(savedProduct);
+        inventoryService.upsertStock(savedProduct.getId(), createProductRequest.getQuantityInStock());
 
         return productMapper.productToProductDto(savedProduct);
-        // return productMapper.productToProductDto(productRepository.findById(savedProduct.getId()).orElse(savedProduct));
     }
 
     public ProductDto updateProduct(UpdateProductRequest updateProductRequest,UUID productId) {
@@ -139,92 +105,29 @@ public class ProductService {
         product.setUnitPrice(updateProductRequest.getUnitPrice());
         product.setImageUrl(updateProductRequest.getImageUrl());
 
-        // update from inventory service
-//        InventoryRequest inventoryRequest = new InventoryRequest(productId,updateProductRequest.getQuantityInStock());
-//        rabbitMQMessageProducer.publish(
-//                inventoryRequest,
-//                "inventory.exchange",
-//                "update.inventory.routing-key"
-//        );
+        inventoryService.upsertStock(productId, updateProductRequest.getQuantityInStock());
 
         productRepository.save(product);
-        updateProductFromElastic(product);
         return productMapper.productToProductDto(product);
     }
 
     @Transactional
     public UUID deleteProduct(UUID id) {
         productRepository.deleteById(id);
-        productElasticRepository.deleteById(id);;
 
-        // delete from inventory service
-        DeleteInventoryRequest deleteInventoryRequest = new DeleteInventoryRequest(id);
-        rabbitMQMessageProducer.publish(
-                deleteInventoryRequest,
-                "inventory.exchange",
-                "delete.inventory.routing-key"
-        );
+        inventoryService.deleteProductFromInventory(id);
         return id;
     }
 
-    public List<ProductSearchDto> searchProduct(String searchTerm, int page, int size, Sort sort,String filter) {
-        QueryBuilder queryBuilder;
-        if(searchTerm == null || searchTerm.length() ==0 ) {
-            queryBuilder = QueryBuilders.matchAllQuery();
-        } else {
-            queryBuilder = QueryBuilders.multiMatchQuery(searchTerm)
-                    .field("name")
-                    .field("categoryName")
-                    .field("description")
-                    .operator(Operator.AND)
-                    .fuzziness(Fuzziness.TWO)
-                    .prefixLength(0);
-        }
+    public List<ProductSearchDto> searchProduct(String searchTerm, int page, int size, Sort sort, String filter) {
+        String normalizedSearchTerm = searchTerm == null ? "" : searchTerm.trim();
+        String normalizedFilter = filter == null ? "" : filter;
 
-        BoolQueryBuilder filterBuilder = boolQuery();
-        if(filter != null && filter.length() != 0){
-            filterBuilder.filter(matchQuery("categoryName",filter));
-        }
+        Pageable pageable = PageRequest.of(page, size, org.springframework.data.domain.Sort.by(sort.getDirection(), sort.getField()));
 
-        NativeSearchQuery query = new NativeSearchQueryBuilder()
-                .withQuery(queryBuilder)
-                .withSorts(SortBuilders.fieldSort(sort.getField()).order(sort.getOrder()))
-                .withPageable(PageRequest.of(page, size))
-                .withFilter(filterBuilder)
-                .build();
+        Page<Product> products = productRepository.searchProducts(normalizedSearchTerm, normalizedFilter, pageable);
 
-        List<SearchHit<ProductModel>> productModels = elasticsearchOperations.search(query, ProductModel.class,
-              IndexCoordinates.of("product")).getSearchHits();
-
-        return productModels.stream().map(productMapper::productSearchDtoMapper).collect(Collectors.toList());
-    }
-
-    private void saveProductToElastic(Product product) {
-        ProductModel productModel = ProductModel.builder()
-                .categoryName(product.getCategory().getName())
-                .description(product.getDescription())
-                .id(product.getId())
-                .name(product.getName())
-                .unitPrice(product.getUnitPrice())
-                .createdDate(LocalDate.now())
-                .imageUrl(product.getImageUrl())
-                .build();
-
-        System.out.println(productModel);
-        productElasticRepository.save(productModel);
-    }
-
-    private void updateProductFromElastic(Product product) {
-        ProductModel productModel = ProductModel.builder()
-                .categoryName(product.getCategory().getName())
-                .description(product.getDescription())
-                .id(product.getId())
-                .name(product.getName())
-                .unitPrice(product.getUnitPrice())
-                .imageUrl(product.getImageUrl())
-                .build();
-
-        productElasticRepository.save(productModel);
+        return products.stream().map(productMapper::productToProductSearchDto).collect(Collectors.toList());
     }
 
 }

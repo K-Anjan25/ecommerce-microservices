@@ -26,6 +26,7 @@ public class CommentService {
         Comment comment = Comment.builder()
                 .product(product)
                 .text(createCommentDto.getText())
+                .rating(createCommentDto.getRating())
                 .creator(userCredential.getUsername())
                 .build();
 

@@ -12,6 +12,7 @@ public class CommentMapper {
                 .createdBy(comment.getCreatedBy())
                 .text(comment.getText())
                 .creator(comment.getCreator())
+                .rating(comment.getRating())
                 .build();
     }
 }

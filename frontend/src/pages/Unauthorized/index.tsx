@@ -1,7 +1,6 @@
 import { Box, Button, Typography } from "@mui/material";
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { styles } from "./styles";
+import { useNavigate } from "react-router-dom";
 function Unauthorized() {
   const navigate = useNavigate();
 

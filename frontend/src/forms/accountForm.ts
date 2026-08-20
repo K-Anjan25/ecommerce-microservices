@@ -2,8 +2,8 @@ import * as yup from "yup";
 import { AccountForm } from "../types/account";
 
 const validationSchema = yup.object({
-  currentPassword: yup.string().required("firstName is required"),
-  newPassword: yup.string().required("lastName is required"),
+  currentPassword: yup.string().required("Current password is required"),
+  newPassword: yup.string().required("New password is required"),
 });
 
 const initialValues: AccountForm = {
@@ -11,7 +11,9 @@ const initialValues: AccountForm = {
   newPassword: "",
 };
 
-export default {
+const accountForm = {
   validationSchema,
   initialValues,
 };
+
+export default accountForm;

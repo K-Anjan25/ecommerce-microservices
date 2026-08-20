@@ -15,4 +15,5 @@ public class CommentDto {
     private LocalDateTime createdDate;
     private String text;
     private String creator;
+    private Integer rating;
 }

@@ -1,8 +1,8 @@
 import { Token } from "../types/user";
 
 export const setToken = (token: Token) => {
-  localStorage.setItem("access-token", "Bearer " + token.accessToken);
-  localStorage.setItem("refresh-token", "Bearer " + token.refreshToken);
+  localStorage.setItem("access-token", token.accessToken);
+  localStorage.setItem("refresh-token", token.refreshToken);
 };
 
 export const removeToken = () => {

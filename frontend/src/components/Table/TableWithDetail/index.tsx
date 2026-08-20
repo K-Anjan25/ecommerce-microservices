@@ -30,7 +30,6 @@ function TableWithDetail({
   columns,
   onClickDetail,
 }: TableProps) {
-  console.log(page, itemsPerPage);
   return (
     <>
       <TableContainer

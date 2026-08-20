@@ -1,17 +1,9 @@
 import React from "react";
-import SearchIcon from "@mui/icons-material/Search";
-import {
-  Box,
-  FormControl,
-  InputAdornment,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  TextField,
-} from "@mui/material";
 import { Category } from "../../types/category";
-import "./style.css";
+import SearchIcon from "@mui/icons-material/Search";
+import SortIcon from "@mui/icons-material/Sort";
+import TuneIcon from "@mui/icons-material/Tune";
+
 type SearchBarProps = {
   onChangeSearchValue: (value: string) => void;
   searchValue: string;
@@ -35,64 +27,66 @@ function SearchBar({
     onChangeSearchValue(e.target.value);
   };
 
-  const handleChangeSortBy = (event: SelectChangeEvent<string>) => {
-    onChangeSortBy(event.target.value as string);
+  const handleChangeSortBy = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    onChangeSortBy(event.target.value);
   };
 
-  const handleChangeFilter = (event: SelectChangeEvent<string>) => {
-    onChangeFilter(event.target.value as string);
+  const handleChangeFilter = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    onChangeFilter(event.target.value);
   };
 
   return (
-    <Box className="container">
-      <TextField
-        id="filled-search"
-        type="search"
-        variant="outlined"
-        className="without-padding"
-        style={{ flex: 0.2, margin: "0.4rem 0" }}
-        fullWidth
-        size="small"
-        value={searchValue}
-        onChange={handleChange}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon />
-            </InputAdornment>
-          ),
-        }}
-      />
-      <FormControl
-        variant="outlined"
-        size="small"
-        style={{ flex: 0.075, margin: "0.4rem 0" }}
-        fullWidth
-      >
-        <InputLabel>Sort By</InputLabel>
-        <Select label="Months" value={sortBy} onChange={handleChangeSortBy}>
-          <MenuItem value={""}>Sort</MenuItem>
-          <MenuItem value={"DATE_DESC"}>Date DESC</MenuItem>
-          <MenuItem value={"DATE_ASC"}>Date ASC</MenuItem>
-          <MenuItem value={"PRICE_DESC"}>Price DESC</MenuItem>
-          <MenuItem value={"PRICE_ASC"}>Price ASC</MenuItem>
-        </Select>
-      </FormControl>
-      <FormControl
-        variant="outlined"
-        size="small"
-        style={{ flex: 0.075, margin: "0.4rem 0" }}
-        fullWidth
-      >
-        <InputLabel>Filter</InputLabel>
-        <Select label="Months" value={filter} onChange={handleChangeFilter}>
-          <MenuItem value={""}>All Categories</MenuItem>
-          {categories.map((category) => (
-            <MenuItem value={category.name}>{category.name}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    </Box>
+    <div className="flex w-full flex-col items-center gap-4 md:flex-row">
+      <div className="relative w-full flex-1">
+        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+          <SearchIcon fontSize="small" />
+        </div>
+        <input
+          type="search"
+          className="input-control pl-10"
+          placeholder="Search products..."
+          value={searchValue}
+          onChange={handleChange}
+        />
+      </div>
+      
+      <div className="flex w-full flex-col gap-4 sm:flex-row md:w-auto">
+        <div className="relative w-full sm:w-48">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+            <SortIcon fontSize="small" />
+          </div>
+          <select
+            className="input-control appearance-none pl-10"
+            value={sortBy}
+            onChange={handleChangeSortBy}
+          >
+            <option value="">Sort By</option>
+            <option value="DATE_DESC">Date DESC</option>
+            <option value="DATE_ASC">Date ASC</option>
+            <option value="PRICE_DESC">Price DESC</option>
+            <option value="PRICE_ASC">Price ASC</option>
+          </select>
+        </div>
+
+        <div className="relative w-full sm:w-48">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+            <TuneIcon fontSize="small" />
+          </div>
+          <select
+            className="input-control appearance-none pl-10"
+            value={filter}
+            onChange={handleChangeFilter}
+          >
+            <option value="">All Categories</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.name}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+    </div>
   );
 }
 

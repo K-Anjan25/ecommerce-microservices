@@ -1,5 +1,7 @@
-import { Button, Container, TextField, Typography } from "@mui/material";
-import { AxiosError } from "axios";
+import { Typography } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
+import TextInput from "../../../components/TextInput";
+import AuthLayout from "../../../components/AuthLayout";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserApi } from "../../../api/userApi";
@@ -9,46 +11,54 @@ import { showError } from "../../../utils/showError";
 function ForgetPassword() {
   const navigate = useNavigate();
   const [value, setValue] = useState("");
-  const handleChange = (e: any) => {
-    setValue(e.target.value);
-  };
+  const [loading, setLoading] = useState(false);
 
   const resetPassword = async () => {
+    setLoading(true);
     try {
       await UserApi.resetPassword(value);
-      showSuccess("New password sent please check your e-mail");
+      showSuccess("New password sent, please check your e-mail");
       navigate("/login");
     } catch (e: any) {
       const res = e.response?.data?.message as string;
       showError(res);
+      setLoading(false);
     }
   };
 
   return (
-    <Container maxWidth="xs" style={{ marginTop: "1rem" }}>
-      <Typography variant="h3" align="center">
+    <AuthLayout>
+      <Typography variant="h4" component="h1" className="font-bold">
         Reset your password
       </Typography>
+      <Typography className="mt-1 text-ink-soft">
+        Enter your email and we&apos;ll send you a fresh one.
+      </Typography>
 
-      <TextField
-        variant="outlined"
-        label="Email"
-        fullWidth
-        size="small"
-        value={value}
-        onChange={handleChange}
-        style={{ marginTop: "2rem", marginBottom: "0.5rem" }}
-        type="email"
-      />
-      <Button
-        color="primary"
-        variant="contained"
-        fullWidth
-        onClick={resetPassword}
+      <form
+        className="mt-8 space-y-4"
+        onSubmit={(e) => {
+          e.preventDefault();
+          resetPassword();
+        }}
       >
-        send
-      </Button>
-    </Container>
+        <TextInput
+          name="email"
+          label="Email"
+          form={{ values: { email: value }, handleChange: (e: any) => setValue(e.target.value) }}
+          type="email"
+        />
+        <LoadingButton
+          variant="contained"
+          fullWidth
+          type="submit"
+          loading={loading}
+          className="!bg-brand !text-paper hover:!bg-brand-main"
+        >
+          Send
+        </LoadingButton>
+      </form>
+    </AuthLayout>
   );
 }
 

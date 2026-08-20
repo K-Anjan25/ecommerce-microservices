@@ -1,128 +1,124 @@
-import React, { Key, useState } from "react";
+import React from "react";
 
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import {
-  Button,
-  CardActionArea,
-  CardActions,
-  Card as MuiCard,
-  Box,
-} from "@mui/material";
-import { Product } from "../../types/product";
-import { IconButton, useTheme } from "@mui/material";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import { Card as MuiCard, Box, Chip, IconButton } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   addToCart,
   decreaseProductQuantity,
   increaseProductQuantity,
   removeFromCart,
 } from "../../store/actions/cartAction";
-import { getFromLocalStorage } from "../../utils/localStorage";
-import { Cart } from "../../types/cart";
-import "./style.css";
+import { AppState } from "../../store";
+import { Product } from "../../types/product";
+import { formatPrice } from "../../utils/cart";
+
 type CardProps = {
   product: Product;
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onClick?: (event: React.MouseEvent) => void;
 };
 
 const Card = ({ product, onClick }: CardProps) => {
-  const getCartItemQuantity = (id: string) => {
-    const persist = getFromLocalStorage("persist:root");
-    const items = JSON.parse(persist.cart) as Cart[];
-
-    const findedItem = items?.find((item) => item.product.id === id);
-    return findedItem?.quantity ?? 0;
-  };
-
   const dispatch = useDispatch<any>();
-  const [quantity, setQuantity] = useState<number>(
-    getCartItemQuantity(product.id)
-  );
+  const cartItems = useSelector((state: AppState) => state.cart);
+  const quantity =
+    cartItems.find((item) => item.product.id === product.id)?.quantity ?? 0;
 
-  const handleAdd = () => {
-    setQuantity((prev) => prev + 1);
+  const stop = (e: React.MouseEvent) => e.stopPropagation();
+
+  const handleAdd = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (quantity === 0) {
-      dispatch(addToCart({ product: product, quantity: 1 }));
+      dispatch(addToCart({ product, quantity: 1 }));
     } else {
       dispatch(increaseProductQuantity(product.id));
     }
   };
 
-  const handleRemove = () => {
-    setQuantity((prev) => prev - 1);
-    if (quantity === 1) {
+  const handleRemove = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (quantity <= 1) {
       dispatch(removeFromCart(product.id));
     } else {
       dispatch(decreaseProductQuantity(product.id));
     }
   };
 
-  const handleClick = (event: any) => {
-    if (onClick) {
-      onClick(event);
-    }
-  };
-
   return (
-    <MuiCard onDoubleClick={handleClick}>
-      <CardActionArea sx={{ display: "flex", flexDirection: "column" }}>
-        <CardMedia
-          component="img"
-          height="200"
-          image={product.imageUrl ?? ""}
-          style={{ width: "auto" }}
-        />
-        <CardContent style={{ width: "100%" }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography gutterBottom variant="h5" component="div">
-              {product.name}
-            </Typography>
-            <Typography gutterBottom variant="h5" component="div">
-              {product.unitPrice.toString()} ₹
-            </Typography>
-          </Box>
-          <Box style={{ height: "3rem" }}>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              className="text-ellipsis"
-            >
-              {product.description}
-            </Typography>
-          </Box>
-        </CardContent>
-      </CardActionArea>
-      <CardActions sx={{ height: "4rem" }}>
-        {quantity ? (
-          <>
-            <Box onClick={handleRemove}>
-              {quantity === 1 ? (
-                <IconButton aria-label="previous">
-                  <DeleteForeverIcon color="primary" />
-                </IconButton>
-              ) : (
-                <IconButton aria-label="play/pause">
-                  <RemoveCircleOutlineIcon color="primary" />
-                </IconButton>
-              )}
-            </Box>
-            <span>{quantity}</span>
-            <IconButton aria-label="next" onClick={handleAdd}>
-              <AddCircleOutlineIcon color="primary" />
-            </IconButton>
-          </>
+    <MuiCard
+      className="group flex h-full cursor-pointer flex-col overflow-hidden transition hover:-translate-y-1 hover:shadow-lift"
+      onClick={onClick}
+    >
+      <Box className="relative aspect-[4/3] overflow-hidden bg-brand-tint">
+        {product.imageUrl ? (
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+          />
         ) : (
-          <IconButton onClick={handleAdd}>
-            <AddShoppingCartIcon color="primary" />
-          </IconButton>
+          <Box className="flex h-full w-full items-center justify-center">
+            <AddShoppingCartIcon className="text-4xl text-brand/30" />
+          </Box>
         )}
-      </CardActions>
+        {product.categoryName && (
+          <Chip
+            label={product.categoryName}
+            size="small"
+            className="absolute left-3 top-3 !bg-white/90 !font-semibold !text-brand shadow-sm backdrop-blur"
+          />
+        )}
+      </Box>
+
+      <Box className="flex flex-1 flex-col gap-1 p-4">
+        <Typography
+          variant="subtitle1"
+          className="line-clamp-1 font-semibold text-ink"
+        >
+          {product.name}
+        </Typography>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          className="line-clamp-2 text-ink-soft"
+        >
+          {product.description}
+        </Typography>
+
+        <Box className="mt-auto flex items-center justify-between pt-3">
+          <Typography className="price-text text-lg">
+            {formatPrice(product.unitPrice)}
+          </Typography>
+
+          {quantity ? (
+            <Box
+              className="flex items-center gap-1 rounded-full border border-ink/10 bg-brand-tint px-1 py-0.5"
+              onClick={stop}
+            >
+              <IconButton size="small" onClick={handleRemove}>
+                <RemoveIcon fontSize="small" />
+              </IconButton>
+              <Typography className="min-w-6 text-center text-sm font-bold">
+                {quantity}
+              </Typography>
+              <IconButton size="small" onClick={handleAdd}>
+                <AddIcon fontSize="small" />
+              </IconButton>
+            </Box>
+          ) : (
+            <IconButton
+              size="small"
+              onClick={handleAdd}
+              className="!bg-brand !text-paper transition hover:!bg-brand-main"
+            >
+              <AddShoppingCartIcon fontSize="small" />
+            </IconButton>
+          )}
+        </Box>
+      </Box>
     </MuiCard>
   );
 };

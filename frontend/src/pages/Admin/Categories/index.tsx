@@ -1,16 +1,21 @@
-import { Box, IconButton, TextField, Typography } from "@mui/material";
+import { Box, Chip, Paper, TextField, Typography } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
 import React, { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { CategoryApi } from "../../../api/categoryApi";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
+import EmptyState from "../../../components/EmptyState";
+import PageHeader from "../../../components/PageHeader";
+import SkeletonRows from "../../../components/SkeletonRows";
 import { showSuccess } from "../../../utils/showSuccess";
 
 function Categories() {
   const queryClient = useQueryClient();
   const [categoryName, setCategoryName] = useState("");
 
-  const { data: categories } = useQuery(["admin-category:categories"], () =>
-    CategoryApi.getCategories()
+  const { data: categories, isLoading } = useQuery(
+    ["admin-category:categories"],
+    () => CategoryApi.getCategories()
   );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -18,7 +23,9 @@ function Categories() {
   };
 
   const addCategory = () => {
-    createMutation.mutate({ name: categoryName });
+    if (categoryName.trim()) {
+      createMutation.mutate({ name: categoryName.trim() });
+    }
   };
 
   const createMutation = useMutation(CategoryApi.saveCategory, {
@@ -30,49 +37,58 @@ function Categories() {
   });
 
   return (
-    <div
-      style={{
-        width: "20%",
-        margin: "auto",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
-      <TextField
-        id="standard-name"
-        label="Category Name"
-        value={categoryName}
-        onChange={handleChange}
-        InputProps={{
-          endAdornment: (
-            <IconButton onClick={addCategory}>
-              <AddCircleIcon />
-            </IconButton>
-          ),
-        }}
+    <div className="space-y-6">
+      <PageHeader
+        title="Categories"
+        subtitle="Organise products into browsable categories."
       />
-      {categories?.map((category) => (
-        <Box
-          sx={{
-            boxShadow: 3,
-            height: "2.5rem",
-            bgcolor: "lightGrey",
-            color: "white",
-            p: 1,
-            m: 1,
-            borderRadius: 2,
-            textAlign: "center",
-            fontSize: "0.875rem",
-            fontWeight: "700",
-            marginTop: "0.5rem",
-            width: "100%",
-          }}
-          key={category.id}
-        >
-          {category.name}
+
+      <Paper className="max-w-lg p-6">
+        <Typography className="mb-3 font-semibold text-ink">
+          Add a category
+        </Typography>
+        <Box className="flex gap-2">
+          <TextField
+            fullWidth
+            size="small"
+            label="Category name"
+            value={categoryName}
+            onChange={handleChange}
+            onKeyDown={(e) => e.key === "Enter" && addCategory()}
+          />
+          <LoadingButton
+            variant="contained"
+            loading={createMutation.isLoading}
+            disabled={!categoryName.trim()}
+            className="!bg-brand !text-paper hover:!bg-brand-main"
+            onClick={addCategory}
+          >
+            Add
+          </LoadingButton>
         </Box>
-      ))}
+      </Paper>
+
+      {isLoading ? (
+        <SkeletonRows rows={4} columns={3} />
+      ) : categories?.length === 0 ? (
+        <div className="panel">
+          <EmptyState
+            icon={<CategoryOutlinedIcon fontSize="large" />}
+            title="No categories yet"
+            subtitle="Add your first category above to get started."
+          />
+        </div>
+      ) : (
+        <Box className="flex flex-wrap gap-3">
+          {categories?.map((category) => (
+            <Chip
+              key={category.id}
+              label={category.name}
+              className="!border-ink/10 !bg-white !px-3 !py-5 !text-base !font-medium !text-ink shadow-card"
+            />
+          ))}
+        </Box>
+      )}
     </div>
   );
 }

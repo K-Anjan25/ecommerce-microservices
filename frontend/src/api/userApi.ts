@@ -14,7 +14,6 @@ const resetPassword = async (gmail: string) => {
   const { data } = await api.get<UserCredentials>(
     `/user/resetpassword/${gmail}`
   );
-
   return data;
 };
 

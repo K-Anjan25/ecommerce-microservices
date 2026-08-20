@@ -13,20 +13,14 @@ target/
 
 # Node / React
 node_modules/
+dist/
+build/
+dev-server.log
 
 # OS
 .DS_Store
 .aider*
+
+# Secrets (never commit)
 .env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
-.env
+.env.local

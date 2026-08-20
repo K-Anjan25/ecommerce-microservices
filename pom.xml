@@ -12,16 +12,10 @@
     <modules>
         <module>common</module>
         <module>product-service</module>
-        <module>order-service</module>
-        <module>inventory-service</module>
+        <module>commerce-service</module>
         <module>event-bus</module>
-        <module>cart-service</module>
         <module>user-service</module>
-        <module>eureka-server</module>
         <module>api-gateway</module>
-        <module>notification-service</module>
-        <module>file-service</module>
-        <module>payment-service</module>
     </modules>
 
 
@@ -55,17 +49,7 @@
             </dependency>
             <dependency>
                 <groupId>com.ecommerce</groupId>
-                <artifactId>order-service</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.ecommerce</groupId>
-                <artifactId>cart-service</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.ecommerce</groupId>
-                <artifactId>inventory-service</artifactId>
+                <artifactId>commerce-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -75,27 +59,7 @@
             </dependency>
             <dependency>
                 <groupId>com.ecommerce</groupId>
-                <artifactId>eureka-server</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.ecommerce</groupId>
                 <artifactId>api-gateway</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.ecommerce</groupId>
-                <artifactId>notification-service</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.ecommerce</groupId>
-                <artifactId>file-service</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.ecommerce</groupId>
-                <artifactId>payment-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
@@ -111,16 +75,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <version>3.1.5</version>
-            <artifactId>spring-cloud-starter-sleuth</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <version>3.1.5</version>
-            <artifactId>spring-cloud-sleuth-zipkin</artifactId>
         </dependency>
     </dependencies>
 

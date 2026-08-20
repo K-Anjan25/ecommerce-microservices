@@ -26,7 +26,9 @@ const initialValues: RegisterForm = {
   lastName: "",
 };
 
-export default {
+const registerForm = {
   validationSchema,
   initialValues,
 };
+
+export default registerForm;

@@ -1,0 +1,9 @@
+# Exclude build outputs, VCS, and unrelated directories from Docker build contexts.
+target/
+.git/
+frontend/
+docs/
+node_modules/
+*.log
+.env
+.DS_Store

@@ -1,20 +1,20 @@
 package com.ecommerce.product_service.enumeration;
 
 import lombok.Getter;
-import org.elasticsearch.search.sort.SortOrder;
+import org.springframework.data.domain.Sort.Direction;
 
 @Getter
 public enum Sort {
-    DATE_DESC("createdDate", SortOrder.DESC),
-    DATE_ASC("createdDate",SortOrder.ASC),
-    PRICE_DESC("unitPrice",SortOrder.DESC),
-    PRICE_ASC("unitPrice",SortOrder.ASC);
+    DATE_DESC("createdDate", Direction.DESC),
+    DATE_ASC("createdDate", Direction.ASC),
+    PRICE_DESC("unitPrice", Direction.DESC),
+    PRICE_ASC("unitPrice", Direction.ASC);
 
     private final String field;
-    private final SortOrder order;
-    Sort(String field,SortOrder order){
+    private final Direction direction;
+    Sort(String field, Direction direction){
         this.field = field;
-        this.order = order;
+        this.direction = direction;
     }
 
 }

@@ -17,7 +17,9 @@ const initialValues: LoginForm = {
   password: "",
 };
 
-export default {
+const loginForm = {
   validationSchema,
   initialValues,
 };
+
+export default loginForm;

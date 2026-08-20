@@ -1,23 +1,22 @@
-import { Box, Grid } from "@mui/material";
-import { Skeleton } from "@mui/material";
+import { Box, Skeleton } from "@mui/material";
 
 function ProductViewPlaceholder() {
   return (
-    <Grid container spacing={2} xs={12}>
-      {Array.from(new Array(8)).map((item, index) => (
-        <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
-          <Skeleton variant="rectangular" width="100%" height={200} />
-          <Box sx={{ pt: 0.5 }}>
-            <Box style={{ display: "flex", justifyContent: "space-between" }}>
-              <Skeleton width="35%" />
-              <Skeleton width="25%" />
-            </Box>
-            <Skeleton width="100%" />
-            <Skeleton width="100%" />
-          </Box>
-        </Grid>
-      ))}
-    </Grid>
+    <div className="panel flex h-full flex-col overflow-hidden">
+      <Skeleton
+        variant="rectangular"
+        className="aspect-[4/3] !rounded-none !bg-ink/10"
+      />
+      <Box className="flex flex-1 flex-col gap-2 p-4">
+        <Skeleton width="60%" />
+        <Skeleton width="90%" />
+        <Skeleton width="80%" />
+        <Box className="mt-auto flex justify-between pt-3">
+          <Skeleton width="30%" />
+          <Skeleton variant="circular" width={36} height={36} />
+        </Box>
+      </Box>
+    </div>
   );
 }
 

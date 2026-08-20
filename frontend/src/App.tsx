@@ -8,9 +8,10 @@ import Unauthorized from "./pages/Unauthorized";
 import RequireAuth from "./components/RequireAuth";
 import React, { Suspense, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { refreshToken, userMe } from "./store/actions/userAction";
+import { userMe } from "./store/actions/userAction";
 import { AppState } from "./store";
 import Loader from "./components/Loader";
+import AdminLayout from "./components/AdminLayout";
 import Home from "./pages/Admin/Home";
 import ForgetPassword from "./pages/Login/ForgetPassword";
 import Profile from "./pages/Profile";
@@ -26,14 +27,14 @@ function App() {
       dispatch(userMe());
     }
     setInitialLoading(false);
-  }, []);
+  }, [dispatch]);
 
   if (loading || initialLoading) {
     return <Loader />;
   }
 
-  const Admin = React.lazy(() => import("./pages/Admin"));
   const Cart = React.lazy(() => import("./pages/Cart"));
+  const Checkout = React.lazy(() => import("./pages/Checkout"));
   const AdminProducts = React.lazy(() => import("./pages/Admin/Products"));
   const AdminOrders = React.lazy(() => import("./pages/Admin/Orders"));
   const AdminCategories = React.lazy(() => import("./pages/Admin/Categories"));
@@ -44,7 +45,6 @@ function App() {
     () => import("./pages/Admin/Orders/OrderDetail")
   );
   const Product = React.lazy(() => import("./pages/Products/Product"));
-  // const Profile = React.lazy(() => import("./pages/Profile"));
 
   return (
     <Router>
@@ -64,7 +64,7 @@ function App() {
                 />
               }
             >
-              <Route path="admin" element={<Admin />}>
+              <Route path="admin" element={<AdminLayout />}>
                 <Route index element={<Home />} />
                 <Route path="products" element={<AdminProducts />} />
                 <Route path="orders" element={<AdminOrders />} />
@@ -82,6 +82,7 @@ function App() {
               }
             >
               <Route path="cart" element={<Cart />} />
+              <Route path="checkout" element={<Checkout />} />
               <Route path="profile/:id" element={<Profile />} />
               <Route path="account" element={<Account />} />
             </Route>

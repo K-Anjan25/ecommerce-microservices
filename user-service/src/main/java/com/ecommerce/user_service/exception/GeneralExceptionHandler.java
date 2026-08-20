@@ -99,6 +99,11 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
         return createHttpResponse(BAD_REQUEST, exception.getMessage());
     }
 
+    @ExceptionHandler(EmailSendingException.class)
+    public ResponseEntity<HttpResponse> emailSendingException(EmailSendingException exception) {
+        return createHttpResponse(BAD_REQUEST, exception.getMessage());
+    }
+
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<HttpResponse> userNotFoundException(UserNotFoundException exception) {
         return createHttpResponse(BAD_REQUEST, exception.getMessage());

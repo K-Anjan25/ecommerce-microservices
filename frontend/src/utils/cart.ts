@@ -20,3 +20,10 @@ export const calculateTotalPriceOfOneProduct = (
 ) => {
   return Math.round(unitPrice * quantity * 100) / 100;
 };
+
+export const formatPrice = (value: number) => {
+  return `₹ ${Number(value).toLocaleString("en-IN", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+};

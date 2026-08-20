@@ -1,4 +1,4 @@
-import { UserAction, User, UserState, UserReducer } from "../../types/user";
+import { UserAction, UserState, UserReducer } from "../../types/user";
 
 const defaultState: UserState = {
   data: {} as UserReducer,

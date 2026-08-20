@@ -1,30 +1,36 @@
 import React from "react";
-import { Avatar, Grid, Paper } from "@mui/material";
+import { Avatar, Box, Paper, Typography } from "@mui/material";
 import { Comment as CommentType } from "../../../types/comment";
 import moment from "moment";
 
-interface CommentsProps {
+interface CommentProps {
   comment: CommentType;
 }
 
-function Comment({ comment }: CommentsProps) {
+function Comment({ comment }: CommentProps) {
+  const initials =
+    (comment?.creator?.split(" ").map((p) => p[0]?.toUpperCase()).join("") ??
+      "?") || "?";
+
   return (
-    <>
-      <Paper style={{ padding: "1rem" }}>
-        <Grid container wrap="nowrap" spacing={2}>
-          <Grid item>
-            <Avatar alt="Remy Sharp" src={""} />
-          </Grid>
-          <Grid item xs zeroMinWidth>
-            <h4 style={{ margin: 0, textAlign: "left" }}>{comment?.creator}</h4>
-            <p style={{ textAlign: "left" }}>{comment?.text}</p>
-            <p style={{ textAlign: "left", color: "gray" }}>
-              {moment(comment?.createdDate).format("YYYY-MM-DD HH:mm:ss")}
-            </p>
-          </Grid>
-        </Grid>
-      </Paper>
-    </>
+    <Paper className="p-4">
+      <Box className="flex gap-3">
+        <Avatar className="!bg-brand-soft !font-bold !text-brand">
+          {initials}
+        </Avatar>
+        <Box className="min-w-0 flex-1">
+          <Box className="flex flex-wrap items-baseline justify-between gap-x-3">
+            <Typography className="font-semibold text-ink">
+              {comment?.creator}
+            </Typography>
+            <Typography variant="caption" className="text-ink-muted">
+              {moment(comment?.createdDate).format("DD MMM YYYY, h:mm a")}
+            </Typography>
+          </Box>
+          <Typography className="mt-1 text-ink-soft">{comment?.text}</Typography>
+        </Box>
+      </Box>
+    </Paper>
   );
 }
 

@@ -1,8 +1,10 @@
-import { Typography } from "@mui/material";
-import React from "react";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
+import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import { OrderApi } from "../../../api/orderApi";
+import EmptyState from "../../../components/EmptyState";
+import PageHeader from "../../../components/PageHeader";
+import SkeletonRows from "../../../components/SkeletonRows";
 import TableWithDetail from "../../../components/Table/TableWithDetail";
 import { ORDER_COLUMNS } from "../../../constants/table";
 import usePagination from "../../../hooks/usePagination";
@@ -14,11 +16,9 @@ function Orders() {
   const { page, handleChangePage, handleChangeItemsPerPage, itemsPerPage } =
     usePagination();
 
-  const { data: orders } = useQuery(["admin:orders", page, itemsPerPage], () =>
-    OrderApi.getOrders({
-      pageNo: page,
-      pageSize: itemsPerPage,
-    })
+  const { data: orders, isLoading } = useQuery(
+    ["admin:orders", page, itemsPerPage],
+    () => OrderApi.getOrders(page, itemsPerPage)
   );
 
   const orderRows = orders?.data.map(
@@ -37,19 +37,36 @@ function Orders() {
       state: order,
     });
   };
+
   return (
-    <>
-      <TableWithDetail
-        rows={orderRows}
-        columns={ORDER_COLUMNS}
-        totalSize={orders?.totalSize}
-        handleChangePage={handleChangePage}
-        handleChangeItemsPerPage={handleChangeItemsPerPage}
-        page={page}
-        itemsPerPage={itemsPerPage}
-        onClickDetail={navigateDetailOrder}
+    <div className="space-y-6">
+      <PageHeader
+        title="Orders"
+        subtitle="Review customer orders and their status."
       />
-    </>
+      {isLoading ? (
+        <SkeletonRows rows={5} columns={ORDER_COLUMNS.length} />
+      ) : orders?.data.length === 0 ? (
+        <div className="panel">
+          <EmptyState
+            icon={<ReceiptLongOutlinedIcon fontSize="large" />}
+            title="No orders yet"
+            subtitle="When customers place orders, they will show up here."
+          />
+        </div>
+      ) : (
+        <TableWithDetail
+          rows={orderRows}
+          columns={ORDER_COLUMNS}
+          totalSize={orders?.totalSize}
+          handleChangePage={handleChangePage}
+          handleChangeItemsPerPage={handleChangeItemsPerPage}
+          page={page}
+          itemsPerPage={itemsPerPage}
+          onClickDetail={navigateDetailOrder}
+        />
+      )}
+    </div>
   );
 }
 

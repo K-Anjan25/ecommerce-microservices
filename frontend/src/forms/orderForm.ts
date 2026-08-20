@@ -13,7 +13,9 @@ const initialValues: OrderForm = {
   addressDetail: "",
 };
 
-export default {
+const orderForm = {
   validationSchema,
   initialValues,
 };
+
+export default orderForm;

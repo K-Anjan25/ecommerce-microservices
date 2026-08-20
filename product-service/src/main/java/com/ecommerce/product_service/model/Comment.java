@@ -26,6 +26,7 @@ public class Comment extends AdvanceBaseModal {
     )
     private UUID id;
     private String text;
+    private Integer rating;
     @ManyToOne()
     @JoinColumn(name = "product_id")
     private Product product;

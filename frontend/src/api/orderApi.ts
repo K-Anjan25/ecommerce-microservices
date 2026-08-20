@@ -1,20 +1,28 @@
-import { CreateOrderRequest, Order, OrderParam } from "../types/order";
+import { CreateOrderRequest, Order } from "../types/order";
 import { Pagination } from "../types/pagination";
 import { api } from "./axios";
 
-const getOrders = async (params: OrderParam) => {
+// API Methods - Requires authenticated user (ROLE_USER or ROLE_ADMIN)
+const getOrders = async (pageNo: number = 0, pageSize: number = 10) => {
   const { data } = await api.get<Pagination<Order[]>>("/v1/orders", {
-    params,
+    params: { pageNo, pageSize },
   });
   return data;
 };
 
+const getOrderById = async (orderId: string) => {
+  const { data } = await api.get<Order>(`/v1/orders/${orderId}`);
+  return data;
+};
+
 const createOrder = async (order: CreateOrderRequest) => {
-  const { data } = await api.post("/v1/orders", order);
+  // Requires ROLE_USER or ROLE_ADMIN
+  const { data } = await api.post<Order>("/v1/orders", order);
   return data;
 };
 
 export const OrderApi = {
   getOrders,
+  getOrderById,
   createOrder,
 };

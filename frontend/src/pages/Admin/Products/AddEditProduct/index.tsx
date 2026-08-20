@@ -1,4 +1,4 @@
-import { Box, Button, IconButton } from "@mui/material";
+import { Box, Button, IconButton, Paper } from "@mui/material";
 import { useFormik } from "formik";
 import { useEffect } from "react";
 import { useMutation, useQuery } from "react-query";
@@ -6,12 +6,13 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { CategoryApi } from "../../../../api/categoryApi";
 import { ProductApi } from "../../../../api/productApi";
 import Loader from "../../../../components/Loader";
+import PageHeader from "../../../../components/PageHeader";
 import SelectInput from "../../../../components/SelectInput";
 import TextInput from "../../../../components/TextInput";
 import productForm from "../../../../forms/productForm";
 import { ProductAdmin, ProductForm } from "../../../../types/product";
 import { showSuccess } from "../../../../utils/showSuccess";
-import { useState, ChangeEvent } from "react";
+import { ChangeEvent } from "react";
 import { FileApi } from "../../../../api/file";
 import ClearIcon from "@mui/icons-material/Clear";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -48,10 +49,6 @@ function AddEditProduct() {
   });
 
   useEffect(() => {
-    setInitialValues();
-  }, []);
-
-  const setInitialValues = () => {
     if (MODE === "edit") {
       const newProduct = {
         ...product,
@@ -67,7 +64,8 @@ function AddEditProduct() {
       };
       form.setValues(initialFormData, false);
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [MODE, product]);
 
   const addProduct = (data: ProductForm) => {
     createMutation.mutate(data);
@@ -106,87 +104,103 @@ function AddEditProduct() {
     form.setFieldValue("imageUrl", "");
   };
 
-  if (isLoading) <Loader />;
-  return (
-    <>
-      <form onSubmit={form.handleSubmit}>
-        <TextInput name="name" label="Product Name" form={form} />
-        <TextInput
-          name="unitPrice"
-          label="Unit Price"
-          form={form}
-          type="number"
-        />
-        <SelectInput
-          name="categoryId"
-          label="Select Category"
-          form={form}
-          data={categories}
-        />
-        <TextInput name="description" label="Description" form={form} />
+  if (isLoading) return <Loader />;
 
-        {MODE === "add" && (
+  const busy = createMutation.isLoading || editMutation.isLoading;
+
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        title={MODE === "edit" ? "Edit product" : "Create product"}
+        subtitle={
+          MODE === "edit"
+            ? "Update the details of this product."
+            : "Add a new product to your store."
+        }
+      />
+
+      <Paper className="max-w-2xl p-6 sm:p-8">
+        <form onSubmit={form.handleSubmit} className="space-y-6">
+          <TextInput name="name" label="Product Name" form={form} />
           <TextInput
-            name="quantityInStock"
-            label="Quantity In Stock"
+            name="unitPrice"
+            label="Unit Price"
             form={form}
             type="number"
           />
-        )}
-        <Box style={{ display: "flex", marginBottom: "0.4rem" }}>
-          {form.values.imageUrl && (
-            <Box
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginRight: "1.5rem",
-              }}
-            >
-              <img
-                src={form.values.imageUrl}
-                height={50}
-                style={{ width: "auto" }}
-              />
+          <SelectInput
+            name="categoryId"
+            label="Select Category"
+            form={form}
+            data={categories}
+          />
+          <TextInput name="description" label="Description" form={form} />
 
-              <IconButton
-                aria-label="delete"
-                color="secondary"
-                onClick={handleRemoveFile}
-              >
-                <ClearIcon />
-              </IconButton>
-            </Box>
-          )}
-          <Button variant="contained" component="label">
-            Upload File
-            <input
-              type="file"
-              hidden
-              onChange={handleFileChange}
-              accept="image/*"
+          {MODE === "add" && (
+            <TextInput
+              name="quantityInStock"
+              label="Quantity In Stock"
+              form={form}
+              type="number"
             />
-          </Button>
-        </Box>
-        <LoadingButton
-          color="primary"
-          variant="contained"
-          fullWidth
-          type="submit"
-          disabled={isLoading}
-          // disabled={isLoading || !(form.isValid && form.dirty)}
-          loading={createMutation.isLoading || editMutation.isLoading}
-        >
-          {MODE}
-        </LoadingButton>
-      </form>
-    </>
+          )}
+
+          <Box className="flex items-center gap-3">
+            {form.values.imageUrl && (
+              <Box className="flex items-center gap-1">
+                <img
+                  src={form.values.imageUrl}
+                  alt="Product preview"
+                  className="h-14 w-14 rounded-lg border border-ink/10 object-cover"
+                />
+                <IconButton
+                  aria-label="Remove image"
+                  color="secondary"
+                  onClick={handleRemoveFile}
+                >
+                  <ClearIcon />
+                </IconButton>
+              </Box>
+            )}
+            <Button
+              variant="outlined"
+              component="label"
+              className="border-ink/20 text-ink hover:border-brand hover:bg-brand-tint hover:text-brand"
+            >
+              Upload image
+              <input
+                type="file"
+                hidden
+                onChange={handleFileChange}
+                accept="image/*"
+              />
+            </Button>
+          </Box>
+
+          <Box className="flex gap-3 pt-2">
+            <LoadingButton
+              variant="contained"
+              fullWidth
+              size="large"
+              type="submit"
+              loading={busy}
+              className="!bg-brand !text-paper hover:!bg-brand-main"
+            >
+              {MODE === "edit" ? "Save changes" : "Create product"}
+            </LoadingButton>
+            <Button
+              variant="outlined"
+              size="large"
+              fullWidth
+              onClick={() => navigate("/admin/products")}
+            >
+              Cancel
+            </Button>
+          </Box>
+        </form>
+      </Paper>
+    </div>
   );
 }
 
 export default AddEditProduct;
-
-//   const { data: products } =
-//     (queryClient.getQueriesData("admin:products")[0][1] as Pagination<
-//       ProductAdmin[]
-//     >) ;
-//   const product = products.find((item) => item.id === productId);
