@@ -283,6 +283,20 @@ All verified with `tsc + vite build`.
       `GET /v1/returns/all`), approve/reject/refund actions with error surfacing. Admin nav
       gained Coupons + Returns entries.
 
+### 7.4.11 Phase 10 started: CI workflow prepared (2026-08-22, seventh session)
+- [x] `ProductServiceTest` fixed for the new `PriceWatchService` constructor arg (would have
+      broken `mvn package` — found while preparing CI).
+- [x] `.github/workflows/ci.yml` written (backend: temurin-17 + `mvn -B clean package` with
+      maven cache; frontend: node-20 `npm ci` + `npm run build`; compose: `docker compose
+      config -q`). ⚠️ **NOT PUSHED**: the Arena sandbox GitHub token lacks `workflows`
+      permission, so pushes containing workflow files are rejected. The file sits untracked in
+      the repo root — either reconnect the GitHub integration with workflow permissions (then
+      the agent can push it) or add+push it manually:
+      `git add .github && git commit -m "CI" && git push`.
+- Static import/reference audit of all 35 changed Java files: clean (no missing imports /
+  constructor-arg mismatches beyond the one fixed above). Full compile verification still
+      pending real CI or a local `mvnw` run (sandbox has no JDK and Maven Central is blocked).
+
 ### 7.4.6 Remaining / optional
 - [ ] Public order-tracking page for guests ("email link to track" in the roadmap) — needs
       public `GET /v1/orders/{id}/track` and a frontend page.
