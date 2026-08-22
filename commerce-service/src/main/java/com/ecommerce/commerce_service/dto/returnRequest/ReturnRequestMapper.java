@@ -20,6 +20,7 @@ public class ReturnRequestMapper {
                 .quantity(returnRequest.getQuantity())
                 .status(returnRequest.getStatus())
                 .refundAmount(returnRequest.getRefundAmount())
+                .refundTransactionId(returnRequest.getRefundTransactionId())
                 .reason(returnRequest.getReason())
                 .rejectionReason(returnRequest.getRejectionReason())
                 .build();

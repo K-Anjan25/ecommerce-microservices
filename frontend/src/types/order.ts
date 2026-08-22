@@ -49,6 +49,7 @@ enum OrderStatus {
   APPROVED = "APPROVED",
   CANCELLING = "CANCELLING",
   CANCELLED = "CANCELLED",
+  REFUNDED = "REFUNDED",
 }
 
 export enum ShippingMethod {

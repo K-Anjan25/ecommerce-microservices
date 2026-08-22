@@ -65,6 +65,12 @@ function Returns() {
                       Rejected: {req.rejectionReason}
                     </Typography>
                   )}
+                  {req.refundAmount != null && req.status === ReturnStatus.REFUNDED && (
+                    <Typography className="text-sm text-ink-soft">
+                      Refunded: ₹ {req.refundAmount.toFixed(2)}
+                      {req.refundTransactionId ? ` · Ref: ${req.refundTransactionId}` : ""}
+                    </Typography>
+                  )}
                 </div>
                 <Chip
                   label={req.status}

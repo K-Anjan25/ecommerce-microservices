@@ -14,6 +14,7 @@ export interface ReturnRequest {
   quantity: number;
   status: ReturnStatus;
   refundAmount?: number;
+  refundTransactionId?: string;
   reason?: string;
   rejectionReason?: string;
 }

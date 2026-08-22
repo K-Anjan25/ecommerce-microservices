@@ -191,12 +191,34 @@ Starting **Phase 7 — Commerce completion** per `docs/06-roadmap.md`.
 - Caveats: invoice content is regenerated from current order data (no immutable snapshot);
   COD orders get no invoice email until a real provider payment happens.
 
-### 7.4.5 Next up (Phase 7 remainder)
-- [ ] **Refund via real payment provider** — return approval currently restores stock but the
-      provider refund call needs Stripe/Razorpay refund API wiring (keys are config-gated).
-- [ ] (Optional) public order-tracking page for guests ("email link to track" in the roadmap) —
-      needs public `GET /v1/orders/{id}/track` and a frontend page.
-- [ ] (Optional) `formdata.json` state list is outdated — no TELANGANA entry.
+### 7.4.5 Refunds via payment provider (DONE 2026-08-22, third session)
+- [x] `PaymentProviderClient` gains `refund(Payment, BigDecimal)`; implemented by all three
+      providers: **Razorpay** (`POST /v1/payments/{txn}/refund`, amount in paise), **Stripe**
+      (`POST /v1/refunds`, `payment_intent` + smallest-unit amount), **CASH** (offline note).
+      When provider keys are missing, Razorpay/Stripe return a clearly-labelled **simulated
+      success** (`SIM-REFUND-…`) so the dev flow stays testable; with keys present a real API
+      call is made against the stored transaction id.
+- [x] `PaymentService.refundOrderPayment(orderId, amount)` — looks up the original payment,
+      charges the provider, and on success publishes a `REFUNDED` payment-status event
+      (`order → REFUNDED` via `applyPaymentStatus`, new enum value + history note) plus a
+      refund-confirmation email. A failed refund only logs/returns — it never cancels the order.
+- [x] `ReturnRequestService.refundReturnRequest` — now requires APPROVED status (matches the
+      admin UI sequence Approve → Refund), computes line refund (price × qty), calls the
+      provider through `refundOrderPayment`, and on success stores `refundAmount` +
+      new `refundTransactionId` column (nullable, added by `ddl-auto`). On failure it throws so
+      the admin sees the provider message (frontend `onError` added).
+- [x] Frontend: `REFUNDED` order status; refund amount + reference shown on the Returns page;
+  admin refund button surfaces errors.
+- Caveat: Razorpay charges store the razorpay **order** id as transaction id (the flow never
+  completes a real Razorpay checkout), so a real-key refund may be rejected by Razorpay until
+  payment capture is implemented; dev/keyless flows are unaffected (simulated).
+
+### 7.4.6 Remaining / optional
+- [ ] Public order-tracking page for guests ("email link to track" in the roadmap) — needs
+      public `GET /v1/orders/{id}/track` and a frontend page.
+- [ ] `formdata.json` state list is outdated — no TELANGANA entry.
+- Phase 7 scope is otherwise complete → next roadmap stop is Phase 8 remainder (price-drop
+  alerts) and Phase 9 (admin platform & analytics).
 
 ---
 

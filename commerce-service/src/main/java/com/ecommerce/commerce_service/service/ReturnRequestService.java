@@ -10,6 +10,7 @@ import com.ecommerce.commerce_service.model.ReturnStatus;
 import com.ecommerce.commerce_service.repository.OrderRepository;
 import com.ecommerce.commerce_service.repository.ReturnRequestRepository;
 import com.ecommerce.commerce_service.client.CommerceInventoryService;
+import com.ecommerce.commerce_service.service.provider.ProviderPaymentResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public class ReturnRequestService {
     private final ReturnRequestMapper returnRequestMapper;
     private final OrderRepository orderRepository;
     private final CommerceInventoryService commerceInventoryService;
+    private final PaymentService paymentService;
 
     public ReturnRequestDto createReturnRequest(CreateReturnRequest createReturnRequest) {
         ReturnRequest returnRequest = returnRequestMapper.returnRequestDtoToReturnRequest(createReturnRequest);
@@ -78,7 +80,11 @@ public class ReturnRequestService {
     public ReturnRequestDto refundReturnRequest(UUID returnRequestId) {
         ReturnRequest returnRequest = returnRequestRepository.findById(returnRequestId)
                 .orElseThrow(() -> new RuntimeException("Return request not found"));
-        returnRequest.setStatus(ReturnStatus.REFUNDED);
+
+        if (returnRequest.getStatus() != ReturnStatus.APPROVED) {
+            throw new RuntimeException("Return request must be APPROVED before refunding (current: "
+                    + returnRequest.getStatus() + ")");
+        }
 
         Order order = orderRepository.findById(returnRequest.getOrderId())
                 .orElseThrow(() -> new RuntimeException("Order not found"));
@@ -89,7 +95,18 @@ public class ReturnRequestService {
                 .map(item -> item.getPrice() == null ? BigDecimal.ZERO : item.getPrice())
                 .orElse(BigDecimal.ZERO);
 
-        returnRequest.setRefundAmount(unitPrice.multiply(BigDecimal.valueOf(returnRequest.getQuantity())));
+        BigDecimal refundAmount = unitPrice.multiply(BigDecimal.valueOf(returnRequest.getQuantity()));
+
+        // Charge the provider; on failure the request stays APPROVED and the
+        // admin sees the provider message.
+        ProviderPaymentResult result = paymentService.refundOrderPayment(order.getId(), refundAmount);
+        if (!result.isSuccess()) {
+            throw new RuntimeException("Refund failed: " + result.getMessage());
+        }
+
+        returnRequest.setStatus(ReturnStatus.REFUNDED);
+        returnRequest.setRefundAmount(refundAmount);
+        returnRequest.setRefundTransactionId(result.getTransactionId());
         ReturnRequest saved = returnRequestRepository.save(returnRequest);
         return returnRequestMapper.returnRequestToReturnRequestDto(saved);
     }

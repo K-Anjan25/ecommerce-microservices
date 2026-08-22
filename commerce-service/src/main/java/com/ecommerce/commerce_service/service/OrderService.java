@@ -191,6 +191,9 @@ public class OrderService {
                 recordStatus(orderId, OrderStatus.CANCELLED, "Payment failed");
             } else if ("PENDING".equalsIgnoreCase(paymentStatus)) {
                 recordStatus(orderId, OrderStatus.PENDING, "Cash on delivery selected");
+            } else if ("REFUNDED".equalsIgnoreCase(paymentStatus)) {
+                order.setOrderStatus(OrderStatus.REFUNDED);
+                recordStatus(orderId, OrderStatus.REFUNDED, "Refund processed");
             }
             orderRepository.save(order);
             log.info("Order {} updated to {} after payment status {}", orderId, order.getOrderStatus(), paymentStatus);
