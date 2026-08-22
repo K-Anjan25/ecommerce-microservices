@@ -216,7 +216,7 @@ Starting **Phase 7 — Commerce completion** per `docs/06-roadmap.md`.
 ### 7.4.6 Remaining / optional
 - [ ] Public order-tracking page for guests ("email link to track" in the roadmap) — needs
       public `GET /v1/orders/{id}/track` and a frontend page.
-- [ ] `formdata.json` state list is outdated — no TELANGANA entry.
+- [x] `formdata.json` — TELANGANA added (2026-08-22, after Andhra Pradesh; district list simplified).
 - Phase 7 scope is otherwise complete → next roadmap stop is Phase 8 remainder (price-drop
   alerts) and Phase 9 (admin platform & analytics).
 
