@@ -268,6 +268,21 @@ All verified with `tsc + vite build`.
 - Remaining Phase 9 items: CMS/store settings, coupon admin UI, refund queue UI, audit log,
   staff (Manager) role.
 
+### 7.4.10 Phase 9 continued: coupon admin + checkout coupons + returns queue (2026-08-22, sixth session)
+- [x] **Coupon admin UI** (`/admin/coupons`): list with type/value/min/max/usage/window chips,
+      create dialog (formik+yup), activate/deactivate toggle, delete. Backend additions:
+      `GET /v1/coupons`, `PUT /v1/coupons/{id}` (partial update — code/type/value immutable by
+      design), `DELETE /v1/coupons/{id}` (usage rows deleted first; no cascade on the FK).
+- [x] **Checkout coupons** — the order flow never sent `couponCode` before. Checkout now has a
+      coupon field (logged-in users): validates via `POST /v1/coupons/validate`, shows the
+      discount live, mirrors the backend tax math (tax on subtotal + shipping − discount +
+      gift wrap), auto-invalidates when the cart changes, and includes the code in the order
+      payload (server recomputes — preview only, never trusted).
+- [x] **Admin returns/refunds queue** (`/admin/returns`): all return requests with status
+      filter chips + counts, product names resolved, REQUESTED-first ordering (backend
+      `GET /v1/returns/all`), approve/reject/refund actions with error surfacing. Admin nav
+      gained Coupons + Returns entries.
+
 ### 7.4.6 Remaining / optional
 - [ ] Public order-tracking page for guests ("email link to track" in the roadmap) — needs
       public `GET /v1/orders/{id}/track` and a frontend page.

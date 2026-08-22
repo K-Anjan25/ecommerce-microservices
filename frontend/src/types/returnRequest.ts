@@ -9,6 +9,7 @@ export interface ReturnRequest {
   id: string;
   orderId: string;
   customerId: string;
+  createdDate?: string;
   productId: string;
   variantId?: string;
   quantity: number;

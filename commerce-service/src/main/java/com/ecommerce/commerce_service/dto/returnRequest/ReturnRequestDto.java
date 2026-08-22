@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -16,6 +17,7 @@ import java.util.UUID;
 public class ReturnRequestDto {
     private UUID id;
     private UUID orderId;
+    private LocalDateTime createdDate;
     private UUID customerId;
     private UUID productId;
     private String variantId;

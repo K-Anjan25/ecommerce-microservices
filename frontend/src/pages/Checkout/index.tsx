@@ -9,6 +9,7 @@ import { OrderApi } from "../../api/orderApi";
 import { PaymentApi } from "../../api/paymentApi";
 import { AddressApi } from "../../api/addressApi";
 import { ShippingApi } from "../../api/shippingApi";
+import { CouponApi } from "../../api/couponApi";
 import Card from "../../components/Card";
 import EmptyState from "../../components/EmptyState";
 import PageHeader from "../../components/PageHeader";
@@ -39,6 +40,8 @@ function Checkout() {
   const [shippingMethod, setShippingMethod] = useState<ShippingMethod>(ShippingMethod.STANDARD);
   const [paymentProvider, setPaymentProvider] = useState<PaymentProvider>("RAZORPAY");
   const [giftWrap, setGiftWrap] = useState(false);
+  const [couponInput, setCouponInput] = useState("");
+  const [coupon, setCoupon] = useState<{ code: string; discount: number } | null>(null);
   const subtotal = Number(calculateTotalPriceOfCartItems(items));
   const itemCount = calculateCountOfCartItems(items);
 
@@ -83,6 +86,7 @@ function Checkout() {
         giftWrap,
         pincode: values.pincode,
         state: values.state,
+        couponCode: coupon?.code,
       } as CreateOrderRequest;
 
       createOrderMutation.mutate(order);
@@ -116,13 +120,43 @@ function Checkout() {
     ? 100
     : 50;
   const giftWrapFee = giftWrap ? 50 : 0;
+  const discount = coupon?.discount ?? 0;
   const taxRate = taxRule?.rate ?? 0.18;
   const taxLabel = taxRule
     ? `${taxRule.taxName} ${Math.round(taxRate * 100)}%`
     : "18% GST";
-  // Mirrors the backend: tax applies to subtotal + shipping + gift wrap.
-  const tax = Number(((subtotal + shippingCost + giftWrapFee) * taxRate).toFixed(2));
-  const total = subtotal + shippingCost + giftWrapFee + tax;
+  // Mirrors the backend: tax applies to subtotal + shipping - discount + gift wrap.
+  const tax = Number(
+    ((subtotal + shippingCost - discount + giftWrapFee) * taxRate).toFixed(2)
+  );
+  const total = subtotal + shippingCost - discount + giftWrapFee + tax;
+
+  // A cart change invalidates the applied coupon (discount depends on subtotal).
+  useEffect(() => {
+    setCoupon(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [subtotal]);
+
+  const couponMutation = useMutation(
+    () => CouponApi.validateCoupon(couponInput.trim().toUpperCase(), subtotal),
+    {
+      onSuccess: (res) => {
+        if (res.valid) {
+          setCoupon({ code: res.code, discount: Number(res.discountAmount) });
+          showSuccess(`Coupon ${res.code} applied`);
+        } else {
+          showError(res.message ?? "Coupon is not valid");
+        }
+      },
+      onError: (e: any) =>
+        showError(e.response?.data?.message ?? "Coupon could not be applied"),
+    }
+  );
+
+  const applyCoupon = () => {
+    if (!couponInput.trim()) return;
+    couponMutation.mutate();
+  };
 
   const createOrderMutation = useMutation(OrderApi.createOrder, {
     onSuccess: (order) => {
@@ -333,7 +367,44 @@ function Checkout() {
               label="Gift wrap (+₹50)"
             />
 
-            <Box className="rounded-xl bg-brand-tint p-4">
+              {isLoggedIn && (
+                <div className="flex items-end gap-2">
+                  <TextInput
+                    name="couponCode"
+                    label="Coupon code"
+                    form={form}
+                    value={couponInput}
+                    onChange={(e: any) => setCouponInput(e.target.value)}
+                    disabled={Boolean(coupon)}
+                  />
+                  {coupon ? (
+                    <Button variant="outlined" onClick={() => setCoupon(null)}>
+                      Remove
+                    </Button>
+                  ) : (
+                    <LoadingButton
+                      variant="contained"
+                      onClick={applyCoupon}
+                      loading={couponMutation.isLoading}
+                      className="!bg-brand !text-paper hover:!bg-brand-main"
+                    >
+                      Apply
+                    </LoadingButton>
+                  )}
+                </div>
+              )}
+              {coupon && (
+                <div className="flex justify-between text-sm">
+                  <span className="font-semibold text-emerald-700">
+                    Coupon {coupon.code}
+                  </span>
+                  <span className="font-semibold text-emerald-700">
+                    -{formatPrice(coupon.discount)}
+                  </span>
+                </div>
+              )}
+
+              <Box className="rounded-xl bg-brand-tint p-4">
               <div className="flex justify-between text-sm">
                 <span className="text-ink-soft">
                   Subtotal ({itemCount} items)

@@ -50,6 +50,24 @@ public class ReturnRequestService {
                 .collect(Collectors.toList());
     }
 
+    /** Admin queue: all return requests, newest first (REQUESTED first, then by date). */
+    public List<ReturnRequestDto> getAllReturnRequests() {
+        return returnRequestRepository.findAll().stream()
+                .sorted((a, b) -> {
+                    int rank = statusRank(a.getStatus()) - statusRank(b.getStatus());
+                    if (rank != 0) return rank;
+                    return b.getCreatedDate() != null ? b.getCreatedDate().compareTo(a.getCreatedDate()) : 0;
+                })
+                .map(returnRequestMapper::returnRequestToReturnRequestDto)
+                .collect(Collectors.toList());
+    }
+
+    private int statusRank(ReturnStatus status) {
+        if (status == ReturnStatus.REQUESTED) return 0;
+        if (status == ReturnStatus.APPROVED) return 1;
+        return 2;
+    }
+
     public ReturnRequestDto approveReturnRequest(UUID returnRequestId) {
         ReturnRequest returnRequest = returnRequestRepository.findById(returnRequestId)
                 .orElseThrow(() -> new RuntimeException("Return request not found"));

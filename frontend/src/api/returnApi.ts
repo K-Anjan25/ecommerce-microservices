@@ -11,6 +11,12 @@ const getMyReturnRequests = async () => {
   return data;
 };
 
+// Admin queue: every return request (REQUESTED first).
+const getAllReturnRequests = async () => {
+  const { data } = await api.get<ReturnRequest[]>("/v1/returns/all");
+  return data;
+};
+
 const createReturnRequest = async (returnRequest: CreateReturnRequest) => {
   const { data } = await api.post<ReturnRequest>("/v1/returns", returnRequest);
   return data;
@@ -34,6 +40,7 @@ const refundReturnRequest = async (returnRequestId: string) => {
 export const ReturnApi = {
   getReturnRequestsByOrder,
   getMyReturnRequests,
+  getAllReturnRequests,
   createReturnRequest,
   approveReturnRequest,
   rejectReturnRequest,

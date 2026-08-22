@@ -8,4 +8,5 @@ import java.util.UUID;
 public interface CouponUsageRepository extends JpaRepository<CouponUsage, UUID> {
     boolean existsByCouponIdAndUserId(UUID couponId, UUID userId);
     long countByCouponId(UUID couponId);
+    void deleteByCouponId(UUID couponId);
 }

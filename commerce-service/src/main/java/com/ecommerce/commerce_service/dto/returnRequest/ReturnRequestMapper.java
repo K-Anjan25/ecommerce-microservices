@@ -14,6 +14,7 @@ public class ReturnRequestMapper {
         return ReturnRequestDto.builder()
                 .id(returnRequest.getId())
                 .orderId(returnRequest.getOrderId())
+                .createdDate(returnRequest.getCreatedDate())
                 .customerId(returnRequest.getCustomerId())
                 .productId(returnRequest.getProductId())
                 .variantId(returnRequest.getVariantId())
