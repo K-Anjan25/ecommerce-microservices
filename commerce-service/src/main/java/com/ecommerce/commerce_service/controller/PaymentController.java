@@ -22,9 +22,12 @@ public class PaymentController {
 
     @PostMapping
     public ResponseEntity<PaymentResponse> makePayment(@Valid @RequestBody PaymentRequest request,
-                                                       @RequestHeader("userId") String userId) {
+                                                       // Optional so guest checkout (no AuthFilter → no header) works;
+                                                       // logged-in requests are forwarded by the gateway with userId set.
+                                                       @RequestHeader(value = "userId", required = false) String userId) {
         log.info("payment request received for order {} from user {}", request.getOrderId(), userId);
-        return new ResponseEntity<>(paymentService.processPayment(request, UUID.fromString(userId)), HttpStatus.CREATED);
+        UUID customerUuid = (userId == null || userId.isBlank()) ? null : UUID.fromString(userId);
+        return new ResponseEntity<>(paymentService.processPayment(request, customerUuid), HttpStatus.CREATED);
     }
 
     @GetMapping("/test")

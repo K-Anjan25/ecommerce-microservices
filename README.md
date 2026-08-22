@@ -46,6 +46,7 @@ A full-stack e-commerce platform: **Spring Boot** microservices + **React + Type
 - **REST/Feign**: Gateway → services; commerce → product (`isInStock` / `deductStock`, wrapped in a Resilience4j circuit breaker).
 - **Async (RabbitMQ)**: payment → order status (`order.exchange`); commerce → user email (`notification.exchange` → `send.email.queue`).
 - **Auth**: stateless JWT (access 2d / refresh 24d). Gateway `AuthFilter` validates the token against user-service and injects `userId` / `authorities` headers downstream. RBAC `ROLE_USER` / `ROLE_ADMIN` / `ROLE_SUPER_ADMIN`.
+- **Guest checkout**: `POST /v1/orders` and `POST /v1/payments` are public (headerless requests bypass `AuthFilter` via dedicated gateway routes; requests carrying a Bearer token still match the guarded routes first). Guest orders need a contact email and are paid via COD or Razorpay.
 
 ## Prerequisites
 

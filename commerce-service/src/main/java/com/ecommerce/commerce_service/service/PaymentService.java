@@ -32,6 +32,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PaymentService {
 
+    /**
+     * Payments for guest checkouts are attributed to this pseudo-user
+     * (payment.user_id is NOT NULL; guest payments carry no real user id).
+     */
+    private static final UUID GUEST_USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
     private final RabbitMQMessageProducer rabbitMQMessageProducer;
@@ -68,7 +74,7 @@ public class PaymentService {
 
         Payment payment = Payment.builder()
                 .orderId(request.getOrderId())
-                .userId(userId)
+                .userId(userId != null ? userId : GUEST_USER_ID)
                 .amount(request.getAmount())
                 .currency(request.getCurrency())
                 .provider(request.getProvider())

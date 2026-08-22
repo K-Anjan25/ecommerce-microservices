@@ -18,7 +18,7 @@ import createOrderForm from "../../forms/orderForm";
 import { AppState } from "../../store";
 import { clearAllItems } from "../../store/actions/cartAction";
 import { CreateOrderRequest, ShippingMethod } from "../../types/order";
-import { PaymentRequest } from "../../types/payment";
+import { PaymentRequest, PaymentProvider } from "../../types/payment";
 import { SavedAddress } from "../../types/address";
 import {
   calculateCountOfCartItems,
@@ -37,6 +37,7 @@ function Checkout() {
   const isLoggedIn = useSelector((state: AppState) => state.user.data.isLogedIn);
   const [districts, setDistricts] = useState<{ name: string; id: string }[]>([]);
   const [shippingMethod, setShippingMethod] = useState<ShippingMethod>(ShippingMethod.STANDARD);
+  const [paymentProvider, setPaymentProvider] = useState<PaymentProvider>("RAZORPAY");
   const [giftWrap, setGiftWrap] = useState(false);
   const subtotal = Number(calculateTotalPriceOfCartItems(items));
   const itemCount = calculateCountOfCartItems(items);
@@ -129,7 +130,7 @@ function Checkout() {
         orderId: order.id,
         amount: order.totalAmount ?? total,
         currency: "INR",
-        provider: "RAZORPAY",
+        provider: paymentProvider,
       } as PaymentRequest;
 
       paymentMutation.mutate(payment);
@@ -146,7 +147,12 @@ function Checkout() {
         return;
       }
 
-      showSuccess("Payment completed and order has been created successfully");
+      const isCod = payment.provider === "CASH" || payment.status === "PENDING";
+      showSuccess(
+        isCod
+          ? "Order placed successfully — pay on delivery"
+          : "Payment completed and order has been created successfully"
+      );
       dispatch(clearAllItems());
       sessionStorage.removeItem("checkout_form");
       navigate("/");
@@ -231,7 +237,9 @@ function Checkout() {
             Payment details
           </Typography>
           <Typography className="mt-1 text-sm text-ink-soft">
-            Razorpay will open to complete your payment.
+            {paymentProvider === "CASH"
+              ? "Pay in cash when your order is delivered."
+              : "Razorpay will open to complete your payment."}
           </Typography>
           <Divider className="my-4" />
 
@@ -288,6 +296,24 @@ function Checkout() {
                 <MenuItem value={ShippingMethod.STANDARD}>Standard (3-5 days)</MenuItem>
                 <MenuItem value={ShippingMethod.EXPRESS}>Express (1-2 days)</MenuItem>
               </Select>
+            </FormControl>
+
+            <FormControl size="small" fullWidth>
+              <InputLabel id="payment-provider-label">Payment method</InputLabel>
+              <Select
+                labelId="payment-provider-label"
+                value={paymentProvider}
+                label="Payment method"
+                onChange={(e) => setPaymentProvider(e.target.value as PaymentProvider)}
+              >
+                <MenuItem value="RAZORPAY">Razorpay (card / UPI)</MenuItem>
+                <MenuItem value="CASH">Cash on delivery</MenuItem>
+              </Select>
+              {paymentProvider === "RAZORPAY" && (
+                <Typography variant="caption" className="text-ink-soft">
+                  Requires Razorpay keys to be configured.
+                </Typography>
+              )}
             </FormControl>
 
             <FormControlLabel

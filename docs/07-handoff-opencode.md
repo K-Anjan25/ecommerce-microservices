@@ -153,14 +153,30 @@ Starting **Phase 7 — Commerce completion** per `docs/06-roadmap.md`.
 - [x] **Dockerfile casing** — `product-service/dockerfile`/`user-service/dockerfile` renamed to
       `Dockerfile` (matches compose; was breaking case-sensitive Linux/CI checkouts).
 
-### 7.4.3 Next up (Phase 7)
-- [ ] **Guest checkout end-to-end** — frontend collects `customerEmail`, but the gateway
-      `AuthFilter` 401s unauthenticated `POST /v1/orders`; needs a public order route (with
-      abuse protection) + cart merge on later login. Also: `formdata.json` state list is
-      outdated — no TELANGANA entry.
+### 7.4.3 Guest checkout end-to-end (DONE 2026-08-22, second session)
+- [x] **Gateway** — split routes: guarded `/v1/orders/**` + `/v1/payments/**` now also match
+      `Header=Authorization, Bearer .+` (AuthFilter); new public routes match headerless
+      `POST /v1/orders` and `POST /v1/payments` (no filter). Logged-in requests match the
+      guarded route first, so `userId` injection is unchanged.
+- [x] **commerce-service** — `POST /v1/payments` added to `permitAll` (POST /v1/orders already
+      was); `PaymentController` reads `userId` header with `required=false`;
+      `PaymentService` attributes guest payments to the all-zeros `GUEST_USER_ID` pseudo-user
+      (`payment.user_id` is NOT NULL — no schema change needed).
+- [x] **Frontend** — Checkout already collected guest email + sent `customerEmail` and the
+      `/checkout` route was never auth-guarded; added a payment-method selector
+      (Razorpay / Cash on delivery) because Razorpay requires real API keys — COD is the only
+      provider that works in a keyless demo; success message is COD-aware.
+- Notes / caveats: guest order emails (order placed + payment) already flowed through
+  `order.customerEmail` via RabbitMQ. No rate limiting on the public endpoints yet
+  (Phase 10). Cart is client-side (redux-persist), so "cart merge on login" is a non-issue.
+  `formdata.json` state list still outdated — no TELANGANA entry.
+
+### 7.4.4 Next up (Phase 7)
 - [ ] **PDF invoices** — generated + emailed on payment success.
 - [ ] **Refund via real payment provider** — return approval currently restores stock but the
       provider refund call needs Stripe/Razorpay refund API wiring (keys are config-gated).
+- [ ] (Optional) public order-tracking page for guests ("email link to track" in the roadmap) —
+      needs public `GET /v1/orders/{id}/track` and a frontend page.
 
 ---
 
