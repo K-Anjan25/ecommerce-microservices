@@ -1,3 +1,5 @@
+package com.ecommerce.event_bus.dto;
+
 public class EmailRequest {
     private String text;
     private String email;
