@@ -53,6 +53,9 @@ class ProductServiceTest {
     @Mock
     private FlashSaleRepository flashSaleRepository;
 
+    @Mock
+    private PriceWatchService priceWatchService;
+
     private ProductService productService;
 
     private UUID productId;
@@ -63,7 +66,7 @@ class ProductServiceTest {
     @BeforeEach
     void setUp() {
         productService = new ProductService(productRepository, categoryService, productMapper, commentMapper,
-                inventoryService, productImageRepository, productVariantRepository, flashSaleRepository);
+                inventoryService, productImageRepository, productVariantRepository, flashSaleRepository, priceWatchService);
 
         productId = UUID.randomUUID();
 
