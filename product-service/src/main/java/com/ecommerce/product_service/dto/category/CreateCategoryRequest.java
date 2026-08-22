@@ -8,4 +8,7 @@ import javax.validation.constraints.NotNull;
 public class CreateCategoryRequest {
     @NotNull
     private String name;
+    private String slug;
+    private Long parentId;
+    private Integer sortOrder;
 }

@@ -28,8 +28,15 @@ public class CategoryService {
     }
 
     public CategoryDto createCategory(CreateCategoryRequest createCategoryRequest) {
+        String slug = createCategoryRequest.getSlug();
+        if (slug == null || slug.isBlank()) {
+            slug = slugify(createCategoryRequest.getName());
+        }
         Category category = Category.builder()
                 .name(createCategoryRequest.getName())
+                .slug(slug)
+                .parentId(createCategoryRequest.getParentId())
+                .sortOrder(createCategoryRequest.getSortOrder())
                 .build();
 
         return categoryMapper.categoryToCategoryDto(categoryRepository.save(category));
@@ -39,5 +46,15 @@ public class CategoryService {
         return categoryRepository.findAll().stream()
                 .map(categoryMapper::categoryToCategoryDto)
                 .collect(Collectors.toList());
+    }
+
+    public List<CategoryDto> getCategoryTree(){
+        return categoryMapper.toTree(categoryRepository.findAll());
+    }
+
+    private String slugify(String name) {
+        return name.toLowerCase()
+                .replaceAll("[^a-z0-9]+", "-")
+                .replaceAll("^-|-$", "");
     }
 }

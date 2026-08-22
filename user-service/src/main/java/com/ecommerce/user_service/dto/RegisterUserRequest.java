@@ -14,6 +14,7 @@ public class RegisterUserRequest {
     private String lastName;
     @NotNull
     private String password;
+    private String referralCode;
 }
 
 

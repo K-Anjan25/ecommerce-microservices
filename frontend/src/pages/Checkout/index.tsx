@@ -1,12 +1,13 @@
-import { Box, Button, Divider, Typography } from "@mui/material";
+import { Box, Button, Checkbox, Divider, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { OrderApi } from "../../api/orderApi";
 import { PaymentApi } from "../../api/paymentApi";
+import { AddressApi } from "../../api/addressApi";
 import Card from "../../components/Card";
 import EmptyState from "../../components/EmptyState";
 import PageHeader from "../../components/PageHeader";
@@ -15,8 +16,9 @@ import TextInput from "../../components/TextInput";
 import orderForm from "../../forms/orderForm";
 import { AppState } from "../../store";
 import { clearAllItems } from "../../store/actions/cartAction";
-import { CreateOrderRequest } from "../../types/order";
+import { CreateOrderRequest, ShippingMethod } from "../../types/order";
 import { PaymentRequest } from "../../types/payment";
+import { SavedAddress } from "../../types/address";
 import {
   calculateCountOfCartItems,
   calculateTotalPriceOfCartItems,
@@ -31,11 +33,36 @@ function Checkout() {
   const navigate = useNavigate();
   const dispatch = useDispatch<any>();
   const items = useSelector((state: AppState) => state.cart);
-  const [districts, setDistricts] = useState<{ name: string; id: string }[]>(
-    []
-  );
-  const totalPrice = Number(calculateTotalPriceOfCartItems(items));
+  const isLoggedIn = useSelector((state: AppState) => state.user.data.isLogedIn);
+  const [districts, setDistricts] = useState<{ name: string; id: string }[]>([]);
+  const [shippingMethod, setShippingMethod] = useState<ShippingMethod>(ShippingMethod.STANDARD);
+  const [giftWrap, setGiftWrap] = useState(false);
+  const subtotal = Number(calculateTotalPriceOfCartItems(items));
   const itemCount = calculateCountOfCartItems(items);
+  const shippingCost = subtotal >= 500 ? 0 : shippingMethod === ShippingMethod.EXPRESS ? 100 : 50;
+  const giftWrapFee = giftWrap ? 50 : 0;
+  const tax = Number(((subtotal + shippingCost + giftWrapFee) * 0.18).toFixed(2));
+  const total = subtotal + shippingCost + giftWrapFee + tax;
+
+  const { data: defaultAddress } = useQuery(
+    "defaultAddress",
+    AddressApi.getDefaultAddress,
+    { retry: false }
+  );
+
+  const applyAddress = (address: SavedAddress) => {
+    form.setValues({
+      ...form.values,
+      state: address.state,
+      district: address.district,
+      addressDetail: address.addressDetail,
+    });
+    setDistricts(
+      statesAndDistrict
+        .find((s: any) => s.state_name === address.state)
+        ?.districts.map((d: any) => ({ name: d.district_name, id: d.district_name })) ?? []
+    );
+  };
 
   const form = useFormik({
     ...orderForm,
@@ -43,6 +70,7 @@ function Checkout() {
       const products = items.map((item) => ({
         productId: item.product.id,
         quantity: item.quantity,
+        variantId: item.variantId,
       }));
 
       const order = {
@@ -52,6 +80,9 @@ function Checkout() {
           addressDetail: values.addressDetail,
         },
         items: products,
+        shippingMethod,
+        customerEmail: isLoggedIn ? undefined : values.customerEmail,
+        giftWrap,
       } as CreateOrderRequest;
 
       createOrderMutation.mutate(order);
@@ -62,7 +93,7 @@ function Checkout() {
     onSuccess: (order) => {
       const payment = {
         orderId: order.id,
-        amount: totalPrice,
+        amount: order.totalAmount ?? total,
         currency: "INR",
         provider: "RAZORPAY",
       } as PaymentRequest;
@@ -171,6 +202,26 @@ function Checkout() {
           <Divider className="my-4" />
 
           <form onSubmit={form.handleSubmit} className="space-y-3">
+            {!isLoggedIn && (
+              <TextInput
+                name="customerEmail"
+                label="Email for order updates"
+                form={form}
+                type="email"
+              />
+            )}
+
+            {defaultAddress && (
+              <Button
+                size="small"
+                variant="outlined"
+                fullWidth
+                onClick={() => applyAddress(defaultAddress)}
+              >
+                Use default address
+              </Button>
+            )}
+
             <SelectInput name="state" label="State" form={form} data={states} />
             <SelectInput
               name="district"
@@ -186,19 +237,60 @@ function Checkout() {
               rows={3}
             />
 
+            <FormControl size="small" fullWidth>
+              <InputLabel id="shipping-method-label">Shipping method</InputLabel>
+              <Select
+                labelId="shipping-method-label"
+                value={shippingMethod}
+                label="Shipping method"
+                onChange={(e) => setShippingMethod(e.target.value as ShippingMethod)}
+              >
+                <MenuItem value={ShippingMethod.STANDARD}>Standard (3-5 days)</MenuItem>
+                <MenuItem value={ShippingMethod.EXPRESS}>Express (1-2 days)</MenuItem>
+              </Select>
+            </FormControl>
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={giftWrap}
+                  onChange={(e) => setGiftWrap(e.target.checked)}
+                  name="giftWrap"
+                  color="primary"
+                />
+              }
+              label="Gift wrap (+₹50)"
+            />
+
             <Box className="rounded-xl bg-brand-tint p-4">
               <div className="flex justify-between text-sm">
                 <span className="text-ink-soft">
                   Subtotal ({itemCount} items)
                 </span>
                 <span className="font-semibold">
-                  {formatPrice(totalPrice)}
+                  {formatPrice(subtotal)}
                 </span>
               </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-ink-soft">Shipping</span>
+                <span className="font-semibold">
+                  {shippingCost === 0 ? "FREE" : formatPrice(shippingCost)}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-ink-soft">Tax (18% GST)</span>
+                <span className="font-semibold">{formatPrice(tax)}</span>
+              </div>
+              {giftWrap && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-ink-soft">Gift wrap</span>
+                  <span className="font-semibold">{formatPrice(giftWrapFee)}</span>
+                </div>
+              )}
               <Divider className="my-2" />
               <div className="flex justify-between">
                 <span className="font-semibold">Total</span>
-                <span className="price-text">{formatPrice(totalPrice)}</span>
+                <span className="price-text">{formatPrice(total)}</span>
               </div>
             </Box>
 

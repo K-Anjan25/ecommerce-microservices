@@ -4,6 +4,7 @@ import com.ecommerce.commerce_service.dto.orderAddress.OrderAddressMapper;
 import com.ecommerce.commerce_service.dto.orderItem.OrderItemMapper;
 import com.ecommerce.commerce_service.model.Order;
 import com.ecommerce.commerce_service.model.OrderStatus;
+import com.ecommerce.commerce_service.model.ShippingMethod;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -31,15 +32,29 @@ public class OrderMapper {
                 .createdDate(order.getCreatedDate())
                 .totalAmount(order.getTotalAmount())
                 .discountAmount(order.getDiscountAmount())
+                .shippingAmount(order.getShippingAmount())
+                .taxAmount(order.getTaxAmount())
+                .shippingMethod(order.getShippingMethod())
                 .couponCode(order.getCouponCode())
                 .customerEmail(order.getCustomerEmail())
+                .giftWrap(order.getGiftWrap())
+                .giftWrapFee(order.getGiftWrapFee())
                 .build();
     }
 
     public Order orderRequestToOrder(CreateOrderRequest createOrderRequest){
+        UUID customerId = null;
+        try {
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (principal instanceof String) {
+                customerId = UUID.fromString((String) principal);
+            }
+        } catch (Exception ignored) {
+        }
         return Order.builder()
-                .customerId(UUID.fromString((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal()))
+                .customerId(customerId)
                 .orderStatus(OrderStatus.PENDING)
+                .shippingMethod(createOrderRequest.getShippingMethod())
                 .address(orderAddressMapper.orderAddressRequestToOrderAddress(createOrderRequest.getAddress()))
                 .items(createOrderRequest.getItems()
                         .stream()
@@ -47,6 +62,7 @@ public class OrderMapper {
                         .collect(Collectors.toList()))
                 .couponCode(createOrderRequest.getCouponCode())
                 .customerEmail(createOrderRequest.getCustomerEmail())
+                .giftWrap(createOrderRequest.getGiftWrap())
                 .build();
     }
 

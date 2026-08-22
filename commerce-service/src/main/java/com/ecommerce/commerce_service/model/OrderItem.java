@@ -21,6 +21,7 @@ public class OrderItem extends BaseModel  {
     private Order order;
 
     private UUID productId;
+    private UUID variantId;
     private Integer quantity;
     @Column(precision = 19, scale = 2)
     private BigDecimal price;

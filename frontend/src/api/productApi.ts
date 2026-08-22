@@ -7,15 +7,28 @@ import {
   ProductAdmin,
   ProductParam,
   ProductForm,
+  ProductSearchResponse,
 } from "../types/product";
 import { api } from "./axios";
 
 // Public endpoints - no authentication required
 const getProducts = async (params: ProductParam = { ...PRODUCT_PARAM }) => {
-  const { data } = await api.get<Product[]>("/v1/products", {
+  const { data } = await api.get<ProductSearchResponse>("/v1/products", {
     params,
   });
 
+  return data;
+};
+
+const getProductBrands = async () => {
+  const { data } = await api.get<string[]>("/v1/products/brands");
+  return data;
+};
+
+const suggestProducts = async (term: string) => {
+  const { data } = await api.get<string[]>("/v1/products/suggest", {
+    params: { term },
+  });
   return data;
 };
 
@@ -54,6 +67,34 @@ const getCommentsByProductId = async (productId: string) => {
   return data;
 };
 
+const getRelatedProducts = async (productId: string) => {
+  const { data } = await api.get<Product[]>(`/v1/products/${productId}/related`);
+  return data;
+};
+
+const getBestsellers = async () => {
+  const { data } = await api.get<Record<string, number>>("/v1/orders/stats/bestsellers");
+  const entries = Object.entries(data)
+    .sort((a, b) => (b[1] as number) - (a[1] as number))
+    .slice(0, 8)
+    .map(([id]) => id);
+  if (entries.length === 0) return [];
+  const { data: products } = await api.get<Product[]>(`/v1/products/findByIds/${entries.join(",")}`);
+  return products;
+};
+
+const getBoughtTogether = async (productId: string) => {
+  const { data } = await api.get<string[]>(`/v1/orders/bought-together/${productId}`);
+  if (data.length === 0) return [];
+  const { data: products } = await api.get<Product[]>(`/v1/products/findByIds/${data.join(",")}`);
+  return products;
+};
+
+const getFlashSales = async () => {
+  const { data } = await api.get<Product[]>("/v1/flash-sales");
+  return data;
+};
+
 // Admin only endpoints - Requires ROLE_ADMIN authentication
 const saveProduct = async (product: ProductForm) => {
   // Requires ROLE_ADMIN
@@ -84,6 +125,8 @@ const deleteProduct = async (id: string) => {
 
 export const ProductApi = {
   getProducts,
+  getProductBrands,
+  suggestProducts,
   getProductsByPagination,
   deleteProduct,
   getProductById,
@@ -91,4 +134,8 @@ export const ProductApi = {
   updateProduct,
   getProductsByIds,
   getCommentsByProductId,
+  getRelatedProducts,
+  getBestsellers,
+  getBoughtTogether,
+  getFlashSales,
 };

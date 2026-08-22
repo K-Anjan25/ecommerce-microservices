@@ -30,4 +30,10 @@ public class InventoryController {
         inventoryService.deductStock(deductStockRequests);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/restoreStock")
+    public ResponseEntity<Void> restoreStock(@RequestBody List<DeductStockRequest> restoreStockRequests) {
+        inventoryService.restoreStock(restoreStockRequests);
+        return ResponseEntity.ok().build();
+    }
 }

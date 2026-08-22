@@ -14,6 +14,7 @@ import java.util.UUID;
 public class CreateOrderItemRequest {
     @NotNull
     private UUID productId;
+    private UUID variantId;
     @NotNull
     private Integer quantity;
     @NotNull

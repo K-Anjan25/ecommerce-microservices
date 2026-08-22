@@ -3,6 +3,7 @@ import { Category } from "../../types/category";
 import SearchIcon from "@mui/icons-material/Search";
 import SortIcon from "@mui/icons-material/Sort";
 import TuneIcon from "@mui/icons-material/Tune";
+import { Paper, Box } from "@mui/material";
 
 type SearchBarProps = {
   onChangeSearchValue: (value: string) => void;
@@ -12,6 +13,9 @@ type SearchBarProps = {
   onChangeFilter: (value: string) => void;
   filter: string;
   categories: Category[];
+  onSuggest?: (term: string) => void;
+  suggestions?: string[];
+  onPickSuggestion?: (suggestion: string) => void;
 };
 
 function SearchBar({
@@ -22,9 +26,18 @@ function SearchBar({
   onChangeSortBy,
   sortBy,
   categories,
+  onSuggest,
+  suggestions,
+  onPickSuggestion,
 }: SearchBarProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChangeSearchValue(e.target.value);
+    onSuggest?.(e.target.value);
+  };
+
+  const handlePickSuggestion = (suggestion: string) => {
+    onChangeSearchValue(suggestion);
+    onPickSuggestion?.(suggestion);
   };
 
   const handleChangeSortBy = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -48,6 +61,19 @@ function SearchBar({
           value={searchValue}
           onChange={handleChange}
         />
+        {suggestions && suggestions.length > 0 && (
+          <Paper className="absolute z-10 mt-1 w-full shadow-lg">
+            {suggestions.map((suggestion, index) => (
+              <Box
+                key={index}
+                className="cursor-pointer px-4 py-2 hover:bg-brand-soft"
+                onClick={() => handlePickSuggestion(suggestion)}
+              >
+                {suggestion}
+              </Box>
+            ))}
+          </Paper>
+        )}
       </div>
       
       <div className="flex w-full flex-col gap-4 sm:flex-row md:w-auto">

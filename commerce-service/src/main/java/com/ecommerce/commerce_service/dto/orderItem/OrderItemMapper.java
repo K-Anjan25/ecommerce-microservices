@@ -10,6 +10,7 @@ public class OrderItemMapper {
     public OrderItemDto orderToOrderItemDto(OrderItem orderItem){
         return OrderItemDto.builder()
                 .productId(orderItem.getProductId())
+                .variantId(orderItem.getVariantId())
                 .quantity(orderItem.getQuantity())
                 .price(orderItem.getPrice())
                 .build();
@@ -18,6 +19,7 @@ public class OrderItemMapper {
     public OrderItem orderItemRequestToOrderItem(CreateOrderItemRequest createOrderItemRequest){
         return OrderItem.builder()
                 .productId(createOrderItemRequest.getProductId())
+                .variantId(createOrderItemRequest.getVariantId())
                 .quantity(createOrderItemRequest.getQuantity())
                 .price(createOrderItemRequest.getPrice())
                 .build();

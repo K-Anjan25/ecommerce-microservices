@@ -3,6 +3,7 @@ package com.ecommerce.commerce_service.dto.order;
 import com.ecommerce.commerce_service.dto.orderAddress.OrderAddressDto;
 import com.ecommerce.commerce_service.dto.orderItem.OrderItemDto;
 import com.ecommerce.commerce_service.model.OrderStatus;
+import com.ecommerce.commerce_service.model.ShippingMethod;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,6 +27,11 @@ public class OrderDto {
     private LocalDateTime createdDate;
     private BigDecimal totalAmount;
     private BigDecimal discountAmount;
+    private BigDecimal shippingAmount;
+    private BigDecimal taxAmount;
+    private ShippingMethod shippingMethod;
     private String couponCode;
     private String customerEmail;
+    private Boolean giftWrap;
+    private BigDecimal giftWrapFee;
 }

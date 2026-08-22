@@ -14,9 +14,15 @@ import com.ecommerce.commerce_service.exception.OrderNotFoundException;
 import com.ecommerce.commerce_service.exception.ProductNotInStockException;
 import com.ecommerce.commerce_service.model.Order;
 import com.ecommerce.commerce_service.model.OrderStatus;
+import com.ecommerce.commerce_service.model.ShippingMethod;
 import com.ecommerce.commerce_service.model.OrderStatusHistory;
 import com.ecommerce.commerce_service.repository.OrderRepository;
 import com.ecommerce.commerce_service.repository.OrderStatusHistoryRepository;
+import com.ecommerce.commerce_service.repository.OrderItemRepository;
+import com.ecommerce.commerce_service.dto.shippingRate.ShippingCalculationRequest;
+import com.ecommerce.commerce_service.service.LoyaltyPointService;
+import com.ecommerce.commerce_service.service.ShippingRateService;
+import com.ecommerce.commerce_service.service.TaxRuleService;
 import com.ecommerce.event_bus.RabbitMQMessageProducer;
 import com.ecommerce.event_bus.dto.EmailRequest;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +34,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -43,6 +51,10 @@ public class OrderService {
     private final CouponService couponService;
     private final OrderStatusHistoryRepository orderStatusHistoryRepository;
     private final RabbitMQMessageProducer rabbitMQMessageProducer;
+    private final OrderItemRepository orderItemRepository;
+    private final LoyaltyPointService loyaltyPointService;
+    private final ShippingRateService shippingRateService;
+    private final TaxRuleService taxRuleService;
 
     @Value("${rabbitmq.exchanges.notification}")
     private String notificationExchange;
@@ -57,7 +69,7 @@ public class OrderService {
         order.getItems().forEach(item -> item.setOrder(order));
 
         List<InventoryCheckRequest> inventoryCheckRequests = order.getItems().stream()
-                .map(item -> new InventoryCheckRequest(item.getProductId(),item.getQuantity()))
+                .map(item -> new InventoryCheckRequest(item.getProductId(), item.getQuantity(), item.getVariantId()))
                 .collect(Collectors.toList());
 
         InventoryCheckResponse inventoryCheckResponse = commerceInventoryService.isInStock(inventoryCheckRequests);
@@ -67,22 +79,36 @@ public class OrderService {
         }
 
         List<DeductStockRequest> deductStockRequests = order.getItems().stream()
-                .map(item -> new DeductStockRequest(item.getProductId(), item.getQuantity()))
+                .map(item -> new DeductStockRequest(item.getProductId(), item.getQuantity(), item.getVariantId()))
                 .collect(Collectors.toList());
         commerceInventoryService.deductStock(deductStockRequests);
 
-        BigDecimal orderAmount = order.getItems().stream()
+        BigDecimal subtotal = order.getItems().stream()
                 .map(item -> item.getPrice() == null ? BigDecimal.ZERO : item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        order.setTotalAmount(orderAmount);
+
+        BigDecimal shipping = calculateShipping(subtotal, createOrderRequest.getShippingMethod(), createOrderRequest.getPincode());
+        BigDecimal discount = BigDecimal.ZERO;
 
         if (createOrderRequest.getCouponCode() != null && !createOrderRequest.getCouponCode().isBlank()) {
             couponService.validateCoupon(
-                    CouponValidationRequest.builder().code(createOrderRequest.getCouponCode()).orderAmount(orderAmount).build(),
+                    CouponValidationRequest.builder().code(createOrderRequest.getCouponCode()).orderAmount(subtotal).build(),
                     order.getCustomerId());
-            BigDecimal discount = couponService.computeDiscount(couponService.findCoupon(createOrderRequest.getCouponCode()), orderAmount);
-            order.setDiscountAmount(discount);
+            discount = couponService.computeDiscount(couponService.findCoupon(createOrderRequest.getCouponCode()), subtotal);
         }
+
+        BigDecimal taxableAmount = subtotal.add(shipping).subtract(discount);
+        BigDecimal giftWrapFee = createOrderRequest.getGiftWrap() != null && createOrderRequest.getGiftWrap() ? new BigDecimal("50.00") : BigDecimal.ZERO;
+        taxableAmount = taxableAmount.add(giftWrapFee);
+        BigDecimal tax = calculateTax(taxableAmount, createOrderRequest.getState()).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal total = taxableAmount.add(tax);
+
+        order.setTotalAmount(total);
+        order.setShippingAmount(shipping);
+        order.setTaxAmount(tax);
+        order.setDiscountAmount(discount);
+        order.setGiftWrap(createOrderRequest.getGiftWrap());
+        order.setGiftWrapFee(giftWrapFee);
 
         Order savedOrder = orderRepository.save(order);
 
@@ -92,9 +118,39 @@ public class OrderService {
             couponService.markUsed(savedOrder.getCouponCode(), savedOrder.getCustomerId(), savedOrder.getId());
         }
 
+        if (savedOrder.getCustomerId() != null) {
+            loyaltyPointService.earnPoints(savedOrder.getCustomerId(), savedOrder.getTotalAmount(), "Order #" + savedOrder.getId());
+        }
+
         sendOrderPlacedEmail(savedOrder);
 
         return orderMapper.orderToOrderDto(savedOrder);
+    }
+
+    private BigDecimal calculateShipping(BigDecimal subtotal, ShippingMethod method, String pincode) {
+        if (pincode != null && !pincode.isBlank()) {
+            var rate = shippingRateService.calculateShipping(
+                    new com.ecommerce.commerce_service.dto.shippingRate.ShippingCalculationRequest(pincode, subtotal));
+            if (rate.getCost() != null) {
+                return rate.getCost();
+            }
+        }
+        if (subtotal.compareTo(new BigDecimal("500")) >= 0) {
+            return BigDecimal.ZERO;
+        }
+        if (method == ShippingMethod.EXPRESS) {
+            return new BigDecimal("100.00");
+        }
+        return new BigDecimal("50.00");
+    }
+
+    private BigDecimal calculateTax(BigDecimal taxableAmount, String state) {
+        if (state != null && !state.isBlank()) {
+            return taxRuleService.getTaxRuleForState(state)
+                    .map(rule -> taxableAmount.multiply(rule.getRate()).setScale(2, RoundingMode.HALF_UP))
+                    .orElse(taxableAmount.multiply(new BigDecimal("0.18")).setScale(2, RoundingMode.HALF_UP));
+        }
+        return taxableAmount.multiply(new BigDecimal("0.18")).setScale(2, RoundingMode.HALF_UP);
     }
 
     public Pagination<OrderDto> getAllOrders(int pageNo, int pageSize){
@@ -174,5 +230,15 @@ public class OrderService {
             sb.append("\nDiscount: ").append(order.getDiscountAmount());
         }
         return sb.toString();
+    }
+
+    public Map<UUID, Long> getBestsellers() {
+        return orderRepository.findAll().stream()
+                .flatMap(order -> order.getItems().stream())
+                .collect(Collectors.groupingBy(item -> item.getProductId(), Collectors.summingLong(item -> item.getQuantity())));
+    }
+
+    public List<UUID> getBoughtTogether(UUID productId) {
+        return orderItemRepository.findBoughtTogether(productId);
     }
 }

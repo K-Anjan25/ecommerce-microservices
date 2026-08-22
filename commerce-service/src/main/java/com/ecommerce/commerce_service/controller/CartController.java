@@ -41,8 +41,9 @@ public class CartController {
 
     @DeleteMapping
     public ResponseEntity<String> removeProductFromCart(@RequestParam UUID customerId,
-                                                        @RequestParam UUID productId) {
-        cartService.removeItem(customerId, productId);
+                                                        @RequestParam UUID productId,
+                                                        @RequestParam(required = false) UUID variantId) {
+        cartService.removeItem(customerId, productId, variantId);
         return ResponseEntity.ok("Product removed from cart");
     }
 }

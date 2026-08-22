@@ -167,4 +167,17 @@ public class UserController {
         return byteArrayOutputStream.toByteArray();
     }
 
+    @GetMapping("/referral/code")
+    public ResponseEntity<String> getMyReferralCode(@RequestHeader(AUTHORIZATION) String authorizationHeader) {
+        String token = authorizationHeader.substring(TOKEN_PREFIX.length());
+        User user = userService.getUserByToken(token);
+        return ResponseEntity.ok(user.getReferralCode());
+    }
+
+    @GetMapping("/referral/validate/{code}")
+    public ResponseEntity<Boolean> validateReferralCode(@PathVariable String code) {
+        boolean valid = userService.findUserByReferralCode(code) != null;
+        return ResponseEntity.ok(valid);
+    }
+
 }

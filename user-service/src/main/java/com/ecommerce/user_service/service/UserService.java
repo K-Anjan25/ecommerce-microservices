@@ -75,6 +75,10 @@ public class UserService implements UserDetailsService {
         newUser.setRole(ROLE_USER.name());
         newUser.setAuthorities(ROLE_USER.getAuthorities());
         newUser.setProfileImageUrl(getTemporaryProfileImageUrl(user.getEmail()));
+        newUser.setReferralCode(generateUniqueReferralCode());
+        if (user.getReferralCode() != null && !user.getReferralCode().isBlank()) {
+            newUser.setReferredBy(user.getReferralCode());
+        }
         userRepository.save(newUser);
         return newUser;
     }
@@ -280,6 +284,25 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UserNotFoundException(NO_USER_FOUND_BY_EMAIL + userId));
         user.setActive(active);
         return userRepository.save(user);
+    }
+
+    private String generateUniqueReferralCode() {
+        String code;
+        do {
+            code = RandomStringUtils.randomAlphanumeric(8).toUpperCase();
+        } while (userRepository.findByReferralCode(code).isPresent());
+        return code;
+    }
+
+    public User getUserByToken(String token) {
+        DecodedJWT decodedJWT = jwtTokenProvider.decodeToken(token);
+        String userId = decodedJWT.getClaim("userId").asString();
+        return userRepository.findById(UUID.fromString(userId))
+                .orElseThrow(() -> new UserNotFoundException(NO_USER_FOUND_BY_EMAIL + userId));
+    }
+
+    public User findUserByReferralCode(String referralCode) {
+        return userRepository.findByReferralCode(referralCode).orElse(null);
     }
 
 }

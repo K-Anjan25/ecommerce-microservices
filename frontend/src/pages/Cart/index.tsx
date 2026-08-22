@@ -43,7 +43,7 @@ function Cart() {
     ...orderForm,
     onSubmit: (values) => {
       const products = items.map((item) => {
-        return { productId: item.product.id, quantity: item.quantity };
+        return { productId: item.product.id, quantity: item.quantity, variantId: item.variantId };
       });
       const order = {
         address: {

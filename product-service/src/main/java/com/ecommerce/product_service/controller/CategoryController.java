@@ -25,4 +25,9 @@ public class CategoryController {
     public ResponseEntity<List<CategoryDto>> getAllCategories(){
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
+
+    @GetMapping("/tree")
+    public ResponseEntity<List<CategoryDto>> getCategoryTree(){
+        return ResponseEntity.ok(categoryService.getCategoryTree());
+    }
 }

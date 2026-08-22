@@ -21,4 +21,7 @@ public interface InventoryServiceClient {
 
     @PostMapping("/deductStock")
     void deductStock(@RequestBody List<DeductStockRequest> deductStockRequests);
+
+    @PostMapping("/restoreStock")
+    void restoreStock(@RequestBody List<DeductStockRequest> restoreStockRequests);
 }

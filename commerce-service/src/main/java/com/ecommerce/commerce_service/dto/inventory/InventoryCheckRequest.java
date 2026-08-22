@@ -12,5 +12,5 @@ import java.util.UUID;
 public class InventoryCheckRequest {
     UUID productId;
     Integer quantity;
-
+    UUID variantId;
 }

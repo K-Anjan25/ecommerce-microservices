@@ -45,7 +45,16 @@ function App() {
   const OrderDetail = React.lazy(
     () => import("./pages/Admin/Orders/OrderDetail")
   );
+  const Orders = React.lazy(() => import("./pages/Orders"));
+  const Addresses = React.lazy(() => import("./pages/Addresses"));
+  const Compare = React.lazy(() => import("./pages/Compare"));
+  const GiftCards = React.lazy(() => import("./pages/GiftCards"));
+  const FlashSales = React.lazy(() => import("./pages/FlashSales"));
+  const Referral = React.lazy(() => import("./pages/Referral"));
+  const Returns = React.lazy(() => import("./pages/Returns"));
+  const LoyaltyPoints = React.lazy(() => import("./pages/LoyaltyPoints"));
   const Product = React.lazy(() => import("./pages/Products/Product"));
+  const UserOrderDetail = React.lazy(() => import("./pages/Orders/OrderDetail"));
 
   return (
     <Router>
@@ -84,10 +93,19 @@ function App() {
               }
             >
               <Route path="cart" element={<Cart />} />
-              <Route path="checkout" element={<Checkout />} />
+              <Route path="orders" element={<Orders />} />
+              <Route path="orderDetail/:orderId" element={<UserOrderDetail />} />
+              <Route path="addresses" element={<Addresses />} />
+              <Route path="compare" element={<Compare />} />
+              <Route path="gift-cards" element={<GiftCards />} />
+              <Route path="flash-sales" element={<FlashSales />} />
+              <Route path="referral" element={<Referral />} />
+              <Route path="returns" element={<Returns />} />
+              <Route path="loyalty" element={<LoyaltyPoints />} />
               <Route path="profile/:id" element={<Profile />} />
               <Route path="account" element={<Account />} />
             </Route>
+            <Route path="checkout" element={<Checkout />} />
           </Route>
           <Route path="*" element={<NotFound />} />
           <Route path="/unauthorized" element={<Unauthorized />} />

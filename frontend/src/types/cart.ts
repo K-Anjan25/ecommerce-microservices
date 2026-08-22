@@ -1,9 +1,11 @@
 import { ThunkDispatch } from "redux-thunk";
-import { Product } from "./product";
+import { Product, ProductAdmin } from "./product";
 
 export interface Cart {
-  product: Product;
+  product: Product | ProductAdmin;
   quantity: number;
+  variantId?: string;
+  variantName?: string;
 }
 
 interface ADD_TO_CART {

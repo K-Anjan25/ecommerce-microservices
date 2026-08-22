@@ -8,6 +8,7 @@ import java.util.UUID;
 @Getter
 public class CreateCartItemRequest {
     private UUID productId;
+    private UUID variantId;
     private String name;
     private BigDecimal price;
     private Integer quantity;

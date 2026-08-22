@@ -1,22 +1,26 @@
-import { Box, Button, Paper, Typography } from "@mui/material";
+import { Box, Button, Chip, Paper, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useQuery } from "react-query";
+import { useQuery, useMutation } from "react-query";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { OrderApi } from "../../../../api/orderApi";
 import { ProductApi } from "../../../../api/productApi";
 import { UserApi } from "../../../../api/userApi";
+import { ReturnApi } from "../../../../api/returnApi";
 import EmptyState from "../../../../components/EmptyState";
 import Loader from "../../../../components/Loader";
 import PageHeader from "../../../../components/PageHeader";
 import TableWithDetail from "../../../../components/Table/TableWithDetail";
 import { ORDER_PRODUCT_COLUMNS } from "../../../../constants/table";
 import { Order } from "../../../../types/order";
+import { ReturnRequest, ReturnStatus } from "../../../../types/returnRequest";
 import { OrderProductRow } from "../../../../types/table";
 import {
   calculateTotalPriceOfOneProduct,
   formatPrice,
 } from "../../../../utils/cart";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
+import { showSuccess } from "../../../../utils/showSuccess";
+import { showError } from "../../../../utils/showError";
 
 interface OrderLocation {
   state?: Order;
@@ -57,6 +61,25 @@ function OrderDetail() {
     },
     { enabled: Boolean(resolvedOrder) }
   );
+
+  const { data: returns, refetch: refetchReturns } = useQuery(
+    ["admin:returns", resolvedOrder?.id],
+    () => {
+      if (!resolvedOrder) return [];
+      return ReturnApi.getReturnRequestsByOrder(resolvedOrder.id);
+    },
+    { enabled: Boolean(resolvedOrder) }
+  );
+
+  const approveMutation = useMutation(ReturnApi.approveReturnRequest, {
+    onSuccess: () => { showSuccess("Return approved"); refetchReturns(); },
+  });
+  const rejectMutation = useMutation(ReturnApi.rejectReturnRequest, {
+    onSuccess: () => { showSuccess("Return rejected"); refetchReturns(); },
+  });
+  const refundMutation = useMutation(ReturnApi.refundReturnRequest, {
+    onSuccess: () => { showSuccess("Refund processed"); refetchReturns(); },
+  });
 
   if (orderLoading && !orderFromNav) return <Loader />;
 
@@ -151,6 +174,39 @@ function OrderDetail() {
           </Typography>
         </div>
       </Paper>
+
+      {returns && returns.length > 0 && (
+        <Paper className="p-6 sm:p-8">
+          <Typography variant="h6" className="mb-4 font-bold">
+            Returns & refunds
+          </Typography>
+          <div className="space-y-3">
+            {returns.map((r: ReturnRequest) => (
+              <div key={r.id} className="flex items-center justify-between rounded-xl border border-ink/10 p-4">
+                <div>
+                  <Typography className="font-semibold">Product {r.productId}</Typography>
+                  <Typography className="text-sm text-ink-soft">Qty: {r.quantity} · Reason: {r.reason || "—"}</Typography>
+                  {r.rejectionReason && (
+                    <Typography className="text-sm text-rose-600">Rejected: {r.rejectionReason}</Typography>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Chip label={r.status} color={r.status === ReturnStatus.REFUNDED ? "success" : r.status === ReturnStatus.APPROVED ? "info" : r.status === ReturnStatus.REJECTED ? "error" : "warning"} />
+                  {r.status === ReturnStatus.REQUESTED && (
+                    <>
+                      <Button size="small" variant="contained" onClick={() => approveMutation.mutate(r.id)}>Approve</Button>
+                      <Button size="small" variant="outlined" onClick={() => rejectMutation.mutate({ id: r.id, reason: "Not eligible" })}>Reject</Button>
+                    </>
+                  )}
+                  {r.status === ReturnStatus.APPROVED && (
+                    <Button size="small" variant="contained" onClick={() => refundMutation.mutate(r.id)}>Refund</Button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Paper>
+      )}
     </div>
   );
 }

@@ -27,6 +27,11 @@ public class CommerceInventoryService {
         inventoryServiceClient.deductStock(deductStockRequests);
     }
 
+    @CircuitBreaker(name = "inventoryService", fallbackMethod = "restoreStockFallback")
+    public void restoreStock(List<DeductStockRequest> restoreStockRequests) {
+        inventoryServiceClient.restoreStock(restoreStockRequests);
+    }
+
     private InventoryCheckResponse isInStockFallback(List<InventoryCheckRequest> inventoryCheckRequests, Throwable throwable) {
         log.error("Inventory check failed, treating as out of stock: {}", throwable.getMessage());
         return InventoryCheckResponse.builder().isInStock(false).isNotInStockProductIds(List.of()).build();
@@ -34,5 +39,9 @@ public class CommerceInventoryService {
 
     private void deductStockFallback(List<DeductStockRequest> deductStockRequests, Throwable throwable) {
         log.error("Stock deduction failed: {}", throwable.getMessage());
+    }
+
+    private void restoreStockFallback(List<DeductStockRequest> restoreStockRequests, Throwable throwable) {
+        log.error("Stock restoration failed: {}", throwable.getMessage());
     }
 }

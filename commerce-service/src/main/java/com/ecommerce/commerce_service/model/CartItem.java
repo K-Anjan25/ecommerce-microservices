@@ -13,6 +13,7 @@ import java.util.UUID;
 @Builder
 public class CartItem {
     private UUID productId;
+    private UUID variantId;
     private String name;
     private BigDecimal price;
     private BigDecimal totalPrice;

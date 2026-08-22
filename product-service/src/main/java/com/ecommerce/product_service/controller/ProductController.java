@@ -57,17 +57,36 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductSearchDto>> getProductBySearch(@RequestParam(required = false, defaultValue = "") String searchTerm,
+    public ResponseEntity<ProductSearchResponse> getProductBySearch(@RequestParam(required = false, defaultValue = "") String searchTerm,
                                                      @RequestParam(required = false, defaultValue = "0") int page,
                                                      @RequestParam(required = false, defaultValue = "10") int size,
                                                      @RequestParam(required = false, defaultValue = "dateAsc") Sort sort,
-                                                     @RequestParam(required = false, defaultValue = "") String filter){
-        return ResponseEntity.ok(productService.searchProduct(searchTerm,page,size,sort,filter));
+                                                     @RequestParam(required = false, defaultValue = "") String filter,
+                                                     @RequestParam(required = false, defaultValue = "") String brand,
+                                                     @RequestParam(required = false, defaultValue = "0") double minPrice,
+                                                     @RequestParam(required = false, defaultValue = "0") double maxPrice,
+                                                      @RequestParam(required = false, defaultValue = "0") double minRating){
+        return ResponseEntity.ok(productService.searchProduct(searchTerm,page,size,sort,filter,brand,minPrice,maxPrice,minRating));
+    }
+
+    @GetMapping("/suggest")
+    public ResponseEntity<List<String>> getSearchSuggestions(@RequestParam(defaultValue = "") String term){
+        return ResponseEntity.ok(productService.searchSuggestions(term));
+    }
+
+    @GetMapping("/brands")
+    public ResponseEntity<java.util.List<String>> getBrands(){
+        return ResponseEntity.ok(productService.searchBrands());
     }
 
     @GetMapping("/getAll")
     public ResponseEntity<Pagination<ProductDto>> getProductByPagination(@RequestParam(required = false,defaultValue = "0")  int pageNo,
-                                                             @RequestParam(required = false,defaultValue = "10") int pageSize){
+                                                              @RequestParam(required = false,defaultValue = "10") int pageSize){
         return ResponseEntity.ok(productService.getAllProducts(pageNo,pageSize));
+    }
+
+    @GetMapping("/{id}/related")
+    public ResponseEntity<List<ProductDto>> getRelatedProducts(@PathVariable UUID id){
+        return ResponseEntity.ok(productService.getRelatedProducts(id));
     }
 }

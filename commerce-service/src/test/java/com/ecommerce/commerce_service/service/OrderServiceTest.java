@@ -13,6 +13,10 @@ import com.ecommerce.commerce_service.model.OrderItem;
 import com.ecommerce.commerce_service.model.OrderStatus;
 import com.ecommerce.commerce_service.repository.OrderRepository;
 import com.ecommerce.commerce_service.repository.OrderStatusHistoryRepository;
+import com.ecommerce.commerce_service.repository.OrderItemRepository;
+import com.ecommerce.commerce_service.service.LoyaltyPointService;
+import com.ecommerce.commerce_service.service.ShippingRateService;
+import com.ecommerce.commerce_service.service.TaxRuleService;
 import com.ecommerce.event_bus.RabbitMQMessageProducer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,6 +59,18 @@ class OrderServiceTest {
     @Mock
     private RabbitMQMessageProducer rabbitMQMessageProducer;
 
+    @Mock
+    private OrderItemRepository orderItemRepository;
+
+    @Mock
+    private LoyaltyPointService loyaltyPointService;
+
+    @Mock
+    private ShippingRateService shippingRateService;
+
+    @Mock
+    private TaxRuleService taxRuleService;
+
     private OrderService orderService;
 
     private UUID productId;
@@ -65,7 +81,8 @@ class OrderServiceTest {
     @BeforeEach
     void setUp() {
         orderService = new OrderService(orderRepository, orderMapper, commerceInventoryService,
-                couponService, orderStatusHistoryRepository, rabbitMQMessageProducer);
+                couponService, orderStatusHistoryRepository, rabbitMQMessageProducer, orderItemRepository, loyaltyPointService,
+                shippingRateService, taxRuleService);
 
         productId = UUID.randomUUID();
         orderId = UUID.randomUUID();

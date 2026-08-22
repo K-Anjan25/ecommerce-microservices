@@ -6,11 +6,13 @@ export const calculateCountOfCartItems = (items: Cart[]) => {
 
 export const calculateTotalPriceOfCartItems = (items: Cart[]) => {
   return items
-    .reduce(
-      (accumalator, item) =>
-        accumalator + item.quantity * item.product.unitPrice,
-      0
-    )
+    .reduce((accumalator, item) => {
+      const price =
+        item.variantId && item.product.variants
+          ? item.product.variants.find((v) => v.id === item.variantId)?.price ?? item.product.unitPrice
+          : item.product.unitPrice;
+      return accumalator + item.quantity * price;
+    }, 0)
     .toFixed(2);
 };
 

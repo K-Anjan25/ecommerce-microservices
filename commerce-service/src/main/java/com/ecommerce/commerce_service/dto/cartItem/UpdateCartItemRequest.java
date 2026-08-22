@@ -7,5 +7,6 @@ import java.util.UUID;
 @Getter
 public class UpdateCartItemRequest {
     private UUID productId;
+    private UUID variantId;
     private Integer quantity;
 }

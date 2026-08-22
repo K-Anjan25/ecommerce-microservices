@@ -13,11 +13,13 @@ import {
   removeFromCart,
 } from "../../store/actions/cartAction";
 import { AppState } from "../../store";
-import { Product } from "../../types/product";
+import { Product, ProductAdmin } from "../../types/product";
 import { formatPrice } from "../../utils/cart";
+import { addToCompare, isInCompare } from "../../utils/compare";
+import CompareIcon from "@mui/icons-material/Compare";
 
 type CardProps = {
-  product: Product;
+  product: Product | ProductAdmin;
   onClick?: (event: React.MouseEvent) => void;
 };
 
@@ -47,15 +49,17 @@ const Card = ({ product, onClick }: CardProps) => {
     }
   };
 
+  const categoryName = "categoryName" in product ? product.categoryName : product.category?.name;
+
   return (
     <MuiCard
       className="group flex h-full cursor-pointer flex-col overflow-hidden transition hover:-translate-y-1 hover:shadow-lift"
       onClick={onClick}
     >
       <Box className="relative aspect-[4/3] overflow-hidden bg-brand-tint">
-        {product.imageUrl ? (
+        {product.images?.[0] || product.imageUrl ? (
           <img
-            src={product.imageUrl}
+            src={product.images?.[0] || product.imageUrl}
             alt={product.name}
             className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
           />
@@ -64,11 +68,25 @@ const Card = ({ product, onClick }: CardProps) => {
             <AddShoppingCartIcon className="text-4xl text-brand/30" />
           </Box>
         )}
-        {product.categoryName && (
+        {categoryName && (
           <Chip
-            label={product.categoryName}
+            label={categoryName}
             size="small"
             className="absolute left-3 top-3 !bg-white/90 !font-semibold !text-brand shadow-sm backdrop-blur"
+          />
+        )}
+        {product.brand && (
+          <Chip
+            label={product.brand}
+            size="small"
+            className="absolute left-3 bottom-3 !bg-black/70 !font-semibold !text-white shadow-sm"
+          />
+        )}
+        {product.originalPrice && product.originalPrice > product.unitPrice && (
+          <Chip
+            label="SALE"
+            size="small"
+            className="absolute right-3 top-3 !bg-rose-600 !font-bold !text-white shadow-sm"
           />
         )}
         <Chip
@@ -106,9 +124,16 @@ const Card = ({ product, onClick }: CardProps) => {
         </Typography>
 
         <Box className="mt-auto flex items-center justify-between pt-3">
-          <Typography className="price-text text-lg">
-            {formatPrice(product.unitPrice)}
-          </Typography>
+          <Box className="flex flex-col">
+            {product.originalPrice && product.originalPrice > product.unitPrice && (
+              <Typography variant="body2" className="line-through text-ink-soft">
+                {formatPrice(product.originalPrice)}
+              </Typography>
+            )}
+            <Typography className="price-text text-lg">
+              {formatPrice(product.unitPrice)}
+            </Typography>
+          </Box>
 
           {quantity ? (
             <Box
@@ -134,6 +159,26 @@ const Card = ({ product, onClick }: CardProps) => {
               <AddShoppingCartIcon fontSize="small" />
             </IconButton>
           )}
+          <IconButton
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (isInCompare(product.id)) {
+                window.location.href = "/compare";
+              } else {
+                addToCompare(product.id);
+                window.location.href = "/compare";
+              }
+            }}
+            className={`transition ${
+              isInCompare(product.id)
+                ? "!bg-brand !text-paper"
+                : "!bg-white !text-ink hover:!bg-brand-tint"
+            }`}
+            title="Compare"
+          >
+            <CompareIcon fontSize="small" />
+          </IconButton>
         </Box>
       </Box>
     </MuiCard>

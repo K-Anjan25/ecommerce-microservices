@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/v1/orders")
@@ -44,4 +46,13 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrderTracking(orderId));
     }
 
+    @GetMapping("/stats/bestsellers")
+    public ResponseEntity<Map<UUID, Long>> getBestsellers(){
+        return ResponseEntity.ok(orderService.getBestsellers());
+    }
+
+    @GetMapping("/bought-together/{productId}")
+    public ResponseEntity<List<UUID>> getBoughtTogether(@PathVariable UUID productId){
+        return ResponseEntity.ok(orderService.getBoughtTogether(productId));
+    }
 }

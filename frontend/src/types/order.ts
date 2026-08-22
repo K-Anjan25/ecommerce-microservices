@@ -10,12 +10,22 @@ export interface Order {
   items: OrderItem[];
   orderStatus: OrderStatus;
   createdDate: string;
+  totalAmount: number;
+  discountAmount?: number;
+  shippingAmount?: number;
+  taxAmount?: number;
+  shippingMethod?: ShippingMethod;
+  giftWrap?: boolean;
+  giftWrapFee?: number;
 }
 
 export interface CreateOrderRequest {
   items: OrderItem[];
   address: OrderAdress;
   paymentId?: string;
+  shippingMethod?: ShippingMethod;
+  customerEmail?: string;
+  giftWrap?: boolean;
 }
 
 interface OrderAdress {
@@ -24,9 +34,10 @@ interface OrderAdress {
   addressDetail: string;
 }
 
-interface OrderItem {
+export interface OrderItem {
   productId: string;
   quantity: number;
+  variantId?: string;
 }
 
 enum OrderStatus {
@@ -37,8 +48,14 @@ enum OrderStatus {
   CANCELLED = "CANCELLED",
 }
 
+export enum ShippingMethod {
+  STANDARD = "STANDARD",
+  EXPRESS = "EXPRESS",
+}
+
 export interface OrderForm {
   state: string;
   district: string;
   addressDetail: string;
+  customerEmail?: string;
 }

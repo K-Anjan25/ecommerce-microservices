@@ -1,11 +1,25 @@
 import { Category } from "./category";
 import { Comment } from "./comment";
+
+export interface ProductVariant {
+  id: string;
+  name: string;
+  sku: string;
+  price: number;
+  quantityInStock: number;
+  attributes: string;
+}
+
 export interface ProductParam {
   size: number;
   page: number;
   filter: string;
   sort: string;
   searchTerm: string;
+  brand?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  minRating?: number;
 }
 
 interface BaseProduct {
@@ -14,8 +28,20 @@ interface BaseProduct {
   unitPrice: number;
   description: string;
   imageUrl: string;
+  images?: string[];
+  brand?: string;
+  originalPrice?: number;
+  badge?: string;
+  featured?: boolean;
+  avgRating?: number;
+  ratingCount?: number;
+  variants?: ProductVariant[];
   quantityInStock?: number;
+  flashPrice?: number;
+  flashSaleEndsAt?: string;
+  flashSaleActive?: boolean;
 }
+
 export interface ProductAdminParam {
   pageNo: number;
   pageSize: number;
@@ -30,6 +56,24 @@ export interface ProductAdmin extends BaseProduct {
   category: Category;
   comments: Comment[];
 }
+
+export interface FacetCount {
+  value: string;
+  count: number;
+}
+
+export interface Facets {
+  brands: FacetCount[];
+  categories: FacetCount[];
+  priceMin?: number;
+  priceMax?: number;
+}
+
+export interface ProductSearchResponse {
+  content: Product[];
+  facets: Facets;
+}
+
 export interface ProductForm {
   name: string;
   unitPrice: number | undefined;

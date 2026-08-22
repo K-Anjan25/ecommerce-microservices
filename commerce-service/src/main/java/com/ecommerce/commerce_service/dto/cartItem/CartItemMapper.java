@@ -16,6 +16,7 @@ public class CartItemMapper {
                 .name(createCartItemRequest.getName())
                 .price(price)
                 .productId(createCartItemRequest.getProductId())
+                .variantId(createCartItemRequest.getVariantId())
                 .quantity(quantity)
                 .totalPrice(price.multiply(BigDecimal.valueOf(quantity)))
                 .build();

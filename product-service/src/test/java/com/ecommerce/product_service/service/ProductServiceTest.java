@@ -1,12 +1,16 @@
 package com.ecommerce.product_service.service;
 
+import com.ecommerce.product_service.dto.comment.CommentMapper;
 import com.ecommerce.product_service.dto.product.CreateProductRequest;
 import com.ecommerce.product_service.dto.product.ProductDto;
 import com.ecommerce.product_service.dto.product.ProductMapper;
 import com.ecommerce.product_service.inventory.service.InventoryService;
 import com.ecommerce.product_service.model.Category;
 import com.ecommerce.product_service.model.Product;
+import com.ecommerce.product_service.repository.ProductImageRepository;
 import com.ecommerce.product_service.repository.ProductRepository;
+import com.ecommerce.product_service.repository.ProductVariantRepository;
+import com.ecommerce.product_service.repository.FlashSaleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,7 +39,19 @@ class ProductServiceTest {
     private ProductMapper productMapper;
 
     @Mock
+    private CommentMapper commentMapper;
+
+    @Mock
     private InventoryService inventoryService;
+
+    @Mock
+    private ProductImageRepository productImageRepository;
+
+    @Mock
+    private ProductVariantRepository productVariantRepository;
+
+    @Mock
+    private FlashSaleRepository flashSaleRepository;
 
     private ProductService productService;
 
@@ -46,7 +62,8 @@ class ProductServiceTest {
 
     @BeforeEach
     void setUp() {
-        productService = new ProductService(productRepository, categoryService, productMapper, null, inventoryService);
+        productService = new ProductService(productRepository, categoryService, productMapper, commentMapper,
+                inventoryService, productImageRepository, productVariantRepository, flashSaleRepository);
 
         productId = UUID.randomUUID();
 
@@ -61,12 +78,11 @@ class ProductServiceTest {
                 .category(testCategory)
                 .build();
 
-        testProductDto = ProductDto.builder()
-                .id(productId)
-                .name("Test Product")
-                .unitPrice(BigDecimal.TEN)
-                .description("Test Description")
-                .build();
+        testProductDto = new ProductDto();
+        testProductDto.setId(productId);
+        testProductDto.setName("Test Product");
+        testProductDto.setUnitPrice(BigDecimal.TEN);
+        testProductDto.setDescription("Test Description");
     }
 
     @Test

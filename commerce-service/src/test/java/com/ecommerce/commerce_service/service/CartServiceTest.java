@@ -180,7 +180,7 @@ class CartServiceTest {
 
         when(cartRepository.findCartByCustomerId(customerId)).thenReturn(Optional.of(cart));
 
-        cartService.removeItem(customerId, productId);
+        cartService.removeItem(customerId, productId, null);
 
         verify(cartRepository).delete(cart);
         verify(cartRepository, never()).save(any());
@@ -212,7 +212,7 @@ class CartServiceTest {
 
         when(cartRepository.findCartByCustomerId(customerId)).thenReturn(Optional.of(cart));
 
-        cartService.removeItem(customerId, productId);
+        cartService.removeItem(customerId, productId, null);
 
         verify(cartRepository, never()).delete(any());
         assertThat(cart.getCartItems()).hasSize(1);

@@ -34,4 +34,6 @@ public class User {
     private String[] authorities;
     private boolean isActive;
     private boolean isNotLocked;
+    private String referralCode;
+    private String referredBy;
 }

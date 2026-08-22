@@ -33,7 +33,21 @@ public class Order extends AdvanceBaseModal {
     @Column(precision = 19, scale = 2)
     private BigDecimal discountAmount;
 
+    @Column(precision = 19, scale = 2)
+    private BigDecimal shippingAmount;
+
+    @Column(precision = 19, scale = 2)
+    private BigDecimal taxAmount;
+
     private String couponCode;
 
     private String customerEmail;
+
+    @Enumerated(EnumType.STRING)
+    private ShippingMethod shippingMethod;
+
+    private Boolean giftWrap;
+
+    @Column(precision = 19, scale = 2)
+    private BigDecimal giftWrapFee;
 }

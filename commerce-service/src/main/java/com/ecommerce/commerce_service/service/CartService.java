@@ -32,7 +32,7 @@ public class CartService {
         if (cart.isPresent()) {
             Cart presentCart = cart.get();
             Optional<CartItem> existing = presentCart.getCartItems().stream()
-                    .filter(item -> item.getProductId().equals(createCartItemRequest.getProductId()))
+                    .filter(item -> sameLine(item, createCartItemRequest.getProductId(), createCartItemRequest.getVariantId()))
                     .findFirst();
 
             if (existing.isPresent()) {
@@ -71,7 +71,7 @@ public class CartService {
         CartItem cartItem = cart
                 .getCartItems()
                 .stream()
-                .filter(eachCart -> eachCart.getProductId().equals(updateCartItemRequest.getProductId()))
+                .filter(eachCart -> sameLine(eachCart, updateCartItemRequest.getProductId(), updateCartItemRequest.getVariantId()))
                 .collect(toSingleton());
 
         cartItem.setQuantity(updateCartItemRequest.getQuantity());
@@ -81,14 +81,14 @@ public class CartService {
     }
 
     @Transactional
-    public void removeItem(UUID customerId, UUID productId) {
+    public void removeItem(UUID customerId, UUID productId, UUID variantId) {
         Cart cart = cartRepository.findCartByCustomerId(customerId)
                 .orElseThrow(() -> {
                     log.error("Cart for customer {} could not be found!", customerId);
                     throw new RuntimeException("Cart is not found for customer :" + customerId);
                 });
 
-        cart.getCartItems().removeIf(item -> item.getProductId().equals(productId));
+        cart.getCartItems().removeIf(item -> sameLine(item, productId, variantId));
 
         if (cart.getCartItems().isEmpty()) {
             cartRepository.delete(cart);
@@ -104,4 +104,10 @@ public class CartService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
+    private boolean sameLine(CartItem item, UUID productId, UUID variantId) {
+        boolean productMatch = item.getProductId() != null && item.getProductId().equals(productId);
+        boolean variantMatch = (item.getVariantId() == null && variantId == null)
+                || (item.getVariantId() != null && item.getVariantId().equals(variantId));
+        return productMatch && variantMatch;
+    }
 }

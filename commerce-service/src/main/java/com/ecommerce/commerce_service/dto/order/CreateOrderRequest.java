@@ -2,6 +2,7 @@ package com.ecommerce.commerce_service.dto.order;
 
 import com.ecommerce.commerce_service.dto.orderAddress.CreateOrderAddressRequest;
 import com.ecommerce.commerce_service.dto.orderItem.CreateOrderItemRequest;
+import com.ecommerce.commerce_service.model.ShippingMethod;
 import lombok.Getter;
 
 import javax.validation.constraints.NotNull;
@@ -15,4 +16,8 @@ public class CreateOrderRequest {
     private List<CreateOrderItemRequest> items;
     private String couponCode;
     private String customerEmail;
+    private ShippingMethod shippingMethod;
+    private Boolean giftWrap;
+    private String pincode;
+    private String state;
 }

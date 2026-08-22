@@ -80,6 +80,18 @@ spring:
             - Path=/v1/products/**,/v1/categories/**,/v1/comments/**
             - Method=GET
 
+        - id: shipping-service
+          uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
+          predicates:
+            - Path=/v1/shipping/**,/v1/tax/**,/v1/returns/**,/v1/addresses/**,/v1/loyalty/**
+          filters:
+            - AuthFilter
+
+        - id: flash-sale-service
+          uri: ${PRODUCT_SERVICE_URI:http://localhost:8080}
+          predicates:
+            - Path=/v1/flash-sales/**
+
   main:
     web-application-type: reactive
 

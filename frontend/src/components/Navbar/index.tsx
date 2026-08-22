@@ -130,6 +130,36 @@ const Navbar = () => {
             <span className={navLink(isActive("/"))} onClick={() => navigate("/")}>
               Shop
             </span>
+            <span
+              className={navLink(isActive("/gift-cards"))}
+              onClick={() => navigate("/gift-cards")}
+            >
+              Gift Cards
+            </span>
+            <span
+              className={navLink(isActive("/flash-sales"))}
+              onClick={() => navigate("/flash-sales")}
+            >
+              Flash Sales
+            </span>
+            <span
+              className={navLink(isActive("/referral"))}
+              onClick={() => navigate("/referral")}
+            >
+              Referral
+            </span>
+            <span
+              className={navLink(isActive("/returns"))}
+              onClick={() => navigate("/returns")}
+            >
+              Returns
+            </span>
+            <span
+              className={navLink(isActive("/loyalty"))}
+              onClick={() => navigate("/loyalty")}
+            >
+              Loyalty
+            </span>
             {user.isLogedIn && (
               <span
                 className={navLink(isActive("/cart"))}
@@ -239,6 +269,31 @@ const Navbar = () => {
             <ListItem disablePadding>
               <ListItemButton onClick={() => go("/")}>
                 <ListItemText primary="Shop" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => go("/gift-cards")}>
+                <ListItemText primary="Gift Cards" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => go("/flash-sales")}>
+                <ListItemText primary="Flash Sales" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => go("/referral")}>
+                <ListItemText primary="Referral" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => go("/returns")}>
+                <ListItemText primary="Returns" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => go("/loyalty")}>
+                <ListItemText primary="Loyalty" />
               </ListItemButton>
             </ListItem>
             {user.isLogedIn && (
