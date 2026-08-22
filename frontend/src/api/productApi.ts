@@ -32,6 +32,23 @@ const suggestProducts = async (term: string) => {
   return data;
 };
 
+// ----- Price-drop watchlist (Phase 8) -----
+const isWatchingPrice = async (productId: string, email: string) => {
+  const { data } = await api.get<{ watching: boolean }>(
+    `/v1/products/${productId}/watch`,
+    { params: { email } }
+  );
+  return data.watching;
+};
+
+const watchPrice = async (productId: string, email: string) => {
+  await api.post(`/v1/products/${productId}/watch`, { email });
+};
+
+const unwatchPrice = async (productId: string, email: string) => {
+  await api.delete(`/v1/products/${productId}/watch`, { params: { email } });
+};
+
 const getProductsByPagination = async (params: ProductAdminParam) => {
   const { data } = await api.get<Pagination<ProductAdmin[]>>(
     "/v1/products/getAll",
@@ -127,6 +144,9 @@ export const ProductApi = {
   getProducts,
   getProductBrands,
   suggestProducts,
+  isWatchingPrice,
+  watchPrice,
+  unwatchPrice,
   getProductsByPagination,
   deleteProduct,
   getProductById,

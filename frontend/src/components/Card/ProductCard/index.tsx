@@ -20,6 +20,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Comments from "../../Comments";
 import { useParams } from "react-router-dom";
+import PriceWatch from "../../PriceWatch";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { ProductApi } from "../../../api/productApi";
 import { CommentApi } from "../../../api/comment";
@@ -281,6 +282,8 @@ const ProductCard = ({ product }: CardProps) => {
               {quantity ? "Add one more" : "Add to cart"}
             </Button>
           </Box>
+
+          {productId && <PriceWatch productId={productId} />}
         </Box>
       </Paper>
 

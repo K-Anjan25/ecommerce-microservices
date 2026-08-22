@@ -43,6 +43,7 @@ public class ProductService {
     private final ProductImageRepository productImageRepository;
     private final ProductVariantRepository productVariantRepository;
     private final FlashSaleRepository flashSaleRepository;
+    private final PriceWatchService priceWatchService;
 
     @Transactional(readOnly = true)
     public Pagination<ProductDto> getAllProducts(int pageNo, int pageSize) {
@@ -126,6 +127,8 @@ public class ProductService {
 
         Category category = categoryService.getCategoryById(updateProductRequest.getCategoryId());
 
+        BigDecimal previousUnitPrice = product.getUnitPrice();
+
         product.setCategory(category);
         product.setDescription(updateProductRequest.getDescription());
         product.setName(updateProductRequest.getName());
@@ -153,6 +156,15 @@ public class ProductService {
         }
 
         productRepository.save(product);
+
+        // Phase 8: queue price-drop alert emails when the unit price decreased.
+        try {
+            priceWatchService.notifyPriceDrop(productId, product.getName(),
+                    previousUnitPrice, product.getUnitPrice());
+        } catch (Exception e) {
+            log.error("Price-drop notification failed for product {}", productId, e);
+        }
+
         return productMapper.productToProductDto(productRepository.findById(productId).orElse(product));
     }
 

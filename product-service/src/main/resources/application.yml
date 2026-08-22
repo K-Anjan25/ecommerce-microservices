@@ -23,6 +23,18 @@ spring:
   application:
     name: product-service
 
+rabbitmq:
+  exchanges:
+    notification: notification.exchange
+  queues:
+    send-email: send.email.queue
+  routing-keys:
+    send-email: send.email.routing-key
+
+app:
+  # Used in customer-facing links (e.g. price-drop alert emails)
+  frontend-url: ${APP_FRONTEND_URL:http://localhost:3000}
+
 management:
   endpoints:
     web:
