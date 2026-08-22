@@ -12,6 +12,7 @@
     <modules>
         <module>common</module>
         <module>event-bus</module>
+        <module>product-service</module>
     </modules>
 
 
