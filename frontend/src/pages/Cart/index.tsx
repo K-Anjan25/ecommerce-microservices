@@ -158,7 +158,12 @@ function Cart() {
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
         <div className="space-y-6">
           {items.map((item) => (
-            <Card key={item.product.id} product={item.product} />
+            <Card
+              key={`${item.product.id}-${item.variantId ?? "base"}`}
+              product={item.product}
+              variantId={item.variantId}
+              variantName={item.variantName}
+            />
           ))}
         </div>
 

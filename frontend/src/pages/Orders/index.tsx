@@ -6,6 +6,7 @@ import EmptyState from "../../components/EmptyState";
 import PageHeader from "../../components/PageHeader";
 import { Button, Paper, Typography } from "@mui/material";
 import { Order } from "../../types/order";
+import { ProductApi } from "../../api/productApi";
 import { formatDate } from "../../utils/date";
 import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "../../store";
@@ -20,24 +21,47 @@ function Orders() {
 
   const { data: orders, isLoading } = useQuery(
     ["user:orders", userId],
-    () => OrderApi.getOrders(0, 100),
+    () => OrderApi.getMyOrders(),
     { enabled: Boolean(userId) }
   );
 
-  const userOrders = orders?.data ?? [];
+  const userOrders = orders ?? [];
 
-  const handleBuyAgain = (order: Order) => {
-    order.items.forEach((item) => {
-      dispatch(
-        addToCart({
-          product: { id: item.productId, name: item.productId } as any,
-          quantity: item.quantity,
-          variantId: item.variantId,
-        })
+  const handleBuyAgain = async (order: Order) => {
+    // Fetch the real products so cart lines have prices/images; items whose
+    // product no longer exists are skipped instead of adding broken lines.
+    try {
+      const productIds = Array.from(
+        new Set(order.items.map((item) => item.productId))
       );
-    });
-    showSuccess("Items added to cart");
-    navigate("/cart");
+      const products = await ProductApi.getProductsByIds(productIds);
+      const byId = new Map(products.map((p) => [p.id, p]));
+      let added = 0;
+      order.items.forEach((item) => {
+        const product = byId.get(item.productId);
+        if (!product) return;
+        const variant = item.variantId
+          ? product.variants?.find((v) => v.id === item.variantId)
+          : undefined;
+        dispatch(
+          addToCart({
+            product,
+            quantity: item.quantity,
+            variantId: item.variantId,
+            variantName: variant?.name,
+          })
+        );
+        added += 1;
+      });
+      if (added === 0) {
+        showSuccess("These products are no longer available");
+        return;
+      }
+      showSuccess("Items added to cart");
+      navigate("/cart");
+    } catch {
+      showSuccess("Could not re-add these items — products are no longer available");
+    }
   };
 
   if (isLoading) {

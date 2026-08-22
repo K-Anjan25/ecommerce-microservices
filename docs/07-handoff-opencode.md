@@ -213,6 +213,36 @@ Starting **Phase 7 — Commerce completion** per `docs/06-roadmap.md`.
   completes a real Razorpay checkout), so a real-key refund may be rejected by Razorpay until
   payment capture is implemented; dev/keyless flows are unaffected (simulated).
 
+### 7.4.7 Frontend audit + UX polish (DONE 2026-08-22, fourth session)
+Bugs fixed:
+- **Cart was variant-blind on mutations** — ADD merged on `(productId, variantId)` but
+  REMOVE/INCREASE/DECREASE matched `productId` only, corrupting both lines when a product was
+  in the cart under two variants. Actions now take `(productId, variantId?)`; reducer matches
+  on both (`undefined` only matches `undefined`); grid Card + detail ProductCard + Cart +
+  Checkout lines all pass variant context. Cart/Checkout also had duplicate React keys for
+  such lines (now `${productId}-${variantId ?? "base"}`) and cart lines now show their
+  variant chip.
+- **Orders page showed EVERYONE's orders** — `GET /v1/orders` is unscoped. New
+  `GET /v1/orders/my` (userId header from gateway; 401 if absent) + repository
+  `findByCustomerIdOrderByCreatedDateDesc`; frontend Orders page uses it.
+- **"Buy again" added fake products** (`{id, name: productId}` — no price → NaN totals). Now
+  fetches real products via `findByIds`, resolves variant names, skips deleted products.
+- **Compare button did `window.location.href`** (full page reload, state wipe). Now uses the
+  router + a toast.
+- **Login ignored the redirect-back state** (`RequireAuth` passes `state.from`) — always went
+  to `/`. Now returns to the originating page.
+- **Card chip collision** — SALE and stock chips were both absolute at top-right. SALE now
+  shows `SALE · N% off` below the stock chip.
+
+UX polish:
+- Global search in the navbar (desktop) → navigates home with `{state:{search}}`, and the
+  Products page seeds its catalog search from it (per-location-entry effect).
+- Subtle page-entry animation (`fade-up` on layout main), custom slim scrollbars,
+  `:focus-visible` rings, `prefers-reduced-motion` support, lazy product images,
+  bottom-right toasts with shorter auto-close.
+
+All verified with `tsc + vite build`.
+
 ### 7.4.6 Remaining / optional
 - [ ] Public order-tracking page for guests ("email link to track" in the roadmap) — needs
       public `GET /v1/orders/{id}/track` and a frontend page.

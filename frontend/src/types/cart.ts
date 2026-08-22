@@ -8,6 +8,16 @@ export interface Cart {
   variantName?: string;
 }
 
+/**
+ * Identifies one cart line. A product can appear in multiple lines when it
+ * has variants (one line per variant), so mutations must match on both.
+ * undefined variantId only matches undefined (strict equality).
+ */
+export interface CartLineKey {
+  productId: string;
+  variantId?: string;
+}
+
 interface ADD_TO_CART {
   type: "ADD_TO_CART";
   payload: Cart;
@@ -15,17 +25,17 @@ interface ADD_TO_CART {
 
 interface REMOVE_FROM_CART {
   type: "REMOVE_FROM_CART";
-  payload: string;
+  payload: CartLineKey;
 }
 
 interface DECREASE_PRODUCT_QUANTITY {
   type: "DECREASE_PRODUCT_QUANTITY";
-  payload: string;
+  payload: CartLineKey;
 }
 
 interface INCREASE_PRODUCT_QUANTITY {
   type: "INCREASE_PRODUCT_QUANTITY";
-  payload: string;
+  payload: CartLineKey;
 }
 
 interface CLEAR_ALL_ITEMS {

@@ -169,6 +169,13 @@ public class OrderService {
                 .orElseThrow(() -> new OrderNotFoundException("Order not found: " + orderId));
     }
 
+    /** Customer-scoped order history (the userId header is injected by the gateway). */
+    public List<OrderDto> getOrdersByCustomer(UUID customerId) {
+        return orderRepository.findByCustomerIdOrderByCreatedDateDesc(customerId).stream()
+                .map(orderMapper::orderToOrderDto)
+                .collect(Collectors.toList());
+    }
+
     public List<OrderStatusHistoryDto> getOrderTracking(UUID orderId) {
         return orderStatusHistoryRepository.findByOrderIdOrderByChangedAtAsc(orderId).stream()
                 .map(history -> OrderStatusHistoryDto.builder()

@@ -113,16 +113,16 @@ const ProductCard = ({ product }: CardProps) => {
         })
       );
     } else {
-      dispatch(increaseProductQuantity(product.id));
+      dispatch(increaseProductQuantity(product.id, selectedVariantId || undefined));
     }
   };
 
   const handleRemove = () => {
     if (!product) return;
     if (quantity <= 1) {
-      dispatch(removeFromCart(product.id));
+      dispatch(removeFromCart(product.id, selectedVariantId || undefined));
     } else {
-      dispatch(decreaseProductQuantity(product.id));
+      dispatch(decreaseProductQuantity(product.id, selectedVariantId || undefined));
     }
   };
 

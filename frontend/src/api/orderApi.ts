@@ -15,6 +15,12 @@ const getOrderById = async (orderId: string) => {
   return data;
 };
 
+// Customer-scoped history of the signed-in user (server filters by userId).
+const getMyOrders = async () => {
+  const { data } = await api.get<Order[]>("/v1/orders/my");
+  return data;
+};
+
 const createOrder = async (order: CreateOrderRequest) => {
   // Requires ROLE_USER or ROLE_ADMIN
   const { data } = await api.post<Order>("/v1/orders", order);
@@ -31,6 +37,7 @@ const getInvoice = async (orderId: string) => {
 
 export const OrderApi = {
   getOrders,
+  getMyOrders,
   getOrderById,
   createOrder,
   getInvoice,

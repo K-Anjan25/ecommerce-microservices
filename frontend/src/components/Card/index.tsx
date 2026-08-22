@@ -6,6 +6,7 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   addToCart,
   decreaseProductQuantity,
@@ -16,44 +17,61 @@ import { AppState } from "../../store";
 import { Product, ProductAdmin } from "../../types/product";
 import { formatPrice } from "../../utils/cart";
 import { addToCompare, isInCompare } from "../../utils/compare";
+import { showSuccess } from "../../utils/showSuccess";
 import CompareIcon from "@mui/icons-material/Compare";
 
 type CardProps = {
   product: Product | ProductAdmin;
   onClick?: (event: React.MouseEvent) => void;
+  /** Cart-line variant context: pass when the card represents a specific cart line. */
+  variantId?: string;
+  variantName?: string;
 };
 
-const Card = ({ product, onClick }: CardProps) => {
+const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
   const dispatch = useDispatch<any>();
+  const navigate = useNavigate();
   const cartItems = useSelector((state: AppState) => state.cart);
   const quantity =
-    cartItems.find((item) => item.product.id === product.id)?.quantity ?? 0;
+    cartItems.find(
+      (item) => item.product.id === product.id && item.variantId === variantId
+    )?.quantity ?? 0;
 
   const stop = (e: React.MouseEvent) => e.stopPropagation();
 
   const handleAdd = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (quantity === 0) {
-      dispatch(addToCart({ product, quantity: 1 }));
+      dispatch(addToCart({ product, quantity: 1, variantId, variantName }));
     } else {
-      dispatch(increaseProductQuantity(product.id));
+      dispatch(increaseProductQuantity(product.id, variantId));
     }
   };
 
   const handleRemove = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (quantity <= 1) {
-      dispatch(removeFromCart(product.id));
+      dispatch(removeFromCart(product.id, variantId));
     } else {
-      dispatch(decreaseProductQuantity(product.id));
+      dispatch(decreaseProductQuantity(product.id, variantId));
     }
+  };
+
+  const handleCompare = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isInCompare(product.id)) {
+      navigate("/compare");
+      return;
+    }
+    addToCompare(product.id);
+    showSuccess(`${product.name} added to compare`);
   };
 
   const categoryName = "categoryName" in product ? product.categoryName : product.category?.name;
 
   return (
     <MuiCard
-      className="group flex h-full cursor-pointer flex-col overflow-hidden transition hover:-translate-y-1 hover:shadow-lift"
+      className="group flex h-full cursor-pointer flex-col overflow-hidden transition duration-200 hover:-translate-y-1 hover:shadow-lift"
       onClick={onClick}
     >
       <Box className="relative aspect-[4/3] overflow-hidden bg-brand-tint">
@@ -61,6 +79,7 @@ const Card = ({ product, onClick }: CardProps) => {
           <img
             src={product.images?.[0] || product.imageUrl}
             alt={product.name}
+            loading="lazy"
             className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
           />
         ) : (
@@ -84,9 +103,11 @@ const Card = ({ product, onClick }: CardProps) => {
         )}
         {product.originalPrice && product.originalPrice > product.unitPrice && (
           <Chip
-            label="SALE"
+            label={`SALE · ${Math.round(
+              ((product.originalPrice - product.unitPrice) / product.originalPrice) * 100
+            )}% off`}
             size="small"
-            className="absolute right-3 top-3 !bg-rose-600 !font-bold !text-white shadow-sm"
+            className="absolute right-3 top-14 !bg-rose-600 !font-bold !text-white shadow-sm"
           />
         )}
         <Chip
@@ -115,6 +136,13 @@ const Card = ({ product, onClick }: CardProps) => {
         >
           {product.name}
         </Typography>
+        {variantName && (
+          <Chip
+            label={variantName}
+            size="small"
+            className="w-fit !bg-brand-tint !text-brand"
+          />
+        )}
         <Typography
           variant="body2"
           color="text.secondary"
@@ -135,50 +163,44 @@ const Card = ({ product, onClick }: CardProps) => {
             </Typography>
           </Box>
 
-          {quantity ? (
-            <Box
-              className="flex items-center gap-1 rounded-full border border-ink/10 bg-brand-tint px-1 py-0.5"
-              onClick={stop}
-            >
-              <IconButton size="small" onClick={handleRemove}>
-                <RemoveIcon fontSize="small" />
+          <Box className="flex items-center gap-1">
+            {quantity ? (
+              <Box
+                className="flex items-center gap-1 rounded-full border border-ink/10 bg-brand-tint px-1 py-0.5"
+                onClick={stop}
+              >
+                <IconButton size="small" onClick={handleRemove}>
+                  <RemoveIcon fontSize="small" />
+                </IconButton>
+                <Typography className="min-w-6 text-center text-sm font-bold">
+                  {quantity}
+                </Typography>
+                <IconButton size="small" onClick={handleAdd}>
+                  <AddIcon fontSize="small" />
+                </IconButton>
+              </Box>
+            ) : (
+              <IconButton
+                size="small"
+                onClick={handleAdd}
+                className="!bg-brand !text-paper transition hover:!bg-brand-main"
+              >
+                <AddShoppingCartIcon fontSize="small" />
               </IconButton>
-              <Typography className="min-w-6 text-center text-sm font-bold">
-                {quantity}
-              </Typography>
-              <IconButton size="small" onClick={handleAdd}>
-                <AddIcon fontSize="small" />
-              </IconButton>
-            </Box>
-          ) : (
+            )}
             <IconButton
               size="small"
-              onClick={handleAdd}
-              className="!bg-brand !text-paper transition hover:!bg-brand-main"
+              onClick={handleCompare}
+              className={`transition ${
+                isInCompare(product.id)
+                  ? "!bg-brand !text-paper"
+                  : "!bg-white !text-ink hover:!bg-brand-tint"
+              }`}
+              title="Compare"
             >
-              <AddShoppingCartIcon fontSize="small" />
+              <CompareIcon fontSize="small" />
             </IconButton>
-          )}
-          <IconButton
-            size="small"
-            onClick={(e) => {
-              e.stopPropagation();
-              if (isInCompare(product.id)) {
-                window.location.href = "/compare";
-              } else {
-                addToCompare(product.id);
-                window.location.href = "/compare";
-              }
-            }}
-            className={`transition ${
-              isInCompare(product.id)
-                ? "!bg-brand !text-paper"
-                : "!bg-white !text-ink hover:!bg-brand-tint"
-            }`}
-            title="Compare"
-          >
-            <CompareIcon fontSize="small" />
-          </IconButton>
+          </Box>
         </Box>
       </Box>
     </MuiCard>

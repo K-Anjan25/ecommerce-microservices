@@ -40,6 +40,19 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getAllOrders(pageNo,pageSize));
     }
 
+    /**
+     * Order history of the signed-in customer. The gateway AuthFilter injects
+     * the userId header on this route; a missing header means the call did not
+     * come through the authenticated gateway path.
+     */
+    @GetMapping("/my")
+    public ResponseEntity<List<OrderDto>> getMyOrders(@RequestHeader(value = "userId", required = false) String userId) {
+        if (userId == null || userId.isBlank()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(orderService.getOrdersByCustomer(UUID.fromString(userId)));
+    }
+
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderDto> getById(@PathVariable UUID orderId){
         return ResponseEntity.ok(orderService.getOrderById(orderId));

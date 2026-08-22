@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
+import SearchIcon from "@mui/icons-material/Search";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -54,6 +55,7 @@ const Navbar = () => {
   const carts = useSelector((state: AppState) => state.cart);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [navSearch, setNavSearch] = useState("");
 
   const isAdmin = user?.roles?.includes("ROLE_ADMIN");
 
@@ -69,6 +71,15 @@ const Navbar = () => {
     setDrawerOpen(false);
     setAnchorElUser(null);
     navigate(path);
+  };
+
+  const submitNavSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const term = navSearch.trim();
+    if (!term) return;
+    // Products page seeds its search from this navigation state.
+    navigate("/", { state: { search: term } });
+    setNavSearch("");
   };
 
   const handleCloseUserMenu = (setting: string) => {
@@ -182,6 +193,22 @@ const Navbar = () => {
           </Box>
 
           <Box className="flex-1" />
+
+          <Box
+            component="form"
+            onSubmit={submitNavSearch}
+            className="relative mr-1 hidden w-56 items-center lg:flex xl:w-72"
+          >
+            <SearchIcon className="pointer-events-none absolute left-3 text-paper/60" fontSize="small" />
+            <input
+              type="search"
+              value={navSearch}
+              onChange={(e) => setNavSearch(e.target.value)}
+              placeholder="Search products…"
+              aria-label="Search products"
+              className="h-9 w-full rounded-full border border-paper/25 bg-paper/10 pl-9 pr-3 text-sm text-paper placeholder:text-paper/60 outline-none transition focus:border-paper/60 focus:bg-paper/20"
+            />
+          </Box>
 
           <IconButton
             aria-label="cart"
