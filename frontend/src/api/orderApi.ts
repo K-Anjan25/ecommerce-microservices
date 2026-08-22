@@ -21,8 +21,17 @@ const createOrder = async (order: CreateOrderRequest) => {
   return data;
 };
 
+// Regenerated server-side from current order data; returns a PDF blob.
+const getInvoice = async (orderId: string) => {
+  const res = await api.get<Blob>(`/v1/orders/${orderId}/invoice`, {
+    responseType: "blob",
+  });
+  return res.data;
+};
+
 export const OrderApi = {
   getOrders,
   getOrderById,
   createOrder,
+  getInvoice,
 };

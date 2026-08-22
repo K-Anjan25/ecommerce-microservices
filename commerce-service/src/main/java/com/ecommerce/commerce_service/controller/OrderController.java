@@ -4,10 +4,13 @@ import com.ecommerce.commerce_service.dto.Pagination;
 import com.ecommerce.commerce_service.dto.order.OrderDto;
 import com.ecommerce.commerce_service.dto.order.CreateOrderRequest;
 import com.ecommerce.commerce_service.dto.tracking.OrderStatusHistoryDto;
+import com.ecommerce.commerce_service.service.InvoiceService;
 import com.ecommerce.commerce_service.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +26,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class OrderController {
     private final OrderService orderService;
+    private final InvoiceService invoiceService;
 
     @PostMapping
     public ResponseEntity<OrderDto> createOrder(@Valid @RequestBody CreateOrderRequest createOrderRequest){
@@ -44,6 +48,16 @@ public class OrderController {
     @GetMapping("/{orderId}/track")
     public ResponseEntity<List<OrderStatusHistoryDto>> trackOrder(@PathVariable UUID orderId){
         return ResponseEntity.ok(orderService.getOrderTracking(orderId));
+    }
+
+    /** Regenerates the invoice PDF from current order data (authenticated users). */
+    @GetMapping("/{orderId}/invoice")
+    public ResponseEntity<byte[]> downloadInvoice(@PathVariable UUID orderId) {
+        byte[] pdf = invoiceService.getOrderInvoicePdf(orderId);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=invoice-" + orderId + ".pdf");
+        return new ResponseEntity<>(pdf, headers, HttpStatus.OK);
     }
 
     @GetMapping("/stats/bestsellers")

@@ -12,13 +12,14 @@
 
 ## 7.0 TL;DR for the next agent
 
-- **Phase 6 is COMPLETE** (backend + frontend). All work is **UNCOMMITTED** in the working tree.
-- This session delivered: P6.6 frontend catalog UX (facet sidebar, flash-sale countdown timer,
-  returns/refunds pages, user order detail with return request), plus customer-scoped returns API
-  (`GET /v1/returns/my`).
-- **Phase 7 is in progress.** Starting with pincode-based shipping rates, configurable state tax,
-  and stock restoration on return approval.
-- **Nothing is committed.** Recommend a checkpoint commit before continuing.
+- **Phase 6 is COMPLETE** (backend + frontend).
+- **Phase 7 is nearly complete** (see §7.4.x): shipping rates + state tax (backend AND frontend
+  wiring), returns with stock restore, saved addresses, **guest checkout end-to-end**, and
+  **PDF invoices** (emailed on payment success + downloadable from order detail).
+- All of the above is committed on branch `arena/01a02949-ecommerce-microservices`
+  (PR #1). Java changes made on 2026-08-22 still need a Maven build to verify — the
+  authoring sandbox had no JDK.
+- Remaining Phase 7 items: refund via real payment provider (§7.4.4).
 
 ### 7.0.1 Critical bug fixed earlier (read before you touch entities!)
 **`java.lang.StackOverflowError` on `GET /v1/products`** was caused by a Lombok `@Data`
@@ -171,12 +172,31 @@ Starting **Phase 7 — Commerce completion** per `docs/06-roadmap.md`.
   (Phase 10). Cart is client-side (redux-persist), so "cart merge on login" is a non-issue.
   `formdata.json` state list still outdated — no TELANGANA entry.
 
-### 7.4.4 Next up (Phase 7)
-- [ ] **PDF invoices** — generated + emailed on payment success.
+### 7.4.4 PDF invoices (DONE 2026-08-22, second session)
+- [x] **event-bus** — `EmailRequest` gains optional `attachmentName` + `attachmentBase64`
+      (5-arg constructor; `hasAttachment()` helper; old 3-arg constructor unchanged).
+- [x] **user-service** — `EmailService` builds a `MimeMultipart` (text + PDF attachment via
+      `ByteArrayDataSource`/`DataHandler`) when the request has an attachment; plain text
+      behaviour unchanged otherwise.
+- [x] **commerce-service** — new `InvoiceService` (OpenPDF `com.github.librepdf:openpdf:1.3.30`):
+      generates a tax invoice (order meta, bill-to, line table, subtotal/shipping/gift
+      wrap/discount/tax/total); product names fetched best-effort from product-service via new
+      `ProductCatalogClient` Feign client (falls back to short ids); amounts use "Rs." (Helvetica
+      has no rupee glyph).
+- [x] **Trigger** — `PaymentService.processPayment` emails the invoice when payment status is
+      SUCCESS (wrapped in try/catch inside `emailInvoice`; never rolls back the payment).
+- [x] **Download** — `GET /v1/orders/{orderId}/invoice` regenerates the PDF on demand
+      (authenticated users via the guarded gateway route); frontend Order detail has an
+      "Invoice" download button (`OrderApi.getInvoice` blob download).
+- Caveats: invoice content is regenerated from current order data (no immutable snapshot);
+  COD orders get no invoice email until a real provider payment happens.
+
+### 7.4.5 Next up (Phase 7 remainder)
 - [ ] **Refund via real payment provider** — return approval currently restores stock but the
       provider refund call needs Stripe/Razorpay refund API wiring (keys are config-gated).
 - [ ] (Optional) public order-tracking page for guests ("email link to track" in the roadmap) —
       needs public `GET /v1/orders/{id}/track` and a frontend page.
+- [ ] (Optional) `formdata.json` state list is outdated — no TELANGANA entry.
 
 ---
 

@@ -42,6 +42,7 @@ public class PaymentService {
     private final OrderRepository orderRepository;
     private final RabbitMQMessageProducer rabbitMQMessageProducer;
     private final List<PaymentProviderClient> providerClients;
+    private final InvoiceService invoiceService;
 
     @Value("${rabbitmq.exchanges.internal}")
     private String exchange;
@@ -115,6 +116,12 @@ public class PaymentService {
         );
 
         sendPaymentEmail(savedPayment);
+
+        // PDF invoice: emailed on successful (non-COD) payment; failures are
+        // logged inside and never roll back the payment.
+        if (PaymentStatus.SUCCESS.name().equals(savedPayment.getStatus())) {
+            orderRepository.findById(savedPayment.getOrderId()).ifPresent(invoiceService::emailInvoice);
+        }
 
         log.info("Payment status event published for order {}", savedPayment.getOrderId());
 

@@ -8,6 +8,7 @@ import Loader from "../../../components/Loader";
 import EmptyState from "../../../components/EmptyState";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import PictureAsPdfOutlinedIcon from "@mui/icons-material/PictureAsPdfOutlined";
 import { showSuccess } from "../../../utils/showSuccess";
 import { showError } from "../../../utils/showError";
 import { useState } from "react";
@@ -39,6 +40,20 @@ function UserOrderDetail() {
       setForm({ productId: "", quantity: 1, reason: "" });
     },
     onError: () => showError("Failed to submit return request"),
+  });
+
+  const invoiceMutation = useMutation(OrderApi.getInvoice, {
+    onSuccess: (blob) => {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `invoice-${orderId}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    },
+    onError: () => showError("Could not download invoice"),
   });
 
   const handleSubmit = () => {
@@ -76,9 +91,18 @@ function UserOrderDetail() {
         title={`Order #${order.id}`}
         subtitle={new Date(order.createdDate).toLocaleString()}
         actions={
-          <Button startIcon={<ArrowBackIcon />} onClick={() => navigate("/orders")}>
-            Back to orders
-          </Button>
+          <>
+            <Button
+              startIcon={<PictureAsPdfOutlinedIcon />}
+              onClick={() => invoiceMutation.mutate(orderId!)}
+              disabled={invoiceMutation.isLoading}
+            >
+              Invoice
+            </Button>
+            <Button startIcon={<ArrowBackIcon />} onClick={() => navigate("/orders")}>
+              Back to orders
+            </Button>
+          </>
         }
       />
 
