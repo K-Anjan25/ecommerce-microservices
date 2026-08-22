@@ -11,11 +11,8 @@
 
     <modules>
         <module>common</module>
-        <module>product-service</module>
-        <module>commerce-service</module>
         <module>event-bus</module>
-        <module>user-service</module>
-        <module>api-gateway</module>
+        <module>product-service</module>
     </modules>
 
 
