@@ -297,6 +297,16 @@ All verified with `tsc + vite build`.
   constructor-arg mismatches beyond the one fixed above). Full compile verification still
       pending real CI or a local `mvnw` run (sandbox has no JDK and Maven Central is blocked).
 
+### 7.4.12 CI green — backend verified (2026-08-22, eighth session)
+- [x] CI (`.github/workflows/ci.yml`, added by the owner) is **green on all three jobs**:
+      backend `mvn -B clean package` (compile + tests, all 6 modules), frontend build,
+      compose config. Root causes of the earlier failures, all fixed:
+      1. event-bus dependency declared as `1.0-SNAPSHOT` (modules are `0.0.1-SNAPSHOT`);
+      2. `EmailRequest` rewrite dropped its `package com.ecommerce.event_bus.dto;` line
+         (class compiled into the default package — broke product/commerce/user-service);
+      3. `CouponService` missing the `UpdateCouponRequest` import.
+- All Phase 7–9 backend work is now machine-verified. PR #1 merged to main.
+
 ### 7.4.6 Remaining / optional
 - [ ] Public order-tracking page for guests ("email link to track" in the roadmap) — needs
       public `GET /v1/orders/{id}/track` and a frontend page.
