@@ -4,6 +4,7 @@ import com.ecommerce.commerce_service.dto.coupon.CouponDto;
 import com.ecommerce.commerce_service.dto.coupon.CouponValidationRequest;
 import com.ecommerce.commerce_service.dto.coupon.CouponValidationResponse;
 import com.ecommerce.commerce_service.dto.coupon.CreateCouponRequest;
+import com.ecommerce.commerce_service.dto.coupon.UpdateCouponRequest;
 import com.ecommerce.commerce_service.exception.CouponException;
 import com.ecommerce.commerce_service.model.Coupon;
 import com.ecommerce.commerce_service.model.CouponType;
