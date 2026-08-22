@@ -30,8 +30,18 @@ spring:
           uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
           predicates:
             - Path=/v1/orders/**
+            - Header=Authorization, Bearer .+
           filters:
             - AuthFilter
+
+        # Guest checkout: order creation without a token (no AuthFilter).
+        # Must come AFTER the guarded route: logged-in requests carry an
+        # Authorization header and match it first, so userId is still injected.
+        - id: order-service-guest
+          uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
+          predicates:
+            - Path=/v1/orders
+            - Method=POST
 
         - id: cart-service
           uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
@@ -44,8 +54,16 @@ spring:
           uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
           predicates:
             - Path=/v1/payments/**
+            - Header=Authorization, Bearer .+
           filters:
             - AuthFilter
+
+        # Guest checkout: payment initiation without a token (no AuthFilter).
+        - id: payment-service-guest
+          uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
+          predicates:
+            - Path=/v1/payments
+            - Method=POST
 
         - id: coupon-service
           uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}

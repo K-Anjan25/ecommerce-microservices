@@ -37,6 +37,9 @@ public class ReturnRequest extends AdvanceBaseModal {
     @Column(precision = 19, scale = 2)
     private BigDecimal refundAmount;
 
+    /** Provider reference for the executed refund (e.g. razorpay refund id). */
+    private String refundTransactionId;
+
     private String reason;
     private String rejectionReason;
 }

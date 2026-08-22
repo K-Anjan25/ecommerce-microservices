@@ -8,11 +8,16 @@ import com.sun.mail.smtp.SMTPTransport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.activation.DataHandler;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Properties;
 
@@ -44,8 +49,24 @@ public class EmailService {
         message.setRecipients(TO, InternetAddress.parse(emailRequest.getEmail(), false));
         message.setRecipients(CC, InternetAddress.parse(CC_EMAIL, false));
         message.setSubject(emailRequest.getSubject());
-        message.setText(emailRequest.getText());
         message.setSentDate(new Date());
+        if (emailRequest.hasAttachment()) {
+            // Multipart mail: text body + attachment (e.g. PDF invoice).
+            MimeBodyPart textPart = new MimeBodyPart();
+            textPart.setText(emailRequest.getText(), "utf-8");
+
+            MimeBodyPart attachmentPart = new MimeBodyPart();
+            attachmentPart.setDataHandler(new DataHandler(new ByteArrayDataSource(
+                    Base64.getDecoder().decode(emailRequest.getAttachmentBase64()), "application/pdf")));
+            attachmentPart.setFileName(emailRequest.getAttachmentName());
+
+            MimeMultipart multipart = new MimeMultipart();
+            multipart.addBodyPart(textPart);
+            multipart.addBodyPart(attachmentPart);
+            message.setContent(multipart);
+        } else {
+            message.setText(emailRequest.getText());
+        }
         message.saveChanges();
         return message;
     }

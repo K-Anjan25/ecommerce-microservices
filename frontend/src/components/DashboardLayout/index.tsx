@@ -6,7 +6,7 @@ function DashboardLayout() {
   return (
     <div className="flex min-h-screen flex-col bg-paper">
       <Navbar />
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
+      <main className="animate-fade-up mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
         <Outlet />
       </main>
       <footer className="border-t border-ink/10 bg-brand-dark text-paper/70">

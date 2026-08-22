@@ -79,6 +79,10 @@ function OrderDetail() {
   });
   const refundMutation = useMutation(ReturnApi.refundReturnRequest, {
     onSuccess: () => { showSuccess("Refund processed"); refetchReturns(); },
+    onError: (e: any) => {
+      showError(e.response?.data?.message ?? e.response?.data?.error ?? "Refund failed");
+      refetchReturns();
+    },
   });
 
   if (orderLoading && !orderFromNav) return <Loader />;

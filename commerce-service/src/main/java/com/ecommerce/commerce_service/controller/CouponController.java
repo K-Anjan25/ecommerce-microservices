@@ -4,6 +4,7 @@ import com.ecommerce.commerce_service.dto.coupon.CouponDto;
 import com.ecommerce.commerce_service.dto.coupon.CouponValidationRequest;
 import com.ecommerce.commerce_service.dto.coupon.CouponValidationResponse;
 import com.ecommerce.commerce_service.dto.coupon.CreateCouponRequest;
+import com.ecommerce.commerce_service.dto.coupon.UpdateCouponRequest;
 import com.ecommerce.commerce_service.service.CouponService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,26 @@ public class CouponController {
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<CouponDto> createCoupon(@Valid @RequestBody CreateCouponRequest request) {
         return new ResponseEntity<>(couponService.createCoupon(request), HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    public ResponseEntity<java.util.List<CouponDto>> getAllCoupons() {
+        return ResponseEntity.ok(couponService.getAllCoupons());
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    public ResponseEntity<CouponDto> updateCoupon(@PathVariable UUID id,
+                                                  @RequestBody UpdateCouponRequest request) {
+        return ResponseEntity.ok(couponService.updateCoupon(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    public ResponseEntity<Void> deleteCoupon(@PathVariable UUID id) {
+        couponService.deleteCoupon(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/validate")

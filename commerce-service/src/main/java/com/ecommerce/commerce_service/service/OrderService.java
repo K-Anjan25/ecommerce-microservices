@@ -8,6 +8,7 @@ import com.ecommerce.commerce_service.dto.inventory.InventoryCheckResponse;
 import com.ecommerce.commerce_service.dto.order.CreateOrderRequest;
 import com.ecommerce.commerce_service.dto.order.OrderDto;
 import com.ecommerce.commerce_service.dto.order.OrderMapper;
+import com.ecommerce.commerce_service.dto.stats.DashboardStatsDto;
 import com.ecommerce.commerce_service.dto.coupon.CouponValidationRequest;
 import com.ecommerce.commerce_service.dto.tracking.OrderStatusHistoryDto;
 import com.ecommerce.commerce_service.exception.OrderNotFoundException;
@@ -35,7 +36,12 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -131,7 +137,10 @@ public class OrderService {
         if (pincode != null && !pincode.isBlank()) {
             var rate = shippingRateService.calculateShipping(
                     new com.ecommerce.commerce_service.dto.shippingRate.ShippingCalculationRequest(pincode, subtotal));
-            if (rate.getCost() != null) {
+            // Only trust the lookup when an active rate exists for the pincode:
+            // the service returns cost=0 / active=false when none is configured,
+            // which must NOT be treated as free shipping.
+            if (rate.isActive() && rate.getCost() != null) {
                 return rate.getCost();
             }
         }
@@ -166,6 +175,13 @@ public class OrderService {
                 .orElseThrow(() -> new OrderNotFoundException("Order not found: " + orderId));
     }
 
+    /** Customer-scoped order history (the userId header is injected by the gateway). */
+    public List<OrderDto> getOrdersByCustomer(UUID customerId) {
+        return orderRepository.findByCustomerIdOrderByCreatedDateDesc(customerId).stream()
+                .map(orderMapper::orderToOrderDto)
+                .collect(Collectors.toList());
+    }
+
     public List<OrderStatusHistoryDto> getOrderTracking(UUID orderId) {
         return orderStatusHistoryRepository.findByOrderIdOrderByChangedAtAsc(orderId).stream()
                 .map(history -> OrderStatusHistoryDto.builder()
@@ -188,6 +204,9 @@ public class OrderService {
                 recordStatus(orderId, OrderStatus.CANCELLED, "Payment failed");
             } else if ("PENDING".equalsIgnoreCase(paymentStatus)) {
                 recordStatus(orderId, OrderStatus.PENDING, "Cash on delivery selected");
+            } else if ("REFUNDED".equalsIgnoreCase(paymentStatus)) {
+                order.setOrderStatus(OrderStatus.REFUNDED);
+                recordStatus(orderId, OrderStatus.REFUNDED, "Refund processed");
             }
             orderRepository.save(order);
             log.info("Order {} updated to {} after payment status {}", orderId, order.getOrderStatus(), paymentStatus);
@@ -240,5 +259,95 @@ public class OrderService {
 
     public List<UUID> getBoughtTogether(UUID productId) {
         return orderItemRepository.findBoughtTogether(productId);
+    }
+
+    /**
+     * Phase 9 analytics: lightweight aggregates computed in-memory (dev-scale
+     * data; swap for SQL aggregation if volume grows). Cancelled orders are
+     * excluded from revenue; order lines drive the top-products ranking.
+     */
+    public DashboardStatsDto getDashboardStats() {
+        List<Order> all = orderRepository.findAll();
+        List<Order> revenueOrders = all.stream()
+                .filter(order -> order.getOrderStatus() != OrderStatus.CANCELLED)
+                .collect(Collectors.toList());
+
+        LocalDate today = LocalDate.now();
+        LocalDate windowStart = today.minusDays(6);
+
+        BigDecimal totalRevenue = revenueOrders.stream()
+                .map(o -> nvl(o.getTotalAmount()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal revenueToday = revenueOrders.stream()
+                .filter(o -> o.getCreatedDate() != null && o.getCreatedDate().toLocalDate().equals(today))
+                .map(o -> nvl(o.getTotalAmount()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal revenue7d = revenueOrders.stream()
+                .filter(o -> o.getCreatedDate() != null
+                        && !o.getCreatedDate().toLocalDate().isBefore(windowStart)
+                        && !o.getCreatedDate().toLocalDate().isAfter(today))
+                .map(o -> nvl(o.getTotalAmount()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        long ordersToday = revenueOrders.stream()
+                .filter(o -> o.getCreatedDate() != null && o.getCreatedDate().toLocalDate().equals(today))
+                .count();
+
+        Map<String, Long> byStatus = all.stream()
+                .collect(Collectors.groupingBy(o -> o.getOrderStatus().name(), Collectors.counting()));
+
+        List<DashboardStatsDto.DailyRevenueDto> daily = new ArrayList<>();
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("EEE d");
+        for (long i = 0; i < 7; i++) {
+            LocalDate day = windowStart.plusDays(i);
+            List<Order> dayOrders = revenueOrders.stream()
+                    .filter(o -> o.getCreatedDate() != null && o.getCreatedDate().toLocalDate().equals(day))
+                    .collect(Collectors.toList());
+            daily.add(DashboardStatsDto.DailyRevenueDto.builder()
+                    .date(day.format(fmt))
+                    .revenue(dayOrders.stream().map(o -> nvl(o.getTotalAmount())).reduce(BigDecimal.ZERO, BigDecimal::add))
+                    .orders((long) dayOrders.size())
+                    .build());
+        }
+
+        Map<UUID, DashboardStatsDto.TopProductDto> top = new LinkedHashMap<>();
+        revenueOrders.stream().flatMap(o -> o.getItems().stream()).forEach(item -> {
+            BigDecimal lineRevenue = (item.getPrice() == null ? BigDecimal.ZERO : item.getPrice())
+                    .multiply(BigDecimal.valueOf(item.getQuantity() == null ? 0 : item.getQuantity()));
+            DashboardStatsDto.TopProductDto agg = top.get(item.getProductId());
+            if (agg == null) {
+                top.put(item.getProductId(), DashboardStatsDto.TopProductDto.builder()
+                        .productId(item.getProductId())
+                        .unitsSold((long) (item.getQuantity() == null ? 0 : item.getQuantity()))
+                        .revenue(lineRevenue)
+                        .build());
+            } else {
+                agg.setUnitsSold(agg.getUnitsSold() + (item.getQuantity() == null ? 0 : item.getQuantity()));
+                agg.setRevenue(agg.getRevenue().add(lineRevenue));
+            }
+        });
+        List<DashboardStatsDto.TopProductDto> topProducts = top.values().stream()
+                .sorted(Comparator.comparing(DashboardStatsDto.TopProductDto::getRevenue).reversed())
+                .limit(5)
+                .collect(Collectors.toList());
+
+        return DashboardStatsDto.builder()
+                .revenueToday(revenueToday)
+                .revenueLast7Days(revenue7d)
+                .avgOrderValue(revenueOrders.isEmpty()
+                        ? BigDecimal.ZERO
+                        : totalRevenue.divide(BigDecimal.valueOf(revenueOrders.size()), 2, RoundingMode.HALF_UP))
+                .totalOrders((long) all.size())
+                .ordersToday(ordersToday)
+                .ordersByStatus(byStatus)
+                .dailyRevenue(daily)
+                .topProducts(topProducts)
+                .build();
+    }
+
+    private BigDecimal nvl(BigDecimal value) {
+        return value == null ? BigDecimal.ZERO : value;
     }
 }

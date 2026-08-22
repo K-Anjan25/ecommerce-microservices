@@ -20,6 +20,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Comments from "../../Comments";
 import { useParams } from "react-router-dom";
+import PriceWatch from "../../PriceWatch";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { ProductApi } from "../../../api/productApi";
 import { CommentApi } from "../../../api/comment";
@@ -113,16 +114,16 @@ const ProductCard = ({ product }: CardProps) => {
         })
       );
     } else {
-      dispatch(increaseProductQuantity(product.id));
+      dispatch(increaseProductQuantity(product.id, selectedVariantId || undefined));
     }
   };
 
   const handleRemove = () => {
     if (!product) return;
     if (quantity <= 1) {
-      dispatch(removeFromCart(product.id));
+      dispatch(removeFromCart(product.id, selectedVariantId || undefined));
     } else {
-      dispatch(decreaseProductQuantity(product.id));
+      dispatch(decreaseProductQuantity(product.id, selectedVariantId || undefined));
     }
   };
 
@@ -281,6 +282,8 @@ const ProductCard = ({ product }: CardProps) => {
               {quantity ? "Add one more" : "Add to cart"}
             </Button>
           </Box>
+
+          {productId && <PriceWatch productId={productId} />}
         </Box>
       </Paper>
 

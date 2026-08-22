@@ -10,7 +10,7 @@ import PageHeader from "../../components/PageHeader";
 import EmptyState from "../../components/EmptyState";
 import SelectInput from "../../components/SelectInput";
 import TextInput from "../../components/TextInput";
-import orderForm from "../../forms/orderForm";
+import createOrderForm from "../../forms/orderForm";
 import { AppState } from "../../store";
 import { clearAllItems } from "../../store/actions/cartAction";
 import { CreateOrderRequest } from "../../types/order";
@@ -40,7 +40,7 @@ function Cart() {
   const dispatch = useDispatch<any>();
 
   const form = useFormik({
-    ...orderForm,
+    ...createOrderForm(),
     onSubmit: (values) => {
       const products = items.map((item) => {
         return { productId: item.product.id, quantity: item.quantity, variantId: item.variantId };
@@ -52,6 +52,7 @@ function Cart() {
           addressDetail: values.addressDetail,
         },
         items: products,
+        state: values.state,
       } as CreateOrderRequest;
       createMutation.mutate(order);
     },
@@ -157,7 +158,12 @@ function Cart() {
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
         <div className="space-y-6">
           {items.map((item) => (
-            <Card key={item.product.id} product={item.product} />
+            <Card
+              key={`${item.product.id}-${item.variantId ?? "base"}`}
+              product={item.product}
+              variantId={item.variantId}
+              variantName={item.variantName}
+            />
           ))}
         </div>
 

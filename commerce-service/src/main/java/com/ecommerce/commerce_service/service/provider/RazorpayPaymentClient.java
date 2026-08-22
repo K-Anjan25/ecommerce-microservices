@@ -71,6 +71,54 @@ public class RazorpayPaymentClient implements PaymentProviderClient {
         }
     }
 
+    @Override
+    public ProviderPaymentResult refund(Payment payment, java.math.BigDecimal amount) {
+        String keyId = paymentProviderProperties.getRazorpay().getKeyId();
+        String keySecret = paymentProviderProperties.getRazorpay().getKeySecret();
+        if (isBlank(keyId) || isBlank(keySecret)) {
+            return ProviderPaymentResult.builder()
+                    .success(true)
+                    .transactionId("SIM-REFUND-" + payment.getOrderId())
+                    .message("Razorpay credentials are missing - refund simulated")
+                    .build();
+        }
+        String transactionId = payment.getTransactionId();
+        if (isBlank(transactionId)) {
+            return ProviderPaymentResult.builder()
+                    .success(false)
+                    .message("No Razorpay transaction stored for order " + payment.getOrderId())
+                    .build();
+        }
+
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set(HttpHeaders.AUTHORIZATION, basicAuth(keyId, keySecret));
+
+            Map<String, Object> body = new HashMap<>();
+            body.put("amount", amount.movePointRight(2).intValue()); // paise
+            body.put("speed", "normal");
+
+            HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+            ResponseEntity<Map> response = restTemplate.postForEntity(
+                    "https://api.razorpay.com/v1/payments/" + transactionId + "/refund", requestEntity, Map.class);
+            Map<String, Object> responseBody = response.getBody();
+            String refundId = responseBody != null ? String.valueOf(responseBody.get("id")) : null;
+
+            return ProviderPaymentResult.builder()
+                    .success(response.getStatusCode().is2xxSuccessful() && refundId != null)
+                    .transactionId(refundId)
+                    .message(response.getStatusCode().is2xxSuccessful() ? "Razorpay refund created" : "Razorpay refund failed")
+                    .build();
+        } catch (Exception exception) {
+            log.error("Razorpay refund failed for orderId {}", payment.getOrderId(), exception);
+            return ProviderPaymentResult.builder()
+                    .success(false)
+                    .message("Razorpay refund error: " + exception.getMessage())
+                    .build();
+        }
+    }
+
     private String basicAuth(String keyId, String keySecret) {
         String token = keyId + ":" + keySecret;
         return "Basic " + Base64.getEncoder().encodeToString(token.getBytes(StandardCharsets.UTF_8));

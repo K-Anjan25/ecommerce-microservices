@@ -12,13 +12,14 @@
 
 ## 7.0 TL;DR for the next agent
 
-- **Phase 6 is COMPLETE** (backend + frontend). All work is **UNCOMMITTED** in the working tree.
-- This session delivered: P6.6 frontend catalog UX (facet sidebar, flash-sale countdown timer,
-  returns/refunds pages, user order detail with return request), plus customer-scoped returns API
-  (`GET /v1/returns/my`).
-- **Phase 7 is in progress.** Starting with pincode-based shipping rates, configurable state tax,
-  and stock restoration on return approval.
-- **Nothing is committed.** Recommend a checkpoint commit before continuing.
+- **Phase 6 is COMPLETE** (backend + frontend).
+- **Phase 7 is nearly complete** (see §7.4.x): shipping rates + state tax (backend AND frontend
+  wiring), returns with stock restore, saved addresses, **guest checkout end-to-end**, and
+  **PDF invoices** (emailed on payment success + downloadable from order detail).
+- All of the above is committed on branch `arena/01a02949-ecommerce-microservices`
+  (PR #1). Java changes made on 2026-08-22 still need a Maven build to verify — the
+  authoring sandbox had no JDK.
+- Remaining Phase 7 items: refund via real payment provider (§7.4.4).
 
 ### 7.0.1 Critical bug fixed earlier (read before you touch entities!)
 **`java.lang.StackOverflowError` on `GET /v1/products`** was caused by a Lombok `@Data`
@@ -127,13 +128,191 @@ Starting **Phase 7 — Commerce completion** per `docs/06-roadmap.md`.
       under `/v1/addresses`.
 - [x] Saved addresses frontend — `frontend/src/pages/Addresses` with add/delete + default chip.
 
-### 7.4.2 Next up (Phase 7)
-- [ ] **Pincode-based shipping rates** — `ShippingRate` entity (pincode, cost, freeAbove,
-      estimatedDays); replace flat shipping logic in checkout.
-- [ ] **Configurable state tax** — `TaxRule` entity (state, rate, name); replace flat 18% with
-      per-state lookup.
-- [ ] **Stock restoration on return approval** — call `InventoryServiceClient` to restore stock
-      when admin approves a return.
+### 7.4.2 Shipping / tax (was "next up" — DONE in a later session, 2026-08-22)
+- [x] Pincode-based shipping rates — `ShippingRate` entity + `/v1/shipping/calculate` +
+      admin CRUD (`/v1/shipping/rates`), wired into `OrderService.calculateShipping`.
+- [x] Configurable state tax — `TaxRule` entity + `/v1/tax/rule/{state}` + admin CRUD
+      (`/v1/tax/rules`), wired into `OrderService.calculateTax`.
+- [x] Stock restoration on return approval — `ReturnRequestService` calls
+      `CommerceInventoryService.restoreStock` (failure is logged, does not block approval).
+- [x] **Frontend Checkout wired to real quotes** — new `frontend/src/api/shippingApi.ts` +
+      `types/shipping.ts`; Checkout collects a 6-digit pincode, queries
+      `POST /v1/shipping/calculate` (shows carrier + ETA + FREE) and `GET /v1/tax/rule/{state}`
+      (dynamic tax label/rate) for logged-in users; guests keep the flat estimate.
+      Order payload now sends top-level `pincode` + `state` so the backend recomputes totals.
+- [x] **`OrderService` unknown-pincode fix** — previously ANY unknown pincode ⇒ free shipping
+      (service returns `cost=0, active=false` when no rate row exists; `cost != null` was the
+      only guard). Now the pincode rate is trusted only when `rate.isActive()`.
+      ⚠️ Java change made without a local JDK (sandbox has none) — run the Maven build.
+- [x] **Checkout validation bug fix** — `customerEmail` was unconditionally required, blocking
+      logged-in users (field only rendered for guests). `forms/orderForm` is now a factory:
+      `createOrderForm({ guest, requirePincode })`; Cart uses `createOrderForm()`.
+- [x] **Seed data** — `docker/postgres/seed-commerce-data.sql` (run manually against
+      `commercedb`): 6 shipping rates (incl. inactive one) + 7 tax rules (Kerala 19% to prove
+      per-state variance). State values must match `formdata.json` exactly (uppercase,
+      e.g. `NCT OF DELHI`).
+- [x] **Dockerfile casing** — `product-service/dockerfile`/`user-service/dockerfile` renamed to
+      `Dockerfile` (matches compose; was breaking case-sensitive Linux/CI checkouts).
+
+### 7.4.3 Guest checkout end-to-end (DONE 2026-08-22, second session)
+- [x] **Gateway** — split routes: guarded `/v1/orders/**` + `/v1/payments/**` now also match
+      `Header=Authorization, Bearer .+` (AuthFilter); new public routes match headerless
+      `POST /v1/orders` and `POST /v1/payments` (no filter). Logged-in requests match the
+      guarded route first, so `userId` injection is unchanged.
+- [x] **commerce-service** — `POST /v1/payments` added to `permitAll` (POST /v1/orders already
+      was); `PaymentController` reads `userId` header with `required=false`;
+      `PaymentService` attributes guest payments to the all-zeros `GUEST_USER_ID` pseudo-user
+      (`payment.user_id` is NOT NULL — no schema change needed).
+- [x] **Frontend** — Checkout already collected guest email + sent `customerEmail` and the
+      `/checkout` route was never auth-guarded; added a payment-method selector
+      (Razorpay / Cash on delivery) because Razorpay requires real API keys — COD is the only
+      provider that works in a keyless demo; success message is COD-aware.
+- Notes / caveats: guest order emails (order placed + payment) already flowed through
+  `order.customerEmail` via RabbitMQ. No rate limiting on the public endpoints yet
+  (Phase 10). Cart is client-side (redux-persist), so "cart merge on login" is a non-issue.
+  `formdata.json` state list still outdated — no TELANGANA entry.
+
+### 7.4.4 PDF invoices (DONE 2026-08-22, second session)
+- [x] **event-bus** — `EmailRequest` gains optional `attachmentName` + `attachmentBase64`
+      (5-arg constructor; `hasAttachment()` helper; old 3-arg constructor unchanged).
+- [x] **user-service** — `EmailService` builds a `MimeMultipart` (text + PDF attachment via
+      `ByteArrayDataSource`/`DataHandler`) when the request has an attachment; plain text
+      behaviour unchanged otherwise.
+- [x] **commerce-service** — new `InvoiceService` (OpenPDF `com.github.librepdf:openpdf:1.3.30`):
+      generates a tax invoice (order meta, bill-to, line table, subtotal/shipping/gift
+      wrap/discount/tax/total); product names fetched best-effort from product-service via new
+      `ProductCatalogClient` Feign client (falls back to short ids); amounts use "Rs." (Helvetica
+      has no rupee glyph).
+- [x] **Trigger** — `PaymentService.processPayment` emails the invoice when payment status is
+      SUCCESS (wrapped in try/catch inside `emailInvoice`; never rolls back the payment).
+- [x] **Download** — `GET /v1/orders/{orderId}/invoice` regenerates the PDF on demand
+      (authenticated users via the guarded gateway route); frontend Order detail has an
+      "Invoice" download button (`OrderApi.getInvoice` blob download).
+- Caveats: invoice content is regenerated from current order data (no immutable snapshot);
+  COD orders get no invoice email until a real provider payment happens.
+
+### 7.4.5 Refunds via payment provider (DONE 2026-08-22, third session)
+- [x] `PaymentProviderClient` gains `refund(Payment, BigDecimal)`; implemented by all three
+      providers: **Razorpay** (`POST /v1/payments/{txn}/refund`, amount in paise), **Stripe**
+      (`POST /v1/refunds`, `payment_intent` + smallest-unit amount), **CASH** (offline note).
+      When provider keys are missing, Razorpay/Stripe return a clearly-labelled **simulated
+      success** (`SIM-REFUND-…`) so the dev flow stays testable; with keys present a real API
+      call is made against the stored transaction id.
+- [x] `PaymentService.refundOrderPayment(orderId, amount)` — looks up the original payment,
+      charges the provider, and on success publishes a `REFUNDED` payment-status event
+      (`order → REFUNDED` via `applyPaymentStatus`, new enum value + history note) plus a
+      refund-confirmation email. A failed refund only logs/returns — it never cancels the order.
+- [x] `ReturnRequestService.refundReturnRequest` — now requires APPROVED status (matches the
+      admin UI sequence Approve → Refund), computes line refund (price × qty), calls the
+      provider through `refundOrderPayment`, and on success stores `refundAmount` +
+      new `refundTransactionId` column (nullable, added by `ddl-auto`). On failure it throws so
+      the admin sees the provider message (frontend `onError` added).
+- [x] Frontend: `REFUNDED` order status; refund amount + reference shown on the Returns page;
+  admin refund button surfaces errors.
+- Caveat: Razorpay charges store the razorpay **order** id as transaction id (the flow never
+  completes a real Razorpay checkout), so a real-key refund may be rejected by Razorpay until
+  payment capture is implemented; dev/keyless flows are unaffected (simulated).
+
+### 7.4.7 Frontend audit + UX polish (DONE 2026-08-22, fourth session)
+Bugs fixed:
+- **Cart was variant-blind on mutations** — ADD merged on `(productId, variantId)` but
+  REMOVE/INCREASE/DECREASE matched `productId` only, corrupting both lines when a product was
+  in the cart under two variants. Actions now take `(productId, variantId?)`; reducer matches
+  on both (`undefined` only matches `undefined`); grid Card + detail ProductCard + Cart +
+  Checkout lines all pass variant context. Cart/Checkout also had duplicate React keys for
+  such lines (now `${productId}-${variantId ?? "base"}`) and cart lines now show their
+  variant chip.
+- **Orders page showed EVERYONE's orders** — `GET /v1/orders` is unscoped. New
+  `GET /v1/orders/my` (userId header from gateway; 401 if absent) + repository
+  `findByCustomerIdOrderByCreatedDateDesc`; frontend Orders page uses it.
+- **"Buy again" added fake products** (`{id, name: productId}` — no price → NaN totals). Now
+  fetches real products via `findByIds`, resolves variant names, skips deleted products.
+- **Compare button did `window.location.href`** (full page reload, state wipe). Now uses the
+  router + a toast.
+- **Login ignored the redirect-back state** (`RequireAuth` passes `state.from`) — always went
+  to `/`. Now returns to the originating page.
+- **Card chip collision** — SALE and stock chips were both absolute at top-right. SALE now
+  shows `SALE · N% off` below the stock chip.
+
+UX polish:
+- Global search in the navbar (desktop) → navigates home with `{state:{search}}`, and the
+  Products page seeds its catalog search from it (per-location-entry effect).
+- Subtle page-entry animation (`fade-up` on layout main), custom slim scrollbars,
+  `:focus-visible` rings, `prefers-reduced-motion` support, lazy product images,
+  bottom-right toasts with shorter auto-close.
+
+All verified with `tsc + vite build`.
+
+### 7.4.8 Phase 8 complete: price-drop alerts (DONE 2026-08-22, fifth session)
+- [x] product-service: `ProductPriceWatch` entity (`product_price_watches`, keyed on
+      productId+email, `active` flag) + `PriceWatchService` + `PriceWatchController`
+      (`POST/DELETE/GET /v1/products/{id}/watch`). Subscribe/unsubscribe ride the gateway's
+      authenticated product-write route; the status check is a public read.
+- [x] Trigger: `ProductService.updateProduct` captures the previous unit price and, on a
+      decrease, queues an email per active watch ("Was X / Now Y (Z% off)" + product link) via
+      the event-bus producer to `notification.exchange` — same topology user-service consumes.
+      product-service now declares the notification exchange/queue/binding too (idempotent) and
+      gained the `event-bus` dependency + `scanBasePackages` for it.
+- [x] Frontend: `PriceWatch` component on the product detail page — logged-in users toggle
+      with their account email; guests enter one. Watch state queried per email.
+- ⚠️ New Java + pom changes need Maven verify (no JDK in authoring env).
+
+### 7.4.9 Phase 9 started: analytics dashboard (DONE 2026-08-22, fifth session)
+- [x] commerce-service: `GET /v1/orders/stats/dashboard` (`@PreAuthorize` ROLE_ADMIN) returning
+      revenue today / last 7 days, avg order value (cancelled excluded), total + today's order
+      counts, orders-by-status map, 7-day daily revenue series and top-5 products by revenue.
+      Computed in-memory from `findAll()` (dev scale — swap for SQL if volume grows).
+- [x] Frontend Admin Home redesigned: revenue KPI cards, 7-day revenue bar chart (recharts —
+      new frontend dep), orders-by-status chips, top products with resolved names, low-stock
+      panel retained, quick actions folded into the side panel.
+- Remaining Phase 9 items: CMS/store settings, coupon admin UI, refund queue UI, audit log,
+  staff (Manager) role.
+
+### 7.4.10 Phase 9 continued: coupon admin + checkout coupons + returns queue (2026-08-22, sixth session)
+- [x] **Coupon admin UI** (`/admin/coupons`): list with type/value/min/max/usage/window chips,
+      create dialog (formik+yup), activate/deactivate toggle, delete. Backend additions:
+      `GET /v1/coupons`, `PUT /v1/coupons/{id}` (partial update — code/type/value immutable by
+      design), `DELETE /v1/coupons/{id}` (usage rows deleted first; no cascade on the FK).
+- [x] **Checkout coupons** — the order flow never sent `couponCode` before. Checkout now has a
+      coupon field (logged-in users): validates via `POST /v1/coupons/validate`, shows the
+      discount live, mirrors the backend tax math (tax on subtotal + shipping − discount +
+      gift wrap), auto-invalidates when the cart changes, and includes the code in the order
+      payload (server recomputes — preview only, never trusted).
+- [x] **Admin returns/refunds queue** (`/admin/returns`): all return requests with status
+      filter chips + counts, product names resolved, REQUESTED-first ordering (backend
+      `GET /v1/returns/all`), approve/reject/refund actions with error surfacing. Admin nav
+      gained Coupons + Returns entries.
+
+### 7.4.11 Phase 10 started: CI workflow prepared (2026-08-22, seventh session)
+- [x] `ProductServiceTest` fixed for the new `PriceWatchService` constructor arg (would have
+      broken `mvn package` — found while preparing CI).
+- [x] `.github/workflows/ci.yml` written (backend: temurin-17 + `mvn -B clean package` with
+      maven cache; frontend: node-20 `npm ci` + `npm run build`; compose: `docker compose
+      config -q`). ⚠️ **NOT PUSHED**: the Arena sandbox GitHub token lacks `workflows`
+      permission, so pushes containing workflow files are rejected. The file sits untracked in
+      the repo root — either reconnect the GitHub integration with workflow permissions (then
+      the agent can push it) or add+push it manually:
+      `git add .github && git commit -m "CI" && git push`.
+- Static import/reference audit of all 35 changed Java files: clean (no missing imports /
+  constructor-arg mismatches beyond the one fixed above). Full compile verification still
+      pending real CI or a local `mvnw` run (sandbox has no JDK and Maven Central is blocked).
+
+### 7.4.12 CI green — backend verified (2026-08-22, eighth session)
+- [x] CI (`.github/workflows/ci.yml`, added by the owner) is **green on all three jobs**:
+      backend `mvn -B clean package` (compile + tests, all 6 modules), frontend build,
+      compose config. Root causes of the earlier failures, all fixed:
+      1. event-bus dependency declared as `1.0-SNAPSHOT` (modules are `0.0.1-SNAPSHOT`);
+      2. `EmailRequest` rewrite dropped its `package com.ecommerce.event_bus.dto;` line
+         (class compiled into the default package — broke product/commerce/user-service);
+      3. `CouponService` missing the `UpdateCouponRequest` import.
+- All Phase 7–9 backend work is now machine-verified. PR #1 merged to main.
+
+### 7.4.6 Remaining / optional
+- [ ] Public order-tracking page for guests ("email link to track" in the roadmap) — needs
+      public `GET /v1/orders/{id}/track` and a frontend page.
+- [x] `formdata.json` — TELANGANA added (2026-08-22, after Andhra Pradesh; district list simplified).
+- Phase 7 scope is otherwise complete → next roadmap stop is Phase 8 remainder (price-drop
+  alerts) and Phase 9 (admin platform & analytics).
 
 ---
 

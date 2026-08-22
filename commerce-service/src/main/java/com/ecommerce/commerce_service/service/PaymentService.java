@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -32,10 +33,17 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PaymentService {
 
+    /**
+     * Payments for guest checkouts are attributed to this pseudo-user
+     * (payment.user_id is NOT NULL; guest payments carry no real user id).
+     */
+    private static final UUID GUEST_USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
     private final RabbitMQMessageProducer rabbitMQMessageProducer;
     private final List<PaymentProviderClient> providerClients;
+    private final InvoiceService invoiceService;
 
     @Value("${rabbitmq.exchanges.internal}")
     private String exchange;
@@ -68,7 +76,7 @@ public class PaymentService {
 
         Payment payment = Payment.builder()
                 .orderId(request.getOrderId())
-                .userId(userId)
+                .userId(userId != null ? userId : GUEST_USER_ID)
                 .amount(request.getAmount())
                 .currency(request.getCurrency())
                 .provider(request.getProvider())
@@ -110,6 +118,12 @@ public class PaymentService {
 
         sendPaymentEmail(savedPayment);
 
+        // PDF invoice: emailed on successful (non-COD) payment; failures are
+        // logged inside and never roll back the payment.
+        if (PaymentStatus.SUCCESS.name().equals(savedPayment.getStatus())) {
+            orderRepository.findById(savedPayment.getOrderId()).ifPresent(invoiceService::emailInvoice);
+        }
+
         log.info("Payment status event published for order {}", savedPayment.getOrderId());
 
         return PaymentResponse.builder()
@@ -121,6 +135,60 @@ public class PaymentService {
                 .transactionId(savedPayment.getTransactionId())
                 .message(result.getMessage())
                 .build();
+    }
+
+    /**
+     * Refunds {@code amount} of the order's original payment through its
+     * provider. On success a REFUNDED payment-status event is published
+     * (order transitions to REFUNDED); a failed refund only logs — it must
+     * never cancel the order.
+     */
+    @Transactional
+    public ProviderPaymentResult refundOrderPayment(UUID orderId, BigDecimal amount) {
+        Payment payment = paymentRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("No payment found for order " + orderId));
+
+        Map<PaymentProvider, PaymentProviderClient> providers = providerClients.stream()
+                .collect(Collectors.toMap(PaymentProviderClient::provider, Function.identity()));
+        PaymentProviderClient client = providers.get(payment.getProvider());
+        if (client == null) {
+            throw new IllegalArgumentException("Unsupported payment provider: " + payment.getProvider());
+        }
+
+        ProviderPaymentResult result = client.refund(payment, amount);
+        log.info("Refund for order {} via {}: success={}, message={}",
+                orderId, payment.getProvider(), result.isSuccess(), result.getMessage());
+
+        if (result.isSuccess()) {
+            rabbitMQMessageProducer.publish(
+                    PaymentStatusEvent.builder()
+                            .orderId(orderId)
+                            .status(PaymentStatus.REFUNDED.name())
+                            .provider(payment.getProvider().name())
+                            .transactionId(result.getTransactionId())
+                            .amount(amount)
+                            .currency(payment.getCurrency())
+                            .build(),
+                    exchange,
+                    paymentStatusRoutingKey);
+            sendRefundEmail(payment, amount, result);
+        }
+        return result;
+    }
+
+    private void sendRefundEmail(Payment payment, BigDecimal amount, ProviderPaymentResult result) {
+        String customerEmail = orderRepository.findById(payment.getOrderId())
+                .map(Order::getCustomerEmail)
+                .orElse(null);
+        if (customerEmail == null || customerEmail.isBlank()) {
+            return;
+        }
+        String text = "Your refund for order " + payment.getOrderId() + " has been processed.\n"
+                + "Amount: " + amount + " " + payment.getCurrency() + "\n"
+                + "Refund reference: " + result.getTransactionId();
+        rabbitMQMessageProducer.publish(
+                new EmailRequest(text, customerEmail, "CARTLY - Refund processed"),
+                notificationExchange, sendEmailRoutingKey);
     }
 
     private void sendPaymentEmail(Payment payment) {

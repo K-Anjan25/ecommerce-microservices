@@ -4,6 +4,7 @@ import com.ecommerce.commerce_service.dto.coupon.CouponDto;
 import com.ecommerce.commerce_service.dto.coupon.CouponValidationRequest;
 import com.ecommerce.commerce_service.dto.coupon.CouponValidationResponse;
 import com.ecommerce.commerce_service.dto.coupon.CreateCouponRequest;
+import com.ecommerce.commerce_service.dto.coupon.UpdateCouponRequest;
 import com.ecommerce.commerce_service.exception.CouponException;
 import com.ecommerce.commerce_service.model.Coupon;
 import com.ecommerce.commerce_service.model.CouponType;
@@ -46,6 +47,37 @@ public class CouponService {
                 .active(true)
                 .build();
         return toDto(couponRepository.save(coupon));
+    }
+
+    /** Admin: all coupons with usage counts. */
+    public java.util.List<CouponDto> getAllCoupons() {
+        return couponRepository.findAll().stream()
+                .sorted(java.util.Comparator.comparing(Coupon::getCode))
+                .map(this::toDto)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    /** Admin: partial update (constraints/window/limits/active). */
+    public CouponDto updateCoupon(UUID id, UpdateCouponRequest request) {
+        Coupon coupon = couponRepository.findById(id)
+                .orElseThrow(() -> new CouponException("Coupon not found: " + id));
+        if (request.getMinOrderAmount() != null) coupon.setMinOrderAmount(request.getMinOrderAmount());
+        if (request.getMaxDiscount() != null) coupon.setMaxDiscount(request.getMaxDiscount());
+        if (request.getValidFrom() != null) coupon.setValidFrom(request.getValidFrom());
+        if (request.getValidUntil() != null) coupon.setValidUntil(request.getValidUntil());
+        if (request.getUsageLimit() != null) coupon.setUsageLimit(request.getUsageLimit());
+        if (request.getActive() != null) coupon.setActive(request.getActive());
+        return toDto(couponRepository.save(coupon));
+    }
+
+    /** Admin: delete a coupon and its usage history. */
+    @org.springframework.transaction.annotation.Transactional
+    public void deleteCoupon(UUID id) {
+        if (!couponRepository.existsById(id)) {
+            throw new CouponException("Coupon not found: " + id);
+        }
+        couponUsageRepository.deleteByCouponId(id);
+        couponRepository.deleteById(id);
     }
 
     public CouponValidationResponse validateCoupon(CouponValidationRequest request, UUID userId) {

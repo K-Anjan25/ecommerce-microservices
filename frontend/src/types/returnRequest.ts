@@ -9,11 +9,13 @@ export interface ReturnRequest {
   id: string;
   orderId: string;
   customerId: string;
+  createdDate?: string;
   productId: string;
   variantId?: string;
   quantity: number;
   status: ReturnStatus;
   refundAmount?: number;
+  refundTransactionId?: string;
   reason?: string;
   rejectionReason?: string;
 }

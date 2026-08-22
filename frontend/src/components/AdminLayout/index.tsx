@@ -6,12 +6,16 @@ import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
+import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
+import AssignmentReturnIcon from "@mui/icons-material/AssignmentReturn";
 
 const NAV = [
   { path: "/admin", label: "Dashboard", icon: HomeIcon, exact: true },
   { path: "/admin/products", label: "Products", icon: Inventory2Icon, exact: false },
   { path: "/admin/categories", label: "Categories", icon: CategoryIcon, exact: false },
   { path: "/admin/orders", label: "Orders", icon: ReceiptLongIcon, exact: false },
+  { path: "/admin/coupons", label: "Coupons", icon: ConfirmationNumberIcon, exact: false },
+  { path: "/admin/returns", label: "Returns", icon: AssignmentReturnIcon, exact: false },
   { path: "/admin/users", label: "Users", icon: PeopleOutlineIcon, exact: false },
 ] as const;
 

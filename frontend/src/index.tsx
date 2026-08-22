@@ -31,7 +31,15 @@ const { store, persistor }: any = configureStore;
 root.render(
   <>
     <CssBaseline />
-    <ToastContainer />
+    <ToastContainer
+      position="bottom-right"
+      autoClose={2200}
+      newestOnTop
+      closeOnClick
+      pauseOnFocusLoss={false}
+      draggable
+      pauseOnHover
+    />
     <ThemeProvider theme={theme}>
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>

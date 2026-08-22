@@ -72,6 +72,52 @@ public class StripePaymentClient implements PaymentProviderClient {
         }
     }
 
+    @Override
+    public ProviderPaymentResult refund(Payment payment, java.math.BigDecimal amount) {
+        String secretKey = paymentProviderProperties.getStripe().getSecretKey();
+        if (secretKey == null || secretKey.isBlank()) {
+            return ProviderPaymentResult.builder()
+                    .success(true)
+                    .transactionId("SIM-REFUND-" + payment.getOrderId())
+                    .message("Stripe secret key is missing - refund simulated")
+                    .build();
+        }
+        String transactionId = payment.getTransactionId();
+        if (transactionId == null || transactionId.isBlank()) {
+            return ProviderPaymentResult.builder()
+                    .success(false)
+                    .message("No Stripe transaction stored for order " + payment.getOrderId())
+                    .build();
+        }
+
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            headers.set(HttpHeaders.AUTHORIZATION, basicAuth(secretKey));
+
+            MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+            body.add("payment_intent", transactionId);
+            body.add("amount", amount.movePointRight(2).toPlainString()); // smallest currency unit
+
+            HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
+            ResponseEntity<Map> response = restTemplate.postForEntity("https://api.stripe.com/v1/refunds", requestEntity, Map.class);
+            Map<String, Object> responseBody = response.getBody();
+            String refundId = responseBody != null ? String.valueOf(responseBody.get("id")) : null;
+
+            return ProviderPaymentResult.builder()
+                    .success(response.getStatusCode().is2xxSuccessful() && refundId != null)
+                    .transactionId(refundId)
+                    .message(response.getStatusCode().is2xxSuccessful() ? "Stripe refund created" : "Stripe refund failed")
+                    .build();
+        } catch (Exception exception) {
+            log.error("Stripe refund failed for orderId {}", payment.getOrderId(), exception);
+            return ProviderPaymentResult.builder()
+                    .success(false)
+                    .message("Stripe refund error: " + exception.getMessage())
+                    .build();
+        }
+    }
+
     private String basicAuth(String secretKey) {
         String token = secretKey + ":";
         return "Basic " + Base64.getEncoder().encodeToString(token.getBytes(StandardCharsets.UTF_8));

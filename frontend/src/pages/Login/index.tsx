@@ -9,20 +9,24 @@ import { AppState } from "../../store";
 import { login } from "../../store/actions/userAction";
 import { useEffect, useState } from "react";
 import { showSuccess } from "../../utils/showSuccess";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 function Login() {
   const dispatch = useDispatch<any>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { data, loading } = useSelector((state: AppState) => state.user);
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (data.isLogedIn) {
       showSuccess("You have successfully logged in!");
-      navigate("/");
+      // Return the user to the page that required login (RequireAuth passes
+      // `state.from`), falling back to home.
+      const from = (location.state as { from?: { pathname?: string } } | null)?.from;
+      navigate(from?.pathname ?? "/");
     }
-  }, [data, navigate]);
+  }, [data, navigate, location.state]);
 
   const form = useFormik({
     ...loginForm,

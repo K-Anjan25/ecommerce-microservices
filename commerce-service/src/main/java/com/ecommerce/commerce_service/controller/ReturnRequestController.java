@@ -41,6 +41,13 @@ public class ReturnRequestController {
         return ResponseEntity.ok(returnRequestService.getReturnRequestsByCustomer(UUID.fromString(customerId)));
     }
 
+    /** Admin refund/returns queue: every return request, newest first. */
+    @GetMapping("/all")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    public ResponseEntity<List<ReturnRequestDto>> getAllReturnRequests(){
+        return ResponseEntity.ok(returnRequestService.getAllReturnRequests());
+    }
+
     @PostMapping("/{returnRequestId}/approve")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<ReturnRequestDto> approveReturnRequest(@PathVariable UUID returnRequestId){

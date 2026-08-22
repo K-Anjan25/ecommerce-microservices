@@ -30,6 +30,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/v1/orders").permitAll()
                 .antMatchers(HttpMethod.POST, "/v1/orders").permitAll()
+                // Guest checkout: payment initiation without a token; the
+                // gateway only exposes this for headerless POSTs.
+                .antMatchers(HttpMethod.POST, "/v1/payments").permitAll()
                 .antMatchers(HttpMethod.GET, "/v1/payments/test").permitAll()
                 .antMatchers(HttpMethod.GET, "/actuator/health", "/actuator/health/**", "/actuator/info").permitAll()
                 .anyRequest()

@@ -23,4 +23,14 @@ public class CashPaymentClient implements PaymentProviderClient {
                 .message("Cash on delivery selected; order stays pending until delivery")
                 .build();
     }
+
+    @Override
+    public ProviderPaymentResult refund(Payment payment, java.math.BigDecimal amount) {
+        log.info("COD refund recorded for order {} ({} {})", payment.getOrderId(), amount, payment.getCurrency());
+        return ProviderPaymentResult.builder()
+                .success(true)
+                .transactionId("CASH-REFUND-" + payment.getOrderId())
+                .message("Cash on delivery refund recorded; to be settled offline")
+                .build();
+    }
 }

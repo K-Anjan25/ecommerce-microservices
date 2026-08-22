@@ -4270,6 +4270,105 @@
     "info": "Total Households: 21,022,588. Population Density: 307 per sq. km."
   },
   {
+    "state_name": "TELANGANA",
+    "id": "36",
+    "population": "35,003,674",
+    "region": "India",
+    "area_sq_km": "112,077",
+    "districts": [
+      {
+        "district_name": "Hyderabad"
+      },
+      {
+        "district_name": "Rangareddy"
+      },
+      {
+        "district_name": "Medchal-Malkajgiri"
+      },
+      {
+        "district_name": "Sangareddy"
+      },
+      {
+        "district_name": "Siddipet"
+      },
+      {
+        "district_name": "Suryapet"
+      },
+      {
+        "district_name": "Nalgonda"
+      },
+      {
+        "district_name": "Yadadri Bhuvanagiri"
+      },
+      {
+        "district_name": "Khammam"
+      },
+      {
+        "district_name": "Bhadradri Kothagudem"
+      },
+      {
+        "district_name": "Warangal"
+      },
+      {
+        "district_name": "Hanamkonda"
+      },
+      {
+        "district_name": "Mahbubnagar"
+      },
+      {
+        "district_name": "Wanaparthy"
+      },
+      {
+        "district_name": "Nagarkurnool"
+      },
+      {
+        "district_name": "Jogulamba Gadwal"
+      },
+      {
+        "district_name": "Nizamabad"
+      },
+      {
+        "district_name": "Kamareddy"
+      },
+      {
+        "district_name": "Karimnagar"
+      },
+      {
+        "district_name": "Rajanna Sircilla"
+      },
+      {
+        "district_name": "Peddapalli"
+      },
+      {
+        "district_name": "Jagitial"
+      },
+      {
+        "district_name": "Nirmal"
+      },
+      {
+        "district_name": "Adilabad"
+      },
+      {
+        "district_name": "Mancherial"
+      },
+      {
+        "district_name": "Mulugu"
+      },
+      {
+        "district_name": "Jayashankar Bhupalpally"
+      },
+      {
+        "district_name": "Medak"
+      },
+      {
+        "district_name": "Vikarabad"
+      },
+      {
+        "district_name": "Narayanpet"
+      }
+    ]
+  },
+  {
     "state_name": "KARNATAKA",
     "id": "29",
     "population": "61,095,297",

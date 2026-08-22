@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useInfiniteQuery, useQuery } from "react-query";
 import { useInView } from "react-intersection-observer";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ProductApi } from "../../api/productApi";
 import { PRODUCT_PARAM } from "../../constants/product";
 import Card from "../../components/Card";
@@ -10,12 +11,12 @@ import { Category } from "../../types/category";
 import ProductViewPlaceholder from "../../components/ProductViewPlaceholder";
 import EmptyState from "../../components/EmptyState";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
-import { useNavigate } from "react-router-dom";
 import debounce from "lodash.debounce";
 import { Button, Typography, Checkbox, FormControlLabel, TextField, Divider } from "@mui/material";
 
 function Products() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { ref, inView } = useInView();
   const [searchValue, setSearchValue] = useState("");
   const [sortBy, setSortBy] = useState("DATE_DESC");
@@ -63,6 +64,17 @@ function Products() {
       fetchNextPage();
     }
   }, [inView, fetchNextPage]);
+
+  // Global navbar search: navigating home with { state: { search } } seeds the
+  // catalog search (each navigation creates a new location entry).
+  useEffect(() => {
+    const navSearch = (location.state as { search?: string } | null)?.search;
+    if (typeof navSearch === "string" && navSearch.trim()) {
+      setSearchValue(navSearch);
+      setSearchTerm(navSearch);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.key]);
 
   useEffect(() => {
     getAllCategories();

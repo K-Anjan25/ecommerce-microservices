@@ -7,8 +7,73 @@
     @apply bg-paper text-ink antialiased;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   ::selection {
     @apply bg-brand text-paper;
+  }
+
+  /* Visible keyboard focus without the mouse-click outline flash */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+  :focus-visible {
+    outline: 2px solid rgba(11, 107, 85, 0.55);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Slim, unobtrusive scrollbars (WebKit) */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(16, 42, 67, 0.22);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(16, 42, 67, 0.38);
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+}
+
+/* Subtle entry animation shared by page content */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.35s cubic-bezier(0.21, 1.02, 0.73, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-fade-up {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
