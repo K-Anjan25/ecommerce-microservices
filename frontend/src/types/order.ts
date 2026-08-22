@@ -57,6 +57,17 @@ export enum ShippingMethod {
   EXPRESS = "EXPRESS",
 }
 
+export interface DashboardStats {
+  revenueToday: number;
+  revenueLast7Days: number;
+  avgOrderValue: number;
+  totalOrders: number;
+  ordersToday: number;
+  ordersByStatus: Record<string, number>;
+  dailyRevenue: { date: string; revenue: number; orders: number }[];
+  topProducts: { productId: string; unitsSold: number; revenue: number }[];
+}
+
 export interface OrderForm {
   state: string;
   district: string;

@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -76,6 +77,13 @@ public class OrderController {
     @GetMapping("/stats/bestsellers")
     public ResponseEntity<Map<UUID, Long>> getBestsellers(){
         return ResponseEntity.ok(orderService.getBestsellers());
+    }
+
+    /** Phase 9 analytics for the admin dashboard (admin-only). */
+    @GetMapping("/stats/dashboard")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    public ResponseEntity<com.ecommerce.commerce_service.dto.stats.DashboardStatsDto> getDashboardStats() {
+        return ResponseEntity.ok(orderService.getDashboardStats());
     }
 
     @GetMapping("/bought-together/{productId}")

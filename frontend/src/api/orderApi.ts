@@ -1,4 +1,4 @@
-import { CreateOrderRequest, Order } from "../types/order";
+import { CreateOrderRequest, DashboardStats, Order } from "../types/order";
 import { Pagination } from "../types/pagination";
 import { api } from "./axios";
 
@@ -35,10 +35,16 @@ const getInvoice = async (orderId: string) => {
   return res.data;
 };
 
+const getDashboardStats = async () => {
+  const { data } = await api.get<DashboardStats>("/v1/orders/stats/dashboard");
+  return data;
+};
+
 export const OrderApi = {
   getOrders,
   getMyOrders,
   getOrderById,
   createOrder,
   getInvoice,
+  getDashboardStats,
 };

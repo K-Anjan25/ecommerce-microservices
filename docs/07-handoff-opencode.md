@@ -243,6 +243,31 @@ UX polish:
 
 All verified with `tsc + vite build`.
 
+### 7.4.8 Phase 8 complete: price-drop alerts (DONE 2026-08-22, fifth session)
+- [x] product-service: `ProductPriceWatch` entity (`product_price_watches`, keyed on
+      productId+email, `active` flag) + `PriceWatchService` + `PriceWatchController`
+      (`POST/DELETE/GET /v1/products/{id}/watch`). Subscribe/unsubscribe ride the gateway's
+      authenticated product-write route; the status check is a public read.
+- [x] Trigger: `ProductService.updateProduct` captures the previous unit price and, on a
+      decrease, queues an email per active watch ("Was X / Now Y (Z% off)" + product link) via
+      the event-bus producer to `notification.exchange` — same topology user-service consumes.
+      product-service now declares the notification exchange/queue/binding too (idempotent) and
+      gained the `event-bus` dependency + `scanBasePackages` for it.
+- [x] Frontend: `PriceWatch` component on the product detail page — logged-in users toggle
+      with their account email; guests enter one. Watch state queried per email.
+- ⚠️ New Java + pom changes need Maven verify (no JDK in authoring env).
+
+### 7.4.9 Phase 9 started: analytics dashboard (DONE 2026-08-22, fifth session)
+- [x] commerce-service: `GET /v1/orders/stats/dashboard` (`@PreAuthorize` ROLE_ADMIN) returning
+      revenue today / last 7 days, avg order value (cancelled excluded), total + today's order
+      counts, orders-by-status map, 7-day daily revenue series and top-5 products by revenue.
+      Computed in-memory from `findAll()` (dev scale — swap for SQL if volume grows).
+- [x] Frontend Admin Home redesigned: revenue KPI cards, 7-day revenue bar chart (recharts —
+      new frontend dep), orders-by-status chips, top products with resolved names, low-stock
+      panel retained, quick actions folded into the side panel.
+- Remaining Phase 9 items: CMS/store settings, coupon admin UI, refund queue UI, audit log,
+  staff (Manager) role.
+
 ### 7.4.6 Remaining / optional
 - [ ] Public order-tracking page for guests ("email link to track" in the roadmap) — needs
       public `GET /v1/orders/{id}/track` and a frontend page.
