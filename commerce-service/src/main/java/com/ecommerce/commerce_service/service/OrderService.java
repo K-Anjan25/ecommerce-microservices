@@ -131,7 +131,10 @@ public class OrderService {
         if (pincode != null && !pincode.isBlank()) {
             var rate = shippingRateService.calculateShipping(
                     new com.ecommerce.commerce_service.dto.shippingRate.ShippingCalculationRequest(pincode, subtotal));
-            if (rate.getCost() != null) {
+            // Only trust the lookup when an active rate exists for the pincode:
+            // the service returns cost=0 / active=false when none is configured,
+            // which must NOT be treated as free shipping.
+            if (rate.isActive() && rate.getCost() != null) {
                 return rate.getCost();
             }
         }

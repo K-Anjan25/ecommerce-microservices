@@ -1,23 +1,45 @@
 import * as yup from "yup";
 import { OrderForm } from "../types/order";
 
-const validationSchema = yup.object({
-  state: yup.string().required("state is required"),
-  district: yup.string().required("district is required"),
-  addressDetail: yup.string().required("addressDetail is required"),
-  customerEmail: yup.string().email("Invalid email").required("Email is required for guest checkout"),
-});
+interface OrderFormOptions {
+  /** Guest checkout: customerEmail is collected and required. */
+  guest?: boolean;
+  /** Checkout flow: pincode is collected (needed for delivery quotes). */
+  requirePincode?: boolean;
+}
 
-const initialValues: OrderForm = {
-  state: "",
-  district: "",
-  addressDetail: "",
-  customerEmail: "",
+const createOrderForm = (options: OrderFormOptions = {}) => {
+  const { guest = false, requirePincode = false } = options;
+
+  const validationSchema = yup.object({
+    state: yup.string().required("state is required"),
+    district: yup.string().required("district is required"),
+    addressDetail: yup.string().required("addressDetail is required"),
+    pincode: requirePincode
+      ? yup
+          .string()
+          .matches(/^\d{6}$/, "Enter a valid 6-digit pincode")
+          .required("pincode is required")
+      : yup.string(),
+    // Only require an email for guest checkout — the field is not rendered
+    // for logged-in users, so a blanket required() would block their submit.
+    customerEmail: guest
+      ? yup
+          .string()
+          .email("Invalid email")
+          .required("Email is required for guest checkout")
+      : yup.string(),
+  });
+
+  const initialValues: OrderForm = {
+    state: "",
+    district: "",
+    addressDetail: "",
+    pincode: "",
+    customerEmail: "",
+  };
+
+  return { validationSchema, initialValues };
 };
 
-const orderForm = {
-  validationSchema,
-  initialValues,
-};
-
-export default orderForm;
+export default createOrderForm;

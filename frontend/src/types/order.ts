@@ -26,6 +26,9 @@ export interface CreateOrderRequest {
   shippingMethod?: ShippingMethod;
   customerEmail?: string;
   giftWrap?: boolean;
+  pincode?: string;
+  state?: string;
+  couponCode?: string;
 }
 
 interface OrderAdress {
@@ -57,5 +60,6 @@ export interface OrderForm {
   state: string;
   district: string;
   addressDetail: string;
+  pincode: string;
   customerEmail?: string;
 }

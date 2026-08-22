@@ -8,12 +8,13 @@ import { useNavigate } from "react-router-dom";
 import { OrderApi } from "../../api/orderApi";
 import { PaymentApi } from "../../api/paymentApi";
 import { AddressApi } from "../../api/addressApi";
+import { ShippingApi } from "../../api/shippingApi";
 import Card from "../../components/Card";
 import EmptyState from "../../components/EmptyState";
 import PageHeader from "../../components/PageHeader";
 import SelectInput from "../../components/SelectInput";
 import TextInput from "../../components/TextInput";
-import orderForm from "../../forms/orderForm";
+import createOrderForm from "../../forms/orderForm";
 import { AppState } from "../../store";
 import { clearAllItems } from "../../store/actions/cartAction";
 import { CreateOrderRequest, ShippingMethod } from "../../types/order";
@@ -39,10 +40,6 @@ function Checkout() {
   const [giftWrap, setGiftWrap] = useState(false);
   const subtotal = Number(calculateTotalPriceOfCartItems(items));
   const itemCount = calculateCountOfCartItems(items);
-  const shippingCost = subtotal >= 500 ? 0 : shippingMethod === ShippingMethod.EXPRESS ? 100 : 50;
-  const giftWrapFee = giftWrap ? 50 : 0;
-  const tax = Number(((subtotal + shippingCost + giftWrapFee) * 0.18).toFixed(2));
-  const total = subtotal + shippingCost + giftWrapFee + tax;
 
   const { data: defaultAddress } = useQuery(
     "defaultAddress",
@@ -65,7 +62,7 @@ function Checkout() {
   };
 
   const form = useFormik({
-    ...orderForm,
+    ...createOrderForm({ guest: !isLoggedIn, requirePincode: true }),
     onSubmit: (values) => {
       const products = items.map((item) => ({
         productId: item.product.id,
@@ -83,11 +80,48 @@ function Checkout() {
         shippingMethod,
         customerEmail: isLoggedIn ? undefined : values.customerEmail,
         giftWrap,
+        pincode: values.pincode,
+        state: values.state,
       } as CreateOrderRequest;
 
       createOrderMutation.mutate(order);
     },
   });
+
+  // Server-computed shipping quote + tax rule (both endpoints sit behind the
+  // gateway AuthFilter, so they are only queried for logged-in users; guests
+  // fall back to the legacy flat estimate below).
+  const pincode = (form.values.pincode ?? "").trim();
+  const pincodeValid = /^\d{6}$/.test(pincode);
+
+  const { data: shippingQuote, isFetching: shippingFetching } = useQuery(
+    ["shippingQuote", pincode, subtotal],
+    () => ShippingApi.calculateShipping(pincode, subtotal),
+    { enabled: isLoggedIn && pincodeValid, retry: false }
+  );
+
+  const { data: taxRule } = useQuery(
+    ["taxRule", form.values.state],
+    () => ShippingApi.getTaxRule(form.values.state),
+    { enabled: isLoggedIn && Boolean(form.values.state), retry: false }
+  );
+
+  const hasShippingQuote = Boolean(shippingQuote?.active);
+  const shippingCost = hasShippingQuote
+    ? Number(shippingQuote?.cost ?? 0)
+    : subtotal >= 500
+    ? 0
+    : shippingMethod === ShippingMethod.EXPRESS
+    ? 100
+    : 50;
+  const giftWrapFee = giftWrap ? 50 : 0;
+  const taxRate = taxRule?.rate ?? 0.18;
+  const taxLabel = taxRule
+    ? `${taxRule.taxName} ${Math.round(taxRate * 100)}%`
+    : "18% GST";
+  // Mirrors the backend: tax applies to subtotal + shipping + gift wrap.
+  const tax = Number(((subtotal + shippingCost + giftWrapFee) * taxRate).toFixed(2));
+  const total = subtotal + shippingCost + giftWrapFee + tax;
 
   const createOrderMutation = useMutation(OrderApi.createOrder, {
     onSuccess: (order) => {
@@ -230,6 +264,12 @@ function Checkout() {
               data={districts}
             />
             <TextInput
+              name="pincode"
+              label="Delivery pincode"
+              form={form}
+              inputProps={{ maxLength: 6, inputMode: "numeric" }}
+            />
+            <TextInput
               name="addressDetail"
               label="Address detail"
               form={form}
@@ -272,13 +312,27 @@ function Checkout() {
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-ink-soft">Shipping</span>
+                <span className="text-ink-soft">
+                  Shipping
+                  {hasShippingQuote && (
+                    <span className="ml-1 text-xs text-ink-soft/70">
+                      ({shippingQuote?.carrier} ·{" "}
+                      {shippingQuote?.estimatedDaysMin}–
+                      {shippingQuote?.estimatedDaysMax} days)
+                    </span>
+                  )}
+                </span>
                 <span className="font-semibold">
                   {shippingCost === 0 ? "FREE" : formatPrice(shippingCost)}
                 </span>
               </div>
+              {isLoggedIn && pincodeValid && !shippingFetching && !hasShippingQuote && (
+                <div className="text-xs text-ink-soft/70">
+                  No courier rate found for this pincode — flat rate applies.
+                </div>
+              )}
               <div className="flex justify-between text-sm">
-                <span className="text-ink-soft">Tax (18% GST)</span>
+                <span className="text-ink-soft">Tax ({taxLabel})</span>
                 <span className="font-semibold">{formatPrice(tax)}</span>
               </div>
               {giftWrap && (

@@ -127,13 +127,40 @@ Starting **Phase 7 — Commerce completion** per `docs/06-roadmap.md`.
       under `/v1/addresses`.
 - [x] Saved addresses frontend — `frontend/src/pages/Addresses` with add/delete + default chip.
 
-### 7.4.2 Next up (Phase 7)
-- [ ] **Pincode-based shipping rates** — `ShippingRate` entity (pincode, cost, freeAbove,
-      estimatedDays); replace flat shipping logic in checkout.
-- [ ] **Configurable state tax** — `TaxRule` entity (state, rate, name); replace flat 18% with
-      per-state lookup.
-- [ ] **Stock restoration on return approval** — call `InventoryServiceClient` to restore stock
-      when admin approves a return.
+### 7.4.2 Shipping / tax (was "next up" — DONE in a later session, 2026-08-22)
+- [x] Pincode-based shipping rates — `ShippingRate` entity + `/v1/shipping/calculate` +
+      admin CRUD (`/v1/shipping/rates`), wired into `OrderService.calculateShipping`.
+- [x] Configurable state tax — `TaxRule` entity + `/v1/tax/rule/{state}` + admin CRUD
+      (`/v1/tax/rules`), wired into `OrderService.calculateTax`.
+- [x] Stock restoration on return approval — `ReturnRequestService` calls
+      `CommerceInventoryService.restoreStock` (failure is logged, does not block approval).
+- [x] **Frontend Checkout wired to real quotes** — new `frontend/src/api/shippingApi.ts` +
+      `types/shipping.ts`; Checkout collects a 6-digit pincode, queries
+      `POST /v1/shipping/calculate` (shows carrier + ETA + FREE) and `GET /v1/tax/rule/{state}`
+      (dynamic tax label/rate) for logged-in users; guests keep the flat estimate.
+      Order payload now sends top-level `pincode` + `state` so the backend recomputes totals.
+- [x] **`OrderService` unknown-pincode fix** — previously ANY unknown pincode ⇒ free shipping
+      (service returns `cost=0, active=false` when no rate row exists; `cost != null` was the
+      only guard). Now the pincode rate is trusted only when `rate.isActive()`.
+      ⚠️ Java change made without a local JDK (sandbox has none) — run the Maven build.
+- [x] **Checkout validation bug fix** — `customerEmail` was unconditionally required, blocking
+      logged-in users (field only rendered for guests). `forms/orderForm` is now a factory:
+      `createOrderForm({ guest, requirePincode })`; Cart uses `createOrderForm()`.
+- [x] **Seed data** — `docker/postgres/seed-commerce-data.sql` (run manually against
+      `commercedb`): 6 shipping rates (incl. inactive one) + 7 tax rules (Kerala 19% to prove
+      per-state variance). State values must match `formdata.json` exactly (uppercase,
+      e.g. `NCT OF DELHI`).
+- [x] **Dockerfile casing** — `product-service/dockerfile`/`user-service/dockerfile` renamed to
+      `Dockerfile` (matches compose; was breaking case-sensitive Linux/CI checkouts).
+
+### 7.4.3 Next up (Phase 7)
+- [ ] **Guest checkout end-to-end** — frontend collects `customerEmail`, but the gateway
+      `AuthFilter` 401s unauthenticated `POST /v1/orders`; needs a public order route (with
+      abuse protection) + cart merge on later login. Also: `formdata.json` state list is
+      outdated — no TELANGANA entry.
+- [ ] **PDF invoices** — generated + emailed on payment success.
+- [ ] **Refund via real payment provider** — return approval currently restores stock but the
+      provider refund call needs Stripe/Razorpay refund API wiring (keys are config-gated).
 
 ---
 
