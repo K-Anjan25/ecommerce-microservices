@@ -30,6 +30,8 @@ Password reset now returns the same generic response whether or not an account
 exists, preventing email enumeration. Generated passwords are no longer written
 to logs, and reset email branding is Cartly-specific.
 
-The current temporary-password email mechanism is retained for compatibility.
-A future enhancement should replace it with a one-time, short-lived, hashed
-reset token and a dedicated password-selection page.
+The temporary-password mechanism has now been removed. Reset requests create a
+cryptographically random 256-bit token, store only its SHA-256 hash, expire it
+after 30 minutes, invalidate older tokens for the account, and mark it used
+atomically after password selection. The raw token exists only in the emailed
+one-time link and is never logged or stored.

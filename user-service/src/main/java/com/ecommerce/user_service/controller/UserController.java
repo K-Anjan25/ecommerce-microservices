@@ -6,9 +6,9 @@ import static com.ecommerce.user_service.constant.RequestConstant.*;
 import com.ecommerce.user_service.audit.AuditLogService;
 import com.ecommerce.user_service.dto.*;
 import com.ecommerce.user_service.exception.HttpResponse;
-import com.ecommerce.user_service.exception.EmailNotFoundException;
 import com.ecommerce.user_service.model.User;
 import com.ecommerce.user_service.model.UserPrincipal;
+import com.ecommerce.user_service.service.PasswordResetService;
 import com.ecommerce.user_service.service.UserService;
 import com.ecommerce.user_service.util.AuthenticationHelper;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +43,7 @@ public class UserController {
     private final UserService userService;
     private final AuthenticationHelper authenticationHelper;
     private final AuditLogService auditLogService;
+    private final PasswordResetService passwordResetService;
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterUserRequest user)  {
         userService.register(user);
@@ -148,15 +149,18 @@ public class UserController {
         return ResponseEntity.ok(userService.findUserByEmail(email));
     }
 
-    @GetMapping("/resetpassword/{email}")
-    public ResponseEntity<HttpResponse> resetPassword(@PathVariable String email) {
-        try {
-            userService.resetPassword(email);
-        } catch (EmailNotFoundException ignored) {
-            // Return the same result so this endpoint cannot enumerate accounts.
-        }
+    @PostMapping("/password-reset/request")
+    public ResponseEntity<HttpResponse> requestPasswordReset(@Valid @RequestBody PasswordResetRequest request) {
+        passwordResetService.request(request.getEmail());
         return new ResponseEntity<>(new HttpResponse(OK.value(), OK, OK.getReasonPhrase().toUpperCase(),
                 "If an account exists, password reset instructions have been sent."), OK);
+    }
+
+    @PostMapping("/password-reset/confirm")
+    public ResponseEntity<HttpResponse> confirmPasswordReset(@Valid @RequestBody PasswordResetConfirmRequest request) {
+        passwordResetService.confirm(request.getToken(), request.getNewPassword());
+        return new ResponseEntity<>(new HttpResponse(OK.value(), OK, OK.getReasonPhrase().toUpperCase(),
+                "Password updated. You can now sign in."), OK);
     }
 
     @DeleteMapping("/delete/{email}")

@@ -16,8 +16,8 @@ function ForgetPassword() {
   const resetPassword = async () => {
     setLoading(true);
     try {
-      await UserApi.resetPassword(value);
-      showSuccess("New password sent, please check your e-mail");
+      await UserApi.requestPasswordReset(value);
+      showSuccess("If the account exists, a reset link has been sent");
       navigate("/login");
     } catch (e: any) {
       const res = e.response?.data?.message as string;
@@ -32,7 +32,7 @@ function ForgetPassword() {
         Reset your password
       </Typography>
       <Typography className="mt-1 text-ink-soft">
-        Enter your email and we&apos;ll send you a fresh one.
+        Enter your email and we&apos;ll send a secure, one-time reset link.
       </Typography>
 
       <form

@@ -33,6 +33,7 @@ function App() {
     return <Loader />;
   }
 
+  const ResetPassword = React.lazy(() => import("./pages/Login/ResetPassword"));
   const Cart = React.lazy(() => import("./pages/Cart"));
   const Checkout = React.lazy(() => import("./pages/Checkout"));
   const AdminProducts = React.lazy(() => import("./pages/Admin/Products"));
@@ -69,6 +70,7 @@ function App() {
             <Route path="products/:productId" element={<Product />} />
             <Route path="login" element={<Login />} />
             <Route path="forgetPassword" element={<ForgetPassword />} />
+            <Route path="reset-password" element={<ResetPassword />} />
             <Route path="register" element={<Register />} />
             <Route
               element={

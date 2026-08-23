@@ -69,7 +69,8 @@ public class RateLimitFilter implements GlobalFilter, Ordered {
         String path = exchange.getRequest().getURI().getPath();
         if ("POST".equals(method) && "/user/login".equals(path)) return new Rule("login", 10);
         if ("POST".equals(method) && "/user/register".equals(path)) return new Rule("register", 5);
-        if ("GET".equals(method) && path.startsWith("/user/resetpassword/")) return new Rule("password-reset", 5);
+        if ("POST".equals(method) && "/user/password-reset/request".equals(path)) return new Rule("password-reset", 5);
+        if ("POST".equals(method) && "/user/password-reset/confirm".equals(path)) return new Rule("password-reset-confirm", 10);
         if ("POST".equals(method) && "/v1/orders".equals(path)) return new Rule("guest-order", 20);
         if ("POST".equals(method) && "/v1/payments".equals(path)) return new Rule("payment", 20);
         if ("POST".equals(method) && path.startsWith("/v1/comments")) return new Rule("comment", 30);

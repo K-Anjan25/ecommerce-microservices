@@ -146,6 +146,10 @@ createServer((req, res) => {
 
   if (req.method === "OPTIONS") return json(res, {});
 
+  if (["/user/password-reset/request", "/user/password-reset/confirm"].includes(p) && req.method === "POST") {
+    return json(res, { message: "Mock password reset accepted" });
+  }
+
   if (p === "/v1/store-settings" && req.method === "GET") return json(res, STORE_SETTINGS);
   if (p === "/v1/store-settings" && req.method === "PUT") {
     let raw = "";
