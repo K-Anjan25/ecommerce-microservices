@@ -99,6 +99,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             error.put("error_message", exception.getMessage());
             response.setContentType(APPLICATION_JSON_VALUE);
             new ObjectMapper().writeValue(response.getOutputStream(), error);
+            return; // never continue to protected controllers after token failure
         }
 
         filterChain.doFilter(request, response);

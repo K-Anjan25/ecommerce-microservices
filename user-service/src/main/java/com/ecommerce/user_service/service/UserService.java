@@ -130,16 +130,13 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
-    public User updateUser(UpdateUserRequest user){
-        User currentUser = findUserByEmail(user.getEmail());
+    public User updateUser(UpdateUserRequest user, String token){
+        DecodedJWT decodedJWT = jwtTokenProvider.decodeToken(token);
+        String email = decodedJWT.getClaim("email").asString();
+        User currentUser = findUserByEmail(email);
         currentUser.setFirstName(user.getFirstName());
         currentUser.setLastName(user.getLastName());
         currentUser.setProfileImageUrl(user.getProfileImageURL());
-        currentUser.setActive(user.isActive());
-        currentUser.setNotLocked(user.isNonLocked());
-        currentUser.setRole(getRoleEnumName(user.getRole()).name());
-        currentUser.setAuthorities(getRoleEnumName(user.getRole()).getAuthorities());
-        saveProfileImage(currentUser, user.getProfileImage());
         return userRepository.save(currentUser);
     }
 
@@ -176,13 +173,13 @@ public class UserService implements UserDetailsService {
         String password = generatePassword();
         user.setPassword(encodePassword(password));
         userRepository.save(user);
-        log.info("New user password: " + password);
+        // Passwords and reset secrets must never enter application logs.
         sendEmail(user, password);
     }
 
     private void sendEmail(User user, String password) {
         String text = "Hello " + user.getFirstName() + ", \n \n Your new account password is: " + password + "\n \n The Support Team";
-        String subject = "Anjan kumar, AK - New Password";
+        String subject = "Cartly password reset";
         EmailRequest emailRequest = new EmailRequest(text, user.getEmail(),subject);
         rabbitMQMessageProducer.publish(
                 emailRequest,

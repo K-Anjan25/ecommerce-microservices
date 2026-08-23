@@ -6,6 +6,7 @@ import static com.ecommerce.user_service.constant.RequestConstant.*;
 import com.ecommerce.user_service.audit.AuditLogService;
 import com.ecommerce.user_service.dto.*;
 import com.ecommerce.user_service.exception.HttpResponse;
+import com.ecommerce.user_service.exception.EmailNotFoundException;
 import com.ecommerce.user_service.model.User;
 import com.ecommerce.user_service.model.UserPrincipal;
 import com.ecommerce.user_service.service.UserService;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
@@ -75,6 +77,7 @@ public class UserController {
     }
 
     @GetMapping("/getById/{userId}")
+    @PreAuthorize("hasAnyAuthority('ROLE_MANAGER','ROLE_ADMIN','ROLE_SUPER_ADMIN')")
     public ResponseEntity<UserCredential> getUserById(@PathVariable UUID userId) {
         return ResponseEntity.ok(userService.getUserCredentialsById(userId));
     }
@@ -120,8 +123,10 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<LoginResponse> updateUser(@RequestBody UpdateUserRequest user)  {
-        User currentUser = userService.updateUser(user);
+    public ResponseEntity<LoginResponse> updateUser(@Valid @RequestBody UpdateUserRequest user,
+                                                     @RequestHeader(AUTHORIZATION) String authorizationHeader)  {
+        String token = authorizationHeader.substring(TOKEN_PREFIX.length());
+        User currentUser = userService.updateUser(user, token);
         UserPrincipal userPrincipal = new UserPrincipal(currentUser);
         LoginResponse loginResponse = authenticationHelper.getLoginResponse(userPrincipal);
         return ResponseEntity.ok(loginResponse);
@@ -138,18 +143,24 @@ public class UserController {
     }
 
     @GetMapping("/find/{email}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_SUPER_ADMIN')")
     public ResponseEntity<User> getUser(@PathVariable String email) {
         return ResponseEntity.ok(userService.findUserByEmail(email));
     }
 
     @GetMapping("/resetpassword/{email}")
     public ResponseEntity<HttpResponse> resetPassword(@PathVariable String email) {
-        userService.resetPassword(email);
+        try {
+            userService.resetPassword(email);
+        } catch (EmailNotFoundException ignored) {
+            // Return the same result so this endpoint cannot enumerate accounts.
+        }
         return new ResponseEntity<>(new HttpResponse(OK.value(), OK, OK.getReasonPhrase().toUpperCase(),
-                RESET_PASSWORD_RES + email), OK);
+                "If an account exists, password reset instructions have been sent."), OK);
     }
 
     @DeleteMapping("/delete/{email}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_SUPER_ADMIN')")
     public ResponseEntity<HttpResponse> deleteUser(@PathVariable String email){
         userService.deleteUser(email);
         return new ResponseEntity<>(new HttpResponse(OK.value(), OK, OK.getReasonPhrase().toUpperCase(),
@@ -157,6 +168,7 @@ public class UserController {
     }
 
     @PostMapping("/updateProfileImage")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_SUPER_ADMIN')")
     public ResponseEntity<User> updateProfileImage(@RequestParam String email,
                                                    @RequestParam MultipartFile profileImage) {
         return ResponseEntity.ok(userService.updateProfileImage(email,profileImage));
