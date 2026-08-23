@@ -43,7 +43,35 @@ esac
 cd "$(git rev-parse --show-toplevel)"
 ROOT="$(pwd)"
 
-[ -d "$PREFIX" ] || { echo "error: $PREFIX does not exist. Run 'git pull' first." >&2; exit 1; }
+if ! git cat-file -e "HEAD:$PREFIX/style.css" 2>/dev/null; then
+	echo "error: $PREFIX is not on the current branch." >&2
+	echo "       you are on: $(git rev-parse --abbrev-ref HEAD)" >&2
+	echo >&2
+
+	# Point at whichever branch actually carries the theme — the usual cause is
+	# sitting on main while the work is still on a feature branch.
+	FOUND=""
+	for ref in $(git for-each-ref --format='%(refname:short)' refs/heads refs/remotes 2>/dev/null); do
+		if git cat-file -e "$ref:$PREFIX/style.css" 2>/dev/null; then
+			FOUND="$FOUND $ref"
+		fi
+	done
+
+	if [ -n "$FOUND" ]; then
+		echo "       it exists on:$FOUND" >&2
+		echo >&2
+		# `$FOUND` has a leading space, so drop blank lines before picking one.
+		BRANCH_HINT="$(printf '%s' "$FOUND" | tr ' ' '\n' | grep -v '^$' | grep -v '^origin/' | head -1)"
+		if [ -z "$BRANCH_HINT" ]; then
+			BRANCH_HINT="$(printf '%s' "$FOUND" | tr ' ' '\n' | grep -v '^$' | head -1 | sed 's#^origin/##')"
+		fi
+		echo "       git switch $BRANCH_HINT && git pull" >&2
+		echo "       bash tools/split-theme-repo.sh" >&2
+	else
+		echo "       run 'git pull' first." >&2
+	fi
+	exit 1
+fi
 
 if [ -n "$(git status --porcelain)" ]; then
 	echo "error: working tree is dirty. Commit or stash first." >&2
@@ -126,30 +154,41 @@ if [ -n "$REMOTE" ]; then
 	echo
 	echo "==> pushing to $REMOTE"
 	git -C "$OUT" remote add origin "$REMOTE"
-	git -C "$OUT" push -u origin main
-	echo "    pushed."
+	if git -C "$OUT" push -u origin main; then
+		echo "    pushed."
+	else
+		echo >&2
+		echo "error: push failed." >&2
+		echo "       Most likely the repo does not exist yet. Create an EMPTY one:" >&2
+		echo "         https://github.com/new   (no README, no .gitignore, no licence)" >&2
+		echo >&2
+		echo "       Your split repo is safe at $OUT — just retry:" >&2
+		echo "         git -C \"$OUT\" push -u origin main" >&2
+		exit 1
+	fi
+	echo
+	echo "Now retire the copy in this repo so the two cannot drift:"
+	echo
+	echo "     cd \"$ROOT\""
+	echo "     git rm -r wordpress"
+	echo "     git commit -m \"chore: theme moved to its own repository\""
 	exit 0
 fi
 
 cat <<EOF
 
-Next — publish it. Pick ONE:
+Next — publish it.
 
-  A) With the GitHub CLI, if you have it:
+  1. Create an EMPTY repo at https://github.com/new
+       name: $NAME
+       do NOT tick "Add a README", .gitignore or a licence.
 
-       gh repo create $NAME --public --source "$OUT" --push
+  2. Re-run this script with the URL — it pushes for you, so there is no
+     'cd' to get wrong:
 
-  B) Without it (works everywhere):
+       bash tools/split-theme-repo.sh $URL
 
-       1. Create an EMPTY repo at https://github.com/new
-          name: $NAME
-          do NOT tick "Add a README", .gitignore or a licence.
-
-       2. Then:
-
-            cd "$OUT"
-            git remote add origin $URL
-            git push -u origin main
+  (Or, if you have the GitHub CLI:  gh repo create $NAME --public --source "$OUT" --push)
 
 Afterwards, retire the copy in this repo so the two cannot drift:
 
