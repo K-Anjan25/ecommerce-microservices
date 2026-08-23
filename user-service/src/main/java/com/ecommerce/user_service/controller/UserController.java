@@ -3,6 +3,7 @@ package com.ecommerce.user_service.controller;
 import static com.ecommerce.user_service.constant.FileConstant.*;
 import static com.ecommerce.user_service.constant.RequestConstant.*;
 
+import com.ecommerce.user_service.audit.AuditLogService;
 import com.ecommerce.user_service.dto.*;
 import com.ecommerce.user_service.exception.HttpResponse;
 import com.ecommerce.user_service.model.User;
@@ -39,6 +40,7 @@ import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 public class UserController {
     private final UserService userService;
     private final AuthenticationHelper authenticationHelper;
+    private final AuditLogService auditLogService;
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterUserRequest user)  {
         userService.register(user);
@@ -87,6 +89,7 @@ public class UserController {
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_SUPER_ADMIN')")
     public ResponseEntity<HttpResponse> disableUser(@PathVariable UUID userId) {
         userService.setUserActive(userId, false);
+        auditLogService.record("USER_DISABLED", "USER", userId.toString(), null);
         return new ResponseEntity<>(new HttpResponse(OK.value(), OK, OK.getReasonPhrase().toUpperCase(),
                 DISABLE_USER_RES), OK);
     }
@@ -95,6 +98,7 @@ public class UserController {
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_SUPER_ADMIN')")
     public ResponseEntity<HttpResponse> enableUser(@PathVariable UUID userId) {
         userService.setUserActive(userId, true);
+        auditLogService.record("USER_ENABLED", "USER", userId.toString(), null);
         return new ResponseEntity<>(new HttpResponse(OK.value(), OK, OK.getReasonPhrase().toUpperCase(),
                 ENABLE_USER_RES), OK);
     }
@@ -110,7 +114,9 @@ public class UserController {
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_SUPER_ADMIN')")
     public ResponseEntity<AdminUserDto> updateStaffRole(@PathVariable UUID userId,
                                                          @RequestParam String role) {
-        return ResponseEntity.ok(userService.setStaffRole(userId, role));
+        AdminUserDto updated = userService.setStaffRole(userId, role);
+        auditLogService.record("USER_ROLE_UPDATED", "USER", userId.toString(), role);
+        return ResponseEntity.ok(updated);
     }
 
     @PutMapping("/update")

@@ -481,8 +481,8 @@ All verified with `tsc + vite build`.
   WooCommerce (see 7.4.20). That is the top item in the theme repo.
 
 ### 7.4.22 Where the platform repo goes next
-- Roadmap Phase 9 leftover: audit log. **CMS/store settings is done**, and **Manager role is now complete** (2026-08-23): admins can promote/demote customers; managers can access analytics, orders and the returns/refund queue but cannot reach users, catalog mutation, coupons or storefront settings.
-- Then Phase 10: structured logs, rate limiting, backups, i18n, PWA.
+- **Phase 9 is complete.** CMS/store settings, scoped Manager role and cross-service audit log are done. The audit ledger merges the latest identity, catalog and commerce mutations in the admin studio.
+- Next is Phase 10: structured logs, rate limiting, backups, i18n, PWA.
 - `main` is still at the pre-redesign merge — **PR #2 carries this entire session** and needs
   merging before `main` reflects reality.
 

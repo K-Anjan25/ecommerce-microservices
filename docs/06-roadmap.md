@@ -3,14 +3,14 @@
 Roadmap for growing the working 4-service stack into a full-featured ecommerce
 platform plus a creative layer, all within the host's 2 GB Docker budget.
 
-> **Status (2026-08-23):** Phase 6 complete · Phase 7 complete · Phase 8 complete · Phase 9 in progress · Phase 10 ongoing.
+> **Status (2026-08-23):** Phase 6 complete · Phase 7 complete · Phase 8 complete · Phase 9 complete · Phase 10 ongoing.
 >
 > | Phase | Current state |
 > |---|---|
 > | 6 — Merchandising & catalog | **Complete**; visual autocomplete refinement added 2026-08-23 |
 > | 7 — Commerce completion | **Complete** |
 > | 8 — Marketing & creative | **Complete** |
-> | 9 — Admin & analytics | **In progress**; analytics, coupons, returns, storefront CMS and Manager role done; audit log remains |
+> | 9 — Admin & analytics | **Complete**; analytics, coupons, returns, storefront CMS, Manager role and cross-service audit log done |
 > | 10 — Hardening | **Ongoing**; CI, dark mode and order-resource authorization hardening done; structured logs, rate limiting, backup drill, i18n and PWA remain |
 
 ## 6.0 Guardrails (hard constraints, every phase must respect)

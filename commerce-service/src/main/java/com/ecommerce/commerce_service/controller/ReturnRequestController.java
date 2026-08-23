@@ -1,5 +1,6 @@
 package com.ecommerce.commerce_service.controller;
 
+import com.ecommerce.commerce_service.audit.AuditLogService;
 import com.ecommerce.commerce_service.dto.returnRequest.CreateReturnRequest;
 import com.ecommerce.commerce_service.dto.returnRequest.ReturnRequestDto;
 import com.ecommerce.commerce_service.service.ReturnRequestService;
@@ -22,6 +23,7 @@ import java.util.UUID;
 @RequestMapping("/v1/returns")
 public class ReturnRequestController {
     private final ReturnRequestService returnRequestService;
+    private final AuditLogService auditLogService;
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
@@ -57,19 +59,26 @@ public class ReturnRequestController {
     @PostMapping("/{returnRequestId}/approve")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER')")
     public ResponseEntity<ReturnRequestDto> approveReturnRequest(@PathVariable UUID returnRequestId){
-        return ResponseEntity.ok(returnRequestService.approveReturnRequest(returnRequestId));
+        ReturnRequestDto result = returnRequestService.approveReturnRequest(returnRequestId);
+        auditLogService.record("RETURN_APPROVED", "RETURN", returnRequestId.toString(), null);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/{returnRequestId}/reject")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER')")
     public ResponseEntity<ReturnRequestDto> rejectReturnRequest(@PathVariable UUID returnRequestId, @RequestParam String reason){
-        return ResponseEntity.ok(returnRequestService.rejectReturnRequest(returnRequestId, reason));
+        ReturnRequestDto result = returnRequestService.rejectReturnRequest(returnRequestId, reason);
+        auditLogService.record("RETURN_REJECTED", "RETURN", returnRequestId.toString(), reason);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/{returnRequestId}/refund")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER')")
     public ResponseEntity<ReturnRequestDto> refundReturnRequest(@PathVariable UUID returnRequestId){
-        return ResponseEntity.ok(returnRequestService.refundReturnRequest(returnRequestId));
+        ReturnRequestDto result = returnRequestService.refundReturnRequest(returnRequestId);
+        auditLogService.record("RETURN_REFUNDED", "RETURN", returnRequestId.toString(),
+                result.getRefundAmount() == null ? null : result.getRefundAmount().toPlainString());
+        return ResponseEntity.ok(result);
     }
 
     private String currentPrincipal() {

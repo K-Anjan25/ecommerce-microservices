@@ -98,6 +98,20 @@ spring:
             - Path=/v1/products/**,/v1/categories/**,/v1/comments/**,/v1/store-settings
             - Method=GET
 
+        - id: product-audit
+          uri: ${PRODUCT_SERVICE_URI:http://localhost:8080}
+          predicates:
+            - Path=/v1/product-audit/**
+          filters:
+            - AuthFilter
+
+        - id: commerce-audit
+          uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
+          predicates:
+            - Path=/v1/commerce-audit/**
+          filters:
+            - AuthFilter
+
         - id: shipping-service
           uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
           predicates:

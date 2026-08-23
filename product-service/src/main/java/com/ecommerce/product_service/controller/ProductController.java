@@ -1,6 +1,7 @@
 package com.ecommerce.product_service.controller;
 
 
+import com.ecommerce.product_service.audit.AuditLogService;
 import com.ecommerce.product_service.dto.Pagination;
 import com.ecommerce.product_service.dto.comment.CommentDto;
 import com.ecommerce.product_service.dto.product.*;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @RequestMapping("/v1/products")
 public class ProductController {
     private final ProductService productService;
+    private final AuditLogService auditLogService;
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductDto> getProductDtoById(@PathVariable UUID id){
@@ -40,20 +42,26 @@ public class ProductController {
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<ProductDto> saveProduct(@Valid @RequestBody CreateProductRequest createProductRequest){
-        return new ResponseEntity<>(productService.createProduct(createProductRequest),HttpStatus.CREATED);
+        ProductDto saved = productService.createProduct(createProductRequest);
+        auditLogService.record("PRODUCT_CREATED", "PRODUCT", saved.getId().toString(), saved.getName());
+        return new ResponseEntity<>(saved,HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<ProductDto> updateProduct(@Valid @RequestBody UpdateProductRequest updateProductRequest,
                                                     @PathVariable UUID id){
-        return ResponseEntity.ok(productService.updateProduct(updateProductRequest,id));
+        ProductDto updated = productService.updateProduct(updateProductRequest,id);
+        auditLogService.record("PRODUCT_UPDATED", "PRODUCT", id.toString(), updated.getName());
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<UUID> deleteProduct(@PathVariable UUID id){
-        return ResponseEntity.ok(productService.deleteProduct(id));
+        UUID deleted = productService.deleteProduct(id);
+        auditLogService.record("PRODUCT_DELETED", "PRODUCT", id.toString(), null);
+        return ResponseEntity.ok(deleted);
     }
 
     @GetMapping

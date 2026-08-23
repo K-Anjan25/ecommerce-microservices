@@ -161,6 +161,8 @@ createServer((req, res) => {
     return;
   }
 
+  if (["/v1/product-audit", "/v1/commerce-audit", "/user/audit-logs"].includes(p)) return json(res, []);
+
   if (p === "/v1/categories") return json(res, CATEGORIES);
 
   if (p === "/v1/products") {
