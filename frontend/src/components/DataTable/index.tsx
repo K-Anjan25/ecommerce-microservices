@@ -77,7 +77,7 @@ function DataTable<T>({
   const rowPad = dense ? "py-2" : "py-3";
 
   return (
-    <div className="panel overflow-hidden">
+    <div className="overflow-hidden border-t border-ink">
       {caption && (
         <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-3">
           <span className="text-xs font-semibold text-ink-soft">{caption}</span>
@@ -88,7 +88,7 @@ function DataTable<T>({
       <div className="hidden overflow-x-auto md:block">
         <table className="w-full border-collapse text-sm">
           <thead>
-            <tr className="bg-canvas">
+            <tr className="bg-transparent">
               {columns.map((col) => (
                 <th
                   key={col.id}
@@ -164,7 +164,7 @@ function DataTable<T>({
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
                 className={`p-4 ${onRowClick ? "cursor-pointer active:bg-brand-tint" : ""}`}
               >
-                <p className="font-heading text-sm font-bold text-ink">{cell(row, primary)}</p>
+                <p className="font-display text-xl text-ink">{cell(row, primary)}</p>
                 <dl className="mt-2 space-y-1.5">
                   {rest.map((col) => (
                     <div key={col.id} className="flex items-start justify-between gap-3 text-xs">
@@ -240,7 +240,7 @@ export function TableIconButton({
       aria-label={label}
       title={label}
       onClick={onClick}
-      className={`flex h-8 w-8 items-center justify-center rounded-xs border border-line bg-paper transition ${
+      className={`flex h-8 w-8 items-center justify-center border border-line bg-paper transition ${
         tone === "danger"
           ? "text-ink-soft hover:border-state-danger hover:bg-state-danger-soft hover:text-state-danger"
           : "text-ink-soft hover:border-ink hover:text-ink"
