@@ -97,9 +97,7 @@ function Products() {
       setFilter(state.category);
       resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-    if (state?.focusSearch) {
-      setFiltersOpen(true);
-    }
+    // Mobile search is handled by the shell drawer; this page only consumes submitted terms.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.key]);
 

@@ -100,6 +100,11 @@ const Navbar = () => {
     setDrawerOpen(false);
   }, [location.pathname]);
 
+  useEffect(() => {
+    const state = location.state as { focusSearch?: boolean } | null;
+    if (state?.focusSearch) setDrawerOpen(true);
+  }, [location.key, location.state]);
+
   /* ⌘K / Ctrl+K focuses the header search — the search is now the primary
      entry point into the catalog, so it deserves a shortcut. */
   useEffect(() => {
