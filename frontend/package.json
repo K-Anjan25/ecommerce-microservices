@@ -10,7 +10,7 @@
     "@mui/material": "^5.11.0",
     "@types/lodash.debounce": "^4.0.7",
     "@types/node": "^20.18.0",
-    "axios": "1.13.6",
+    "axios": "^1.19.0",
     "formik": "^2.2.9",
     "lodash.debounce": "^4.0.8",
     "moment": "^2.29.4",
@@ -32,6 +32,7 @@
   "scripts": {
     "start": "vite",
     "check:contrast": "node ../tools/check-color-contrast.mjs",
+    "audit:security": "npm audit --audit-level=high",
     "build": "npm run check:contrast && tsc --noEmit && vite build",
     "preview": "vite preview"
   },
@@ -50,10 +51,10 @@
   "devDependencies": {
     "@types/react": "^18.3.28",
     "@types/react-dom": "^18.3.7",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^6.1.0",
     "autoprefixer": "^10.5.0",
     "postcss": "^8.5.10",
     "tailwindcss": "^3.4.4",
-    "vite": "^5.4.11"
+    "vite": "^8.2.2"
   }
 }
