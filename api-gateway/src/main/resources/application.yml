@@ -12,7 +12,9 @@ spring:
         add-to-simple-url-handler-mapping: true
         corsConfigurations:
           '[/**]':
-            allowedOrigins: "*"
+            allowedOriginPatterns:
+              - ${CORS_ALLOWED_ORIGIN:http://localhost:*}
+              - https://*.e2b.app
             allowedHeaders: "*"
             allowedMethods:
               - GET

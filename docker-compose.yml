@@ -58,6 +58,7 @@ services:
       PRODUCT_SERVICE_URI: http://product-service:8080
       COMMERCE_SERVICE_URI: http://commerce-service:8081
       USER_SERVICE_URI: http://user-service:8084
+      CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN:-http://localhost:*}
       JAVA_OPTS: *jvm-tiny
     ports:
       - "8889:8889"

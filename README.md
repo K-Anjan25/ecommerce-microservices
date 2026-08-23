@@ -90,12 +90,13 @@ See `.env.example`. Never commit real `.env` values.
 |---|---|
 | `POSTGRES_USERNAME`, `POSTGRES_PASSWORD` | all services / postgres |
 | `JWT_SECRET` | user-service (token signing) |
+| `CORS_ALLOWED_ORIGIN` | API gateway (exact production storefront origin) |
 | `EMAIL_USERNAME`, `EMAIL_PASSWORD`, `EMAIL_FROM` | user-service (SMTP) |
 | `STRIPE_SECRET_KEY`, `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` | commerce-service (payments) |
 
 ## Frontend
 
-React 18 + TypeScript, Redux, Material UI, Tailwind CSS — **Cartly 2.0 design system**.
+React 18 + TypeScript, Redux, Material UI, Tailwind CSS — **Cartly editorial commerce system**.
 
 - **Proxy**: `/api` → `http://localhost:8889` (API Gateway)
 - **Auth**: JWT with auto-refresh (Bearer prefix handled in the refresh interceptor)
