@@ -120,6 +120,27 @@ already assumed.
   add-to-cart bar that becomes a −/qty/+ stepper). Variant-aware cart wiring is
   unchanged.
 
+### Admin tables (wireframe 05, bottom)
+- `components/DataTable` — **new**. One table primitive for the whole admin:
+  full-bleed in its panel, sticky uppercase-eyebrow header on `bg-canvas`,
+  hairline rows, dense padding, per-column `align`/`minWidth`/`mono`/`render`
+  and a `hideBelow` breakpoint so wide tables shed columns instead of scrolling.
+  **Below `md` it switches to a stacked card list** — a 7-column admin table on a
+  phone was unusable. Ships `TableIconButton` and `StatusPill` (one shared
+  status→tone map for order/return/coupon/user states).
+- `Table/TableWithActions` + `Table/TableWithDetail` — rewritten as thin adapters
+  over `DataTable`; **their props are unchanged**, so `Admin/Products` and
+  `Admin/Orders` were not touched. The old components hardcoded
+  `maxWidth: 1200px` and `marginTop: 16px`, which is why admin tables never
+  filled the console.
+- `pages/Admin/Users` — dropped its hand-rolled MUI table for `DataTable`
+  (avatar initials cell, role chip, status pill, enable/disable action).
+- `components/SkeletonRows` — reshaped to match `DataTable` so nothing jumps
+  when data lands.
+- Redundant `!bg-brand !text-paper hover:!bg-brand-main` overrides removed from
+  19 files: the MUI theme's `containedPrimary` already supplies them, and the
+  overrides were suppressing the theme's button shadow.
+
 ### Admin (wireframe 05)
 - `components/AdminLayout` — **rewritten** as an ink nav rail with the user
   identity docked at the bottom, a sticky topbar showing the current section, and
@@ -184,7 +205,8 @@ CI's backend + compose jobs are unaffected.
 - [x] **Cart → checkout** to frame 04 — stepper, sticky summary, mobile pay bar.
       *(done — they remain two routes joined by one stepper, which keeps the cart
       shareable/bookmarkable and the checkout form isolated.)*
-- [ ] Admin table density pass (Orders / Products / Users) to frame 05.
+- [x] Admin table density pass to frame 05 — shared `DataTable`, mobile card
+      fallback, unified status pills. *(done)*
 - [ ] Remaining feature pages (GiftCards, FlashSales, Referral, Returns,
       LoyaltyPoints, Compare, Addresses) inherit the tokens but were not
       re-composed.

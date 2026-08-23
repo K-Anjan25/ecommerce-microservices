@@ -80,8 +80,7 @@ function Products() {
           <Button
             variant="contained"
             startIcon={<AddIcon />}
-            className="!bg-brand !text-paper hover:!bg-brand-main"
-            onClick={() => navigate("/admin/addEditProduct")}
+                        onClick={() => navigate("/admin/addEditProduct")}
           >
             Create product
           </Button>
@@ -99,8 +98,7 @@ function Products() {
             action={
               <Button
                 variant="contained"
-                className="!bg-brand !text-paper hover:!bg-brand-main"
-                onClick={() => navigate("/admin/addEditProduct")}
+                                onClick={() => navigate("/admin/addEditProduct")}
               >
                 Create product
               </Button>

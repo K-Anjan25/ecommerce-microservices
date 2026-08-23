@@ -75,7 +75,7 @@ function SearchBar({
           </Paper>
         )}
       </div>
-      
+
       <div className="flex w-full flex-col gap-4 sm:flex-row md:w-auto">
         <div className="relative w-full sm:w-48">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">

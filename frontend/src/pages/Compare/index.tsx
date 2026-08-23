@@ -44,8 +44,7 @@ function Compare() {
             action={
               <Button
                 variant="contained"
-                className="!bg-brand !text-paper hover:!bg-brand-main"
-                onClick={() => navigate("/")}
+                                onClick={() => navigate("/")}
               >
                 Browse products
               </Button>
@@ -124,8 +123,7 @@ function Compare() {
                     <Button
                       variant="contained"
                       size="small"
-                      className="!bg-brand !text-paper"
-                      onClick={() => navigate(`/products/${product.id}`)}
+                                            onClick={() => navigate(`/products/${product.id}`)}
                     >
                       View details
                     </Button>

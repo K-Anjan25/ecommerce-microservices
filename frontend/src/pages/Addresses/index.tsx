@@ -53,8 +53,7 @@ function Addresses() {
           <Button
             variant="contained"
             startIcon={<AddIcon />}
-            className="!bg-brand !text-paper hover:!bg-brand-main"
-            onClick={() => setOpen(true)}
+                        onClick={() => setOpen(true)}
           >
             Add address
           </Button>
@@ -137,7 +136,7 @@ function Addresses() {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleSubmit} className="!bg-brand !text-paper">
+          <Button variant="contained" onClick={handleSubmit}>
             Save
           </Button>
         </DialogActions>

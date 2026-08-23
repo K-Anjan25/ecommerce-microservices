@@ -353,6 +353,20 @@ All verified with `tsc + vite build`.
       no Buy-now/Wishlist, four tabs, credits section).
 - [x] `tsc --noEmit` + `npm run build` clean. Still no backend changes.
 
+### 7.4.15 Palette decision + admin table density (2026-08-23, eleventh session)
+- [x] **Palette: owner chose to KEEP Ink & Violet** (option 0). `design/palettes/` holds the
+      generator and the six-way comparison sheet that produced the decision — same storefront
+      fragment rendered per palette. No colour values changed.
+- [x] **Admin table density pass (frame 05)**: new `components/DataTable` primitive (sticky
+      eyebrow header, hairline dense rows, per-column align/mono/render + `hideBelow`
+      breakpoint, **stacked card list below `md`**, shared `StatusPill` + `TableIconButton`).
+      `TableWithActions`/`TableWithDetail` became thin adapters with **unchanged props**, so
+      Admin Products/Orders needed no edits; Admin Users dropped its hand-rolled table.
+      `SkeletonRows` reshaped to match. Removed the old hardcoded `maxWidth: 1200px` that kept
+      admin tables from filling the console.
+- [x] Swept 19 files of redundant `!bg-brand !text-paper hover:!bg-brand-main` button overrides
+      (the theme already supplies them, and the overrides killed the button shadow).
+
 ---
 
 ## 7.5 Phase-end verification runbook (MANDATORY at each phase end)

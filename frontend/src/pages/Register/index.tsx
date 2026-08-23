@@ -67,7 +67,6 @@ function Register() {
           fullWidth
           type="submit"
           loading={loading}
-          className="!bg-brand !text-paper hover:!bg-brand-main"
         >
           Register
         </LoadingButton>

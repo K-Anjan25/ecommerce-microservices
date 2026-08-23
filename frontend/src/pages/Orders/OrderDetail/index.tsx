@@ -176,7 +176,7 @@ function UserOrderDetail() {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleSubmit} className="!bg-brand !text-paper">
+          <Button variant="contained" onClick={handleSubmit}>
             Submit
           </Button>
         </DialogActions>

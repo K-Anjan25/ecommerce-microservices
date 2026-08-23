@@ -117,8 +117,7 @@ function Coupons() {
           <Button
             variant="contained"
             startIcon={<AddIcon />}
-            className="!bg-brand !text-paper hover:!bg-brand-main"
-            onClick={() => setCreateOpen(true)}
+                        onClick={() => setCreateOpen(true)}
           >
             New coupon
           </Button>
@@ -136,8 +135,7 @@ function Coupons() {
             action={
               <Button
                 variant="contained"
-                className="!bg-brand !text-paper hover:!bg-brand-main"
-                onClick={() => setCreateOpen(true)}
+                                onClick={() => setCreateOpen(true)}
               >
                 Create coupon
               </Button>
@@ -265,7 +263,6 @@ function Coupons() {
               variant="contained"
               type="submit"
               loading={createMutation.isLoading}
-              className="!bg-brand !text-paper hover:!bg-brand-main"
             >
               Create coupon
             </LoadingButton>

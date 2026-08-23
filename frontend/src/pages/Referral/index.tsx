@@ -70,8 +70,7 @@ function Referral() {
           />
           <Button
             variant="contained"
-            className="!bg-brand !text-paper hover:!bg-brand-main"
-            onClick={handleValidate}
+                        onClick={handleValidate}
           >
             Validate
           </Button>

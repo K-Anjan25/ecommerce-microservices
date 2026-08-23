@@ -97,8 +97,7 @@ function OrderDetail() {
           action={
             <Button
               variant="contained"
-              className="!bg-brand !text-paper hover:!bg-brand-main"
-              onClick={() => navigate("/admin/orders")}
+                            onClick={() => navigate("/admin/orders")}
             >
               Back to orders
             </Button>

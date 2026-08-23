@@ -107,7 +107,6 @@ function Profile() {
             size="large"
             type="submit"
             loading={updateMutation.isLoading}
-            className="!bg-brand !text-paper hover:!bg-brand-main"
           >
             Save changes
           </LoadingButton>

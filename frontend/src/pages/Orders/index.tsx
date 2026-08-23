@@ -89,8 +89,7 @@ function Orders() {
             action={
               <Button
                 variant="contained"
-                className="!bg-brand !text-paper hover:!bg-brand-main"
-                onClick={() => navigate("/")}
+                                onClick={() => navigate("/")}
               >
                 Continue shopping
               </Button>

@@ -1,11 +1,6 @@
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { Table as MuiTable } from "@mui/material";
-import TablePagination from "@mui/material/TablePagination";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import DataTable from "../../DataTable";
+import { toDataColumns } from "../TableWithActions";
 import { Column } from "../../../types/table";
 import type { TableRow as TableRowType } from "../../../types/table";
 
@@ -20,6 +15,10 @@ export interface TableProps {
   onClickDetail?: (tableRow: TableRowType) => void;
 }
 
+/**
+ * Admin table whose rows open a detail view. Same primitive as
+ * TableWithActions, with a trailing affordance instead of edit/delete.
+ */
 function TableWithDetail({
   rows,
   totalSize,
@@ -31,61 +30,32 @@ function TableWithDetail({
   onClickDetail,
 }: TableProps) {
   return (
-    <>
-      <TableContainer
-        component={Paper}
-        sx={{ marginTop: "16px", maxWidth: "1200px" }}
-      >
-        <MuiTable sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column?.align}
-                  style={{ minWidth: column?.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows?.map((row) => {
-              return (
-                <TableRow
-                  hover
-                  role="checkbox"
-                  tabIndex={-1}
-                  key={row.id}
-                  onClick={() => onClickDetail && onClickDetail(row)}
-                >
-                  {columns.map((column) => {
-                    const value = (row as any)[column?.id];
-                    return (
-                      <TableCell key={column.id} align={column?.align}>
-                        {value}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </MuiTable>
-        {page !== undefined && itemsPerPage && (
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={totalSize || 0}
-            rowsPerPage={itemsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeItemsPerPage}
-          />
-        )}
-      </TableContainer>
-    </>
+    <DataTable<TableRowType>
+      rows={rows}
+      columns={toDataColumns(columns)}
+      getRowId={(row) => row.id}
+      caption={
+        totalSize !== undefined
+          ? `${totalSize} record${totalSize === 1 ? "" : "s"}`
+          : undefined
+      }
+      onRowClick={onClickDetail}
+      actions={
+        onClickDetail
+          ? () => (
+              <span className="text-ink-muted transition group-hover:text-brand">
+                <ChevronRightIcon sx={{ fontSize: 18 }} />
+              </span>
+            )
+          : undefined
+      }
+      actionsLabel=""
+      page={page}
+      itemsPerPage={itemsPerPage}
+      totalSize={totalSize}
+      onPageChange={handleChangePage}
+      onItemsPerPageChange={handleChangeItemsPerPage}
+    />
   );
 }
 

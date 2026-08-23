@@ -176,8 +176,7 @@ function AdminReturns() {
                       <Button
                         size="small"
                         variant="contained"
-                        className="!bg-brand !text-paper hover:!bg-brand-main"
-                        disabled={approveMutation.isLoading}
+                                                disabled={approveMutation.isLoading}
                         onClick={() => approveMutation.mutate(r.id)}
                       >
                         Approve

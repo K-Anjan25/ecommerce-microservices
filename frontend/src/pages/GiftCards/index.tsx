@@ -82,7 +82,6 @@ function GiftCards() {
             size="large"
             onClick={handlePurchase}
             disabled={purchaseMutation.isLoading}
-            className="!bg-brand !text-paper hover:!bg-brand-main"
           >
             Purchase gift card
           </Button>
