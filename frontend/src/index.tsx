@@ -62,3 +62,11 @@ function Root() {
 root.render(<Root />);
 
 reportWebVitals();
+
+if (import.meta.env.PROD && "serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch(() => {
+      // Offline support is progressive enhancement; startup must never fail.
+    });
+  });
+}
