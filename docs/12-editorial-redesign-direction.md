@@ -36,6 +36,10 @@ Cartly should feel designed for a premium curated mix of home, apparel, beauty a
 - Removed borders, rounded containers and resting shadows from product cards.
 - Changed product imagery to a taller 4:5 editorial ratio.
 - Updated default CMS hero copy for the selected position.
+- Removed the secondary “Browse” category rail from beneath the header.
+- Removed the sticky catalog search/filter/sort bar that obscured product content.
+- Kept desktop refinement in a quiet left sidebar; mobile uses a small “Refine” text action and bottom sheet.
+- Moved sorting into the refinement panel and kept active filters as lightweight removable tags.
 
 ## Next build pass
 

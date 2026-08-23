@@ -82,7 +82,6 @@ const Navbar = () => {
   const searchRef = useRef<HTMLInputElement>(null);
 
   const isAdmin = user?.roles?.includes("ROLE_ADMIN");
-  const isShop = location.pathname === "/";
   const cartCount = calculateCountOfCartItems(carts);
 
   const { data: categories = [] } = useQuery("nav-categories", CategoryApi.getCategories, {
@@ -90,8 +89,6 @@ const Navbar = () => {
     retry: false,
   });
   const { settings: storeSettings } = useStoreSettings();
-
-  const activeCategory = (location.state as { category?: string } | null)?.category ?? "";
 
   useEffect(() => {
     error && showError(error);
@@ -351,40 +348,6 @@ const Navbar = () => {
           </div>
         </div>
       </header>
-
-      {/* ── navigation rail: stable destinations first, live taxonomy second ── */}
-      <div className="sticky top-[4.5rem] z-40 border-b border-line bg-paper/90 backdrop-blur-md">
-        <div className="page-shell no-scrollbar flex h-12 items-center gap-1 overflow-x-auto">
-          {isShop && categories.length > 0 && (
-            <>
-              <span className="mr-3 shrink-0 text-[0.625rem] font-bold uppercase tracking-[0.18em] text-ink-muted">
-                Browse
-              </span>
-              <button
-                onClick={() => pickCategory("")}
-                className={`shrink-0 border-b px-3 py-3 text-xs font-semibold transition ${
-                  !activeCategory ? "border-ink text-ink" : "border-transparent text-ink-soft hover:text-ink"
-                }`}
-              >
-                All
-              </button>
-              {categories.slice(0, 12).map((c) => (
-                <button
-                  key={c.id}
-                  onClick={() => pickCategory(c.name)}
-                  className={`shrink-0 border-b px-3 py-3 text-xs font-semibold transition ${
-                    activeCategory === c.name
-                      ? "border-ink text-ink"
-                      : "border-transparent text-ink-soft hover:text-ink"
-                  }`}
-                >
-                  {c.name}
-                </button>
-              ))}
-            </>
-          )}
-        </div>
-      </div>
 
       {/* ── mobile drawer ────────────────────────────────────────────── */}
       <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>

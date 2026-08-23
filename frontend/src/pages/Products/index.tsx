@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useMemo, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useInfiniteQuery, useQuery } from "react-query";
 import { useInView } from "react-intersection-observer";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Drawer, Checkbox, FormControlLabel, TextField, Rating } from "@mui/material";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
-import TuneIcon from "@mui/icons-material/Tune";
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
@@ -19,7 +18,6 @@ import { Category } from "../../types/category";
 import Card from "../../components/Card";
 import ProductViewPlaceholder from "../../components/ProductViewPlaceholder";
 import EmptyState from "../../components/EmptyState";
-import { CommerceSearch } from "../../features/catalog";
 import { useStoreSettings } from "../../features/storefront";
 
 const SORTS = [
@@ -40,10 +38,8 @@ function Products() {
   const navigate = useNavigate();
   const location = useLocation();
   const { ref, inView } = useInView();
-  const searchInputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  const [searchValue, setSearchValue] = useState("");
   const [sortBy, setSortBy] = useState("DATE_DESC");
   const [filter, setFilter] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
@@ -94,7 +90,6 @@ function Products() {
       | { search?: string; category?: string; focusSearch?: boolean }
       | null;
     if (typeof state?.search === "string" && state.search.trim()) {
-      setSearchValue(state.search);
       setSearchTerm(state.search);
       resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -103,8 +98,7 @@ function Products() {
       resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
     if (state?.focusSearch) {
-      searchInputRef.current?.focus();
-      searchInputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      setFiltersOpen(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.key]);
@@ -112,19 +106,6 @@ function Products() {
   useEffect(() => {
     CategoryApi.getCategories().then(setCategories).catch(() => setCategories([]));
   }, []);
-
-  const delayedSearchTerm = useMemo(() => {
-    let timer: number | undefined;
-    return (query: string) => {
-      window.clearTimeout(timer);
-      timer = window.setTimeout(() => setSearchTerm(query), 420);
-    };
-  }, []);
-
-  const handleChangeSearchValue = (value: string) => {
-    setSearchValue(value);
-    delayedSearchTerm(value);
-  };
 
   const { settings: storeSettings } = useStoreSettings();
 
@@ -158,7 +139,6 @@ function Products() {
       label: `“${searchTerm}”`,
       clear: () => {
         setSearchTerm("");
-        setSearchValue("");
       },
     },
   ].filter(Boolean) as { key: string; label: string; clear: () => void }[];
@@ -172,7 +152,6 @@ function Products() {
     setMinRating("");
     setFilter("");
     setSearchTerm("");
-    setSearchValue("");
   };
 
   const toggleBrand = (brand: string) =>
@@ -183,6 +162,19 @@ function Products() {
   /* ── facet panel (shared by sidebar + mobile drawer) ────────────────── */
   const FacetPanel = (
     <div className="space-y-7">
+      <section>
+        <p className="eyebrow mb-3">Sort</p>
+        <select
+          value={sortBy}
+          onChange={(event) => setSortBy(event.target.value)}
+          aria-label="Sort products"
+          className="input-control cursor-pointer"
+        >
+          {SORTS.map((option) => (
+            <option key={option.value} value={option.value}>{option.label}</option>
+          ))}
+        </select>
+      </section>
       <section>
         <p className="eyebrow mb-3">Category</p>
         <div className="flex flex-wrap gap-2">
@@ -447,73 +439,39 @@ function Products() {
       )}
 
       {/* ═══ RESULTS ══════════════════════════════════════════════════ */}
-      <section ref={resultsRef} className="page-shell mt-12 scroll-mt-[8rem]">
-        <div className="mb-5">
-          <p className="eyebrow">Catalog</p>
-          <h2 className="section-title mt-1">
-            {filter ? filter : searchTerm ? `Results for “${searchTerm}”` : "All products"}
-          </h2>
-        </div>
-
-        {/* sticky toolbar */}
-        <div className="sticky top-[8rem] z-30 mb-6 rounded-lg border border-line bg-paper/95 p-3 backdrop-blur-md">
-          <div className="flex flex-wrap items-center gap-2">
-            <CommerceSearch
-              value={searchValue}
-              onChange={handleChangeSearchValue}
-              onSubmit={(term) => {
-                setSearchValue(term);
-                setSearchTerm(term);
-              }}
-              onProductSelect={(product) => navigate(`products/${product.id}`)}
-              autoFocusRef={searchInputRef}
-              placeholder="Search within the catalog"
-              className="min-w-[12rem] flex-1"
-            />
-
-            <button onClick={() => setFiltersOpen(true)} className="secondary-button !py-2 lg:hidden">
-              <TuneIcon sx={{ fontSize: 17 }} />
-              Filters{activeFilters.length ? ` · ${activeFilters.length}` : ""}
-            </button>
-
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              aria-label="Sort products"
-              className="input-control !h-10 !w-auto min-w-[10rem] cursor-pointer pr-8 font-semibold"
-            >
-              {SORTS.map((s) => (
-                <option key={s.value} value={s.value}>
-                  Sort: {s.label}
-                </option>
-              ))}
-            </select>
+      <section ref={resultsRef} className="page-shell mt-16 scroll-mt-24">
+        <div className="mb-8 flex items-end justify-between gap-4 border-b border-line pb-5">
+          <div>
+            <p className="eyebrow">The collection</p>
+            <h2 className="section-title mt-1">
+              {filter ? filter : searchTerm ? `Results for “${searchTerm}”` : "All products"}
+            </h2>
+            <p className="mt-2 text-xs text-ink-muted">
+              {products.length} item{products.length === 1 ? "" : "s"}{hasNextPage ? " and more" : ""}
+            </p>
           </div>
-
-          {activeFilters.length > 0 && (
-            <div className="mt-2.5 flex flex-wrap items-center gap-2 border-t border-line pt-2.5">
-              <span className="text-xs font-semibold text-ink-muted">
-                {products.length} result{products.length === 1 ? "" : "s"}
-              </span>
-              {activeFilters.map((f) => (
-                <button key={f.key} onClick={f.clear} className="chip chip-active">
-                  {f.label}
-                  <CloseIcon sx={{ fontSize: 13 }} />
-                </button>
-              ))}
-              <button
-                onClick={clearAll}
-                className="text-xs font-semibold text-ink-soft underline-offset-2 hover:underline"
-              >
-                Clear all
-              </button>
-            </div>
-          )}
+          <button
+            onClick={() => setFiltersOpen(true)}
+            className="border-b border-ink pb-1 text-xs font-semibold uppercase tracking-[0.1em] text-ink lg:hidden"
+          >
+            Refine{activeFilters.length ? ` (${activeFilters.length})` : ""}
+          </button>
         </div>
+
+        {activeFilters.length > 0 && (
+          <div className="mb-6 flex flex-wrap items-center gap-2">
+            {activeFilters.map((item) => (
+              <button key={item.key} onClick={item.clear} className="chip chip-active">
+                {item.label} <CloseIcon sx={{ fontSize: 13 }} />
+              </button>
+            ))}
+            <button onClick={clearAll} className="text-xs text-ink-muted underline">Clear all</button>
+          </div>
+        )}
 
         <div className="grid gap-6 lg:grid-cols-[16rem_1fr]">
           <aside className="hidden lg:block">
-            <div className="panel sticky top-[14.5rem] max-h-[calc(100vh-16rem)] overflow-y-auto p-5">
+            <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto border-t border-line py-5 pr-5">
               <div className="mb-5 flex items-center justify-between">
                 <h3 className="font-heading text-base font-bold">Filters</h3>
                 {hasActiveSearch && (
