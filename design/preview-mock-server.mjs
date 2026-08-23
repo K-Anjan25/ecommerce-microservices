@@ -22,12 +22,12 @@ let STORE_SETTINGS = {
   announcementText: "Free shipping over ₹999",
   announcementLinkText: "Flash sale live",
   announcementLinkUrl: "/flash-sales",
-  heroEyebrow: "New season · 2026",
-  heroTitle: "Everything you",
-  heroEmphasis: "need, one cart.",
-  heroDescription: "A catalog you can actually search, a checkout that doesn't fight you, and rewards that stack.",
-  primaryCtaLabel: "Shop the catalog",
-  secondaryCtaLabel: "View flash sales",
+  heroEyebrow: "The seasonal edit",
+  heroTitle: "Curated finds",
+  heroEmphasis: "for home & life.",
+  heroDescription: "Thoughtful objects, honest materials and everyday essentials selected to last.",
+  primaryCtaLabel: "Shop the collection",
+  secondaryCtaLabel: "Explore the edit",
   freeShippingThreshold: 999,
 };
 

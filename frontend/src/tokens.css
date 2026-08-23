@@ -18,34 +18,34 @@
  */
 
 :root {
-  --c-brand: 91 61 245;
-  --c-action: 91 61 245;
-  --c-action-hover: 74 46 214;
-  --c-brand-main: 74 46 214;
-  --c-brand-dark: 42 25 128;
-  --c-brand-light: 124 92 255;
-  --c-brand-soft: 237 233 254;
-  --c-brand-tint: 245 243 255;
+  --c-brand: 164 71 45;
+  --c-action: 164 71 45;
+  --c-action-hover: 142 56 35;
+  --c-brand-main: 142 56 35;
+  --c-brand-dark: 111 42 26;
+  --c-brand-light: 194 112 86;
+  --c-brand-soft: 243 226 217;
+  --c-brand-tint: 250 241 236;
 
-  --c-accent: 216 241 75;
-  --c-accent-dark: 168 190 34;
-  --c-accent-light: 228 247 126;
-  --c-accent-soft: 242 251 201;
+  --c-accent: 200 169 107;
+  --c-accent-dark: 166 132 70;
+  --c-accent-light: 224 204 161;
+  --c-accent-soft: 247 240 222;
 
-  --c-paper: 255 255 255;
-  --c-canvas: 246 245 242;
-  --c-sunken: 239 238 233;
-  --c-line: 229 227 221;
+  --c-paper: 251 249 244;
+  --c-canvas: 244 240 232;
+  --c-sunken: 233 226 215;
+  --c-line: 218 208 195;
 
-  --c-ink: 11 11 15;
-  --c-ink-800: 22 23 29;
-  --c-ink-700: 39 41 50;
-  --c-ink-soft: 90 95 110;
-  --c-ink-muted: 110 116 128;
-  --c-ink-faint: 201 204 213;
+  --c-ink: 34 26 22;
+  --c-ink-800: 47 38 33;
+  --c-ink-700: 69 57 50;
+  --c-ink-soft: 107 94 86;
+  --c-ink-muted: 116 103 95;
+  --c-ink-faint: 187 176 164;
 
-  --c-contrast: 11 11 15;
-  --c-contrast-lift: 39 41 50;
+  --c-contrast: 34 26 22;
+  --c-contrast-lift: 69 57 50;
   --c-oncontrast: 255 255 255;
 
   --c-success: 14 159 110;
@@ -68,38 +68,38 @@
 }
 
 .dark {
-  /* Brand lifts one step: #5B3DF5 is too dense against a near-black canvas. */
+  /* Brighter rust is reserved for foreground; filled actions remain deeper for AA contrast. */
   /* Brand foreground and action fill split so both meet WCAG AA. */
-  --c-brand: 155 132 255;
-  --c-action: 117 82 245;
-  --c-action-hover: 104 68 232;
-  --c-brand-main: 185 168 255;
-  --c-brand-dark: 91 61 245;
-  --c-brand-light: 185 168 255;
-  --c-brand-soft: 34 30 61;
-  --c-brand-tint: 25 24 40;
+  --c-brand: 227 165 143;
+  --c-action: 164 71 45;
+  --c-action-hover: 194 86 56;
+  --c-brand-main: 240 190 172;
+  --c-brand-dark: 142 56 35;
+  --c-brand-light: 240 190 172;
+  --c-brand-soft: 67 38 30;
+  --c-brand-tint: 45 29 24;
 
   /* Lime already sings on dark — unchanged. */
-  --c-accent: 216 241 75;
-  --c-accent-dark: 168 190 34;
-  --c-accent-light: 228 247 126;
-  --c-accent-soft: 42 47 20;
+  --c-accent: 200 169 107;
+  --c-accent-dark: 166 132 70;
+  --c-accent-light: 224 204 161;
+  --c-accent-soft: 57 47 29;
 
-  --c-paper: 20 22 28;
-  --c-canvas: 11 12 16;
-  --c-sunken: 27 30 38;
-  --c-line: 42 46 57;
+  --c-paper: 33 27 24;
+  --c-canvas: 23 18 16;
+  --c-sunken: 45 37 32;
+  --c-line: 70 58 51;
 
-  --c-ink: 242 243 246;
-  --c-ink-800: 228 230 235;
-  --c-ink-700: 210 213 221;
-  --c-ink-soft: 162 168 184;
-  --c-ink-muted: 133 140 159;
-  --c-ink-faint: 74 79 92;
+  --c-ink: 247 241 233;
+  --c-ink-800: 236 226 216;
+  --c-ink-700: 218 205 194;
+  --c-ink-soft: 190 174 164;
+  --c-ink-muted: 182 169 161;
+  --c-ink-faint: 112 94 84;
 
   /* Lifted above the canvas so ink surfaces still read as surfaces. */
-  --c-contrast: 30 33 42;
-  --c-contrast-lift: 42 46 57;
+  --c-contrast: 43 34 30;
+  --c-contrast-lift: 69 57 50;
   --c-oncontrast: 255 255 255;
 
   --c-success: 52 211 153;

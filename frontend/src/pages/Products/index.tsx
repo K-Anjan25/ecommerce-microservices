@@ -302,34 +302,34 @@ function Products() {
     <div className="pb-4">
       {/* ═══ HERO ═════════════════════════════════════════════════════ */}
       <section className="page-shell">
-        <div className="grid gap-4 lg:grid-cols-[1.25fr_1fr]">
-          <div className="grain relative overflow-hidden rounded-xl2 bg-contrast px-7 py-10 text-oncontrast sm:px-12 sm:py-16">
-            <p className="eyebrow !text-accent">{storeSettings.heroEyebrow}</p>
-            <h1 className="mt-4 font-heading text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
+        <div className="grid overflow-hidden border border-line bg-paper lg:grid-cols-[1.08fr_0.92fr]">
+          <div className="relative order-2 flex flex-col justify-center px-7 py-12 sm:px-12 sm:py-16 lg:min-h-[34rem]">
+            <p className="eyebrow !text-brand">{storeSettings.heroEyebrow}</p>
+            <h1 className="mt-5 font-display text-5xl font-normal leading-[0.98] tracking-[-0.03em] text-ink sm:text-6xl lg:text-7xl">
               {storeSettings.heroTitle}
               <br />
-              <span className="font-display font-normal italic text-accent">
+              <span className="font-display font-normal italic text-brand">
                 {storeSettings.heroEmphasis}
               </span>
             </h1>
-            <p className="mt-5 max-w-md text-sm leading-relaxed text-ink-muted sm:text-base">
+            <p className="mt-7 max-w-md text-sm leading-relaxed text-ink-soft sm:text-base">
               {storeSettings.heroDescription} Browse {products.length ? `${products.length}+` : "the"} products below.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <button
                 onClick={() => resultsRef.current?.scrollIntoView({ behavior: "smooth" })}
-                className="accent-button"
+                className="primary-button"
               >
                 {storeSettings.primaryCtaLabel} <ArrowForwardIcon sx={{ fontSize: 17 }} />
               </button>
               <button
                 onClick={() => navigate("/flash-sales")}
-                className="inline-flex items-center justify-center gap-2 rounded-sm border border-white/25 px-4 py-2.5 text-sm font-semibold text-oncontrast transition hover:bg-white/10"
+                className="inline-flex items-center justify-center gap-2 border-b border-ink px-1 py-2.5 text-sm font-semibold text-ink transition hover:text-brand"
               >
                 {storeSettings.secondaryCtaLabel}
               </button>
             </div>
-            <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-ink-muted">
+            <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-line pt-5 text-xs text-ink-muted">
               <span>★ 4.8 average rating</span>
               <span>12,400+ orders shipped</span>
               <span>Free returns for 7 days</span>
@@ -337,7 +337,7 @@ function Products() {
           </div>
 
           {/* featured slot — bestseller cover, falls back to a quiet panel */}
-          <div className="relative hidden overflow-hidden rounded-xl2 border border-line bg-paper lg:block">
+          <div className="relative order-1 min-h-[24rem] overflow-hidden bg-sunken lg:min-h-[34rem]">
             {bestsellers?.[0]?.imageUrl || bestsellers?.[0]?.images?.[0] ? (
               <button
                 onClick={() => navigate(`products/${bestsellers[0].id}`)}
@@ -368,10 +368,10 @@ function Products() {
         </div>
 
         {/* trust strip */}
-        <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 border-x border-b border-line bg-paper lg:grid-cols-4">
           {TRUST.map(({ icon: Icon, title, copy }) => (
-            <div key={title} className="panel flex items-center gap-3 px-4 py-3.5">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand">
+            <div key={title} className="flex items-center gap-3 border-r border-line px-4 py-4 last:border-r-0">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center text-brand">
                 <Icon sx={{ fontSize: 18 }} />
               </span>
               <div className="min-w-0">
@@ -405,6 +405,8 @@ function Products() {
           <div className="no-scrollbar -mx-4 flex gap-3 overflow-x-auto px-4 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 lg:grid-cols-6">
             {categories.slice(0, 6).map((c) => {
               const active = filter === c.name;
+              const categoryProduct = products.find((product) => product.categoryName === c.name);
+              const categoryImage = categoryProduct?.images?.[0] || categoryProduct?.imageUrl;
               return (
                 <button
                   key={c.id}
@@ -412,21 +414,18 @@ function Products() {
                     setFilter(c.name);
                     resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
                   }}
-                  className={`group w-36 shrink-0 overflow-hidden rounded-lg border p-5 text-left transition sm:w-auto ${
-                    active
-                      ? "border-brand bg-brand-soft"
-                      : "border-line bg-paper hover:-translate-y-1 hover:border-ink-faint hover:shadow-lift"
+                  className={`group w-36 shrink-0 text-center transition sm:w-auto ${
+                    active ? "text-brand" : "text-ink hover:text-brand"
                   }`}
                 >
-                  <span
-                    className={`flex h-10 w-10 items-center justify-center rounded-full font-heading text-base font-extrabold ${
-                      active ? "bg-action text-oncontrast" : "bg-sunken text-ink"
-                    }`}
-                  >
-                    {c.name.charAt(0).toUpperCase()}
+                  <span className={`mx-auto flex aspect-square w-full items-center justify-center overflow-hidden rounded-full border ${active ? "border-brand" : "border-line"}`}>
+                    {categoryImage ? (
+                      <img src={categoryImage} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                    ) : (
+                      <span className="font-display text-3xl">{c.name.charAt(0).toUpperCase()}</span>
+                    )}
                   </span>
-                  <p className="mt-4 truncate text-sm font-bold text-ink">{c.name}</p>
-                  <p className="mt-0.5 text-xs text-ink-muted">Explore →</p>
+                  <p className="mt-3 truncate text-xs font-semibold uppercase tracking-[0.08em]">{c.name}</p>
                 </button>
               );
             })}

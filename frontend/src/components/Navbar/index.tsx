@@ -37,8 +37,8 @@ const CartBadge = styled(Badge)({
   "& .MuiBadge-badge": {
     right: -1,
     top: 1,
-    color: "#0B0B0F",
-    backgroundColor: "#D8F14B",
+    color: "#FBF9F4",
+    backgroundColor: "#A4472D",
     fontWeight: 800,
     fontSize: 10,
     minWidth: 18,
@@ -212,15 +212,29 @@ const Navbar = () => {
             <BrandMark compact={false} />
           </button>
 
-          {/* Product finding is given the widest, optically centred column. */}
+          <nav className="ml-5 hidden items-center gap-5 xl:flex" aria-label="Primary navigation">
+            {PRIMARY.map((item) => (
+              <button
+                key={item.path}
+                onClick={() => navigate(item.path)}
+                className={`border-b py-2 text-xs font-semibold uppercase tracking-[0.08em] transition ${
+                  isActive(item.path, item.exact)
+                    ? "border-ink text-ink"
+                    : "border-transparent text-ink-soft hover:border-ink/40 hover:text-ink"
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </nav>
+
           <CommerceSearch
             value={navSearch}
             onChange={setNavSearch}
             onSubmit={submitNavSearch}
             onProductSelect={(product) => navigate(`/products/${product.id}`)}
             autoFocusRef={searchRef}
-            prominent
-            className="mx-auto hidden w-full max-w-2xl md:block"
+            className="mx-auto hidden w-full max-w-sm md:block"
           />
 
           <div className="ml-auto flex items-center gap-1">
@@ -341,33 +355,28 @@ const Navbar = () => {
       {/* ── navigation rail: stable destinations first, live taxonomy second ── */}
       <div className="sticky top-[4.5rem] z-40 border-b border-line bg-paper/90 backdrop-blur-md">
         <div className="page-shell no-scrollbar flex h-12 items-center gap-1 overflow-x-auto">
-          <nav className="flex shrink-0 items-center gap-1" aria-label="Primary navigation">
-            {PRIMARY.map((item) => {
-              const active = isActive(item.path, item.exact);
-              return (
-                <button
-                  key={item.path}
-                  onClick={() => navigate(item.path)}
-                  className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition ${
-                    active ? "bg-contrast text-oncontrast" : "text-ink-soft hover:bg-sunken hover:text-ink"
-                  }`}
-                >
-                  {item.label}
-                </button>
-              );
-            })}
-          </nav>
           {isShop && categories.length > 0 && (
             <>
-              <span className="mx-2 h-5 w-px shrink-0 bg-line" aria-hidden="true" />
-              <button onClick={() => pickCategory("")} className={`chip ${!activeCategory ? "chip-active" : ""}`}>
-                All categories
+              <span className="mr-3 shrink-0 text-[0.625rem] font-bold uppercase tracking-[0.18em] text-ink-muted">
+                Browse
+              </span>
+              <button
+                onClick={() => pickCategory("")}
+                className={`shrink-0 border-b px-3 py-3 text-xs font-semibold transition ${
+                  !activeCategory ? "border-ink text-ink" : "border-transparent text-ink-soft hover:text-ink"
+                }`}
+              >
+                All
               </button>
               {categories.slice(0, 12).map((c) => (
                 <button
                   key={c.id}
                   onClick={() => pickCategory(c.name)}
-                  className={`chip ${activeCategory === c.name ? "chip-active" : ""}`}
+                  className={`shrink-0 border-b px-3 py-3 text-xs font-semibold transition ${
+                    activeCategory === c.name
+                      ? "border-ink text-ink"
+                      : "border-transparent text-ink-soft hover:text-ink"
+                  }`}
                 >
                   {c.name}
                 </button>

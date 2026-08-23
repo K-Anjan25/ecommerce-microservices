@@ -88,10 +88,10 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
   return (
     <article
       onClick={onClick}
-      className="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-lg border border-line bg-paper transition duration-200 hover:-translate-y-1 hover:border-ink-faint hover:shadow-lift"
+      className="group relative flex h-full cursor-pointer flex-col overflow-hidden bg-transparent transition duration-300"
     >
       {/* ── cover ─────────────────────────────────────────────────────── */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-sunken">
+      <div className="relative aspect-[4/5] overflow-hidden bg-sunken">
         {cover ? (
           <img
             src={cover}
@@ -146,7 +146,7 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
       </div>
 
       {/* ── body ──────────────────────────────────────────────────────── */}
-      <div className="flex flex-1 flex-col gap-1 p-3.5 pb-14 sm:p-4 sm:pb-16">
+      <div className="flex flex-1 flex-col gap-1 px-0 pb-14 pt-3 sm:pb-16">
         <p className="text-eyebrow truncate font-bold uppercase text-ink-muted">
           {product.brand || categoryName || "Cartly"}
         </p>
@@ -182,7 +182,7 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
       {/* ── action bar — docked to the card foot ─────────────────────── */}
       <div
         onClick={stop}
-        className="absolute inset-x-0 bottom-0 p-2.5"
+        className="absolute inset-x-0 bottom-0 pt-2.5"
       >
         {quantity ? (
           <div className="flex h-10 items-center justify-between rounded-sm bg-contrast px-1.5 text-oncontrast">
