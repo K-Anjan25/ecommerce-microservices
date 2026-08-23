@@ -32,6 +32,7 @@ import { useColorSchemeContext } from "../../context/colorScheme";
 import { BrandMark } from "../../brand";
 import { CommerceSearch } from "../../features/catalog";
 import { useStoreSettings } from "../../features/storefront";
+import { MiniCartDrawer } from "../../features/cart";
 
 const CartBadge = styled(Badge)({
   "& .MuiBadge-badge": {
@@ -75,6 +76,7 @@ const Navbar = () => {
 
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [bagOpen, setBagOpen] = useState(false);
   const [navSearch, setNavSearch] = useState("");
   const [announce, setAnnounce] = useState(
     () => sessionStorage.getItem(ANNOUNCE_KEY) !== "1"
@@ -274,7 +276,7 @@ const Navbar = () => {
 
             <button
               aria-label={`Cart, ${cartCount} items`}
-              onClick={() => navigate("/cart")}
+              onClick={() => setBagOpen(true)}
               className="icon-button"
             >
               <CartBadge badgeContent={cartCount}>
@@ -478,6 +480,8 @@ const Navbar = () => {
           </div>
         </div>
       </Drawer>
+
+      <MiniCartDrawer open={bagOpen} onClose={() => setBagOpen(false)} />
     </>
   );
 };

@@ -98,7 +98,6 @@ function App() {
                 <RequireAuth allowedRoles={["ROLE_USER"]} roles={data.roles} />
               }
             >
-              <Route path="cart" element={<Cart />} />
               <Route path="orders" element={<Orders />} />
               <Route path="orderDetail/:orderId" element={<UserOrderDetail />} />
               <Route path="addresses" element={<Addresses />} />
@@ -111,6 +110,7 @@ function App() {
               <Route path="profile/:id" element={<Profile />} />
               <Route path="account" element={<Account />} />
             </Route>
+            <Route path="cart" element={<Cart />} />
             <Route path="checkout" element={<Checkout />} />
           </Route>
           <Route path="*" element={<NotFound />} />
