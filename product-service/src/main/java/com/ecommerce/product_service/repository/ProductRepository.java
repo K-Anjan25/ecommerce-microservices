@@ -34,9 +34,17 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Query("SELECT DISTINCT p.brand FROM products p WHERE p.brand IS NOT NULL AND p.brand <> '' ORDER BY p.brand")
     List<String> findAllBrands();
 
-    @Query(value = "SELECT p.name FROM products p WHERE p.name ILIKE '%' || :term || '%' ORDER BY "
-            + "similarity(p.name, :term) DESC LIMIT 8", nativeQuery = true)
-    List<String> suggestByName(@Param("term") String term);
+    @Query("SELECT new com.ecommerce.product_service.dto.product.ProductSearchSuggestion("
+            + "p.id, p.name, p.brand, c.name, p.unitPrice, p.imageUrl) "
+            + "FROM products p JOIN p.category c WHERE "
+            + "LOWER(p.name) LIKE LOWER(CONCAT('%', :term, '%')) "
+            + "OR LOWER(COALESCE(p.brand, '')) LIKE LOWER(CONCAT('%', :term, '%')) "
+            + "OR LOWER(c.name) LIKE LOWER(CONCAT('%', :term, '%')) "
+            + "OR FUNCTION('similarity', p.name, :term) > 0.2 "
+            + "ORDER BY CASE WHEN LOWER(p.name) LIKE LOWER(CONCAT(:term, '%')) THEN 0 ELSE 1 END, "
+            + "FUNCTION('similarity', p.name, :term) DESC, p.name ASC")
+    List<com.ecommerce.product_service.dto.product.ProductSearchSuggestion> suggestProducts(
+            @Param("term") String term, Pageable pageable);
 
     @Query("SELECT p FROM products p WHERE p.category.id = :categoryId AND p.id != :productId ORDER BY p.createdDate DESC")
     List<Product> findByCategoryIdAndIdNot(@Param("categoryId") Long categoryId, @Param("productId") UUID productId, org.springframework.data.domain.Pageable pageable);

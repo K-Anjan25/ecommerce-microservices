@@ -209,6 +209,7 @@ const Navbar = () => {
             value={navSearch}
             onChange={setNavSearch}
             onSubmit={submitNavSearch}
+            onProductSelect={(product) => navigate(`/products/${product.id}`)}
             autoFocusRef={searchRef}
             prominent
             className="mx-auto hidden w-full max-w-2xl md:block"
@@ -385,6 +386,10 @@ const Navbar = () => {
               value={navSearch}
               onChange={setNavSearch}
               onSubmit={submitNavSearch}
+              onProductSelect={(product) => {
+                setDrawerOpen(false);
+                navigate(`/products/${product.id}`);
+              }}
               prominent
             />
           </div>

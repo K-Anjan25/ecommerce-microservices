@@ -8,6 +8,7 @@ import {
   ProductParam,
   ProductForm,
   ProductSearchResponse,
+  ProductSearchSuggestion,
 } from "../types/product";
 import { api } from "./axios";
 
@@ -26,7 +27,7 @@ const getProductBrands = async () => {
 };
 
 const suggestProducts = async (term: string) => {
-  const { data } = await api.get<string[]>("/v1/products/suggest", {
+  const { data } = await api.get<ProductSearchSuggestion[]>("/v1/products/suggest", {
     params: { term },
   });
   return data;

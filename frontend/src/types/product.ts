@@ -74,6 +74,15 @@ export interface ProductSearchResponse {
   facets: Facets;
 }
 
+export interface ProductSearchSuggestion {
+  id: string;
+  name: string;
+  brand?: string;
+  category: string;
+  unitPrice: number;
+  imageUrl?: string;
+}
+
 export interface ProductForm {
   name: string;
   unitPrice: number | undefined;

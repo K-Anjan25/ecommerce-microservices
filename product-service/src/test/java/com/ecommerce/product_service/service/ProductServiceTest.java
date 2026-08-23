@@ -4,6 +4,7 @@ import com.ecommerce.product_service.dto.comment.CommentMapper;
 import com.ecommerce.product_service.dto.product.CreateProductRequest;
 import com.ecommerce.product_service.dto.product.ProductDto;
 import com.ecommerce.product_service.dto.product.ProductMapper;
+import com.ecommerce.product_service.dto.product.ProductSearchSuggestion;
 import com.ecommerce.product_service.inventory.service.InventoryService;
 import com.ecommerce.product_service.model.Category;
 import com.ecommerce.product_service.model.Product;
@@ -18,12 +19,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -113,6 +116,30 @@ class ProductServiceTest {
         ProductDto result = productService.getProductDtoById(productId);
 
         assertThat(result.getName()).isEqualTo("Test Product");
+    }
+
+    @Test
+    void searchSuggestions_shouldReturnVisualResultsAndCapTheQuery() {
+        ProductSearchSuggestion suggestion = ProductSearchSuggestion.builder()
+                .id(productId)
+                .name("Studio Pro Headphones")
+                .brand("Acme")
+                .category("Electronics")
+                .unitPrice(BigDecimal.valueOf(2499))
+                .build();
+        when(productRepository.suggestProducts(any(), any())).thenReturn(List.of(suggestion));
+
+        List<ProductSearchSuggestion> result = productService.searchSuggestions("  studio  ");
+
+        assertThat(result).containsExactly(suggestion);
+        verify(productRepository).suggestProducts(org.mockito.ArgumentMatchers.eq("studio"),
+                org.mockito.ArgumentMatchers.argThat((org.springframework.data.domain.Pageable page) -> page.getPageSize() == 6));
+    }
+
+    @Test
+    void searchSuggestions_shouldIgnoreQueriesShorterThanTwoCharacters() {
+        assertThat(productService.searchSuggestions(" a ")).isEmpty();
+        verifyNoInteractions(productRepository);
     }
 
     @Test

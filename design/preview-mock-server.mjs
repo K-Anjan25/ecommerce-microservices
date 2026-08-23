@@ -183,7 +183,16 @@ createServer((req, res) => {
     const t = (q.get("term") ?? "").toLowerCase();
     return json(
       res,
-      PRODUCTS.filter((x) => x.name.toLowerCase().includes(t)).slice(0, 8).map((x) => x.name)
+      PRODUCTS.filter(
+        (x) =>
+          x.name.toLowerCase().includes(t) ||
+          x.brand.toLowerCase().includes(t) ||
+          x.categoryName.toLowerCase().includes(t)
+      )
+        .slice(0, 6)
+        .map(({ id, name, brand, categoryName: category, unitPrice, imageUrl }) => ({
+          id, name, brand, category, unitPrice, imageUrl,
+        }))
     );
   }
 

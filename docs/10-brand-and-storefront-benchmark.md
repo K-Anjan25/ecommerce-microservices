@@ -85,8 +85,8 @@ Change in this pass:
 
 Next design phase:
 
-1. Add suggestion result metadata (thumbnail, brand, price, category scope) to the backend DTO.
-2. Add typo tolerance/synonym handling in PostgreSQL search.
+1. ~~Add suggestion result metadata (thumbnail, brand, price, category scope) to the backend DTO.~~ **Done:** the API now returns a six-item lightweight visual-suggestion DTO, and selecting a product goes directly to its detail page.
+2. **In progress:** PostgreSQL trigram similarity now supports close-name autocomplete matches. Add a small domain synonym table next (for example, “earbuds” ↔ “earphones”).
 3. Audit all customer-facing copy against the voice rules.
 4. Run axe, keyboard-only, 320/768/1280/1440 responsive, and dark-mode visual checks.
 5. Replace random/demo product photography with one consistent art direction before production branding is considered complete.

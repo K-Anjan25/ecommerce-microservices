@@ -70,7 +70,7 @@ public class ProductController {
     }
 
     @GetMapping("/suggest")
-    public ResponseEntity<List<String>> getSearchSuggestions(@RequestParam(defaultValue = "") String term){
+    public ResponseEntity<List<ProductSearchSuggestion>> getSearchSuggestions(@RequestParam(defaultValue = "") String term){
         return ResponseEntity.ok(productService.searchSuggestions(term));
     }
 

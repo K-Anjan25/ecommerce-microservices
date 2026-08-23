@@ -460,6 +460,7 @@ function Products() {
                 setSearchValue(term);
                 setSearchTerm(term);
               }}
+              onProductSelect={(product) => navigate(`products/${product.id}`)}
               autoFocusRef={searchInputRef}
               placeholder="Search within the catalog"
               className="min-w-[12rem] flex-1"
