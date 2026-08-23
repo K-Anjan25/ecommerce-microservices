@@ -44,7 +44,7 @@ Cartly should feel designed for a premium curated mix of home, apparel, beauty a
 ## Next build pass
 
 1. Art-direct real category and hero imagery rather than reusing arbitrary catalog covers.
-2. Rework product detail into an editorial gallery + quiet purchasing column.
+2. **Done:** reworked product detail into a tall editorial gallery + quiet sticky purchasing column; removed the duplicate selection rail and boxed tabs.
 3. Rework cart and checkout typography/surfaces to this visual language.
 4. Redraw the SVG wireframes from the selected concept rather than recoloring the rejected structure.
 5. Run responsive visual review at 390, 768, 1280 and 1440px before continuing to admin screens.
