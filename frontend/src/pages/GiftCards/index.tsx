@@ -58,8 +58,8 @@ function GiftCards() {
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         {/* ── form ─────────────────────────────────────────────────── */}
-        <section className="panel p-5 sm:p-7">
-          <h2 className="font-heading text-base font-bold">Buy a gift card</h2>
+        <section className="border-t border-ink py-7 sm:py-8">
+          <h2 className="font-display text-3xl font-normal">Buy a gift card</h2>
 
           <div className="mt-6 space-y-6">
             <div>
@@ -137,7 +137,7 @@ function GiftCards() {
 
         {/* ── live card preview / result ────────────────────────────── */}
         <aside className="space-y-4 lg:sticky lg:top-24 lg:h-fit">
-          <div className="grain relative overflow-hidden rounded-lg bg-contrast p-6 text-oncontrast">
+          <div className="relative overflow-hidden border border-brand bg-action p-6 text-oncontrast">
             <div className="flex items-start justify-between">
               <span className="font-heading text-sm font-extrabold tracking-[0.18em]">CARTLY</span>
               <CardGiftcardOutlinedIcon sx={{ fontSize: 22 }} className="text-accent" />
@@ -154,7 +154,7 @@ function GiftCards() {
           </div>
 
           {purchased ? (
-            <div className="panel p-5">
+            <div className="border-t border-ink py-5">
               <div className="flex items-center justify-between gap-3">
                 <p className="font-heading text-sm font-bold text-ink">Gift card created</p>
                 <span
@@ -189,7 +189,7 @@ function GiftCards() {
               </dl>
             </div>
           ) : (
-            <div className="panel p-5 text-xs leading-relaxed text-ink-soft">
+            <div className="border-t border-line py-5 text-xs leading-relaxed text-ink-soft">
               <p className="mb-2 font-heading text-sm font-bold text-ink">Good to know</p>
               <ul className="space-y-1.5">
                 <li>· Redeem at checkout in the credits section.</li>

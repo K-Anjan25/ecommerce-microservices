@@ -71,7 +71,7 @@ function Referral() {
             <button
               onClick={() => referralCode && copy(referralCode, "Referral code copied!")}
               disabled={!referralCode}
-              className="inline-flex items-center justify-center gap-2 rounded-sm border border-white/25 px-4 py-2.5 text-sm font-semibold text-oncontrast transition hover:bg-white/10 disabled:opacity-50"
+              className="secondary-button disabled:opacity-50"
             >
               {copied ? <CheckIcon sx={{ fontSize: 17 }} /> : <ContentCopyIcon sx={{ fontSize: 16 }} />}
               {copied ? "Copied" : "Copy code"}
@@ -79,9 +79,9 @@ function Referral() {
           </>
         }
       >
-        <div className="inline-flex flex-wrap items-center gap-4 rounded-lg border border-dashed border-white/25 bg-white/5 px-6 py-4">
+        <div className="inline-flex flex-wrap items-center gap-4 border border-dashed border-line bg-sunken px-6 py-4">
           <span className="text-eyebrow font-bold uppercase text-ink-muted">Your code</span>
-          <span className="font-mono text-2xl font-bold tracking-[0.2em] text-accent">
+          <span className="font-mono text-2xl font-bold tracking-[0.2em] text-brand">
             {referralCode ?? "······"}
           </span>
         </div>
@@ -95,8 +95,8 @@ function Referral() {
         ]}
       />
 
-      <section className="panel p-5 sm:p-6">
-        <h2 className="font-heading text-base font-bold">Got a code from a friend?</h2>
+      <section className="border-t border-ink py-7 sm:py-8">
+        <h2 className="font-display text-2xl font-normal">Got a code from a friend?</h2>
         <p className="mt-1 text-sm text-ink-soft">
           Check it here before you sign up, so you know it will be accepted.
         </p>

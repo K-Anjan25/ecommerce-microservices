@@ -55,31 +55,31 @@ function LoyaltyPoints() {
       >
         <div>
           <div className="flex items-baseline justify-between text-xs">
-            <span className="font-semibold text-oncontrast">Next reward tier</span>
+            <span className="font-semibold text-ink">Next reward tier</span>
             <span className="text-ink-muted">{toNextTier} points to go</span>
           </div>
-          <div className="mt-2 h-2 max-w-md overflow-hidden rounded-full bg-white/10">
+          <div className="mt-2 h-1.5 max-w-md overflow-hidden bg-sunken">
             <div
-              className="h-full rounded-full bg-accent transition-all duration-700"
+              className="h-full bg-action transition-all duration-700"
               style={{ width: `${progress}%` }}
             />
           </div>
         </div>
       </FeatureHero>
 
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid border-y border-line sm:grid-cols-3">
         {[
           { icon: StarsOutlinedIcon, label: "Current balance", value: points },
           { icon: TrendingUpIcon, label: "Lifetime earned", value: earned },
           { icon: RedeemOutlinedIcon, label: "Lifetime redeemed", value: redeemed },
         ].map(({ icon: Icon, label, value }) => (
-          <div key={label} className="panel flex items-center gap-4 p-5">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand">
+          <div key={label} className="flex items-center gap-4 border-b border-line py-5 sm:border-b-0 sm:border-r sm:px-5 sm:first:pl-0 sm:last:border-r-0">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center text-brand">
               <Icon sx={{ fontSize: 19 }} />
             </span>
             <div className="min-w-0">
               <p className="text-eyebrow font-bold uppercase text-ink-muted">{label}</p>
-              <p className="font-heading text-xl font-extrabold text-ink">
+              <p className="font-display text-2xl text-ink">
                 {value.toLocaleString("en-IN")}
               </p>
             </div>
@@ -95,9 +95,9 @@ function LoyaltyPoints() {
         ]}
       />
 
-      <section className="panel overflow-hidden">
-        <div className="flex items-center justify-between gap-3 border-b border-line px-5 py-4">
-          <h2 className="font-heading text-base font-bold">Points history</h2>
+      <section className="border-t border-ink">
+        <div className="flex items-center justify-between gap-3 border-b border-line py-4">
+          <h2 className="font-display text-2xl font-normal">Points history</h2>
           {!!history?.length && (
             <span className="text-xs text-ink-muted">{history.length} entries</span>
           )}
@@ -125,7 +125,7 @@ function LoyaltyPoints() {
             {history.map((entry) => {
               const isEarned = entry.type === LoyaltyPointType.EARNED;
               return (
-                <li key={entry.id} className="flex items-center gap-4 px-5 py-3.5">
+                <li key={entry.id} className="flex items-center gap-4 py-3.5">
                   <span
                     className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
                       isEarned ? "bg-state-success-soft text-state-success-on" : "bg-sunken text-ink-soft"
