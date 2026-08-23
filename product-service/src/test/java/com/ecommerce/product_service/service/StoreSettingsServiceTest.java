@@ -27,7 +27,7 @@ class StoreSettingsServiceTest {
 
         StoreSettingsDto result = new StoreSettingsService(repository).get();
 
-        assertThat(result.getHeroTitle()).isEqualTo("Everything you");
+        assertThat(result.getHeroTitle()).isEqualTo("Curated finds");
         assertThat(result.getFreeShippingThreshold()).isEqualByComparingTo("999");
         assertThat(result.isAnnouncementEnabled()).isTrue();
     }
