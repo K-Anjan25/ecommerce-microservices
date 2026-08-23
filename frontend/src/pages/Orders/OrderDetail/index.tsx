@@ -200,7 +200,7 @@ function UserOrderDetail() {
                 <li key={label} className="flex flex-1 items-center gap-2">
                   <span className="flex flex-col items-center gap-1.5">
                     <span
-                      className={`h-3 w-3 rounded-full ${done ? "bg-brand" : "bg-line"}`}
+                      className={`h-3 w-3 rounded-full ${done ? "bg-action" : "bg-line"}`}
                     />
                     <span
                       className={`whitespace-nowrap text-[0.625rem] font-bold uppercase tracking-wide ${
@@ -212,7 +212,7 @@ function UserOrderDetail() {
                   </span>
                   {i < 3 && (
                     <span
-                      className={`mb-5 h-px flex-1 ${i < currentStep ? "bg-brand" : "bg-line"}`}
+                      className={`mb-5 h-px flex-1 ${i < currentStep ? "bg-action" : "bg-line"}`}
                     />
                   )}
                 </li>

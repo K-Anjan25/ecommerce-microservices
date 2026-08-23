@@ -31,7 +31,8 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "tsc --noEmit && vite build",
+    "check:contrast": "node ../tools/check-color-contrast.mjs",
+    "build": "npm run check:contrast && tsc --noEmit && vite build",
     "preview": "vite preview"
   },
   "browserslist": {

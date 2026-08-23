@@ -6,8 +6,8 @@ import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
 import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 
 import PageHeader from "../../../components/PageHeader";
-import { StoreSettingsApi } from "../../../api/storeSettingsApi";
-import { DEFAULT_STORE_SETTINGS, StoreSettings } from "../../../types/storeSettings";
+import { StoreSettingsApi, DEFAULT_STORE_SETTINGS } from "../../../features/storefront";
+import type { StoreSettings } from "../../../features/storefront";
 import { showError } from "../../../utils/showError";
 import { showSuccess } from "../../../utils/showSuccess";
 

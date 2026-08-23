@@ -29,10 +29,9 @@ import { calculateCountOfCartItems } from "../../utils/cart";
 import { setToLocalStorage } from "../../utils/localStorage";
 import { showError } from "../../utils/showError";
 import { useColorSchemeContext } from "../../context/colorScheme";
-import BrandMark from "../BrandMark";
-import CommerceSearch from "../CommerceSearch";
-import { StoreSettingsApi } from "../../api/storeSettingsApi";
-import { DEFAULT_STORE_SETTINGS } from "../../types/storeSettings";
+import { BrandMark } from "../../brand";
+import { CommerceSearch } from "../../features/catalog";
+import { useStoreSettings } from "../../features/storefront";
 
 const CartBadge = styled(Badge)({
   "& .MuiBadge-badge": {
@@ -90,11 +89,7 @@ const Navbar = () => {
     staleTime: 5 * 60 * 1000,
     retry: false,
   });
-  const { data: storeSettings = DEFAULT_STORE_SETTINGS } = useQuery(
-    "store-settings",
-    StoreSettingsApi.get,
-    { staleTime: 5 * 60 * 1000, retry: false }
-  );
+  const { settings: storeSettings } = useStoreSettings();
 
   const activeCategory = (location.state as { category?: string } | null)?.category ?? "";
 
@@ -287,7 +282,7 @@ const Navbar = () => {
                     alt={(user.firstName ?? "") + (user.lastName ?? "")}
                     src={user.profileImageURL ?? ""}
                     sx={{ width: 34, height: 34, fontSize: 13, fontWeight: 700 }}
-                    className="!bg-brand !text-oncontrast"
+                    className="!bg-action !text-oncontrast"
                   >
                     {initials}
                   </Avatar>

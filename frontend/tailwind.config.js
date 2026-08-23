@@ -19,6 +19,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        action: { DEFAULT: v("--c-action"), hover: v("--c-action-hover") },
         brand: {
           DEFAULT: v("--c-brand"),
           dark: v("--c-brand-dark"),

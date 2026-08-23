@@ -2,7 +2,8 @@ import React from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../Navbar";
 import MobileTabBar from "../MobileTabBar";
-import BrandMark from "../BrandMark";
+import { BrandMark } from "../../brand";
+import { CheckoutHeader } from "../../features/checkout";
 
 const FOOTER_LINKS: { title: string; items: { label: string; to: string }[] }[] = [
   {
@@ -38,21 +39,21 @@ function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const isShop = location.pathname === "/";
+  const isCheckout = location.pathname === "/checkout";
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
-      <Navbar />
+      {isCheckout ? <CheckoutHeader /> : <Navbar />}
 
       <main
         key={location.pathname}
-        className={`animate-fade-up flex-1 pb-24 lg:pb-12 ${
-          isShop ? "pt-6" : "page-shell pt-6 sm:pt-8"
-        }`}
+        className={`animate-fade-up flex-1 ${isCheckout ? "page-shell pb-10 pt-6 sm:pt-8" : `pb-24 lg:pb-12 ${isShop ? "pt-6" : "page-shell pt-6 sm:pt-8"}`}`}
       >
         <Outlet />
       </main>
 
-      {/* ── footer ────────────────────────────────────────────────────── */}
+      {/* Checkout deliberately removes catalog navigation and promotional exits. */}
+      {!isCheckout && (
       <footer className="grain mt-auto bg-contrast text-oncontrast">
         <div className="page-shell grid gap-10 py-14 md:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div>
@@ -99,8 +100,9 @@ function DashboardLayout() {
           </div>
         </div>
       </footer>
+      )}
 
-      <MobileTabBar />
+      {!isCheckout && <MobileTabBar />}
     </div>
   );
 }

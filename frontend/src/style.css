@@ -138,7 +138,7 @@
 
   /* ---- actions ---- */
   .primary-button {
-    @apply inline-flex items-center justify-center gap-2 rounded-sm bg-brand px-4 py-2.5 text-sm font-semibold text-oncontrast transition hover:bg-brand-main disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-sm bg-action px-4 py-2.5 text-sm font-semibold text-oncontrast transition hover:bg-action-hover disabled:cursor-not-allowed disabled:opacity-60;
   }
 
   .dark-button {

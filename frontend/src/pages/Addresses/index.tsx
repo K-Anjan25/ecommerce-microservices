@@ -123,7 +123,7 @@ function Addresses() {
                 <span
                   className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
                     addr.defaultAddress
-                      ? "bg-brand text-oncontrast"
+                      ? "bg-action text-oncontrast"
                       : "bg-sunken text-ink-soft"
                   }`}
                 >

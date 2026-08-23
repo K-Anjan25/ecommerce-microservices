@@ -19,9 +19,8 @@ import { Category } from "../../types/category";
 import Card from "../../components/Card";
 import ProductViewPlaceholder from "../../components/ProductViewPlaceholder";
 import EmptyState from "../../components/EmptyState";
-import CommerceSearch from "../../components/CommerceSearch";
-import { StoreSettingsApi } from "../../api/storeSettingsApi";
-import { DEFAULT_STORE_SETTINGS } from "../../types/storeSettings";
+import { CommerceSearch } from "../../features/catalog";
+import { useStoreSettings } from "../../features/storefront";
 
 const SORTS = [
   { value: "DATE_DESC", label: "Newest" },
@@ -127,11 +126,7 @@ function Products() {
     delayedSearchTerm(value);
   };
 
-  const { data: storeSettings = DEFAULT_STORE_SETTINGS } = useQuery(
-    "store-settings",
-    StoreSettingsApi.get,
-    { staleTime: 5 * 60 * 1000, retry: false }
-  );
+  const { settings: storeSettings } = useStoreSettings();
 
   const { data: bestsellers } = useQuery("bestsellers", ProductApi.getBestsellers, {
     enabled:
@@ -425,7 +420,7 @@ function Products() {
                 >
                   <span
                     className={`flex h-10 w-10 items-center justify-center rounded-full font-heading text-base font-extrabold ${
-                      active ? "bg-brand text-oncontrast" : "bg-sunken text-ink"
+                      active ? "bg-action text-oncontrast" : "bg-sunken text-ink"
                     }`}
                   >
                     {c.name.charAt(0).toUpperCase()}

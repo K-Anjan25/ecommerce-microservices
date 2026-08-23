@@ -232,7 +232,7 @@ const ProductCard = ({ product }: CardProps) => {
                 </span>
               )}
               {isFlashSaleActive && (
-                <span className="badge-sale absolute right-4 top-4 !bg-brand !px-3 !py-1.5 !text-xs">
+                <span className="badge-sale absolute right-4 top-4 !bg-action !px-3 !py-1.5 !text-xs">
                   <BoltOutlinedIcon sx={{ fontSize: 13 }} /> Flash sale
                 </span>
               )}

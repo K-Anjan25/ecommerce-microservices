@@ -51,7 +51,7 @@ function AdminLayout() {
       <div className="flex items-center justify-between px-5 py-5">
         <div>
           <p className="font-heading text-base font-extrabold tracking-[0.18em]">CARTLY</p>
-          <span className="mt-1 inline-flex rounded-full bg-brand px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-widest">
+          <span className="mt-1 inline-flex rounded-full bg-action px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-widest">
             Admin
           </span>
         </div>
@@ -96,7 +96,7 @@ function AdminLayout() {
           Back to shop
         </button>
         <div className="flex items-center gap-3 rounded-sm bg-white/5 px-3 py-3">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-bold">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-action text-xs font-bold">
             {initials || "A"}
           </span>
           <div className="min-w-0">

@@ -1,4 +1,4 @@
-# Cartly 2.0 — Design kit
+# Cartly 3.0 — Evidence-led commerce design kit
 
 Everything needed to rebuild this redesign in Figma, plus the machine-readable
 tokens the frontend is generated from.
@@ -32,7 +32,7 @@ a token JSON**. Both round-trip cleanly.
 
 ### 1.1 Wireframes → Figma frames
 
-1. Create a new Figma file, name it `Cartly 2.0 — Wireframes`.
+1. Create a new Figma file, name it `Cartly 3.0 — Wireframes`.
 2. Drag all seven `.svg` files from `design/wireframes/` onto the canvas
    (or **File → Place image…**). Each file lands as **one editable frame**.
 3. Every SVG group is named (`header`, `category-rail`, `product-card-3`,
@@ -52,7 +52,7 @@ a token JSON**. Both round-trip cleanly.
 2. Plugin → **Settings → Import → File** → pick `design/tokens.json`.
 3. **Create styles / Create variables** — you get colour, type, spacing, radius
    and shadow variables matching the code 1:1.
-4. Name the collection `cartly/2.0`. Modes: only `light` for now (dark mode is a
+4. Name the collection `cartly/3.0`. Modes: only `light` for now (dark mode is a
    Phase 10 item).
 
 ### 1.3 Suggested Figma page structure
@@ -80,7 +80,7 @@ a token JSON**. Both round-trip cleanly.
 accents — warm, but every surface was tinted, so nothing had hierarchy: the page
 background, cards and header all competed.
 
-**Cartly 2.0** is a *quiet canvas, loud actions* system.
+**Cartly 3.0** keeps the *quiet canvas, loud actions* direction and adds evidence-led commerce patterns from WooCommerce and Baymard. See [`docs/11-woocommerce-pattern-research-and-frontend-architecture.md`](../docs/11-woocommerce-pattern-research-and-frontend-architecture.md).
 
 | | 1.x | 2.0 |
 |---|---|---|
@@ -199,7 +199,7 @@ design review — the real stack is `docker compose up -d --build`.
 - [x] Cart → checkout (frame 04) — **built**. Implementation note: they stayed two
       routes joined by the shared `CheckoutSteps` header, so the cart remains
       bookmarkable and the checkout form stays isolated.
-- [ ] Admin table density pass (frame 05 bottom) across Orders/Products/Users.
-- [ ] Dark mode — token modes are structured for it, values not chosen.
+- [x] Admin table density pass (frame 05 bottom) across Orders/Products/Users.
+- [x] Dark mode with semantic brand/action separation.
 - [ ] Real product photography; the grid currently leans on whatever `imageUrl`
       the catalog holds.

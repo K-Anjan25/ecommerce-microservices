@@ -3,49 +3,52 @@
 <g id="frame-label" data-name="frame-label">
 <text x="32" y="32" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" fill="#0B0B0F" text-anchor="start">03 · Product detail (desktop)</text>
 <text x="32" y="52" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" fill="#5A5F6E" text-anchor="start">Thumb rail + gallery · buy box (variant chips) · sticky selection rail · tabs</text>
-<text x="1408" y="32" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#8A8F9E" text-anchor="end">1440 × 1240</text>
-<text x="1408" y="52" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#8A8F9E" text-anchor="end">Cartly 2.0 · wireframe</text>
+<text x="1408" y="32" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#6E7480" text-anchor="end">1440 × 1240</text>
+<text x="1408" y="52" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#6E7480" text-anchor="end">Cartly 3.0 · evidence-led commerce wireframe</text>
 </g>
 <g transform="translate(0 74)">
 <rect width="1440" height="1240" fill="#F6F5F2" stroke="#D3D0C8"/>
 <rect x="0" y="0" width="1440" height="116" rx="0" fill="#FFFFFF" stroke="#E5E3DD" stroke-width="1"/>
-<text x="80" y="66" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#8A8F9E" text-anchor="start">GLOBAL SHELL (see frame 01)</text>
+<rect x="80" y="34" width="36" height="36" rx="11" fill="#0B0B0F" stroke="#0B0B0F" stroke-width="1"/>
+<text x="98" y="58" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" fill="#D8F14B" text-anchor="middle">C</text>
+<text x="128" y="58" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="700" fill="#0B0B0F" text-anchor="start" letter-spacing="0.18em">CARTLY</text>
+<text x="1360" y="58" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#5A5F6E" text-anchor="end">Secure checkout  ·  Need help?</text>
 <text x="80" y="152" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#5A5F6E" text-anchor="start">Home  &gt;  Electronics  &gt;  Headphones  &gt;  Acme Studio Pro</text>
 <g id="gallery" data-name="gallery">
 <rect x="80" y="176" width="76" height="76" rx="10" fill="#EFEEE9" stroke="#D3D0C8" stroke-width="1"/>
 <path d="M80 252 L156 176" stroke="#D3D0C8" stroke-width="1"/>
 <path d="M80 176 L156 252" stroke="#D3D0C8" stroke-width="1"/>
-<text x="118" y="218" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#8A8F9E" text-anchor="middle"></text>
+<text x="118" y="218" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="middle"></text>
 <rect x="80" y="264" width="76" height="76" rx="10" fill="#EFEEE9" stroke="#D3D0C8" stroke-width="1"/>
 <path d="M80 340 L156 264" stroke="#D3D0C8" stroke-width="1"/>
 <path d="M80 264 L156 340" stroke="#D3D0C8" stroke-width="1"/>
-<text x="118" y="306" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#8A8F9E" text-anchor="middle"></text>
+<text x="118" y="306" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="middle"></text>
 <rect x="80" y="352" width="76" height="76" rx="10" fill="#EFEEE9" stroke="#D3D0C8" stroke-width="1"/>
 <path d="M80 428 L156 352" stroke="#D3D0C8" stroke-width="1"/>
 <path d="M80 352 L156 428" stroke="#D3D0C8" stroke-width="1"/>
-<text x="118" y="394" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#8A8F9E" text-anchor="middle"></text>
+<text x="118" y="394" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="middle"></text>
 <rect x="80" y="440" width="76" height="76" rx="10" fill="#EFEEE9" stroke="#D3D0C8" stroke-width="1"/>
 <path d="M80 516 L156 440" stroke="#D3D0C8" stroke-width="1"/>
 <path d="M80 440 L156 516" stroke="#D3D0C8" stroke-width="1"/>
-<text x="118" y="482" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#8A8F9E" text-anchor="middle"></text>
+<text x="118" y="482" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="middle"></text>
 <rect x="172" y="176" width="520" height="390" rx="16" fill="#EFEEE9" stroke="#D3D0C8" stroke-width="1"/>
 <path d="M172 566 L692 176" stroke="#D3D0C8" stroke-width="1"/>
 <path d="M172 176 L692 566" stroke="#D3D0C8" stroke-width="1"/>
-<text x="432" y="375" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#8A8F9E" text-anchor="middle">main image (4:3)</text>
+<text x="432" y="375" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="middle">main image (4:3)</text>
 <rect x="188" y="192" width="70" height="26" rx="13" fill="#E0334B" stroke="#E0334B" stroke-width="1"/>
 <text x="223" y="209" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#fff" text-anchor="middle">-32%</text>
 </g>
 <g id="buy-box" data-name="buy-box">
-<text x="736" y="190" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#8A8F9E" text-anchor="start" letter-spacing="0.16em">ACME</text>
+<text x="736" y="190" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#6E7480" text-anchor="start" letter-spacing="0.16em">ACME</text>
 <text x="736" y="222" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="24" font-weight="700" fill="#0B0B0F" text-anchor="start">Acme Studio Pro</text>
 <text x="736" y="250" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="24" font-weight="700" fill="#0B0B0F" text-anchor="start">Headphones</text>
 <text x="736" y="276" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#5A5F6E" text-anchor="start">4.6  ·  128 reviews</text>
 <text x="736" y="322" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="30" font-weight="700" fill="#0B0B0F" text-anchor="start">Rs 2,499</text>
-<text x="888" y="322" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" fill="#8A8F9E" text-anchor="start">Rs 3,699</text>
+<text x="888" y="322" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" fill="#6E7480" text-anchor="start">Rs 3,699</text>
 <rect x="958" y="304" width="78" height="24" rx="12" fill="#D8F14B" stroke="#D8F14B" stroke-width="1"/>
 <text x="997" y="320" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" fill="#0B0B0F" text-anchor="middle">Save 32%</text>
-<text x="736" y="344" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#8A8F9E" text-anchor="start">Inclusive of all taxes</text>
-<text x="736" y="382" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#8A8F9E" text-anchor="start" letter-spacing="0.16em">VARIANT</text>
+<text x="736" y="344" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#6E7480" text-anchor="start">Inclusive of all taxes</text>
+<text x="736" y="382" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#6E7480" text-anchor="start" letter-spacing="0.16em">VARIANT</text>
 <rect x="736" y="394" width="94" height="32" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
 <text x="783" y="414" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" fill="#0B0B0F" text-anchor="middle">Black S</text>
 <rect x="838" y="394" width="94" height="32" rx="16" fill="#0B0B0F" stroke="#0B0B0F" stroke-width="1"/>
@@ -78,7 +81,7 @@
 </g>
 <g id="sticky-rail" data-name="sticky-rail">
 <rect x="1080" y="176" width="280" height="250" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1098" y="206" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#8A8F9E" text-anchor="start" letter-spacing="0.16em">YOUR SELECTION</text>
+<text x="1098" y="206" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#6E7480" text-anchor="start" letter-spacing="0.16em">YOUR SELECTION</text>
 <text x="1098" y="232" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" fill="#0B0B0F" text-anchor="start">Acme Studio Pro</text>
 <rect x="1098" y="244" width="74" height="22" rx="11" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
 <text x="1135" y="259" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#0B0B0F" text-anchor="middle">Sand M</text>
@@ -92,23 +95,23 @@
 <text x="1220" y="387" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">Add to cart</text>
 <text x="1098" y="420" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#5B3DF5" text-anchor="start">Earn 24 loyalty points</text>
 <rect x="1080" y="450" width="280" height="224" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1098" y="480" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#8A8F9E" text-anchor="start" letter-spacing="0.16em">FREQUENTLY BOUGHT TOGETHER</text>
+<text x="1098" y="480" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#6E7480" text-anchor="start" letter-spacing="0.16em">FREQUENTLY BOUGHT TOGETHER</text>
 <rect x="1098" y="496" width="48" height="48" rx="10" fill="#EFEEE9" stroke="#D3D0C8" stroke-width="1"/>
 <path d="M1098 544 L1146 496" stroke="#D3D0C8" stroke-width="1"/>
 <path d="M1098 496 L1146 544" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1122" y="524" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#8A8F9E" text-anchor="middle"></text>
+<text x="1122" y="524" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="middle"></text>
 <rect x="1158" y="510" width="180" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
 <rect x="1158" y="523" width="108" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
 <rect x="1098" y="556" width="48" height="48" rx="10" fill="#EFEEE9" stroke="#D3D0C8" stroke-width="1"/>
 <path d="M1098 604 L1146 556" stroke="#D3D0C8" stroke-width="1"/>
 <path d="M1098 556 L1146 604" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1122" y="584" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#8A8F9E" text-anchor="middle"></text>
+<text x="1122" y="584" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="middle"></text>
 <rect x="1158" y="570" width="180" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
 <rect x="1158" y="583" width="108" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
 <rect x="1098" y="616" width="48" height="48" rx="10" fill="#EFEEE9" stroke="#D3D0C8" stroke-width="1"/>
 <path d="M1098 664 L1146 616" stroke="#D3D0C8" stroke-width="1"/>
 <path d="M1098 616 L1146 664" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1122" y="644" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#8A8F9E" text-anchor="middle"></text>
+<text x="1122" y="644" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="middle"></text>
 <rect x="1158" y="630" width="180" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
 <rect x="1158" y="643" width="108" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
 </g>

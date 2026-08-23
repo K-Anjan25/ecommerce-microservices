@@ -1,5 +1,5 @@
 /**
- * Cartly 2.0 — wireframe generator.
+ * Cartly 3.0 — commerce wireframe generator.
  *
  * Emits one SVG per screen into ./  (this folder). Every SVG is a single
  * artboard sized to a real Figma frame width, so dragging the file into Figma
@@ -23,7 +23,7 @@ const C = {
   lineSoft: "#E5E3DD",
   ink: "#0B0B0F",
   ink500: "#5A5F6E",
-  ink400: "#8A8F9E",
+  ink400: "#6E7480",
   brand: "#5B3DF5",
   brandSoft: "#EDE9FE",
   accent: "#D8F14B",
@@ -124,7 +124,7 @@ ${g("frame-label", [
   text(32, 32, title, { size: 18, weight: 700, fill: C.ink }),
   text(32, 52, subtitle, { size: 12, weight: 400, fill: C.ink500 }),
   text(w - 32, 32, `${w} × ${h}`, { anchor: "end", size: 11, weight: 600, fill: C.ink400 }),
-  text(w - 32, 52, "Cartly 2.0 · wireframe", { anchor: "end", size: 11, weight: 400, fill: C.ink400 }),
+  text(w - 32, 52, "Cartly 3.0 · evidence-led commerce wireframe", { anchor: "end", size: 11, weight: 400, fill: C.ink400 }),
 ])}
 <g transform="translate(0 ${HEAD})">
 <rect width="${w}" height="${h}" fill="${C.canvas}" stroke="${C.line}"/>
@@ -162,21 +162,19 @@ ${body}
   b.push(
     g("header", [
       box(0, hy, W, 68, { r: 0, fill: C.paper, stroke: C.lineSoft }),
-      text(M, hy + 42, "CARTLY", { size: 18, weight: 700, tracking: "0.22em" }),
-      // primary nav
-      pill(M + 130, hy + 20, 66, 30, "Shop", { fill: C.ink, stroke: C.ink, color: C.paper }),
-      pill(M + 202, hy + 20, 70, 30, "Deals"),
-      pill(M + 278, hy + 20, 96, 30, "Gift Cards"),
-      pill(M + 380, hy + 20, 88, 30, "Rewards"),
-      // command search
-      box(W / 2 - 150, hy + 18, 400, 34, { r: 17, fill: C.canvas, stroke: C.line }),
-      text(W / 2 - 126, hy + 39, "Search 2,400 products...", { size: 12, weight: 400, fill: C.ink400 }),
-      pill(W / 2 + 194, hy + 25, 44, 20, "K", { fill: C.paper, size: 10, color: C.ink400 }),
-      // actions
-      pill(W - M - 300, hy + 20, 76, 30, "Compare"),
-      pill(W - M - 216, hy + 20, 70, 30, "Orders"),
-      pill(W - M - 138, hy + 20, 62, 30, "Acct"),
-      button(W - M - 68, hy + 18, 68, 34, "Cart 3", "primary"),
+      box(M, hy + 16, 38, 38, { r: 12, fill: C.ink, stroke: C.ink }),
+      text(M + 19, hy + 41, "C", { anchor: "middle", size: 16, weight: 700, fill: C.accent }),
+      text(M + 50, hy + 36, "CARTLY", { size: 18, weight: 700, tracking: "0.18em" }),
+      text(M + 50, hy + 50, "FIND IT · LOVE IT", { size: 7, weight: 700, fill: C.ink400, tracking: "0.18em" }),
+      // dominant visual search: product finding owns the widest header column
+      box(M + 238, hy + 12, 650, 46, { r: 14, fill: C.canvas, stroke: C.line }),
+      text(M + 266, hy + 40, "⌕  Search products, brands and categories", { size: 12, weight: 400, fill: C.ink400 }),
+      button(M + 806, hy + 18, 74, 34, "Search", "primary"),
+      // compact utility cluster
+      pill(W - M - 286, hy + 20, 62, 30, "◐  Theme"),
+      pill(W - M - 216, hy + 20, 62, 30, "⇄  Compare"),
+      pill(W - M - 146, hy + 20, 62, 30, "Account"),
+      button(W - M - 76, hy + 18, 76, 34, "Cart · 3", "dark"),
     ])
   );
   // category rail
@@ -184,10 +182,13 @@ ${body}
   b.push(
     g("category-rail", [
       box(0, ry, W, 48, { r: 0, fill: C.paper, stroke: C.lineSoft }),
-      ...["All", "Electronics", "Home", "Fashion", "Beauty", "Sports", "Grocery", "Toys"].map(
-        (c, i) => pill(M + i * 104, ry + 10, 92, 28, c, i === 0 ? { fill: C.brandSoft, stroke: C.brandSoft, color: C.brand } : {})
+      ...["Shop", "Deals", "Gift Cards", "Rewards"].map((c, i) =>
+        pill(M + i * 84, ry + 10, 78, 28, c, i === 0 ? { fill: C.ink, stroke: C.ink, color: C.paper } : {})
       ),
-      pill(W - M - 120, ry + 10, 120, 28, "Sort: Newest"),
+      box(M + 348, ry + 13, 1, 22, { r: 0, fill: C.line, stroke: "none" }),
+      ...["All categories", "Electronics", "Home", "Fashion", "Beauty", "Sports"].map((c, i) =>
+        pill(M + 366 + i * 112, ry + 10, 104, 28, c, i === 0 ? { fill: C.brandSoft, stroke: C.brandSoft, color: C.brand } : {})
+      ),
     ])
   );
   // content slot
@@ -233,7 +234,7 @@ ${body}
   );
   b.push(
     g("annotations", [
-      note(M + 470, hy + 8, 1, "Search is promoted to the header centre (was buried in the page body)"),
+      note(M + 318, hy + 6, 1, "Search owns 650px and one baseline; navigation no longer competes for width"),
       note(M + 470, ry + 4, 2, "Categories become a persistent rail — one tap instead of a dropdown"),
       note(W - 470, fy - 16, 3, "Footer inverts to ink: clear end-of-page stop + trust badges"),
     ])
@@ -251,7 +252,7 @@ ${body}
 /* ============================================================== 02 storefront */
 {
   const W = 1440,
-    H = 1700,
+    H = 1860,
     M = 80,
     CW = W - M * 2;
   const b = [];
@@ -277,8 +278,17 @@ ${body}
     ])
   );
 
+  // confidence strip: operational facts, not generic marketing claims
+  const trustY = hy + 356;
+  b.push(g("confidence-strip", [
+    ...[["Free shipping", "Threshold shown early"], ["Delivery date", "Pincode-aware estimate"], ["Easy returns", "Policy beside purchase"], ["Secure checkout", "UPI · Cards · COD"]].map(([a, d], i) => {
+      const x = M + i * (CW / 4);
+      return [box(x, trustY, CW / 4 - 12, 66, { r: 14, fill: C.paper, stroke: C.line }), text(x + 18, trustY + 28, a, { size: 12, weight: 700 }), text(x + 18, trustY + 46, d, { size: 10, fill: C.ink400 })].join("\n");
+    })
+  ]));
+
   // category tiles
-  const ty = hy + 340 + 48;
+  const ty = trustY + 116;
   b.push(
     g("category-tiles", [
       text(M, ty, "Shop by category", { size: 21, weight: 700 }),
@@ -303,10 +313,11 @@ ${body}
   b.push(
     g("results-toolbar", [
       box(M, ry, CW, 56, { r: 14, fill: C.paper, stroke: C.line }),
-      text(M + 20, ry + 34, "248 products", { size: 14, weight: 700 }),
-      pill(M + 130, ry + 15, 108, 26, "Brand: Acme ✕", { fill: C.brandSoft, stroke: C.brandSoft, color: C.brand }),
-      pill(M + 246, ry + 15, 118, 26, "₹500–₹5,000 ✕", { fill: C.brandSoft, stroke: C.brandSoft, color: C.brand }),
-      text(M + 378, ry + 33, "Clear all", { size: 11, weight: 600, fill: C.ink500 }),
+      box(M + 12, ry + 9, 300, 38, { r: 19, fill: C.canvas, stroke: C.line }),
+      text(M + 32, ry + 33, "⌕  Search within the catalog", { size: 11, fill: C.ink400 }),
+      text(M + 332, ry + 34, "248 products", { size: 12, weight: 700 }),
+      pill(M + 430, ry + 15, 108, 26, "Brand: Acme ✕", { fill: C.brandSoft, stroke: C.brandSoft, color: C.brand }),
+      text(M + 550, ry + 33, "Clear all", { size: 11, weight: 600, fill: C.ink500 }),
       pill(W - M - 320, ry + 13, 120, 30, "Filters · 2"),
       pill(W - M - 190, ry + 13, 160, 30, "Sort: Price low-high"),
       pill(W - M - 24, ry + 13, 0, 30, ""),
@@ -383,7 +394,10 @@ ${body}
     CW = W - M * 2;
   const b = [];
   b.push(box(0, 0, W, 116, { r: 0, fill: C.paper, stroke: C.lineSoft }));
-  b.push(text(M, 66, "GLOBAL SHELL (see frame 01)", { size: 11, weight: 600, fill: C.ink400 }));
+  b.push(box(M, 34, 36, 36, { r: 11, fill: C.ink, stroke: C.ink }));
+  b.push(text(M + 18, 58, "C", { anchor: "middle", size: 15, weight: 700, fill: C.accent }));
+  b.push(text(M + 48, 58, "CARTLY", { size: 17, weight: 700, tracking: "0.18em" }));
+  b.push(text(W - M, 58, "Secure checkout  ·  Need help?", { anchor: "end", size: 11, weight: 600, fill: C.ink500 }));
   b.push(text(M, 152, "Home  >  Electronics  >  Headphones  >  Acme Studio Pro", { size: 11, weight: 500, fill: C.ink500 }));
 
   const gy = 176;
@@ -514,7 +528,10 @@ ${body}
     CW = W - M * 2;
   const b = [];
   b.push(box(0, 0, W, 116, { r: 0, fill: C.paper, stroke: C.lineSoft }));
-  b.push(text(M, 66, "GLOBAL SHELL (see frame 01)", { size: 11, weight: 600, fill: C.ink400 }));
+  b.push(box(M, 34, 36, 36, { r: 11, fill: C.ink, stroke: C.ink }));
+  b.push(text(M + 18, 58, "C", { anchor: "middle", size: 15, weight: 700, fill: C.accent }));
+  b.push(text(M + 48, 58, "CARTLY", { size: 17, weight: 700, tracking: "0.18em" }));
+  b.push(text(W - M, 58, "Secure checkout  ·  Need help?", { anchor: "end", size: 11, weight: 600, fill: C.ink500 }));
 
   /* 3-step progress header — matches components/CheckoutSteps */
   b.push(
@@ -671,7 +688,7 @@ ${body}
 
   b.push(
     g("annotations", [
-      note(M + 20, 130, 1, "Cart and checkout are one flow behind a shared 3-step progress header"),
+      note(M + 20, 130, 1, "Enclosed checkout removes store navigation; logo remains the safe exit"),
       note(sx, cy - 20, 2, "Summary is sticky - total always visible, CTA never off-screen"),
       note(M + 20, y + 100, 3, "Coupon / gift card / loyalty / gift wrap collapse into one credits section"),
     ])
@@ -704,7 +721,7 @@ ${body}
         return [
           active ? box(12, y, RAIL - 24, 38, { r: 10, fill: "#221F3D", stroke: "#221F3D" }) : "",
           `<rect x="24" y="${y + 13}" width="12" height="12" rx="3" fill="${active ? C.accent : "#3A3D47"}"/>`,
-          text(48, y + 24, s, { size: 13, weight: active ? 700 : 500, fill: active ? C.paper : "#8A8F9E" }),
+          text(48, y + 24, s, { size: 13, weight: active ? 700 : 500, fill: active ? C.paper : C.ink400 }),
         ].join("\n");
       }),
       box(12, H - 96, RAIL - 24, 72, { r: 12, fill: "#16171D", stroke: "#2A2C36" }),
@@ -1112,8 +1129,8 @@ ${body}
     name: "07-component-sheet",
     w: W,
     h: H,
-    title: "07 · Component sheet & design tokens",
-    subtitle: "Colour · type · actions · card anatomy · states · layout rules — the Figma library page",
+    title: "07 · Commerce components & semantic tokens",
+    subtitle: "Brand foreground ≠ action fill · type roles · actions · product anatomy · states · layout rules",
     body: b.join("\n"),
   });
 }

@@ -106,7 +106,7 @@ function AdminReturns() {
             onClick={() => setFilter(f)}
             className={
               filter === f
-                ? "!bg-brand !font-semibold !text-oncontrast"
+                ? "!bg-action !font-semibold !text-oncontrast"
                 : "!bg-white !text-ink-soft hover:!bg-brand-tint"
             }
           />

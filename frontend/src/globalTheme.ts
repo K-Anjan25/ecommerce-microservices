@@ -15,6 +15,8 @@ type Mode = "light" | "dark";
 const LIGHT = {
   brand: "#5B3DF5",
   brandHover: "#4A2ED6",
+  action: "#5B3DF5",
+  actionHover: "#4A2ED6",
   brandLight: "#7C5CFF",
   brandDark: "#2A1980",
   accent: "#D8F14B",
@@ -26,7 +28,7 @@ const LIGHT = {
   line: "#E5E3DD",
   ink: "#0B0B0F",
   inkSoft: "#5A5F6E",
-  inkMuted: "#8A8F9E",
+  inkMuted: "#6E7480",
   inkFaint: "#C9CCD5",
   contrast: "#0B0B0F",
   success: "#0E9F6E",
@@ -38,8 +40,10 @@ const LIGHT = {
 };
 
 const DARK: typeof LIGHT = {
-  brand: "#7C5CFF",
-  brandHover: "#9B84FF",
+  brand: "#9B84FF",
+  brandHover: "#B9A8FF",
+  action: "#7552F5",
+  actionHover: "#6844E8",
   brandLight: "#B9A8FF",
   brandDark: "#5B3DF5",
   accent: "#D8F14B",
@@ -51,7 +55,7 @@ const DARK: typeof LIGHT = {
   line: "#2A2E39",
   ink: "#F2F3F6",
   inkSoft: "#A2A8B8",
-  inkMuted: "#767D8E",
+  inkMuted: "#858C9F",
   inkFaint: "#4A4F5C",
   contrast: "#1E212A",
   success: "#34D399",
@@ -99,9 +103,9 @@ export function createAppTheme(mode: Mode = "light") {
     palette: {
       mode,
       primary: {
-        main: c.brand,
+        main: c.action,
         light: c.brandLight,
-        dark: c.brandHover,
+        dark: c.actionHover,
         contrastText: "#FFFFFF",
       },
       secondary: {
@@ -163,7 +167,7 @@ export function createAppTheme(mode: Mode = "light") {
               mode === "dark"
                 ? "0 6px 16px rgba(124,92,255,0.28)"
                 : "0 6px 16px rgba(91,61,245,0.24)",
-            "&:hover": { backgroundColor: c.brandHover },
+            "&:hover": { backgroundColor: c.actionHover },
           },
           containedSecondary: {
             color: "#0B0B0F",

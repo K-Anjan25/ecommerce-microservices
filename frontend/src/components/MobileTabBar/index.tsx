@@ -71,7 +71,7 @@ function MobileTabBar() {
                 <span className="relative">
                   <Icon sx={{ fontSize: 21 }} />
                   {!!tab.badge && (
-                    <span className="absolute -right-2.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand px-1 text-[0.5625rem] font-bold text-oncontrast">
+                    <span className="absolute -right-2.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-action px-1 text-[0.5625rem] font-bold text-oncontrast">
                       {tab.badge > 99 ? "99+" : tab.badge}
                     </span>
                   )}

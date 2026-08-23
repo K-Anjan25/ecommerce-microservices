@@ -3,8 +3,8 @@
 <g id="frame-label" data-name="frame-label">
 <text x="32" y="32" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" fill="#0B0B0F" text-anchor="start">05 · Admin console (desktop)</text>
 <text x="32" y="52" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" fill="#5A5F6E" text-anchor="start">Ink nav rail · topbar w/ scope + search · KPI row · revenue chart · status split · order table</text>
-<text x="1408" y="32" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#8A8F9E" text-anchor="end">1440 × 960</text>
-<text x="1408" y="52" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#8A8F9E" text-anchor="end">Cartly 2.0 · wireframe</text>
+<text x="1408" y="32" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#6E7480" text-anchor="end">1440 × 960</text>
+<text x="1408" y="52" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#6E7480" text-anchor="end">Cartly 3.0 · evidence-led commerce wireframe</text>
 </g>
 <g transform="translate(0 74)">
 <rect width="1440" height="960" fill="#F6F5F2" stroke="#D3D0C8"/>
@@ -18,36 +18,36 @@
 <text x="48" y="140" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="start">Dashboard</text>
 
 <rect x="24" y="173" width="12" height="12" rx="3" fill="#3A3D47"/>
-<text x="48" y="184" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#8A8F9E" text-anchor="start">Orders</text>
+<text x="48" y="184" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#6E7480" text-anchor="start">Orders</text>
 
 <rect x="24" y="217" width="12" height="12" rx="3" fill="#3A3D47"/>
-<text x="48" y="228" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#8A8F9E" text-anchor="start">Products</text>
+<text x="48" y="228" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#6E7480" text-anchor="start">Products</text>
 
 <rect x="24" y="261" width="12" height="12" rx="3" fill="#3A3D47"/>
-<text x="48" y="272" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#8A8F9E" text-anchor="start">Categories</text>
+<text x="48" y="272" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#6E7480" text-anchor="start">Categories</text>
 
 <rect x="24" y="305" width="12" height="12" rx="3" fill="#3A3D47"/>
-<text x="48" y="316" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#8A8F9E" text-anchor="start">Coupons</text>
+<text x="48" y="316" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#6E7480" text-anchor="start">Coupons</text>
 
 <rect x="24" y="349" width="12" height="12" rx="3" fill="#3A3D47"/>
-<text x="48" y="360" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#8A8F9E" text-anchor="start">Returns</text>
+<text x="48" y="360" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#6E7480" text-anchor="start">Returns</text>
 
 <rect x="24" y="393" width="12" height="12" rx="3" fill="#3A3D47"/>
-<text x="48" y="404" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#8A8F9E" text-anchor="start">Customers</text>
+<text x="48" y="404" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#6E7480" text-anchor="start">Customers</text>
 
 <rect x="24" y="437" width="12" height="12" rx="3" fill="#3A3D47"/>
-<text x="48" y="448" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#8A8F9E" text-anchor="start">Settings</text>
+<text x="48" y="448" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#6E7480" text-anchor="start">Settings</text>
 <rect x="12" y="864" width="224" height="72" rx="12" fill="#16171D" stroke="#2A2C36" stroke-width="1"/>
 <circle cx="42" cy="900" r="16" fill="#2A2C36"/>
 <text x="68" y="896" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="start">Anjan K</text>
-<text x="68" y="912" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#8A8F9E" text-anchor="start">Super admin</text>
+<text x="68" y="912" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#6E7480" text-anchor="start">Super admin</text>
 </g>
 <g id="admin-topbar" data-name="admin-topbar">
 <rect x="248" y="0" width="1192" height="68" rx="0" fill="#FFFFFF" stroke="#E5E3DD" stroke-width="1"/>
 <text x="280" y="34" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" fill="#0B0B0F" text-anchor="start">Dashboard</text>
-<text x="280" y="52" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#8A8F9E" text-anchor="start">Overview · last 7 days</text>
+<text x="280" y="52" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#6E7480" text-anchor="start">Overview · last 7 days</text>
 <rect x="920" y="18" width="240" height="32" rx="16" fill="#F6F5F2" stroke="#D3D0C8" stroke-width="1"/>
-<text x="940" y="39" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#8A8F9E" text-anchor="start">Search orders, products...</text>
+<text x="940" y="39" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#6E7480" text-anchor="start">Search orders, products...</text>
 <rect x="1172" y="18" width="110" height="32" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
 <text x="1227" y="38" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Last 7 days ▾</text>
 <rect x="1292" y="18" width="116" height="32" rx="10" fill="#5B3DF5" stroke="#5B3DF5" stroke-width="1"/>
@@ -55,22 +55,22 @@
 </g>
 <g id="kpi-cards" data-name="kpi-cards">
 <rect x="280" y="100" width="267" height="116" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="300" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#8A8F9E" text-anchor="start">Revenue today</text>
+<text x="300" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#6E7480" text-anchor="start">Revenue today</text>
 <text x="300" y="172" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="26" font-weight="700" fill="#0B0B0F" text-anchor="start">₹48,210</text>
 <rect x="300" y="184" width="76" height="22" rx="11" fill="#E3F7EF" stroke="none" stroke-width="1"/>
 <text x="338" y="199" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#0E9F6E" text-anchor="middle">+12.4%</text>
 <rect x="567" y="100" width="267" height="116" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="587" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#8A8F9E" text-anchor="start">Orders</text>
+<text x="587" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#6E7480" text-anchor="start">Orders</text>
 <text x="587" y="172" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="26" font-weight="700" fill="#0B0B0F" text-anchor="start">126</text>
 <rect x="587" y="184" width="76" height="22" rx="11" fill="#E3F7EF" stroke="none" stroke-width="1"/>
 <text x="625" y="199" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#0E9F6E" text-anchor="middle">+8</text>
 <rect x="854" y="100" width="267" height="116" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="874" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#8A8F9E" text-anchor="start">Avg order value</text>
+<text x="874" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#6E7480" text-anchor="start">Avg order value</text>
 <text x="874" y="172" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="26" font-weight="700" fill="#0B0B0F" text-anchor="start">₹2,140</text>
 <rect x="874" y="184" width="76" height="22" rx="11" fill="#EFEEE9" stroke="none" stroke-width="1"/>
 <text x="912" y="199" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#5A5F6E" text-anchor="middle">−3.1%</text>
 <rect x="1141" y="100" width="267" height="116" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1161" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#8A8F9E" text-anchor="start">Returns pending</text>
+<text x="1161" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#6E7480" text-anchor="start">Returns pending</text>
 <text x="1161" y="172" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="26" font-weight="700" fill="#0B0B0F" text-anchor="start">7</text>
 <rect x="1161" y="184" width="76" height="22" rx="11" fill="#FDF1DC" stroke="none" stroke-width="1"/>
 <text x="1199" y="199" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#B07A16" text-anchor="middle">action</text>
@@ -110,12 +110,12 @@
 <text x="300" y="578" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" fill="#0B0B0F" text-anchor="start">Recent orders</text>
 <text x="1388" y="578" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#5B3DF5" text-anchor="end">View all →</text>
 <rect x="281" y="594" width="1126" height="34" rx="0" fill="#F6F5F2" stroke="none" stroke-width="1"/>
-<text x="300" y="616" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#8A8F9E" text-anchor="start" letter-spacing="0.1em">Order</text>
-<text x="481.33333333333337" y="616" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#8A8F9E" text-anchor="start" letter-spacing="0.1em">Customer</text>
-<text x="662.6666666666667" y="616" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#8A8F9E" text-anchor="start" letter-spacing="0.1em">Items</text>
-<text x="844" y="616" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#8A8F9E" text-anchor="start" letter-spacing="0.1em">Total</text>
-<text x="1025.3333333333335" y="616" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#8A8F9E" text-anchor="start" letter-spacing="0.1em">Status</text>
-<text x="1206.6666666666667" y="616" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#8A8F9E" text-anchor="start" letter-spacing="0.1em">Placed</text>
+<text x="300" y="616" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#6E7480" text-anchor="start" letter-spacing="0.1em">Order</text>
+<text x="481.33333333333337" y="616" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#6E7480" text-anchor="start" letter-spacing="0.1em">Customer</text>
+<text x="662.6666666666667" y="616" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#6E7480" text-anchor="start" letter-spacing="0.1em">Items</text>
+<text x="844" y="616" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#6E7480" text-anchor="start" letter-spacing="0.1em">Total</text>
+<text x="1025.3333333333335" y="616" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#6E7480" text-anchor="start" letter-spacing="0.1em">Status</text>
+<text x="1206.6666666666667" y="616" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#6E7480" text-anchor="start" letter-spacing="0.1em">Placed</text>
 <rect x="300" y="648" width="92" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
 <rect x="481.33333333333337" y="648" width="92" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
 <rect x="662.6666666666667" y="648" width="92" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>

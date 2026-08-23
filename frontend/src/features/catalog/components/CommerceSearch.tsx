@@ -1,9 +1,9 @@
 import { useEffect, useId, useRef, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import NorthWestIcon from "@mui/icons-material/NorthWest";
-import { ProductApi } from "../../api/productApi";
-import { ProductSearchSuggestion } from "../../types/product";
-import { formatPrice } from "../../utils/cart";
+import { ProductSearchSuggestion } from "../../../types/product";
+import { formatPrice } from "../../../utils/cart";
+import { useProductSuggestions } from "../hooks/useProductSuggestions";
 
 type Props = {
   value: string;
@@ -29,33 +29,16 @@ export default function CommerceSearch({
 }: Props) {
   const listId = useId();
   const localRef = useRef<HTMLInputElement>(null);
-  const [suggestions, setSuggestions] = useState<ProductSearchSuggestion[]>([]);
+  const { suggestions, isLoading, clear } = useProductSuggestions(value);
   const [active, setActive] = useState(-1);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const term = value.trim();
-    if (term.length < 2) {
-      setSuggestions([]);
-      setOpen(false);
-      return;
+    if (suggestions.length > 0 && document.activeElement === localRef.current) {
+      setOpen(true);
+      setActive(-1);
     }
-    let live = true;
-    const timer = window.setTimeout(() => {
-      ProductApi.suggestProducts(term)
-        .then((items) => {
-          if (!live) return;
-          setSuggestions(items.slice(0, 6));
-          setOpen(items.length > 0);
-          setActive(-1);
-        })
-        .catch(() => live && setSuggestions([]));
-    }, 180);
-    return () => {
-      live = false;
-      window.clearTimeout(timer);
-    };
-  }, [value]);
+  }, [suggestions]);
 
   const inputRef = (node: HTMLInputElement | null) => {
     (localRef as React.MutableRefObject<HTMLInputElement | null>).current = node;
@@ -66,6 +49,7 @@ export default function CommerceSearch({
     if (!term) return;
     onChange(term);
     setOpen(false);
+    clear();
     setActive(-1);
     onSubmit(term);
   };
@@ -73,6 +57,7 @@ export default function CommerceSearch({
   const chooseProduct = (suggestion: ProductSearchSuggestion) => {
     onChange(suggestion.name);
     setOpen(false);
+    clear();
     setActive(-1);
     if (onProductSelect) onProductSelect(suggestion);
     else onSubmit(suggestion.name);
@@ -125,7 +110,7 @@ export default function CommerceSearch({
       <button
         type="submit"
         disabled={!value.trim()}
-        className={`absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full bg-contrast font-bold text-oncontrast transition hover:bg-brand disabled:opacity-40 ${
+        className={`absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full bg-contrast font-bold text-oncontrast transition hover:bg-action disabled:opacity-40 ${
           prominent ? "h-9 px-4 text-xs" : "h-7 px-3 text-[0.6875rem]"
         }`}
       >
@@ -139,7 +124,7 @@ export default function CommerceSearch({
           className="absolute inset-x-0 top-[calc(100%+0.5rem)] z-[70] overflow-hidden rounded-lg border border-line bg-paper p-2 shadow-pop"
         >
           <li className="px-3 pb-2 pt-1 text-eyebrow font-bold uppercase text-ink-muted">
-            Suggested searches
+{isLoading ? "Finding products…" : "Products"}
           </li>
           {suggestions.map((suggestion, index) => (
             <li key={suggestion.id} id={`${listId}-${index}`} role="option" aria-selected={active === index}>

@@ -3,64 +3,62 @@
 <g id="frame-label" data-name="frame-label">
 <text x="32" y="32" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" fill="#0B0B0F" text-anchor="start">01 · Global shell (desktop)</text>
 <text x="32" y="52" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" fill="#5A5F6E" text-anchor="start">Announcement · header w/ command search · category rail · content slot · inverse footer</text>
-<text x="1408" y="32" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#8A8F9E" text-anchor="end">1440 × 900</text>
-<text x="1408" y="52" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#8A8F9E" text-anchor="end">Cartly 2.0 · wireframe</text>
+<text x="1408" y="32" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#6E7480" text-anchor="end">1440 × 900</text>
+<text x="1408" y="52" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#6E7480" text-anchor="end">Cartly 3.0 · evidence-led commerce wireframe</text>
 </g>
 <g transform="translate(0 74)">
 <rect width="1440" height="900" fill="#F6F5F2" stroke="#D3D0C8"/>
 <g id="announcement-bar" data-name="announcement-bar">
 <rect x="0" y="0" width="1440" height="36" rx="0" fill="#0B0B0F" stroke="#0B0B0F" stroke-width="1"/>
 <text x="720" y="23" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">Free shipping over ₹999  ·  Flash sale ends in 04:12:56</text>
-<text x="1360" y="23" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#8A8F9E" text-anchor="end">✕</text>
+<text x="1360" y="23" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="end">✕</text>
 </g>
 <g id="header" data-name="header">
 <rect x="0" y="36" width="1440" height="68" rx="0" fill="#FFFFFF" stroke="#E5E3DD" stroke-width="1"/>
-<text x="80" y="78" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" fill="#0B0B0F" text-anchor="start" letter-spacing="0.22em">CARTLY</text>
-<rect x="210" y="56" width="66" height="30" rx="15" fill="#0B0B0F" stroke="#0B0B0F" stroke-width="1"/>
-<text x="243" y="75" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">Shop</text>
-<rect x="282" y="56" width="70" height="30" rx="15" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="317" y="75" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Deals</text>
-<rect x="358" y="56" width="96" height="30" rx="15" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="406" y="75" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Gift Cards</text>
-<rect x="460" y="56" width="88" height="30" rx="15" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="504" y="75" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Rewards</text>
-<rect x="570" y="54" width="400" height="34" rx="17" fill="#F6F5F2" stroke="#D3D0C8" stroke-width="1"/>
-<text x="594" y="75" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" fill="#8A8F9E" text-anchor="start">Search 2,400 products...</text>
-<rect x="914" y="61" width="44" height="20" rx="10" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="936" y="75" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" fill="#8A8F9E" text-anchor="middle">K</text>
-<rect x="1060" y="56" width="76" height="30" rx="15" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1098" y="75" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Compare</text>
-<rect x="1144" y="56" width="70" height="30" rx="15" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1179" y="75" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Orders</text>
-<rect x="1222" y="56" width="62" height="30" rx="15" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1253" y="75" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Acct</text>
-<rect x="1292" y="54" width="68" height="34" rx="10" fill="#5B3DF5" stroke="#5B3DF5" stroke-width="1"/>
-<text x="1326" y="75" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">Cart 3</text>
+<rect x="80" y="52" width="38" height="38" rx="12" fill="#0B0B0F" stroke="#0B0B0F" stroke-width="1"/>
+<text x="99" y="77" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#D8F14B" text-anchor="middle">C</text>
+<text x="130" y="72" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" fill="#0B0B0F" text-anchor="start" letter-spacing="0.18em">CARTLY</text>
+<text x="130" y="86" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7" font-weight="700" fill="#6E7480" text-anchor="start" letter-spacing="0.18em">FIND IT · LOVE IT</text>
+<rect x="318" y="48" width="650" height="46" rx="14" fill="#F6F5F2" stroke="#D3D0C8" stroke-width="1"/>
+<text x="346" y="76" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" fill="#6E7480" text-anchor="start">⌕  Search products, brands and categories</text>
+<rect x="886" y="54" width="74" height="34" rx="10" fill="#5B3DF5" stroke="#5B3DF5" stroke-width="1"/>
+<text x="923" y="75" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">Search</text>
+<rect x="1074" y="56" width="62" height="30" rx="15" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
+<text x="1105" y="75" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">◐  Theme</text>
+<rect x="1144" y="56" width="62" height="30" rx="15" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
+<text x="1175" y="75" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">⇄  Compare</text>
+<rect x="1214" y="56" width="62" height="30" rx="15" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
+<text x="1245" y="75" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Account</text>
+<rect x="1284" y="54" width="76" height="34" rx="10" fill="#0B0B0F" stroke="#0B0B0F" stroke-width="1"/>
+<text x="1322" y="75" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">Cart · 3</text>
 </g>
 <g id="category-rail" data-name="category-rail">
 <rect x="0" y="104" width="1440" height="48" rx="0" fill="#FFFFFF" stroke="#E5E3DD" stroke-width="1"/>
-<rect x="80" y="114" width="92" height="28" rx="14" fill="#EDE9FE" stroke="#EDE9FE" stroke-width="1"/>
-<text x="126" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#5B3DF5" text-anchor="middle">All</text>
-<rect x="184" y="114" width="92" height="28" rx="14" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="230" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Electronics</text>
-<rect x="288" y="114" width="92" height="28" rx="14" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="334" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Home</text>
-<rect x="392" y="114" width="92" height="28" rx="14" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="438" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Fashion</text>
-<rect x="496" y="114" width="92" height="28" rx="14" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="542" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Beauty</text>
-<rect x="600" y="114" width="92" height="28" rx="14" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="646" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Sports</text>
-<rect x="704" y="114" width="92" height="28" rx="14" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="750" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Grocery</text>
-<rect x="808" y="114" width="92" height="28" rx="14" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="854" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Toys</text>
-<rect x="1240" y="114" width="120" height="28" rx="14" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1300" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Sort: Newest</text>
+<rect x="80" y="114" width="78" height="28" rx="14" fill="#0B0B0F" stroke="#0B0B0F" stroke-width="1"/>
+<text x="119" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">Shop</text>
+<rect x="164" y="114" width="78" height="28" rx="14" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
+<text x="203" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Deals</text>
+<rect x="248" y="114" width="78" height="28" rx="14" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
+<text x="287" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Gift Cards</text>
+<rect x="332" y="114" width="78" height="28" rx="14" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
+<text x="371" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Rewards</text>
+<rect x="428" y="117" width="1" height="22" rx="0" fill="#D3D0C8" stroke="none" stroke-width="1"/>
+<rect x="446" y="114" width="104" height="28" rx="14" fill="#EDE9FE" stroke="#EDE9FE" stroke-width="1"/>
+<text x="498" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#5B3DF5" text-anchor="middle">All categories</text>
+<rect x="558" y="114" width="104" height="28" rx="14" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
+<text x="610" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Electronics</text>
+<rect x="670" y="114" width="104" height="28" rx="14" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
+<text x="722" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Home</text>
+<rect x="782" y="114" width="104" height="28" rx="14" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
+<text x="834" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Fashion</text>
+<rect x="894" y="114" width="104" height="28" rx="14" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
+<text x="946" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Beauty</text>
+<rect x="1006" y="114" width="104" height="28" rx="14" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
+<text x="1058" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Sports</text>
 </g>
 <g id="page-content-slot" data-name="page-content-slot">
 <rect x="80" y="184" width="1280" height="380" rx="20" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1" stroke-dasharray="6 6"/>
-<text x="720" y="374" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#8A8F9E" text-anchor="middle">PAGE CONTENT SLOT  ·  max-width 1280 · 12-col grid · 32px gutters</text>
+<text x="720" y="374" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#6E7480" text-anchor="middle">PAGE CONTENT SLOT  ·  max-width 1280 · 12-col grid · 32px gutters</text>
 <rect x="104" y="208" width="78.66666666666667" height="332" rx="4" fill="#5B3DF5" stroke="none" stroke-width="1" opacity="0.05"/>
 <rect x="206.66666666666669" y="208" width="78.66666666666667" height="332" rx="4" fill="#5B3DF5" stroke="none" stroke-width="1" opacity="0.05"/>
 <rect x="309.33333333333337" y="208" width="78.66666666666667" height="332" rx="4" fill="#5B3DF5" stroke="none" stroke-width="1" opacity="0.05"/>
@@ -99,18 +97,18 @@
 <rect x="960" y="664" width="96" height="7" rx="4" fill="#2A2C36" stroke="none" stroke-width="1"/>
 <rect x="960" y="678" width="96" height="7" rx="4" fill="#2A2C36" stroke="none" stroke-width="1"/>
 <rect x="960" y="692" width="57.599999999999994" height="7" rx="4" fill="#2A2C36" stroke="none" stroke-width="1"/>
-<text x="80" y="876" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#8A8F9E" text-anchor="start">© 2026 Cartly · Spring Boot microservices</text>
+<text x="80" y="876" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#6E7480" text-anchor="start">© 2026 Cartly · Spring Boot microservices</text>
 <rect x="1100" y="860" width="80" height="24" rx="12" fill="#2A2C36" stroke="#2A2C36" stroke-width="1"/>
-<text x="1140" y="876" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#8A8F9E" text-anchor="middle">Visa</text>
+<text x="1140" y="876" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#6E7480" text-anchor="middle">Visa</text>
 <rect x="1188" y="860" width="80" height="24" rx="12" fill="#2A2C36" stroke="#2A2C36" stroke-width="1"/>
-<text x="1228" y="876" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#8A8F9E" text-anchor="middle">UPI</text>
+<text x="1228" y="876" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#6E7480" text-anchor="middle">UPI</text>
 <rect x="1276" y="860" width="84" height="24" rx="12" fill="#2A2C36" stroke="#2A2C36" stroke-width="1"/>
-<text x="1318" y="876" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#8A8F9E" text-anchor="middle">Razorpay</text>
+<text x="1318" y="876" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#6E7480" text-anchor="middle">Razorpay</text>
 </g>
 <g id="annotations" data-name="annotations">
-<circle cx="550" cy="44" r="9" fill="#B0455A"/>
-<text x="550" y="48" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">1</text>
-<text x="565" y="48" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#B0455A" text-anchor="start">Search is promoted to the header centre (was buried in the page body)</text>
+<circle cx="398" cy="42" r="9" fill="#B0455A"/>
+<text x="398" y="46" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">1</text>
+<text x="413" y="46" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#B0455A" text-anchor="start">Search owns 650px and one baseline; navigation no longer competes for width</text>
 <circle cx="550" cy="108" r="9" fill="#B0455A"/>
 <text x="550" y="112" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">2</text>
 <text x="565" y="112" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#B0455A" text-anchor="start">Categories become a persistent rail — one tap instead of a dropdown</text>

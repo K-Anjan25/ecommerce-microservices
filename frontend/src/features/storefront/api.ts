@@ -1,5 +1,5 @@
-import { api } from "./axios";
-import { StoreSettings } from "../types/storeSettings";
+import { api } from "../../api/axios";
+import { StoreSettings } from "./types";
 
 const get = async () => {
   const { data } = await api.get<StoreSettings>("/v1/store-settings");

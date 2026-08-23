@@ -112,7 +112,7 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
             <span className="badge-sale !bg-contrast">{product.badge}</span>
           )}
           {product.flashSaleActive && (
-            <span className="badge-sale !bg-brand">Flash</span>
+            <span className="badge-sale !bg-action">Flash</span>
           )}
         </div>
 
@@ -124,7 +124,7 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
               aria-label="Add to compare"
               className={`flex h-8 w-8 items-center justify-center rounded-full border backdrop-blur transition ${
                 isInCompare(product.id)
-                  ? "border-brand bg-brand text-oncontrast"
+                  ? "border-brand bg-action text-oncontrast"
                   : "border-line bg-paper/90 text-ink-soft hover:border-ink hover:text-ink"
               }`}
             >
@@ -212,7 +212,7 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
         ) : (
           <button
             onClick={handleAdd}
-            className="flex h-10 w-full items-center justify-center gap-2 rounded-sm bg-contrast text-xs font-bold text-oncontrast transition hover:bg-brand sm:text-sm"
+            className="flex h-10 w-full items-center justify-center gap-2 rounded-sm bg-contrast text-xs font-bold text-oncontrast transition hover:bg-action sm:text-sm"
           >
             <AddShoppingCartIcon sx={{ fontSize: 16 }} />
             Add to cart

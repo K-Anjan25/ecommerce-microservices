@@ -19,6 +19,8 @@
 
 :root {
   --c-brand: 91 61 245;
+  --c-action: 91 61 245;
+  --c-action-hover: 74 46 214;
   --c-brand-main: 74 46 214;
   --c-brand-dark: 42 25 128;
   --c-brand-light: 124 92 255;
@@ -39,7 +41,7 @@
   --c-ink-800: 22 23 29;
   --c-ink-700: 39 41 50;
   --c-ink-soft: 90 95 110;
-  --c-ink-muted: 138 143 158;
+  --c-ink-muted: 110 116 128;
   --c-ink-faint: 201 204 213;
 
   --c-contrast: 11 11 15;
@@ -67,8 +69,11 @@
 
 .dark {
   /* Brand lifts one step: #5B3DF5 is too dense against a near-black canvas. */
-  --c-brand: 124 92 255;
-  --c-brand-main: 155 132 255;
+  /* Brand foreground and action fill split so both meet WCAG AA. */
+  --c-brand: 155 132 255;
+  --c-action: 117 82 245;
+  --c-action-hover: 104 68 232;
+  --c-brand-main: 185 168 255;
   --c-brand-dark: 91 61 245;
   --c-brand-light: 185 168 255;
   --c-brand-soft: 34 30 61;
@@ -89,7 +94,7 @@
   --c-ink-800: 228 230 235;
   --c-ink-700: 210 213 221;
   --c-ink-soft: 162 168 184;
-  --c-ink-muted: 118 125 142;
+  --c-ink-muted: 133 140 159;
   --c-ink-faint: 74 79 92;
 
   /* Lifted above the canvas so ink surfaces still read as surfaces. */

@@ -104,7 +104,7 @@ function OptionCard({
     >
       <span
         className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
-          active ? "bg-brand text-oncontrast" : "bg-sunken text-ink-soft"
+          active ? "bg-action text-oncontrast" : "bg-sunken text-ink-soft"
         }`}
       >
         <Icon sx={{ fontSize: 17 }} />

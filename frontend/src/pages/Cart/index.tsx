@@ -189,7 +189,7 @@ function Cart() {
             </div>
             <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-sunken">
               <div
-                className="h-full rounded-full bg-brand transition-all duration-500"
+                className="h-full rounded-full bg-action transition-all duration-500"
                 style={{ width: `${progress}%` }}
               />
             </div>
