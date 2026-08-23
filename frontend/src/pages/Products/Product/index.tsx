@@ -8,6 +8,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { ProductApi } from "../../../api/productApi";
 import ProductDetail from "../../../components/Card/ProductCard";
 import EmptyState from "../../../components/EmptyState";
+import usePageMetadata from "../../../hooks/usePageMetadata";
 
 function Product() {
   const { productId } = useParams();
@@ -21,6 +22,44 @@ function Product() {
   } = useQuery(["products:product", productId], () =>
     ProductApi.getProductById(productId ?? "")
   );
+
+  const metadata = React.useMemo(() => {
+    const cover = product?.images?.[0] || product?.imageUrl;
+    const description = product?.description?.slice(0, 160) || "Discover considered products selected by Cartly.";
+    const rating = product?.ratingCount
+      ? { "@type": "AggregateRating", ratingValue: product.avgRating ?? 0, reviewCount: product.ratingCount }
+      : undefined;
+    return {
+      title: product ? `${product.name} — Cartly` : "Product — Cartly",
+      description,
+      canonicalPath: productId ? `/products/${productId}` : undefined,
+      image: cover,
+      type: "product" as const,
+      jsonLd: product
+        ? {
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: product.name,
+            description,
+            image: product.images?.length ? product.images : cover ? [cover] : undefined,
+            sku: product.id,
+            brand: product.brand ? { "@type": "Brand", name: product.brand } : undefined,
+            aggregateRating: rating,
+            offers: {
+              "@type": "Offer",
+              priceCurrency: "INR",
+              price: product.unitPrice,
+              availability:
+                (product.quantityInStock ?? 0) > 0
+                  ? "https://schema.org/InStock"
+                  : "https://schema.org/OutOfStock",
+              url: new URL(`/products/${product.id}`, window.location.origin).href,
+            },
+          }
+        : undefined,
+    };
+  }, [product, productId]);
+  usePageMetadata(metadata);
 
   const crumbs: { label: string; to?: string }[] = [
     { label: "Home", to: "/" },

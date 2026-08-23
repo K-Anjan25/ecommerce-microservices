@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import { useInfiniteQuery, useQuery } from "react-query";
 import { useInView } from "react-intersection-observer";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -20,6 +20,7 @@ import ProductViewPlaceholder from "../../components/ProductViewPlaceholder";
 import EmptyState from "../../components/EmptyState";
 import { useStoreSettings } from "../../features/storefront";
 import { useI18n } from "../../features/i18n";
+import usePageMetadata from "../../hooks/usePageMetadata";
 
 const SORTS = [
   { value: "DATE_DESC", label: "Newest" },
@@ -117,6 +118,23 @@ function Products() {
   }, []);
 
   const { settings: storeSettings } = useStoreSettings();
+  const homeMetadata = useMemo(
+    () => ({
+      title: "Cartly — Curated for everyday",
+      description: storeSettings.heroDescription,
+      canonicalPath: "/",
+      image: "/images/editorial/hero.jpg",
+      jsonLd: {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        name: "Cartly",
+        url: window.location.origin,
+        description: storeSettings.heroDescription,
+      },
+    }),
+    [storeSettings.heroDescription]
+  );
+  usePageMetadata(homeMetadata);
 
   const { data: bestsellers } = useQuery("bestsellers", ProductApi.getBestsellers, {
     enabled:
