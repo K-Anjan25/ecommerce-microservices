@@ -4,7 +4,6 @@ import { useInView } from "react-intersection-observer";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Drawer, Checkbox, FormControlLabel, TextField, Rating } from "@mui/material";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
-import SearchIcon from "@mui/icons-material/Search";
 import TuneIcon from "@mui/icons-material/Tune";
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -12,7 +11,6 @@ import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined
 import ReplayOutlinedIcon from "@mui/icons-material/ReplayOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import BoltOutlinedIcon from "@mui/icons-material/BoltOutlined";
-import debounce from "lodash.debounce";
 
 import { ProductApi } from "../../api/productApi";
 import { CategoryApi } from "../../api/categoryApi";
@@ -21,6 +19,7 @@ import { Category } from "../../types/category";
 import Card from "../../components/Card";
 import ProductViewPlaceholder from "../../components/ProductViewPlaceholder";
 import EmptyState from "../../components/EmptyState";
+import CommerceSearch from "../../components/CommerceSearch";
 
 const SORTS = [
   { value: "DATE_DESC", label: "Newest" },
@@ -54,7 +53,6 @@ function Products() {
   const [maxPrice, setMaxPrice] = useState<string>("");
   const [minRating, setMinRating] = useState<string>("");
 
-  const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   const { data, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } =
@@ -114,21 +112,17 @@ function Products() {
     CategoryApi.getCategories().then(setCategories).catch(() => setCategories([]));
   }, []);
 
-  const delayedSearchTerm = useMemo(
-    () => debounce((q: string) => setSearchTerm(q), 500),
-    []
-  );
+  const delayedSearchTerm = useMemo(() => {
+    let timer: number | undefined;
+    return (query: string) => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => setSearchTerm(query), 420);
+    };
+  }, []);
 
   const handleChangeSearchValue = (value: string) => {
     setSearchValue(value);
     delayedSearchTerm(value);
-    if (!value) {
-      setSearchSuggestions([]);
-      return;
-    }
-    ProductApi.suggestProducts(value)
-      .then(setSearchSuggestions)
-      .catch(() => setSearchSuggestions([]));
   };
 
   const { data: bestsellers } = useQuery("bestsellers", ProductApi.getBestsellers, {
@@ -448,7 +442,7 @@ function Products() {
       )}
 
       {/* ═══ RESULTS ══════════════════════════════════════════════════ */}
-      <section ref={resultsRef} className="page-shell mt-12 scroll-mt-[7.5rem]">
+      <section ref={resultsRef} className="page-shell mt-12 scroll-mt-[8rem]">
         <div className="mb-5">
           <p className="eyebrow">Catalog</p>
           <h2 className="section-title mt-1">
@@ -457,41 +451,19 @@ function Products() {
         </div>
 
         {/* sticky toolbar */}
-        <div className="sticky top-[7rem] z-30 mb-6 rounded-lg border border-line bg-paper/95 p-3 backdrop-blur-md">
+        <div className="sticky top-[8rem] z-30 mb-6 rounded-lg border border-line bg-paper/95 p-3 backdrop-blur-md">
           <div className="flex flex-wrap items-center gap-2">
-            <div className="relative min-w-[12rem] flex-1">
-              <SearchIcon
-                className="pointer-events-none absolute left-3 top-2.5 text-ink-muted"
-                sx={{ fontSize: 18 }}
-              />
-              <input
-                ref={searchInputRef}
-                type="search"
-                value={searchValue}
-                onChange={(e) => handleChangeSearchValue(e.target.value)}
-                placeholder="Search this catalog…"
-                aria-label="Search catalog"
-                className="input-control !h-10 pl-10"
-              />
-              {searchSuggestions.length > 0 && (
-                <ul className="absolute z-40 mt-1 w-full overflow-hidden rounded-sm border border-line bg-paper shadow-pop">
-                  {searchSuggestions.map((s) => (
-                    <li key={s}>
-                      <button
-                        className="block w-full px-4 py-2 text-left text-sm hover:bg-brand-tint"
-                        onClick={() => {
-                          setSearchValue(s);
-                          setSearchTerm(s);
-                          setSearchSuggestions([]);
-                        }}
-                      >
-                        {s}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+            <CommerceSearch
+              value={searchValue}
+              onChange={handleChangeSearchValue}
+              onSubmit={(term) => {
+                setSearchValue(term);
+                setSearchTerm(term);
+              }}
+              autoFocusRef={searchInputRef}
+              placeholder="Search within the catalog"
+              className="min-w-[12rem] flex-1"
+            />
 
             <button onClick={() => setFiltersOpen(true)} className="secondary-button !py-2 lg:hidden">
               <TuneIcon sx={{ fontSize: 17 }} />
@@ -535,7 +507,7 @@ function Products() {
 
         <div className="grid gap-6 lg:grid-cols-[16rem_1fr]">
           <aside className="hidden lg:block">
-            <div className="panel sticky top-[13.5rem] max-h-[calc(100vh-16rem)] overflow-y-auto p-5">
+            <div className="panel sticky top-[14.5rem] max-h-[calc(100vh-16rem)] overflow-y-auto p-5">
               <div className="mb-5 flex items-center justify-between">
                 <h3 className="font-heading text-base font-bold">Filters</h3>
                 {hasActiveSearch && (

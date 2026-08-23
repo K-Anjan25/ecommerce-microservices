@@ -2,6 +2,7 @@ import React from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../Navbar";
 import MobileTabBar from "../MobileTabBar";
+import BrandMark from "../BrandMark";
 
 const FOOTER_LINKS: { title: string; items: { label: string; to: string }[] }[] = [
   {
@@ -55,8 +56,8 @@ function DashboardLayout() {
       <footer className="grain mt-auto bg-contrast text-oncontrast">
         <div className="page-shell grid gap-10 py-14 md:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div>
-            <p className="font-heading text-lg font-extrabold tracking-[0.18em]">CARTLY</p>
-            <p className="mt-3 max-w-xs text-sm leading-relaxed text-ink-muted">
+            <BrandMark inverse />
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-ink-muted">
               Everything you need, one cart. Built on Spring Boot microservices with a
               React storefront — catalog, checkout, payments and loyalty in one place.
             </p>
