@@ -1,6 +1,7 @@
 # 9. Which front end? — architecture decision
 
-> Status: **DECIDED (2026-08-23) — Option A *and* B, in two independent repos.**
+> Status: **DONE (2026-08-23) — split into two repos.**
+> Platform: `ecommerce-microservices` (this one) · Theme: [`cartly-wp-theme`](https://github.com/K-Anjan25/cartly-wp-theme)
 > Raised 2026-08-23 after the WordPress theme landed and the question became
 > unavoidable: *if we use PHP, we don't need React.*
 >
@@ -142,7 +143,7 @@ better answer than either option alone, and it works *because the split is real*
 
 | | Platform repo | Theme repo |
 |---|---|---|
-| Repo | `ecommerce-microservices` (this one) | `cartly-wp-theme` (new) |
+| Repo | `ecommerce-microservices` (this one) | [`cartly-wp-theme`](https://github.com/K-Anjan25/cartly-wp-theme) |
 | Contains | Spring Boot ×4 · React storefront · **`design/` (canonical)** · docs | The WordPress/WooCommerce theme |
 | Audience | Recruiters, engineers reading the code | Site owners installing a theme |
 | Runs on | Docker Compose, 2 GB budget | Any WordPress host |
@@ -183,7 +184,16 @@ from the platform repo. The theme's CI also fails if the committed
 > `tokens.css` had already drifted from the React one (a header comment I had
 > edited while copying). Day one.
 
-### Performing the split
+### The split, as performed
+
+Done on 2026-08-23. `wordpress/cartly` was extracted with
+`tools/split-theme-repo.sh` and pushed to
+[`cartly-wp-theme`](https://github.com/K-Anjan25/cartly-wp-theme) — 4 commits, history preserved, CI landed at
+`.github/workflows/ci.yml`. The directory has since been removed from this repo;
+its content remains in this repo's history and in the `.bundle` the script
+emits.
+
+### Re-running the split
 
 `tools/split-theme-repo.sh` extracts `wordpress/cartly` with **its git history
 intact** (`git subtree split`), moves the CI workflow to the repo root, writes a

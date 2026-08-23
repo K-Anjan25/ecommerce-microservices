@@ -103,12 +103,16 @@ React 18 + TypeScript, Redux, Material UI, Tailwind CSS — **Cartly 2.0 design 
 - **Design kit**: wireframes, tokens and the Figma handoff live in [`design/`](design/);
   the engineering record is [`docs/08-frontend-redesign.md`](docs/08-frontend-redesign.md).
 
-### WordPress theme
+### WordPress theme — separate repository
 
 The same design system also ships as an installable WordPress + WooCommerce
-theme in [`wordpress/cartly/`](wordpress/cartly) — same tokens, same shell,
-same product card. See its [README](wordpress/cartly/README.md) for install and
-setup.
+theme: **[`cartly-wp-theme`](https://github.com/K-Anjan25/cartly-wp-theme)**. Same tokens, same shell, same product
+card, rendered by PHP instead of React.
+
+It lives in its own repo because it has a different audience and release
+cadence — see [`docs/09-frontend-strategy.md`](docs/09-frontend-strategy.md).
+`design/tokens.json` stays canonical **here**; the theme pulls it and its CI
+fails if the two drift.
 
 ### Reviewing the UI without the backend
 
@@ -141,4 +145,4 @@ Per-container caps (`docker-compose.yml`): postgres 384m, rabbitmq 128m, gateway
 - `docs/08-frontend-redesign.md` — Cartly 2.0 frontend redesign
 - `docs/09-frontend-strategy.md` — **open decision:** React vs WordPress/WooCommerce
 - `design/README.md` — design tokens, wireframes and the Figma handoff
-- `wordpress/cartly/README.md` — the design system as a WordPress/WooCommerce theme
+- [`cartly-wp-theme`](https://github.com/K-Anjan25/cartly-wp-theme) — the design system as a WordPress/WooCommerce theme (separate repo)

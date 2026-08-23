@@ -461,8 +461,30 @@ All verified with `tsc + vite build`.
   (`content-product.php`, shop archive, cart, checkout) are structurally linted and
   syntax-checked but have **not been rendered against a live WooCommerce** — run
   `./bin/preview.sh` (with WooCommerce) on a machine with normal network before shipping.
-- Next stop is the roadmap: Phase 9 leftovers (CMS/store settings, audit log, staff Manager
-  role) and Phase 10.
+### 7.4.21 Two-repo split executed (2026-08-23, seventeenth session)
+- [x] Owner decision (`docs/09-frontend-strategy.md`): build **both** front ends, in **two
+      independent repos**. Platform repo = Spring Boot + React + the canonical `design/` kit
+      (portfolio). Theme repo = WordPress/WooCommerce (the sellable product).
+- [x] `wordpress/cartly` split out with `tools/split-theme-repo.sh` (git subtree, history
+      preserved) and pushed to **https://github.com/K-Anjan25/cartly-wp-theme** — 4 commits, CI at `.github/workflows/ci.yml`,
+      verified through the GitHub API.
+- [x] `wordpress/` **removed from this repo.** Content remains in this repo's history and in
+      the `.bundle` the split script emits. Keeping a second copy here was the drift trap the
+      split exists to avoid.
+- [x] Anti-drift guard: `design/tokens.json` is canonical HERE; the theme's `bin/sync-tokens.sh`
+      pulls `frontend/src/tokens.css` and its CI fails on drift (it caught a real divergence on
+      its very first run).
+- [x] `tools/patches/theme-standalone-readme.patch` — rewrites the theme README for standalone
+      life (absolute cross-repo links, no `../../` or `cd wordpress`). Verified with
+      `git apply` against the live repo. **Apply it there**, it cannot be pushed from here.
+- ⚠️ Still true: the theme's WooCommerce templates have never been rendered against a live
+  WooCommerce (see 7.4.20). That is the top item in the theme repo.
+
+### 7.4.22 Where the platform repo goes next
+- Roadmap Phase 9 leftovers: CMS/store settings, audit log, staff Manager role.
+- Then Phase 10: structured logs, rate limiting, backups, i18n, PWA.
+- `main` is still at the pre-redesign merge — **PR #2 carries this entire session** and needs
+  merging before `main` reflects reality.
 
 ---
 
