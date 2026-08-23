@@ -182,7 +182,7 @@ function UserOrderDetail() {
       />
 
       {/* ── status timeline ─────────────────────────────────────────── */}
-      <section className="panel p-5">
+      <section className="border-y border-line py-5">
         <div className="mb-4 flex items-center justify-between gap-3">
           <p className="eyebrow">Status</p>
           <StatusPill value={order.orderStatus} />
@@ -225,9 +225,9 @@ function UserOrderDetail() {
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
         {/* ── items ─────────────────────────────────────────────────── */}
         <div className="space-y-4">
-          <section className="panel overflow-hidden">
-            <div className="border-b border-line px-5 py-4">
-              <h2 className="font-heading text-base font-bold">
+          <section className="border-t border-ink">
+            <div className="border-b border-line py-4">
+              <h2 className="font-display text-2xl font-normal">
                 Items · {order.items.length}
               </h2>
             </div>
@@ -243,11 +243,11 @@ function UserOrderDetail() {
                 return (
                   <li
                     key={`${item.productId}-${item.variantId ?? "base"}`}
-                    className="flex gap-4 p-5"
+                    className="flex gap-4 py-5"
                   >
                     <button
                       onClick={() => navigate(`/products/${item.productId}`)}
-                      className="h-16 w-16 shrink-0 overflow-hidden rounded-sm border border-line bg-sunken"
+                      className="h-20 w-16 shrink-0 overflow-hidden bg-sunken"
                       aria-label={`View ${nameOf(item.productId)}`}
                     >
                       {cover ? (
@@ -261,7 +261,7 @@ function UserOrderDetail() {
 
                     <div className="flex min-w-0 flex-1 flex-wrap items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="truncate font-heading text-sm font-bold text-ink">
+                        <p className="truncate font-display text-xl text-ink">
                           {nameOf(item.productId)}
                         </p>
                         <p className="mt-0.5 text-xs text-ink-muted">
@@ -300,13 +300,13 @@ function UserOrderDetail() {
           </section>
 
           {productReturns.length > 0 && (
-            <section className="panel p-5">
-              <h2 className="mb-4 font-heading text-base font-bold">Returns on this order</h2>
+            <section className="border-t border-ink py-5">
+              <h2 className="mb-4 font-display text-2xl font-normal">Returns on this order</h2>
               <ul className="space-y-2.5">
                 {productReturns.map((r: ReturnRequest) => (
                   <li
                     key={r.id}
-                    className="flex flex-wrap items-center justify-between gap-3 rounded-sm border border-line px-4 py-3"
+                    className="flex flex-wrap items-center justify-between gap-3 border-b border-line py-3"
                   >
                     <div className="min-w-0">
                       <p className="truncate text-sm font-semibold text-ink">
@@ -327,8 +327,8 @@ function UserOrderDetail() {
 
         {/* ── summary + address ─────────────────────────────────────── */}
         <aside className="space-y-4 lg:sticky lg:top-24 lg:h-fit">
-          <section className="panel-raised p-5">
-            <h2 className="mb-4 font-heading text-base font-bold">Payment summary</h2>
+          <section className="border-t border-ink py-5">
+            <h2 className="mb-4 font-display text-2xl font-normal">Payment summary</h2>
             <dl className="space-y-2.5 text-sm">
               {!!subtotal && (
                 <div className="flex justify-between">
@@ -364,15 +364,15 @@ function UserOrderDetail() {
               )}
             </dl>
             <div className="mt-4 flex items-baseline justify-between border-t border-line pt-4">
-              <span className="font-heading text-base font-bold">Total paid</span>
-              <span className="font-heading text-xl font-extrabold">
+              <span className="font-medium">Total paid</span>
+              <span className="font-display text-2xl">
                 {formatPrice(order.totalAmount)}
               </span>
             </div>
           </section>
 
-          <section className="panel p-5">
-            <h2 className="mb-3 flex items-center gap-2 font-heading text-sm font-bold">
+          <section className="border-t border-line py-5">
+            <h2 className="mb-3 flex items-center gap-2 font-display text-xl">
               <PlaceOutlinedIcon sx={{ fontSize: 17 }} className="text-ink-muted" />
               Delivery address
             </h2>
@@ -394,7 +394,7 @@ function UserOrderDetail() {
 
       {/* ── return dialog ───────────────────────────────────────────── */}
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="xs" fullWidth>
-        <DialogTitle className="!font-heading !font-bold">Request a return</DialogTitle>
+        <DialogTitle className="!font-display !text-2xl !font-normal">Request a return</DialogTitle>
         <DialogContent dividers>
           <div className="space-y-4 py-1">
             <div>

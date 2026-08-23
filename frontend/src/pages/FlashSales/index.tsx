@@ -49,10 +49,10 @@ function FlashSales() {
         }
       >
         {countdown && countdown !== "Expired" && (
-          <div className="inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/5 px-5 py-2.5">
-            <BoltOutlinedIcon sx={{ fontSize: 17 }} className="text-accent" />
+          <div className="inline-flex items-center gap-3 border border-line bg-sunken px-5 py-2.5">
+            <BoltOutlinedIcon sx={{ fontSize: 17 }} className="text-brand" />
             <span className="text-xs font-semibold text-ink-muted">Next sale ends in</span>
-            <span className="font-mono text-sm font-bold text-accent">{countdown}</span>
+            <span className="font-mono text-sm font-bold text-brand">{countdown}</span>
           </div>
         )}
       </FeatureHero>
