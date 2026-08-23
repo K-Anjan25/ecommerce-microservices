@@ -1,6 +1,6 @@
 # 9. Which front end? — architecture decision
 
-> Status: **OPEN — needs an owner decision.**
+> Status: **DECIDED (2026-08-23) — Option A *and* B, in two independent repos.**
 > Raised 2026-08-23 after the WordPress theme landed and the question became
 > unavoidable: *if we use PHP, we don't need React.*
 >
@@ -134,12 +134,74 @@ override only what the design changes. Costs about a day.
 
 ---
 
-## 9.6 Recommendation
+## 9.6 Decision — split into two repositories
 
-**Choose one front end this week.** My read of the repo — phased roadmap,
-memory budget, CI, UML docs — is that this is a **portfolio project**, which
-points at **Option B**: keep Spring Boot + React, keep the WordPress theme as a
-demonstration piece, and stop adding to it.
+The owner's answer to §9.3 was **both**, as two independent repos. That is a
+better answer than either option alone, and it works *because the split is real*
+— the two have different audiences, release cadences and deploy targets:
 
-But that read may be wrong, and it is your call. If the goal is a real store,
-**Option A** is the correct answer and I would say so just as plainly.
+| | Platform repo | Theme repo |
+|---|---|---|
+| Repo | `ecommerce-microservices` (this one) | `cartly-wp-theme` (new) |
+| Contains | Spring Boot ×4 · React storefront · **`design/` (canonical)** · docs | The WordPress/WooCommerce theme |
+| Audience | Recruiters, engineers reading the code | Site owners installing a theme |
+| Runs on | Docker Compose, 2 GB budget | Any WordPress host |
+| Ships as | A repo you point people at | A theme `.zip` |
+| Cadence | Roadmap phases | WordPress/Woo release cycle |
+| Next work | Phase 9 leftovers, Phase 10 | Verify against live WooCommerce, harden |
+
+### The one rule that makes this safe
+
+**Exactly one of them is "the store" at a time.**
+
+- The React storefront is the **portfolio demo**. It talks to the Spring Boot
+  services. It is not trying to take real money.
+- The WordPress theme is the **product**. It talks to WooCommerce. Real orders
+  go here.
+
+Never let both claim to be the live store. That is the drift trap this split is
+designed to avoid, not create.
+
+### Keeping them from diverging
+
+`design/tokens.json` stays **canonical in the platform repo**. There is no third
+"design system" repo — that is overhead a solo maintainer does not need.
+
+Instead the theme pulls tokens and CI refuses to let them rot:
+
+```bash
+./bin/sync-tokens.sh          # pull the platform's tokens
+./bin/sync-tokens.sh --check  # CI: exit 1 if they drifted
+```
+
+It works in both layouts — inside the monorepo it reads
+`../../frontend/src/tokens.css` from disk; standalone it fetches the raw file
+from the platform repo. The theme's CI also fails if the committed
+`assets/css/cartly.css` is stale relative to its source.
+
+> This check earned its keep immediately: the first run found the theme's
+> `tokens.css` had already drifted from the React one (a header comment I had
+> edited while copying). Day one.
+
+### Performing the split
+
+`tools/split-theme-repo.sh` extracts `wordpress/cartly` with **its git history
+intact** (`git subtree split`), moves the CI workflow to the repo root, writes a
+`.gitignore`, and produces both a working clone and a `.bundle`:
+
+```bash
+tools/split-theme-repo.sh
+# → /tmp/cartly-wp-theme  +  /tmp/cartly-wp-theme.bundle
+
+gh repo create cartly-wp-theme --public --source /tmp/cartly-wp-theme --push
+```
+
+Then, and **only** once the new repo exists, retire the copy here so the two
+cannot drift:
+
+```bash
+git rm -r --cached wordpress && rm -rf wordpress
+git commit -m "chore: theme moved to its own repository"
+```
+
+The script is idempotent and non-destructive to this repo — re-run it freely.
