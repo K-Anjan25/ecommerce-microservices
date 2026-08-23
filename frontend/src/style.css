@@ -1,3 +1,5 @@
+@import "./tokens.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -21,14 +23,15 @@
   }
 
   ::selection {
-    @apply bg-brand text-paper;
+    background-color: rgb(var(--c-brand));
+    color: rgb(var(--c-oncontrast));
   }
 
   :focus:not(:focus-visible) {
     outline: none;
   }
   :focus-visible {
-    outline: 2px solid rgba(91, 61, 245, 0.55);
+    outline: 2px solid rgb(var(--c-brand) / 0.55);
     outline-offset: 2px;
     border-radius: 6px;
   }
@@ -41,13 +44,13 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: rgba(11, 11, 15, 0.18);
+    background: rgb(var(--scrollbar-thumb) / 0.2);
     border-radius: 999px;
     border: 3px solid transparent;
     background-clip: content-box;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(11, 11, 15, 0.34);
+    background: rgb(var(--scrollbar-thumb) / 0.36);
     border: 3px solid transparent;
     background-clip: content-box;
   }
@@ -121,7 +124,12 @@
   }
 
   .panel-ink {
-    @apply rounded-lg border border-white/10 bg-ink text-paper;
+    @apply rounded-lg border border-white/10 bg-contrast text-oncontrast;
+  }
+
+  /* A surface that is dark in BOTH modes — hero, footer, admin rail. */
+  .surface-contrast {
+    @apply bg-contrast text-oncontrast;
   }
 
   .hairline {
@@ -130,11 +138,11 @@
 
   /* ---- actions ---- */
   .primary-button {
-    @apply inline-flex items-center justify-center gap-2 rounded-sm bg-brand px-4 py-2.5 text-sm font-semibold text-paper transition hover:bg-brand-main disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-sm bg-brand px-4 py-2.5 text-sm font-semibold text-oncontrast transition hover:bg-brand-main disabled:cursor-not-allowed disabled:opacity-60;
   }
 
   .dark-button {
-    @apply inline-flex items-center justify-center gap-2 rounded-sm bg-ink px-4 py-2.5 text-sm font-semibold text-paper transition hover:bg-ink-700 disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-sm bg-contrast px-4 py-2.5 text-sm font-semibold text-oncontrast transition hover:bg-contrast-lift disabled:cursor-not-allowed disabled:opacity-60;
   }
 
   .accent-button {
@@ -159,7 +167,7 @@
   }
 
   .chip-ink {
-    @apply border-ink bg-ink text-paper hover:text-paper;
+    @apply border-ink bg-contrast text-oncontrast hover:text-oncontrast;
   }
 
   .badge-sale {
@@ -167,15 +175,15 @@
   }
 
   .badge-stock-in {
-    @apply inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-wide text-emerald-700;
+    @apply inline-flex items-center rounded-full bg-state-success-soft px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-wide text-state-success-on;
   }
 
   .badge-stock-low {
-    @apply inline-flex items-center rounded-full bg-amber-50 px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-wide text-amber-700;
+    @apply inline-flex items-center rounded-full bg-state-warning-soft px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-wide text-state-warning-on;
   }
 
   .badge-stock-out {
-    @apply inline-flex items-center rounded-full bg-rose-50 px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-wide text-rose-700;
+    @apply inline-flex items-center rounded-full bg-state-danger-soft px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-wide text-state-danger-on;
   }
 
   /* ---- form ---- */

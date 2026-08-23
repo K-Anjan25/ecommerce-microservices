@@ -40,6 +40,28 @@ export const PALETTES = [
     success: "#0E9F6E",
   },
   {
+    slug: "00d-ink-violet-dark",
+    name: "0 · Ink & Violet — dark",
+    tag: "CURRENT — dark mode",
+    mood: "Same tokens, dark values. Brand lifts to #7C5CFF because #5B3DF5 goes muddy on near-black.",
+    brand: "#7C5CFF",
+    brandHover: "#9B84FF",
+    brandSoft: "#221E3D",
+    brandTint: "#191828",
+    accent: "#D8F14B",
+    accentInk: "#0B0B0F",
+    ink: "#F2F3F6",
+    inkSoft: "#A2A8B8",
+    inkMuted: "#767D8E",
+    canvas: "#0B0C10",
+    paper: "#14161C",
+    sunken: "#1B1E26",
+    line: "#2A2E39",
+    danger: "#FB7185",
+    success: "#34D399",
+    contrast: "#1E212A",
+  },
+  {
     slug: "01-terracotta-ochre",
     name: "1 · Terracotta & Ochre",
     tag: "Warm · artisanal",
@@ -195,9 +217,9 @@ function panel(p) {
   /* ── header ── */
   const hy = 68;
   o.push(rect(M, hy, PW - M * 2, 46, { r: 10, fill: p.paper, stroke: p.line }));
-  o.push(rect(M + 14, hy + 13, 20, 20, { r: 5, fill: p.ink }));
+  o.push(rect(M + 14, hy + 13, 20, 20, { r: 5, fill: p.contrast ?? p.ink }));
   o.push(txt(M + 42, hy + 28, "CARTLY", { size: 12, weight: 700, fill: p.ink, tracking: "0.18em" }));
-  o.push(pill(M + 116, hy + 12, 48, 22, "Shop", p.ink, p.ink, p.paper, 9));
+  o.push(pill(M + 116, hy + 12, 48, 22, "Shop", p.contrast ?? p.ink, p.contrast ?? p.ink, "#FFFFFF", 9));
   o.push(pill(M + 170, hy + 12, 50, 22, "Deals", p.paper, p.line, p.inkSoft, 9));
   o.push(rect(M + 232, hy + 12, 190, 22, { r: 11, fill: p.canvas, stroke: p.line }));
   o.push(txt(M + 246, hy + 27, "Search products…", { size: 9, weight: 400, fill: p.inkMuted }));
@@ -206,13 +228,13 @@ function panel(p) {
   /* ── hero ── */
   const ey = hy + 58;
   const EH = 168;
-  o.push(rect(M, ey, PW - M * 2, EH, { r: 14, fill: p.ink }));
+  o.push(rect(M, ey, PW - M * 2, EH, { r: 14, fill: p.contrast ?? p.ink }));
   o.push(txt(M + 26, ey + 34, "NEW SEASON", { size: 8.5, weight: 700, fill: p.accent, tracking: "0.16em" }));
-  o.push(txt(M + 26, ey + 70, "Everything you", { size: 26, weight: 700, fill: p.paper }));
+  o.push(txt(M + 26, ey + 70, "Everything you", { size: 26, weight: 700, fill: "#FFFFFF" }));
   o.push(txt(M + 26, ey + 100, "need, one cart.", { size: 26, weight: 400, fill: p.accent, italic: true }));
   o.push(pill(M + 26, ey + 118, 116, 32, "Shop the drop", p.accent, p.accent, p.accentInk, 11));
   o.push(rect(M + 152, ey + 118, 96, 32, { r: 8, fill: "none", stroke: "#FFFFFF44" }));
-  o.push(txt(M + 200, ey + 138, "View deals", { anchor: "middle", size: 11, weight: 700, fill: p.paper }));
+  o.push(txt(M + 200, ey + 138, "View deals", { anchor: "middle", size: 11, weight: 700, fill: "#FFFFFF" }));
   o.push(photo(PW - M - 190, ey + 16, 174, EH - 32, p, 10));
   o.push(pill(PW - M - 176, ey + 30, 60, 20, "−32%", p.danger, p.danger, "#FFFFFF", 9));
 
@@ -232,8 +254,8 @@ function panel(p) {
     o.push(txt(x + 12, cy + 188, "★★★★☆ (128)", { size: 8.5, weight: 500, fill: p.inkSoft }));
     o.push(txt(x + 12, cy + 210, "₹2,499", { size: 15, weight: 700, fill: p.ink }));
     if (i === 0) o.push(txt(x + 76, cy + 210, "₹3,699", { size: 8.5, weight: 400, fill: p.inkMuted }));
-    o.push(rect(x + 1, cy + CH - 37, CW - 2, 36, { r: 11, fill: p.ink }));
-    o.push(txt(x + CW / 2, cy + CH - 14, "+  Add to cart", { anchor: "middle", size: 10.5, weight: 700, fill: p.paper }));
+    o.push(rect(x + 1, cy + CH - 37, CW - 2, 36, { r: 11, fill: p.contrast ?? p.ink }));
+    o.push(txt(x + CW / 2, cy + CH - 14, "+  Add to cart", { anchor: "middle", size: 10.5, weight: 700, fill: p.contrast ? "#FFFFFF" : p.paper }));
   });
 
   /* ── control row ── */
@@ -286,11 +308,11 @@ const SH2 = HEAD + (PH + GAP) * Math.ceil(PALETTES.length / COLS) + GAP;
 
 const sheet = [
   rect(0, 0, SW2, SH2, { fill: "#FFFFFF" }),
-  txt(GAP + 20, 34, "Cartly — palette options", { size: 22, weight: 700, fill: "#0B0B0F" }),
+  txt(GAP + 20, 34, "Cartly — palette + dark mode", { size: 22, weight: 700, fill: "#0B0B0F" }),
   txt(
     GAP + 20,
     54,
-    "Same storefront fragment, six palettes. Option 0 is what is currently shipped — keeping it is a valid answer.",
+    "Same storefront fragment per palette. Option 0 shipped (light + dark); options 1-5 were the alternatives — the owner kept 0.",
     { size: 12, weight: 400, fill: "#5A5F6E" }
   ),
   ...PALETTES.map((p, i) => {

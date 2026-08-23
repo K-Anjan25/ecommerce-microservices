@@ -51,7 +51,7 @@ function SearchBar({
   return (
     <div className="flex w-full flex-col items-center gap-4 md:flex-row">
       <div className="relative w-full flex-1">
-        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-ink-muted">
           <SearchIcon fontSize="small" />
         </div>
         <input
@@ -78,7 +78,7 @@ function SearchBar({
 
       <div className="flex w-full flex-col gap-4 sm:flex-row md:w-auto">
         <div className="relative w-full sm:w-48">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-ink-muted">
             <SortIcon fontSize="small" />
           </div>
           <select
@@ -95,7 +95,7 @@ function SearchBar({
         </div>
 
         <div className="relative w-full sm:w-48">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-ink-muted">
             <TuneIcon fontSize="small" />
           </div>
           <select

@@ -306,7 +306,7 @@ function Products() {
       {/* ═══ HERO ═════════════════════════════════════════════════════ */}
       <section className="page-shell">
         <div className="grid gap-4 lg:grid-cols-[1.25fr_1fr]">
-          <div className="grain relative overflow-hidden rounded-xl2 bg-ink px-7 py-10 text-paper sm:px-12 sm:py-16">
+          <div className="grain relative overflow-hidden rounded-xl2 bg-contrast px-7 py-10 text-oncontrast sm:px-12 sm:py-16">
             <p className="eyebrow !text-accent">New season · 2026</p>
             <h1 className="mt-4 font-heading text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
               Everything you
@@ -328,7 +328,7 @@ function Products() {
               </button>
               <button
                 onClick={() => navigate("/flash-sales")}
-                className="inline-flex items-center justify-center gap-2 rounded-sm border border-white/25 px-4 py-2.5 text-sm font-semibold text-paper transition hover:bg-white/10"
+                className="inline-flex items-center justify-center gap-2 rounded-sm border border-white/25 px-4 py-2.5 text-sm font-semibold text-oncontrast transition hover:bg-white/10"
               >
                 View flash sales
               </button>
@@ -352,7 +352,7 @@ function Products() {
                   alt={bestsellers[0].name}
                   className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
                 />
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/90 to-transparent p-6 pt-16 text-paper">
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-contrast/90 to-transparent p-6 pt-16 text-oncontrast">
                   <span className="badge-sale !bg-accent !text-ink">Bestseller</span>
                   <p className="mt-2 font-heading text-xl font-bold">{bestsellers[0].name}</p>
                 </div>
@@ -420,7 +420,7 @@ function Products() {
                 >
                   <span
                     className={`flex h-10 w-10 items-center justify-center rounded-full font-heading text-base font-extrabold ${
-                      active ? "bg-brand text-paper" : "bg-sunken text-ink"
+                      active ? "bg-brand text-oncontrast" : "bg-sunken text-ink"
                     }`}
                   >
                     {c.name.charAt(0).toUpperCase()}

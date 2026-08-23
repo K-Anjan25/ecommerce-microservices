@@ -55,7 +55,7 @@ function LoyaltyPoints() {
       >
         <div>
           <div className="flex items-baseline justify-between text-xs">
-            <span className="font-semibold text-paper">Next reward tier</span>
+            <span className="font-semibold text-oncontrast">Next reward tier</span>
             <span className="text-ink-muted">{toNextTier} points to go</span>
           </div>
           <div className="mt-2 h-2 max-w-md overflow-hidden rounded-full bg-white/10">
@@ -128,7 +128,7 @@ function LoyaltyPoints() {
                 <li key={entry.id} className="flex items-center gap-4 px-5 py-3.5">
                   <span
                     className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
-                      isEarned ? "bg-emerald-50 text-emerald-700" : "bg-sunken text-ink-soft"
+                      isEarned ? "bg-state-success-soft text-state-success-on" : "bg-sunken text-ink-soft"
                     }`}
                   >
                     {isEarned ? (

@@ -163,14 +163,14 @@ function Coupons() {
                   <Chip
                     size="small"
                     label={`Min ${formatPrice(coupon.minOrderAmount)}`}
-                    className="!bg-slate-100 !text-slate-700"
+                    className="!bg-sunken !text-ink-soft"
                   />
                 ) : null}
                 {coupon.maxDiscount ? (
                   <Chip
                     size="small"
                     label={`Max ${formatPrice(coupon.maxDiscount)}`}
-                    className="!bg-slate-100 !text-slate-700"
+                    className="!bg-sunken !text-ink-soft"
                   />
                 ) : null}
                 <Chip
@@ -180,13 +180,13 @@ function Coupons() {
                       ? `Used ${coupon.usedCount}/${coupon.usageLimit}`
                       : `Used ${coupon.usedCount}`
                   }
-                  className="!bg-slate-100 !text-slate-700"
+                  className="!bg-sunken !text-ink-soft"
                 />
                 {coupon.validUntil ? (
                   <Chip
                     size="small"
                     label={`Until ${formatDate(coupon.validUntil)}`}
-                    className="!bg-slate-100 !text-slate-700"
+                    className="!bg-sunken !text-ink-soft"
                   />
                 ) : null}
               </Box>
@@ -197,8 +197,8 @@ function Coupons() {
                   onClick={() => toggleMutation.mutate(coupon)}
                   className={
                     coupon.active
-                      ? "!cursor-pointer !bg-emerald-100 !font-semibold !text-emerald-700"
-                      : "!cursor-pointer !bg-slate-200 !font-semibold !text-slate-600"
+                      ? "!cursor-pointer !bg-state-success-soft !font-semibold !text-state-success-on"
+                      : "!cursor-pointer !bg-sunken !font-semibold !text-ink-soft"
                   }
                 />
                 <Button

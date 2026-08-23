@@ -1,45 +1,66 @@
 /** @type {import('tailwindcss').Config} */
 /**
  * Cartly 2.0 — generated from design/tokens.json.
- * Token NAMES are unchanged from 1.x on purpose: every existing page picks up
- * the new look without being rewritten. Only the values moved.
+ *
+ * Colours resolve through CSS custom properties declared in `src/tokens.css`
+ * (`:root` = light, `.dark` = dark), so adding dark mode required zero page
+ * edits: every existing `bg-paper` / `text-ink-soft` flips automatically.
+ * The `rgb(var(--x) / <alpha-value>)` form keeps opacity modifiers working
+ * (`border-line/60`, `bg-paper/90`).
+ *
+ * Token NAMES are unchanged from 1.x on purpose. `ink` is a FOREGROUND token
+ * and `contrast` is the intentionally-dark SURFACE token — see tokens.css.
  */
+const v = (name) => `rgb(var(${name}) / <alpha-value>)`;
+
 module.exports = {
+  darkMode: "class",
   content: ["./src/**/*.{js,jsx,ts,tsx}", "./index.html"],
   theme: {
     extend: {
       colors: {
         brand: {
-          DEFAULT: "#5B3DF5", // brand/600 — primary action
-          dark: "#2A1980", // brand/900
-          main: "#4A2ED6", // brand/700 — hover
-          light: "#7C5CFF", // brand/500
-          soft: "#EDE9FE", // brand/100
-          tint: "#F5F3FF", // brand/50
+          DEFAULT: v("--c-brand"),
+          dark: v("--c-brand-dark"),
+          main: v("--c-brand-main"),
+          light: v("--c-brand-light"),
+          soft: v("--c-brand-soft"),
+          tint: v("--c-brand-tint"),
         },
         accent: {
-          DEFAULT: "#D8F14B", // accent/500 — lime highlight
-          dark: "#A8BE22",
-          light: "#E4F77E",
-          soft: "#F2FBC9",
+          DEFAULT: v("--c-accent"),
+          dark: v("--c-accent-dark"),
+          light: v("--c-accent-light"),
+          soft: v("--c-accent-soft"),
         },
-        paper: "#FFFFFF",
-        canvas: "#F6F5F2", // bone app background
-        sunken: "#EFEEE9",
-        line: "#E5E3DD",
+        paper: v("--c-paper"),
+        canvas: v("--c-canvas"),
+        sunken: v("--c-sunken"),
+        line: v("--c-line"),
         ink: {
-          DEFAULT: "#0B0B0F",
-          800: "#16171D",
-          700: "#272932",
-          soft: "#5A5F6E",
-          muted: "#8A8F9E",
-          faint: "#C9CCD5",
+          DEFAULT: v("--c-ink"),
+          800: v("--c-ink-800"),
+          700: v("--c-ink-700"),
+          soft: v("--c-ink-soft"),
+          muted: v("--c-ink-muted"),
+          faint: v("--c-ink-faint"),
         },
+        contrast: {
+          DEFAULT: v("--c-contrast"),
+          lift: v("--c-contrast-lift"),
+        },
+        oncontrast: v("--c-oncontrast"),
         state: {
-          success: "#0E9F6E",
-          warning: "#F0A020",
-          danger: "#E0334B",
-          info: "#2F80ED",
+          success: v("--c-success"),
+          "success-soft": v("--c-success-soft"),
+          "success-on": v("--c-success-on"),
+          warning: v("--c-warning"),
+          "warning-soft": v("--c-warning-soft"),
+          "warning-on": v("--c-warning-on"),
+          danger: v("--c-danger"),
+          "danger-soft": v("--c-danger-soft"),
+          "danger-on": v("--c-danger-on"),
+          info: v("--c-info"),
         },
       },
       fontFamily: {
@@ -60,9 +81,9 @@ module.exports = {
       },
       boxShadow: {
         xs: "0 1px 2px rgba(11,11,15,0.05)",
-        card: "0 2px 10px rgba(11,11,15,0.06)",
-        lift: "0 8px 24px rgba(11,11,15,0.08)",
-        pop: "0 20px 48px rgba(11,11,15,0.14)",
+        card: "var(--shadow-card)",
+        lift: "var(--shadow-lift)",
+        pop: "var(--shadow-pop)",
         brand: "0 10px 24px rgba(91,61,245,0.28)",
       },
       maxWidth: {
@@ -83,10 +104,6 @@ module.exports = {
         },
         shimmer: {
           "100%": { transform: "translateX(100%)" },
-        },
-        marquee: {
-          from: { transform: "translateX(0)" },
-          to: { transform: "translateX(-50%)" },
         },
       },
       animation: {

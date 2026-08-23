@@ -59,7 +59,7 @@ function Section({
   return (
     <section className="panel p-5 sm:p-6">
       <div className="mb-5 flex items-start gap-3">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink text-xs font-bold text-paper">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-contrast text-xs font-bold text-oncontrast">
           {step}
         </span>
         <div className="min-w-0">
@@ -104,7 +104,7 @@ function OptionCard({
     >
       <span
         className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
-          active ? "bg-brand text-paper" : "bg-sunken text-ink-soft"
+          active ? "bg-brand text-oncontrast" : "bg-sunken text-ink-soft"
         }`}
       >
         <Icon sx={{ fontSize: 17 }} />
@@ -515,19 +515,19 @@ function Checkout() {
             <div className="space-y-4">
               {isLoggedIn ? (
                 coupon ? (
-                  <div className="flex items-center justify-between gap-3 rounded-sm border border-state-success/30 bg-emerald-50 px-4 py-3">
+                  <div className="flex items-center justify-between gap-3 rounded-sm border border-state-success/30 bg-state-success-soft px-4 py-3">
                     <span className="min-w-0">
                       <span className="block text-sm font-bold text-state-success">
                         {coupon.code} applied
                       </span>
-                      <span className="text-xs text-emerald-700">
+                      <span className="text-xs text-state-success-on">
                         You saved {formatPrice(coupon.discount)}
                       </span>
                     </span>
                     <button
                       type="button"
                       onClick={() => setCoupon(null)}
-                      className="shrink-0 text-xs font-bold text-emerald-800 underline-offset-2 hover:underline"
+                      className="shrink-0 text-xs font-bold text-state-success-on underline-offset-2 hover:underline"
                     >
                       Remove
                     </button>

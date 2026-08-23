@@ -15,7 +15,7 @@ function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <Box className="min-h-[calc(100vh-8rem)]">
       <Box className="grid overflow-hidden rounded-xl2 border border-line bg-paper shadow-card lg:grid-cols-2">
-        <Box className="grain relative hidden flex-col justify-between bg-ink p-12 text-paper lg:flex">
+        <Box className="grain relative hidden flex-col justify-between bg-contrast p-12 text-oncontrast lg:flex">
           <Box className="flex items-center gap-3">
             <ShoppingBagIcon fontSize="large" className="text-accent" />
             <Typography
@@ -36,7 +36,7 @@ function AuthLayout({ children }: { children: React.ReactNode }) {
             </Typography>
             <Box className="mt-8 space-y-3">
               {highlights.map((item, idx) => (
-                <Box key={idx} className="flex items-center gap-3 text-paper">
+                <Box key={idx} className="flex items-center gap-3 text-oncontrast">
                   <Box className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-accent">
                     {item.icon}
                   </Box>

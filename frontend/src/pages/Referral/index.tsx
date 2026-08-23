@@ -71,7 +71,7 @@ function Referral() {
             <button
               onClick={() => referralCode && copy(referralCode, "Referral code copied!")}
               disabled={!referralCode}
-              className="inline-flex items-center justify-center gap-2 rounded-sm border border-white/25 px-4 py-2.5 text-sm font-semibold text-paper transition hover:bg-white/10 disabled:opacity-50"
+              className="inline-flex items-center justify-center gap-2 rounded-sm border border-white/25 px-4 py-2.5 text-sm font-semibold text-oncontrast transition hover:bg-white/10 disabled:opacity-50"
             >
               {copied ? <CheckIcon sx={{ fontSize: 17 }} /> : <ContentCopyIcon sx={{ fontSize: 16 }} />}
               {copied ? "Copied" : "Copy code"}

@@ -22,10 +22,10 @@ const FILTERS = ["ALL", "REQUESTED", "APPROVED", "REFUNDED", "REJECTED"] as cons
 type Filter = (typeof FILTERS)[number];
 
 const statusChip: Record<string, string> = {
-  REQUESTED: "!bg-amber-100 !text-amber-800",
+  REQUESTED: "!bg-state-warning-soft !text-state-warning-on",
   APPROVED: "!bg-brand-soft !text-brand",
-  REFUNDED: "!bg-sky-100 !text-sky-700",
-  REJECTED: "!bg-rose-100 !text-rose-700",
+  REFUNDED: "!bg-state-info/10 !text-state-info",
+  REJECTED: "!bg-state-danger-soft !text-state-danger-on",
 };
 
 function AdminReturns() {
@@ -106,7 +106,7 @@ function AdminReturns() {
             onClick={() => setFilter(f)}
             className={
               filter === f
-                ? "!bg-brand !font-semibold !text-paper"
+                ? "!bg-brand !font-semibold !text-oncontrast"
                 : "!bg-white !text-ink-soft hover:!bg-brand-tint"
             }
           />
@@ -133,7 +133,7 @@ function AdminReturns() {
                     <Chip
                       size="small"
                       label={r.status}
-                      className={statusChip[r.status] ?? "!bg-slate-100 !text-slate-700"}
+                      className={statusChip[r.status] ?? "!bg-sunken !text-ink-soft"}
                     />
                     <Typography className="font-semibold text-ink">
                       {productNames.get(r.productId) ??
@@ -159,13 +159,13 @@ function AdminReturns() {
                     </Typography>
                   )}
                   {r.status === ReturnStatus.REFUNDED && r.refundAmount != null && (
-                    <Typography variant="body2" className="text-sky-700">
+                    <Typography variant="body2" className="text-state-info">
                       Refunded {formatPrice(r.refundAmount)}
                       {r.refundTransactionId ? ` · Ref ${r.refundTransactionId}` : ""}
                     </Typography>
                   )}
                   {r.status === ReturnStatus.REJECTED && r.rejectionReason && (
-                    <Typography variant="body2" className="text-rose-600">
+                    <Typography variant="body2" className="text-state-danger-on">
                       Rejected: {r.rejectionReason}
                     </Typography>
                   )}
@@ -199,7 +199,7 @@ function AdminReturns() {
                       variant="contained"
                       disabled={refundMutation.isLoading}
                       onClick={() => refundMutation.mutate(r.id)}
-                      className="!bg-sky-700 !text-paper hover:!bg-sky-800"
+                      className="!bg-state-info !text-oncontrast hover:!bg-state-info"
                     >
                       Refund
                     </Button>

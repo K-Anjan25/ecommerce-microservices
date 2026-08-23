@@ -208,7 +208,7 @@ function DataTable<T>({
               ".MuiTablePagination-toolbar": { minHeight: 52, paddingLeft: 2 },
               ".MuiTablePagination-selectLabel, .MuiTablePagination-displayedRows": {
                 fontSize: 12,
-                color: "#5A5F6E",
+                color: "text.secondary",
                 margin: 0,
               },
             }}
@@ -242,7 +242,7 @@ export function TableIconButton({
       onClick={onClick}
       className={`flex h-8 w-8 items-center justify-center rounded-xs border border-line bg-paper transition ${
         tone === "danger"
-          ? "text-ink-soft hover:border-state-danger hover:bg-rose-50 hover:text-state-danger"
+          ? "text-ink-soft hover:border-state-danger hover:bg-state-danger-soft hover:text-state-danger"
           : "text-ink-soft hover:border-ink hover:text-ink"
       }`}
     >
@@ -252,18 +252,18 @@ export function TableIconButton({
 }
 
 const STATUS_TONE: Record<string, string> = {
-  PENDING: "bg-amber-50 text-amber-700",
+  PENDING: "bg-state-warning-soft text-state-warning-on",
   APPROVED: "bg-brand-soft text-brand",
-  PAID: "bg-emerald-50 text-emerald-700",
-  SHIPPED: "bg-sky-50 text-sky-700",
-  DELIVERED: "bg-emerald-50 text-emerald-700",
-  CANCELLING: "bg-orange-50 text-orange-700",
-  CANCELLED: "bg-rose-50 text-rose-700",
-  REFUNDED: "bg-sky-50 text-sky-700",
-  REQUESTED: "bg-amber-50 text-amber-700",
-  REJECTED: "bg-rose-50 text-rose-700",
-  ACTIVE: "bg-emerald-50 text-emerald-700",
-  DISABLED: "bg-rose-50 text-rose-700",
+  PAID: "bg-state-success-soft text-state-success-on",
+  SHIPPED: "bg-state-info/10 text-state-info",
+  DELIVERED: "bg-state-success-soft text-state-success-on",
+  CANCELLING: "bg-state-warning-soft text-state-warning-on",
+  CANCELLED: "bg-state-danger-soft text-state-danger-on",
+  REFUNDED: "bg-state-info/10 text-state-info",
+  REQUESTED: "bg-state-warning-soft text-state-warning-on",
+  REJECTED: "bg-state-danger-soft text-state-danger-on",
+  ACTIVE: "bg-state-success-soft text-state-success-on",
+  DISABLED: "bg-state-danger-soft text-state-danger-on",
 };
 
 export function StatusPill({ value }: { value: string }) {

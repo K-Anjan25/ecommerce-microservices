@@ -182,7 +182,7 @@ function Orders() {
                         );
                       })}
                       {items.length > 4 && (
-                        <span className="flex h-12 w-12 items-center justify-center rounded-sm border-2 border-paper bg-ink text-xs font-bold text-paper">
+                        <span className="flex h-12 w-12 items-center justify-center rounded-sm border-2 border-paper bg-contrast text-xs font-bold text-oncontrast">
                           +{items.length - 4}
                         </span>
                       )}

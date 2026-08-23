@@ -35,9 +35,9 @@ function CheckoutSteps({ current }: { current: "cart" | "details" | "done" }) {
                 <span
                   className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold transition ${
                     done
-                      ? "bg-brand text-paper"
+                      ? "bg-brand text-oncontrast"
                       : active
-                      ? "bg-ink text-paper"
+                      ? "bg-contrast text-oncontrast"
                       : "border border-line bg-paper text-ink-muted"
                   }`}
                 >

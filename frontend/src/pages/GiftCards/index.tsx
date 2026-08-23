@@ -137,7 +137,7 @@ function GiftCards() {
 
         {/* ── live card preview / result ────────────────────────────── */}
         <aside className="space-y-4 lg:sticky lg:top-24 lg:h-fit">
-          <div className="grain relative overflow-hidden rounded-lg bg-ink p-6 text-paper">
+          <div className="grain relative overflow-hidden rounded-lg bg-contrast p-6 text-oncontrast">
             <div className="flex items-start justify-between">
               <span className="font-heading text-sm font-extrabold tracking-[0.18em]">CARTLY</span>
               <CardGiftcardOutlinedIcon sx={{ fontSize: 22 }} className="text-accent" />
@@ -148,7 +148,7 @@ function GiftCards() {
             <p className="mt-1 text-xs text-ink-muted">
               Gift card · valid {VALIDITY.find((v) => v.days === days)?.label}
             </p>
-            <p className="mt-6 font-mono text-sm tracking-[0.25em] text-paper/80">
+            <p className="mt-6 font-mono text-sm tracking-[0.25em] text-oncontrast/80">
               {purchased?.code ?? "XXXX-XXXX-XXXX"}
             </p>
           </div>

@@ -197,6 +197,40 @@ already assumed.
 - `pages/Admin/Home` — recharts colours re-pointed at the new palette.
 - `components/PageHeader` — optional `eyebrow`, semantic `<header>`/`<h1>`.
 
+### Dark mode
+- `frontend/src/tokens.css` — **new**. Every colour is a CSS custom property in
+  space-separated RGB channels (`--c-brand: 91 61 245`), declared once for
+  `:root` and once for `.dark`. Tailwind consumes them as
+  `rgb(var(--x) / <alpha-value>)`, so opacity modifiers (`bg-paper/90`,
+  `border-line/60`) keep working.
+- **The token split that made this cheap.** `ink` was doing two jobs: text
+  colour *and* "intentionally dark surface" (hero, footer, admin rail,
+  announcement bar, card action bar). Those must move in opposite directions in
+  dark mode. So `ink*` is now strictly FOREGROUND (inverts), and two new tokens
+  carry the other job: `contrast` (dark in *both* modes, lifted to `#1E212A` in
+  dark so it still separates from the canvas) and `oncontrast` (always
+  near-white). A scripted migration moved 19 files: `bg-ink → bg-contrast`,
+  `text-paper → text-oncontrast`.
+- **Fixed palettes swapped for semantic ones.** ~60 usages of
+  `bg-emerald-50` / `text-rose-700` / `bg-amber-100` / `text-sky-700` /
+  `bg-slate-100` became `state-{success,danger,warning,info}-{soft,on}` and
+  `sunken` / `ink-soft`, which have dark values. (One literal stayed:
+  `text-amber-500` on the rating star — a gold star is a literal, not a status.)
+- `tailwind.config.js` — `darkMode: "class"`; colours resolve through the vars;
+  `shadow-card/lift/pop` also come from vars, because a light-mode shadow is
+  invisible on a dark canvas.
+- `globalTheme.ts` — `createAppTheme(mode)` builds the MUI palette per mode
+  (MUI needs real values, not vars). Brand lifts `#5B3DF5 → #7C5CFF` in dark:
+  the light violet goes muddy against a near-black canvas.
+- `hooks/useColorScheme.ts` + `context/colorScheme.ts` — follows the OS until
+  the user picks a side, then persists to `localStorage`; also drives
+  `<meta name="theme-color">` and `color-scheme`. `applyScheme()` runs **before**
+  React mounts in `index.tsx`, so there is no light flash on load.
+- Toggle lives in the header actions (desktop) and as a labelled row in the
+  mobile drawer. Toasts and recharts follow the mode too.
+- `design/palettes/` gained a dark panel (`00d-ink-violet-dark`) so the dark
+  values are reviewable next to the light ones.
+
 ### Tooling
 - `frontend/vite.config.ts` — `host: true` + `allowedHosts: ['.e2b.app', …]` so
   the dev server works behind a hosted preview proxy. No effect locally.
@@ -215,6 +249,10 @@ already assumed.
    sm:-mt-8`) to break out of `DashboardLayout`'s `page-shell`. If the shell's
    padding changes, change these too.
 3. **`paper` is now white, not cream.** Page backgrounds must use `bg-canvas`.
+3b. **`ink` is a FOREGROUND token.** For a surface that should stay dark in both
+   modes use `bg-contrast` + `text-oncontrast` (or the `.surface-contrast`
+   helper) — never `bg-ink`. Likewise prefer `state-*` over raw
+   `emerald-50`/`rose-700`/etc., which do not adapt.
 4. **MUI `Drawer` needs `PaperProps`**, not `slotProps.paper`, at the version
    pinned here — `slotProps` type-checks on `Menu` but not on `Drawer`.
 5. **Checkout's submit buttons are outside its `<form>`** (they live in the sticky
@@ -258,6 +296,6 @@ CI's backend + compose jobs are unaffected.
 - [x] Feature pages (GiftCards, FlashSales, Referral, Returns, LoyaltyPoints,
       Compare, Addresses) re-composed. *(done)*
 - [x] `pages/Orders` + both `OrderDetail` screens. *(done)*
-- [ ] Dark mode — token structure supports a second mode; values unchosen.
+- [x] Dark mode. *(done — see the Dark mode section above.)*
 - [ ] Roadmap Phase 9 leftovers are unaffected: CMS/store settings, audit log,
       staff (Manager) role.

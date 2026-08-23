@@ -20,6 +20,8 @@ import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
+import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 
 import { AppState } from "../../store";
 import { logout } from "../../store/actions/userAction";
@@ -27,6 +29,7 @@ import { CategoryApi } from "../../api/categoryApi";
 import { calculateCountOfCartItems } from "../../utils/cart";
 import { setToLocalStorage } from "../../utils/localStorage";
 import { showError } from "../../utils/showError";
+import { useColorSchemeContext } from "../../context/colorScheme";
 
 const CartBadge = styled(Badge)({
   "& .MuiBadge-badge": {
@@ -66,6 +69,7 @@ const Navbar = () => {
   const dispatch = useDispatch<any>();
   const { data: user, error } = useSelector((state: AppState) => state.user);
   const carts = useSelector((state: AppState) => state.cart);
+  const { isDark, toggle: toggleScheme } = useColorSchemeContext();
 
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -163,7 +167,7 @@ const Navbar = () => {
     <>
       {/* ── announcement ─────────────────────────────────────────────── */}
       {announce && (
-        <div className="relative bg-ink text-paper">
+        <div className="relative bg-contrast text-oncontrast">
           <div className="page-shell flex h-9 items-center justify-center gap-3">
             <p className="truncate text-[0.6875rem] font-semibold tracking-wide sm:text-xs">
               Free shipping over ₹999
@@ -173,7 +177,7 @@ const Navbar = () => {
             <button
               aria-label="Dismiss announcement"
               onClick={dismissAnnounce}
-              className="absolute right-3 text-ink-muted transition hover:text-paper sm:right-6"
+              className="absolute right-3 text-ink-muted transition hover:text-oncontrast sm:right-6"
             >
               <CloseIcon sx={{ fontSize: 14 }} />
             </button>
@@ -197,7 +201,7 @@ const Navbar = () => {
             className="flex shrink-0 items-center gap-2"
             aria-label="Cartly home"
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-md bg-ink text-accent">
+            <span className="flex h-8 w-8 items-center justify-center rounded-md bg-contrast text-accent">
               <ShoppingCartOutlinedIcon sx={{ fontSize: 17 }} />
             </span>
             <span className="font-heading text-lg font-extrabold tracking-[0.18em] text-ink">
@@ -214,7 +218,7 @@ const Navbar = () => {
                   onClick={() => navigate(item.path)}
                   className={`rounded-full px-3.5 py-2 text-sm font-semibold transition ${
                     active
-                      ? "bg-ink text-paper"
+                      ? "bg-contrast text-oncontrast"
                       : "text-ink-soft hover:bg-sunken hover:text-ink"
                   }`}
                 >
@@ -248,6 +252,21 @@ const Navbar = () => {
           </form>
 
           <div className="ml-auto flex items-center gap-1">
+            <Tooltip title={isDark ? "Switch to light" : "Switch to dark"}>
+              <button
+                aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+                aria-pressed={isDark}
+                onClick={toggleScheme}
+                className="icon-button"
+              >
+                {isDark ? (
+                  <LightModeOutlinedIcon sx={{ fontSize: 20 }} />
+                ) : (
+                  <DarkModeOutlinedIcon sx={{ fontSize: 20 }} />
+                )}
+              </button>
+            </Tooltip>
+
             <Tooltip title="Compare">
               <button
                 aria-label="Compare products"
@@ -291,7 +310,7 @@ const Navbar = () => {
                     alt={(user.firstName ?? "") + (user.lastName ?? "")}
                     src={user.profileImageURL ?? ""}
                     sx={{ width: 34, height: 34, fontSize: 13, fontWeight: 700 }}
-                    className="!bg-brand !text-paper"
+                    className="!bg-brand !text-oncontrast"
                   >
                     {initials}
                   </Avatar>
@@ -454,7 +473,7 @@ const Navbar = () => {
                   setToLocalStorage("admin-nav", 0);
                   go("/admin");
                 }}
-                className="mt-4 flex w-full items-center gap-2 rounded-sm bg-ink px-3 py-2.5 text-sm font-semibold text-paper"
+                className="mt-4 flex w-full items-center gap-2 rounded-sm bg-contrast px-3 py-2.5 text-sm font-semibold text-oncontrast"
               >
                 <DashboardIcon sx={{ fontSize: 18 }} /> Admin console
               </button>
@@ -462,6 +481,24 @@ const Navbar = () => {
           </nav>
 
           <div className="space-y-2 border-t border-line p-4">
+            <button
+              onClick={toggleScheme}
+              aria-pressed={isDark}
+              className="flex w-full items-center justify-between rounded-sm px-3 py-2.5 text-sm font-semibold text-ink-soft transition hover:bg-sunken hover:text-ink"
+            >
+              <span className="flex items-center gap-2">
+                {isDark ? (
+                  <LightModeOutlinedIcon sx={{ fontSize: 18 }} />
+                ) : (
+                  <DarkModeOutlinedIcon sx={{ fontSize: 18 }} />
+                )}
+                {isDark ? "Light mode" : "Dark mode"}
+              </span>
+              <span className="chip !px-2 !py-0.5 !text-[0.625rem]">
+                {isDark ? "Dark" : "Light"}
+              </span>
+            </button>
+
             {user.isLogedIn ? (
               <button onClick={() => dispatch(logout())} className="secondary-button w-full">
                 Logout

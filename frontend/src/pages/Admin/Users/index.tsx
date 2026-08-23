@@ -116,8 +116,8 @@ function Users() {
               disabled={toggleMutation.isLoading}
               className={`!py-1 normal-case ${
                 u.active
-                  ? "!border-rose-200 !text-rose-700 hover:!bg-rose-50"
-                  : "!border-emerald-200 !text-emerald-700 hover:!bg-emerald-50"
+                  ? "!border-state-danger/30 !text-state-danger-on hover:!bg-state-danger-soft"
+                  : "!border-state-success/30 !text-state-success-on hover:!bg-state-success-soft"
               }`}
               onClick={() => toggleMutation.mutate({ id: u.id, active: u.active })}
             >

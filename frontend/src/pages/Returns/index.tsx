@@ -146,7 +146,7 @@ function Returns() {
                   </dl>
 
                   {req.rejectionReason && (
-                    <p className="mt-4 rounded-sm border border-rose-100 bg-rose-50 px-4 py-2.5 text-xs text-rose-700">
+                    <p className="mt-4 rounded-sm border border-state-danger/30 bg-state-danger-soft px-4 py-2.5 text-xs text-state-danger-on">
                       <span className="font-bold">Rejected:</span> {req.rejectionReason}
                     </p>
                   )}

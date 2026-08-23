@@ -52,7 +52,7 @@ function DashboardLayout() {
       </main>
 
       {/* ── footer ────────────────────────────────────────────────────── */}
-      <footer className="grain mt-auto bg-ink text-paper">
+      <footer className="grain mt-auto bg-contrast text-oncontrast">
         <div className="page-shell grid gap-10 py-14 md:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div>
             <p className="font-heading text-lg font-extrabold tracking-[0.18em]">CARTLY</p>
@@ -74,7 +74,7 @@ function DashboardLayout() {
 
           {FOOTER_LINKS.map((col) => (
             <div key={col.title}>
-              <p className="text-eyebrow font-bold uppercase text-paper">{col.title}</p>
+              <p className="text-eyebrow font-bold uppercase text-oncontrast">{col.title}</p>
               <ul className="mt-4 space-y-2.5">
                 {col.items.map((item) => (
                   <li key={item.label}>

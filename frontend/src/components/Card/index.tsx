@@ -109,7 +109,7 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
         <div className="absolute left-2.5 top-2.5 flex flex-col items-start gap-1.5">
           {onSale && <span className="badge-sale">−{discount}%</span>}
           {product.badge && !onSale && (
-            <span className="badge-sale !bg-ink">{product.badge}</span>
+            <span className="badge-sale !bg-contrast">{product.badge}</span>
           )}
           {product.flashSaleActive && (
             <span className="badge-sale !bg-brand">Flash</span>
@@ -124,7 +124,7 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
               aria-label="Add to compare"
               className={`flex h-8 w-8 items-center justify-center rounded-full border backdrop-blur transition ${
                 isInCompare(product.id)
-                  ? "border-brand bg-brand text-paper"
+                  ? "border-brand bg-brand text-oncontrast"
                   : "border-line bg-paper/90 text-ink-soft hover:border-ink hover:text-ink"
               }`}
             >
@@ -185,7 +185,7 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
         className="absolute inset-x-0 bottom-0 p-2.5"
       >
         {quantity ? (
-          <div className="flex h-10 items-center justify-between rounded-sm bg-ink px-1.5 text-paper">
+          <div className="flex h-10 items-center justify-between rounded-sm bg-contrast px-1.5 text-oncontrast">
             <button
               onClick={handleRemove}
               aria-label="Decrease quantity"
@@ -212,7 +212,7 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
         ) : (
           <button
             onClick={handleAdd}
-            className="flex h-10 w-full items-center justify-center gap-2 rounded-sm bg-ink text-xs font-bold text-paper transition hover:bg-brand sm:text-sm"
+            className="flex h-10 w-full items-center justify-center gap-2 rounded-sm bg-contrast text-xs font-bold text-oncontrast transition hover:bg-brand sm:text-sm"
           >
             <AddShoppingCartIcon sx={{ fontSize: 16 }} />
             Add to cart

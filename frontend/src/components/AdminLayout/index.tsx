@@ -45,7 +45,7 @@ function AdminLayout() {
     (user.firstName?.at(0)?.toUpperCase() ?? "") + (user.lastName?.at(0)?.toUpperCase() ?? "");
 
   const Rail = (
-    <div className="flex h-full w-64 flex-col bg-ink text-paper">
+    <div className="flex h-full w-64 flex-col bg-contrast text-oncontrast">
       <div className="flex items-center justify-between px-5 py-5">
         <div>
           <p className="font-heading text-base font-extrabold tracking-[0.18em]">CARTLY</p>
@@ -55,7 +55,7 @@ function AdminLayout() {
         </div>
         <button
           aria-label="Close navigation"
-          className="text-ink-muted hover:text-paper lg:hidden"
+          className="text-ink-muted hover:text-oncontrast lg:hidden"
           onClick={() => setOpen(false)}
         >
           <CloseIcon />
@@ -74,8 +74,8 @@ function AdminLayout() {
               }}
               className={`flex w-full items-center gap-3 rounded-sm px-3 py-2.5 text-sm font-semibold transition ${
                 active
-                  ? "bg-white/10 text-paper"
-                  : "text-ink-muted hover:bg-white/5 hover:text-paper"
+                  ? "bg-white/10 text-oncontrast"
+                  : "text-ink-muted hover:bg-white/5 hover:text-oncontrast"
               }`}
             >
               <Icon sx={{ fontSize: 18 }} className={active ? "text-accent" : ""} />
@@ -88,7 +88,7 @@ function AdminLayout() {
       <div className="space-y-2 border-t border-white/10 p-3">
         <button
           onClick={() => navigate("/")}
-          className="flex w-full items-center gap-3 rounded-sm px-3 py-2.5 text-sm font-semibold text-ink-muted transition hover:bg-white/5 hover:text-paper"
+          className="flex w-full items-center gap-3 rounded-sm px-3 py-2.5 text-sm font-semibold text-ink-muted transition hover:bg-white/5 hover:text-oncontrast"
         >
           <StorefrontIcon sx={{ fontSize: 18 }} />
           Back to shop

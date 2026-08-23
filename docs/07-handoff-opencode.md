@@ -404,6 +404,28 @@ All verified with `tsc + vite build`.
       (`/v1/loyalty/*`, `/user/referral/*`, `/v1/addresses`, `/v1/returns/order/{id}`).
 - Remaining redesign work: **dark mode only**.
 
+### 7.4.18 Dark mode (2026-08-23, fourteenth session)
+- [x] `frontend/src/tokens.css`: every colour becomes a CSS custom property (RGB channels) with
+      a `:root` (light) and `.dark` block; Tailwind consumes them via
+      `rgb(var(--x) / <alpha-value>)` so opacity modifiers still work.
+- [x] **Key refactor:** `ink` was both "text colour" and "intentionally dark surface", which must
+      move in OPPOSITE directions in dark mode. `ink*` is now strictly foreground; new
+      `contrast` / `oncontrast` tokens carry the dark-surface job (`contrast` lifts to `#1E212A`
+      in dark so it still separates from the canvas). Scripted migration across 19 files.
+- [x] ~60 fixed tailwind palette usages (`bg-emerald-50`, `text-rose-700`, `bg-amber-100`,
+      `text-sky-700`, `bg-slate-100`…) replaced with semantic `state-*` / `sunken` / `ink-soft`
+      tokens that have dark values.
+- [x] `tailwind.config.js` `darkMode: "class"`; shadows also come from vars (a light-mode shadow
+      is invisible on a dark canvas). `globalTheme.ts` exposes `createAppTheme(mode)`.
+- [x] `hooks/useColorScheme.ts` + `context/colorScheme.ts`: follows the OS until the user picks,
+      then persists; drives `theme-color` and `color-scheme`; `applyScheme()` runs before React
+      mounts so there is no light flash. Toggle in the header + mobile drawer. Toasts and
+      recharts follow the mode.
+- [x] `design/tokens.json` gained a `colorDark` collection; `design/palettes/` gained a dark
+      panel so the values are reviewable.
+- **The frontend redesign backlog in `docs/08` §8.6 is now empty.** Next stop is the roadmap:
+  Phase 9 leftovers (CMS/store settings, audit log, staff Manager role) and Phase 10.
+
 ---
 
 ## 7.5 Phase-end verification runbook (MANDATORY at each phase end)

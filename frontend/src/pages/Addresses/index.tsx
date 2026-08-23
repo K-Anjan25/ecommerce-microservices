@@ -123,7 +123,7 @@ function Addresses() {
                 <span
                   className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
                     addr.defaultAddress
-                      ? "bg-brand text-paper"
+                      ? "bg-brand text-oncontrast"
                       : "bg-sunken text-ink-soft"
                   }`}
                 >
@@ -147,7 +147,7 @@ function Addresses() {
                   disabled={deleteMutation.isLoading}
                   aria-label="Delete address"
                   title="Delete address"
-                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xs border border-line text-ink-soft transition hover:border-state-danger hover:bg-rose-50 hover:text-state-danger disabled:opacity-50"
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xs border border-line text-ink-soft transition hover:border-state-danger hover:bg-state-danger-soft hover:text-state-danger disabled:opacity-50"
                 >
                   <DeleteOutlineIcon sx={{ fontSize: 16 }} />
                 </button>

@@ -1,10 +1,11 @@
+import { useMemo } from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import { Provider } from "react-redux";
 import reportWebVitals from "./reportWebVitals";
 import { ThemeProvider } from "@mui/material/styles";
-import { theme } from "./globalTheme";
+import { createAppTheme } from "./globalTheme";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ToastContainer } from "react-toastify";
 // @ts-ignore: allow importing toastify CSS without type declarations
@@ -12,44 +13,52 @@ import "react-toastify/dist/ReactToastify.css";
 import { PersistGate } from "redux-persist/integration/react";
 import Loader from "./components/Loader";
 import configureStore from "./config/configureStore";
+import { ColorSchemeContext } from "./context/colorScheme";
+import useColorScheme, { applyScheme, resolveInitialScheme } from "./hooks/useColorScheme";
 import "./style.css";
 
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
-);
+/* Paint the right scheme before React mounts, so there is no light flash. */
+applyScheme(resolveInitialScheme());
+
+const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 
 const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-    },
-  },
+  defaultOptions: { queries: { refetchOnWindowFocus: false } },
 });
 
 const { store, persistor }: any = configureStore;
 
-root.render(
-  <>
-    <CssBaseline />
-    <ToastContainer
-      position="bottom-right"
-      autoClose={2200}
-      newestOnTop
-      closeOnClick
-      pauseOnFocusLoss={false}
-      draggable
-      pauseOnHover
-    />
-    <ThemeProvider theme={theme}>
-      <QueryClientProvider client={queryClient}>
-        <Provider store={store}>
-          <PersistGate loading={<Loader />} persistor={persistor}>
-            <App />
-          </PersistGate>
-        </Provider>
-      </QueryClientProvider>
-    </ThemeProvider>
-  </>
-);
+function Root() {
+  const { scheme, toggle, isDark } = useColorScheme();
+  const muiTheme = useMemo(() => createAppTheme(scheme), [scheme]);
+  const ctx = useMemo(() => ({ scheme, toggle, isDark }), [scheme, toggle, isDark]);
+
+  return (
+    <ColorSchemeContext.Provider value={ctx}>
+      <ThemeProvider theme={muiTheme}>
+        <CssBaseline />
+        <ToastContainer
+          position="bottom-right"
+          autoClose={2200}
+          newestOnTop
+          closeOnClick
+          pauseOnFocusLoss={false}
+          draggable
+          pauseOnHover
+          theme={isDark ? "dark" : "light"}
+        />
+        <QueryClientProvider client={queryClient}>
+          <Provider store={store}>
+            <PersistGate loading={<Loader />} persistor={persistor}>
+              <App />
+            </PersistGate>
+          </Provider>
+        </QueryClientProvider>
+      </ThemeProvider>
+    </ColorSchemeContext.Provider>
+  );
+}
+
+root.render(<Root />);
 
 reportWebVitals();

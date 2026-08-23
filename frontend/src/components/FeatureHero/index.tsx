@@ -25,7 +25,7 @@ function FeatureHero({
   children,
 }: FeatureHeroProps) {
   return (
-    <section className="grain overflow-hidden rounded-xl2 bg-ink px-6 py-8 text-paper sm:px-10 sm:py-10">
+    <section className="grain overflow-hidden rounded-xl2 bg-contrast px-6 py-8 text-oncontrast sm:px-10 sm:py-10">
       <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
         <div className="min-w-0 flex-1">
           <p className="eyebrow !text-accent">{eyebrow}</p>
@@ -44,7 +44,7 @@ function FeatureHero({
             <p className="font-heading text-4xl font-extrabold tracking-tight text-accent sm:text-5xl">
               {metric.value}
             </p>
-            <p className="mt-1 text-eyebrow font-bold uppercase text-paper">{metric.label}</p>
+            <p className="mt-1 text-eyebrow font-bold uppercase text-oncontrast">{metric.label}</p>
             {metric.sub && <p className="mt-2 text-xs text-ink-muted">{metric.sub}</p>}
           </div>
         )}

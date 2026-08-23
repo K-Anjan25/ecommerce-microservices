@@ -12,11 +12,15 @@ about hex codes in isolation.
 
 ---
 
+> **Decided:** the owner kept **option 0 (Ink & Violet)**. Its dark-mode
+> counterpart now ships too — panel `00d-ink-violet-dark`, top-right of the
+> sheet. Options 1–5 are kept as a record of what was considered.
+
 ## The options
 
 | # | Palette | Brand | Accent | Feels like | Watch out for |
 |---|---|---|---|---|---|
-| **0** | **Ink & Violet** *(current)* | `#5B3DF5` | `#D8F14B` | Modern, techy, confident. Lime shouts, violet acts. | Violet + lime is fashionable now — it will date faster than the others. |
+| **0** | **Ink & Violet** *(chosen — light + dark)* | `#5B3DF5` | `#D8F14B` | Modern, techy, confident. Lime shouts, violet acts. | Violet + lime is fashionable now — it will date faster than the others. |
 | **1** | **Terracotta & Ochre** | `#B4441F` | `#E8B84B` | Handmade goods, artisanal, premium at low saturation. | Warm canvas competes slightly with warm product photography. |
 | **2** | **Deep Teal & Coral** | `#0D6E6E` | `#FF7A5A` | Calm marketplace; coral makes deals pop. Easy on long sessions. | Coral and the danger red sit close — needs care on sale badges. |
 | **3** | **Cobalt & Amber** | `#1A56DB` | `#F5A524` | "Safe checkout." Highest familiarity, lowest risk. | The most generic — looks like every other store. |
