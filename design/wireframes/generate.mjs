@@ -16,17 +16,17 @@ mkdirSync(OUT, { recursive: true });
 
 /* ------------------------------------------------------------------ tokens */
 const C = {
-  paper: "#FFFFFF",
-  canvas: "#F6F5F2",
-  sunken: "#EFEEE9",
-  line: "#D3D0C8",
-  lineSoft: "#E5E3DD",
-  ink: "#0B0B0F",
-  ink500: "#5A5F6E",
-  ink400: "#6E7480",
-  brand: "#5B3DF5",
-  brandSoft: "#EDE9FE",
-  accent: "#D8F14B",
+  paper: "#FBF9F4",
+  canvas: "#F4F0E8",
+  sunken: "#E9E2D7",
+  line: "#C2B5A5",
+  lineSoft: "#DAD0C3",
+  ink: "#221A16",
+  ink500: "#6B5E56",
+  ink400: "#74675F",
+  brand: "#A4472D",
+  brandSoft: "#F3E2D9",
+  accent: "#C8A96B",
   danger: "#E0334B",
   success: "#0E9F6E",
   note: "#B0455A",
@@ -119,7 +119,7 @@ const sectionLabel = (x, y, s) =>
 function frame({ name, w, h, title, subtitle, body }) {
   const HEAD = 74;
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h + HEAD}" viewBox="0 0 ${w} ${h + HEAD}">
-<rect width="${w}" height="${h + HEAD}" fill="#FFFFFF"/>
+<rect width="${w}" height="${h + HEAD}" fill="#FBF9F4"/>
 ${g("frame-label", [
   text(32, 32, title, { size: 18, weight: 700, fill: C.ink }),
   text(32, 52, subtitle, { size: 12, weight: 400, fill: C.ink500 }),
@@ -177,22 +177,8 @@ ${body}
       button(W - M - 76, hy + 18, 76, 34, "Cart · 3", "dark"),
     ])
   );
-  // category rail
-  const ry = hy + 68;
-  b.push(
-    g("category-rail", [
-      box(0, ry, W, 48, { r: 0, fill: C.paper, stroke: C.lineSoft }),
-      ...["Shop", "Deals", "Gift Cards", "Rewards"].map((c, i) =>
-        pill(M + i * 84, ry + 10, 78, 28, c, i === 0 ? { fill: C.ink, stroke: C.ink, color: C.paper } : {})
-      ),
-      box(M + 348, ry + 13, 1, 22, { r: 0, fill: C.line, stroke: "none" }),
-      ...["All categories", "Electronics", "Home", "Fashion", "Beauty", "Sports"].map((c, i) =>
-        pill(M + 366 + i * 112, ry + 10, 104, 28, c, i === 0 ? { fill: C.brandSoft, stroke: C.brandSoft, color: C.brand } : {})
-      ),
-    ])
-  );
   // content slot
-  const cy = ry + 48 + 32;
+  const cy = hy + 68 + 32;
   b.push(
     g("page-content-slot", [
       box(M, cy, CW, 380, { r: 20, fill: C.paper, stroke: C.line, dash: "6 6" }),
@@ -235,7 +221,6 @@ ${body}
   b.push(
     g("annotations", [
       note(M + 318, hy + 6, 1, "Search owns 650px and one baseline; navigation no longer competes for width"),
-      note(M + 470, ry + 4, 2, "Categories become a persistent rail — one tap instead of a dropdown"),
       note(W - 470, fy - 16, 3, "Footer inverts to ink: clear end-of-page stop + trust badges"),
     ])
   );
@@ -244,7 +229,7 @@ ${body}
     w: W,
     h: H,
     title: "01 · Global shell (desktop)",
-    subtitle: "Announcement · header w/ command search · category rail · content slot · inverse footer",
+    subtitle: "Announcement · editorial header · content slot · inverse footer",
     body: b.join("\n"),
   });
 }
@@ -259,7 +244,7 @@ ${body}
   b.push(box(0, 0, W, 152, { r: 0, fill: C.paper, stroke: C.lineSoft }));
   b.push(text(M, 60, "GLOBAL SHELL (see frame 01)", { size: 11, weight: 600, fill: C.ink400 }));
   b.push(box(M, 76, CW, 56, { r: 12, fill: C.canvas, stroke: C.line, dash: "5 5" }));
-  b.push(text(W / 2, 110, "header + category rail", { anchor: "middle", size: 11, fill: C.ink400 }));
+  b.push(text(W / 2, 110, "editorial header · navigation · compact search", { anchor: "middle", size: 11, fill: C.ink400 }));
 
   // HERO — split editorial
   const hy = 184;
@@ -311,21 +296,16 @@ ${body}
   // toolbar + results
   const ry = ty + 220;
   b.push(
-    g("results-toolbar", [
-      box(M, ry, CW, 56, { r: 14, fill: C.paper, stroke: C.line }),
-      box(M + 12, ry + 9, 300, 38, { r: 19, fill: C.canvas, stroke: C.line }),
-      text(M + 32, ry + 33, "⌕  Search within the catalog", { size: 11, fill: C.ink400 }),
-      text(M + 332, ry + 34, "248 products", { size: 12, weight: 700 }),
-      pill(M + 430, ry + 15, 108, 26, "Brand: Acme ✕", { fill: C.brandSoft, stroke: C.brandSoft, color: C.brand }),
-      text(M + 550, ry + 33, "Clear all", { size: 11, weight: 600, fill: C.ink500 }),
-      pill(W - M - 320, ry + 13, 120, 30, "Filters · 2"),
-      pill(W - M - 190, ry + 13, 160, 30, "Sort: Price low-high"),
-      pill(W - M - 24, ry + 13, 0, 30, ""),
+    g("collection-heading", [
+      sectionLabel(M, ry + 12, "The collection"),
+      text(M, ry + 48, "All products", { size: 28, weight: 400 }),
+      text(W - M, ry + 46, "248 items", { anchor: "end", size: 11, fill: C.ink400 }),
+      box(M, ry + 66, CW, 1, { r: 0, fill: C.line, stroke: "none" }),
     ])
   );
 
   // sidebar facets + grid
-  const gy = ry + 76;
+  const gy = ry + 96;
   const SW = 264;
   b.push(
     g("facet-sidebar", [
@@ -371,7 +351,7 @@ ${body}
     g("annotations", [
       note(M + CW * 0.58 + 30, hy + 320, 1, "Hero replaces the plain page title — one clear entry point"),
       note(M + 20, ty - 26, 2, "Category tiles surface the taxonomy above the fold"),
-      note(W - 430, ry - 14, 3, "Sticky toolbar: active facets as removable chips + sort"),
+      note(W - 430, ry - 14, 3, "No sticky toolbar: refinement stays in the quiet left column"),
       note(GX + 10, gy - 18, 4, "Card: hover reveals full-width Add to cart; wishlist ♡ top-right; badges top-left"),
     ])
   );
@@ -925,7 +905,7 @@ ${body}
     p.push(text(ox + SW2 - 60, oy + 76, "♡", { size: 16, fill: C.ink500 }));
     p.push(text(ox + SW2 - 28, oy + 76, "Share", { size: 15, fill: C.ink500 }));
     p.push(imgBox(ox, oy + 92, SW2, 300, "gallery · swipe", { r: 0 }));
-    p.push(pill(ox + SW2 / 2 - 30, oy + 368, 60, 14, "o  .  .  .", { fill: "#FFFFFFCC", stroke: "none", size: 8 }));
+    p.push(pill(ox + SW2 / 2 - 30, oy + 368, 60, 14, "o  .  .  .", { fill: "#FBF9F4CC", stroke: "none", size: 8 }));
     p.push(box(ox, oy + 380, SW2, SH - 380 - 96, { r: 24, fill: C.paper, stroke: C.line }));
     p.push(text(ox + 20, oy + 414, "ACME", { size: 9, weight: 700, fill: C.ink400, tracking: "0.16em" }));
     p.push(text(ox + 20, oy + 440, "Acme Studio Pro", { size: 19, weight: 700 }));

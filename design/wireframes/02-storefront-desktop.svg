@@ -1,269 +1,260 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1934" viewBox="0 0 1440 1934">
-<rect width="1440" height="1934" fill="#FFFFFF"/>
+<rect width="1440" height="1934" fill="#FBF9F4"/>
 <g id="frame-label" data-name="frame-label">
-<text x="32" y="32" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" fill="#0B0B0F" text-anchor="start">02 · Storefront / catalog (desktop)</text>
-<text x="32" y="52" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" fill="#5A5F6E" text-anchor="start">Hero → category tiles → sticky results toolbar → facet sidebar + 4-up product grid</text>
-<text x="1408" y="32" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#6E7480" text-anchor="end">1440 × 1860</text>
-<text x="1408" y="52" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#6E7480" text-anchor="end">Cartly 3.0 · evidence-led commerce wireframe</text>
+<text x="32" y="32" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" fill="#221A16" text-anchor="start">02 · Storefront / catalog (desktop)</text>
+<text x="32" y="52" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" fill="#6B5E56" text-anchor="start">Hero → category tiles → sticky results toolbar → facet sidebar + 4-up product grid</text>
+<text x="1408" y="32" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#74675F" text-anchor="end">1440 × 1860</text>
+<text x="1408" y="52" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#74675F" text-anchor="end">Cartly 3.0 · evidence-led commerce wireframe</text>
 </g>
 <g transform="translate(0 74)">
-<rect width="1440" height="1860" fill="#F6F5F2" stroke="#D3D0C8"/>
-<rect x="0" y="0" width="1440" height="152" rx="0" fill="#FFFFFF" stroke="#E5E3DD" stroke-width="1"/>
-<text x="80" y="60" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#6E7480" text-anchor="start">GLOBAL SHELL (see frame 01)</text>
-<rect x="80" y="76" width="1280" height="56" rx="12" fill="#F6F5F2" stroke="#D3D0C8" stroke-width="1" stroke-dasharray="5 5"/>
-<text x="720" y="110" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="middle">header + category rail</text>
+<rect width="1440" height="1860" fill="#F4F0E8" stroke="#C2B5A5"/>
+<rect x="0" y="0" width="1440" height="152" rx="0" fill="#FBF9F4" stroke="#DAD0C3" stroke-width="1"/>
+<text x="80" y="60" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#74675F" text-anchor="start">GLOBAL SHELL (see frame 01)</text>
+<rect x="80" y="76" width="1280" height="56" rx="12" fill="#F4F0E8" stroke="#C2B5A5" stroke-width="1" stroke-dasharray="5 5"/>
+<text x="720" y="110" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#74675F" text-anchor="middle">editorial header · navigation · compact search</text>
 <g id="hero" data-name="hero">
-<rect x="80" y="184" width="716.8000000000001" height="340" rx="24" fill="#0B0B0F" stroke="#0B0B0F" stroke-width="1"/>
-<text x="120" y="232" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#6E7480" text-anchor="start" letter-spacing="0.16em">NEW SEASON</text>
-<text x="120" y="292" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="40" font-weight="700" fill="#FFFFFF" text-anchor="start">Everything you</text>
-<text x="120" y="338" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="40" font-weight="400" fill="#D8F14B" text-anchor="start">need, one cart.</text>
+<rect x="80" y="184" width="716.8000000000001" height="340" rx="24" fill="#221A16" stroke="#221A16" stroke-width="1"/>
+<text x="120" y="232" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#74675F" text-anchor="start" letter-spacing="0.16em">NEW SEASON</text>
+<text x="120" y="292" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="40" font-weight="700" fill="#FBF9F4" text-anchor="start">Everything you</text>
+<text x="120" y="338" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="40" font-weight="400" fill="#C8A96B" text-anchor="start">need, one cart.</text>
 <rect x="120" y="368" width="300" height="7" rx="4" fill="#2A2C36" stroke="none" stroke-width="1"/>
 <rect x="120" y="380" width="180" height="7" rx="4" fill="#2A2C36" stroke="none" stroke-width="1"/>
-<rect x="120" y="416" width="150" height="44" rx="10" fill="#D8F14B" stroke="#D8F14B" stroke-width="1"/>
-<text x="195" y="442" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#0B0B0F" text-anchor="middle">Shop the drop</text>
-<rect x="282" y="416" width="130" height="44" rx="10" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="347" y="442" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#0B0B0F" text-anchor="middle">View deals</text>
+<rect x="120" y="416" width="150" height="44" rx="10" fill="#C8A96B" stroke="#C8A96B" stroke-width="1"/>
+<text x="195" y="442" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#221A16" text-anchor="middle">Shop the drop</text>
+<rect x="282" y="416" width="130" height="44" rx="10" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
+<text x="347" y="442" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#221A16" text-anchor="middle">View deals</text>
 <rect x="120" y="480" width="210" height="26" rx="13" fill="#2A2C36" stroke="#2A2C36" stroke-width="1"/>
-<text x="225" y="497" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">★ 4.8 · 12,400 orders shipped</text>
-<rect x="822.4" y="184" width="537.6" height="340" rx="24" fill="#EFEEE9" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M822.4 524 L1360 184" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M822.4 184 L1360 524" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1091.2" y="358" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="middle">hero product shot</text>
+<text x="225" y="497" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#FBF9F4" text-anchor="middle">★ 4.8 · 12,400 orders shipped</text>
+<rect x="822.4" y="184" width="537.6" height="340" rx="24" fill="#E9E2D7" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M822.4 524 L1360 184" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M822.4 184 L1360 524" stroke="#C2B5A5" stroke-width="1"/>
+<text x="1091.2" y="358" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#74675F" text-anchor="middle">hero product shot</text>
 <rect x="842.4" y="204" width="90" height="26" rx="13" fill="#E0334B" stroke="#E0334B" stroke-width="1"/>
 <text x="887.4" y="221" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#fff" text-anchor="middle">−32% off</text>
 </g>
 <g id="confidence-strip" data-name="confidence-strip">
-<rect x="80" y="540" width="308" height="66" rx="14" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="98" y="568" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#0B0B0F" text-anchor="start">Free shipping</text>
-<text x="98" y="586" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#6E7480" text-anchor="start">Threshold shown early</text>
-<rect x="400" y="540" width="308" height="66" rx="14" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="418" y="568" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#0B0B0F" text-anchor="start">Delivery date</text>
-<text x="418" y="586" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#6E7480" text-anchor="start">Pincode-aware estimate</text>
-<rect x="720" y="540" width="308" height="66" rx="14" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="738" y="568" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#0B0B0F" text-anchor="start">Easy returns</text>
-<text x="738" y="586" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#6E7480" text-anchor="start">Policy beside purchase</text>
-<rect x="1040" y="540" width="308" height="66" rx="14" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1058" y="568" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#0B0B0F" text-anchor="start">Secure checkout</text>
-<text x="1058" y="586" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#6E7480" text-anchor="start">UPI · Cards · COD</text>
+<rect x="80" y="540" width="308" height="66" rx="14" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
+<text x="98" y="568" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#221A16" text-anchor="start">Free shipping</text>
+<text x="98" y="586" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#74675F" text-anchor="start">Threshold shown early</text>
+<rect x="400" y="540" width="308" height="66" rx="14" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
+<text x="418" y="568" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#221A16" text-anchor="start">Delivery date</text>
+<text x="418" y="586" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#74675F" text-anchor="start">Pincode-aware estimate</text>
+<rect x="720" y="540" width="308" height="66" rx="14" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
+<text x="738" y="568" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#221A16" text-anchor="start">Easy returns</text>
+<text x="738" y="586" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#74675F" text-anchor="start">Policy beside purchase</text>
+<rect x="1040" y="540" width="308" height="66" rx="14" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
+<text x="1058" y="568" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#221A16" text-anchor="start">Secure checkout</text>
+<text x="1058" y="586" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#74675F" text-anchor="start">UPI · Cards · COD</text>
 </g>
 <g id="category-tiles" data-name="category-tiles">
-<text x="80" y="656" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" fill="#0B0B0F" text-anchor="start">Shop by category</text>
-<text x="1360" y="656" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#5B3DF5" text-anchor="end">See all →</text>
-<rect x="80" y="676" width="196.66666666666666" height="132" rx="16" fill="#EFEEE9" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M80 808 L276.66666666666663 676" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M80 676 L276.66666666666663 808" stroke="#D3D0C8" stroke-width="1"/>
-<text x="178.33333333333331" y="746" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="middle"></text>
-<text x="178.33333333333331" y="832" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#0B0B0F" text-anchor="middle">Electronics</text>
-<rect x="296.66666666666663" y="676" width="196.66666666666666" height="132" rx="16" fill="#EFEEE9" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M296.66666666666663 808 L493.33333333333326 676" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M296.66666666666663 676 L493.33333333333326 808" stroke="#D3D0C8" stroke-width="1"/>
-<text x="394.99999999999994" y="746" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="middle"></text>
-<text x="394.99999999999994" y="832" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#0B0B0F" text-anchor="middle">Home</text>
-<rect x="513.3333333333333" y="676" width="196.66666666666666" height="132" rx="16" fill="#EFEEE9" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M513.3333333333333 808 L709.9999999999999 676" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M513.3333333333333 676 L709.9999999999999 808" stroke="#D3D0C8" stroke-width="1"/>
-<text x="611.6666666666666" y="746" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="middle"></text>
-<text x="611.6666666666666" y="832" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#0B0B0F" text-anchor="middle">Fashion</text>
-<rect x="730" y="676" width="196.66666666666666" height="132" rx="16" fill="#EFEEE9" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M730 808 L926.6666666666666 676" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M730 676 L926.6666666666666 808" stroke="#D3D0C8" stroke-width="1"/>
-<text x="828.3333333333334" y="746" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="middle"></text>
-<text x="828.3333333333334" y="832" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#0B0B0F" text-anchor="middle">Beauty</text>
-<rect x="946.6666666666666" y="676" width="196.66666666666666" height="132" rx="16" fill="#EFEEE9" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M946.6666666666666 808 L1143.3333333333333 676" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M946.6666666666666 676 L1143.3333333333333 808" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1045" y="746" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="middle"></text>
-<text x="1045" y="832" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#0B0B0F" text-anchor="middle">Sports</text>
-<rect x="1163.3333333333333" y="676" width="196.66666666666666" height="132" rx="16" fill="#EFEEE9" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M1163.3333333333333 808 L1360 676" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M1163.3333333333333 676 L1360 808" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1261.6666666666665" y="746" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="middle"></text>
-<text x="1261.6666666666665" y="832" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#0B0B0F" text-anchor="middle">Toys</text>
+<text x="80" y="656" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" fill="#221A16" text-anchor="start">Shop by category</text>
+<text x="1360" y="656" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#A4472D" text-anchor="end">See all →</text>
+<rect x="80" y="676" width="196.66666666666666" height="132" rx="16" fill="#E9E2D7" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M80 808 L276.66666666666663 676" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M80 676 L276.66666666666663 808" stroke="#C2B5A5" stroke-width="1"/>
+<text x="178.33333333333331" y="746" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#74675F" text-anchor="middle"></text>
+<text x="178.33333333333331" y="832" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#221A16" text-anchor="middle">Electronics</text>
+<rect x="296.66666666666663" y="676" width="196.66666666666666" height="132" rx="16" fill="#E9E2D7" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M296.66666666666663 808 L493.33333333333326 676" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M296.66666666666663 676 L493.33333333333326 808" stroke="#C2B5A5" stroke-width="1"/>
+<text x="394.99999999999994" y="746" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#74675F" text-anchor="middle"></text>
+<text x="394.99999999999994" y="832" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#221A16" text-anchor="middle">Home</text>
+<rect x="513.3333333333333" y="676" width="196.66666666666666" height="132" rx="16" fill="#E9E2D7" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M513.3333333333333 808 L709.9999999999999 676" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M513.3333333333333 676 L709.9999999999999 808" stroke="#C2B5A5" stroke-width="1"/>
+<text x="611.6666666666666" y="746" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#74675F" text-anchor="middle"></text>
+<text x="611.6666666666666" y="832" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#221A16" text-anchor="middle">Fashion</text>
+<rect x="730" y="676" width="196.66666666666666" height="132" rx="16" fill="#E9E2D7" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M730 808 L926.6666666666666 676" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M730 676 L926.6666666666666 808" stroke="#C2B5A5" stroke-width="1"/>
+<text x="828.3333333333334" y="746" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#74675F" text-anchor="middle"></text>
+<text x="828.3333333333334" y="832" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#221A16" text-anchor="middle">Beauty</text>
+<rect x="946.6666666666666" y="676" width="196.66666666666666" height="132" rx="16" fill="#E9E2D7" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M946.6666666666666 808 L1143.3333333333333 676" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M946.6666666666666 676 L1143.3333333333333 808" stroke="#C2B5A5" stroke-width="1"/>
+<text x="1045" y="746" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#74675F" text-anchor="middle"></text>
+<text x="1045" y="832" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#221A16" text-anchor="middle">Sports</text>
+<rect x="1163.3333333333333" y="676" width="196.66666666666666" height="132" rx="16" fill="#E9E2D7" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M1163.3333333333333 808 L1360 676" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M1163.3333333333333 676 L1360 808" stroke="#C2B5A5" stroke-width="1"/>
+<text x="1261.6666666666665" y="746" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#74675F" text-anchor="middle"></text>
+<text x="1261.6666666666665" y="832" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#221A16" text-anchor="middle">Toys</text>
 </g>
-<g id="results-toolbar" data-name="results-toolbar">
-<rect x="80" y="876" width="1280" height="56" rx="14" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<rect x="92" y="885" width="300" height="38" rx="19" fill="#F6F5F2" stroke="#D3D0C8" stroke-width="1"/>
-<text x="112" y="909" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="start">⌕  Search within the catalog</text>
-<text x="412" y="910" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#0B0B0F" text-anchor="start">248 products</text>
-<rect x="510" y="891" width="108" height="26" rx="13" fill="#EDE9FE" stroke="#EDE9FE" stroke-width="1"/>
-<text x="564" y="908" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#5B3DF5" text-anchor="middle">Brand: Acme ✕</text>
-<text x="630" y="909" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#5A5F6E" text-anchor="start">Clear all</text>
-<rect x="1040" y="889" width="120" height="30" rx="15" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1100" y="908" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Filters · 2</text>
-<rect x="1170" y="889" width="160" height="30" rx="15" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1250" y="908" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Sort: Price low-high</text>
-<rect x="1336" y="889" width="0" height="30" rx="15" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1336" y="908" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle"></text>
+<g id="collection-heading" data-name="collection-heading">
+<text x="80" y="888" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#74675F" text-anchor="start" letter-spacing="0.16em">THE COLLECTION</text>
+<text x="80" y="924" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="28" font-weight="400" fill="#221A16" text-anchor="start">All products</text>
+<text x="1360" y="922" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#74675F" text-anchor="end">248 items</text>
+<rect x="80" y="942" width="1280" height="1" rx="0" fill="#C2B5A5" stroke="none" stroke-width="1"/>
 </g>
 <g id="facet-sidebar" data-name="facet-sidebar">
-<rect x="80" y="952" width="264" height="520" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="100" y="986" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" fill="#0B0B0F" text-anchor="start">Filters</text>
-<text x="100" y="1028" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#0B0B0F" text-anchor="start">Category</text>
-<rect x="100" y="1042" width="224" height="9" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="100" y="1058" width="224" height="9" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="100" y="1074" width="134.4" height="9" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<text x="100" y="1124" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#0B0B0F" text-anchor="start">Brand</text>
-<rect x="100" y="1138" width="224" height="9" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="100" y="1154" width="224" height="9" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="100" y="1170" width="134.4" height="9" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<text x="100" y="1220" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#0B0B0F" text-anchor="start">Price</text>
-<rect x="100" y="1234" width="224" height="9" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="100" y="1250" width="224" height="9" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="100" y="1266" width="134.4" height="9" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<text x="100" y="1316" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#0B0B0F" text-anchor="start">Rating</text>
-<rect x="100" y="1330" width="224" height="9" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="100" y="1346" width="224" height="9" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="100" y="1362" width="134.4" height="9" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<text x="100" y="1412" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#0B0B0F" text-anchor="start">Availability</text>
-<rect x="100" y="1426" width="224" height="9" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="100" y="1442" width="224" height="9" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="100" y="1458" width="134.4" height="9" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
+<rect x="80" y="972" width="264" height="520" rx="16" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
+<text x="100" y="1006" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" fill="#221A16" text-anchor="start">Filters</text>
+<text x="100" y="1048" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#221A16" text-anchor="start">Category</text>
+<rect x="100" y="1062" width="224" height="9" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<rect x="100" y="1078" width="224" height="9" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<rect x="100" y="1094" width="134.4" height="9" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<text x="100" y="1144" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#221A16" text-anchor="start">Brand</text>
+<rect x="100" y="1158" width="224" height="9" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<rect x="100" y="1174" width="224" height="9" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<rect x="100" y="1190" width="134.4" height="9" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<text x="100" y="1240" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#221A16" text-anchor="start">Price</text>
+<rect x="100" y="1254" width="224" height="9" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<rect x="100" y="1270" width="224" height="9" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<rect x="100" y="1286" width="134.4" height="9" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<text x="100" y="1336" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#221A16" text-anchor="start">Rating</text>
+<rect x="100" y="1350" width="224" height="9" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<rect x="100" y="1366" width="224" height="9" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<rect x="100" y="1382" width="134.4" height="9" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<text x="100" y="1432" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#221A16" text-anchor="start">Availability</text>
+<rect x="100" y="1446" width="224" height="9" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<rect x="100" y="1462" width="224" height="9" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<rect x="100" y="1478" width="134.4" height="9" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
 </g>
 <g id="product-grid" data-name="product-grid">
 <g id="product-card-1" data-name="product-card-1">
-<rect x="372" y="952" width="229" height="360" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<rect x="373" y="953" width="227" height="176" rx="15" fill="#EFEEE9" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M373 1129 L600 953" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M373 953 L600 1129" stroke="#D3D0C8" stroke-width="1"/>
-<text x="486.5" y="1045" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="middle">product</text>
-<rect x="384" y="964" width="56" height="22" rx="11" fill="#E0334B" stroke="#E0334B" stroke-width="1"/>
-<text x="412" y="979" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" fill="#fff" text-anchor="middle">SALE</text>
-<circle cx="577" cy="976" r="14" fill="#FFFFFF" stroke="#D3D0C8"/>
-<text x="577" y="980" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#5A5F6E" text-anchor="middle">♡</text>
-<text x="386" y="1154" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#6E7480" text-anchor="start" letter-spacing="0.14em">BRAND</text>
-<rect x="386" y="1164" width="201" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="386" y="1177" width="120.6" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<text x="386" y="1214" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#5A5F6E" text-anchor="start">★★★★☆  (128)</text>
-<text x="386" y="1240" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#0B0B0F" text-anchor="start">₹2,499</text>
-<text x="458" y="1240" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#6E7480" text-anchor="start">₹3,699</text>
-<rect x="373" y="1266" width="227" height="45" rx="15" fill="#0B0B0F" stroke="#0B0B0F" stroke-width="1"/>
-<text x="486.5" y="1294" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">+  Add to cart</text>
+<rect x="372" y="972" width="229" height="360" rx="16" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
+<rect x="373" y="973" width="227" height="176" rx="15" fill="#E9E2D7" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M373 1149 L600 973" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M373 973 L600 1149" stroke="#C2B5A5" stroke-width="1"/>
+<text x="486.5" y="1065" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#74675F" text-anchor="middle">product</text>
+<rect x="384" y="984" width="56" height="22" rx="11" fill="#E0334B" stroke="#E0334B" stroke-width="1"/>
+<text x="412" y="999" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" fill="#fff" text-anchor="middle">SALE</text>
+<circle cx="577" cy="996" r="14" fill="#FBF9F4" stroke="#C2B5A5"/>
+<text x="577" y="1000" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#6B5E56" text-anchor="middle">♡</text>
+<text x="386" y="1174" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#74675F" text-anchor="start" letter-spacing="0.14em">BRAND</text>
+<rect x="386" y="1184" width="201" height="7" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<rect x="386" y="1197" width="120.6" height="7" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<text x="386" y="1234" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#6B5E56" text-anchor="start">★★★★☆  (128)</text>
+<text x="386" y="1260" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#221A16" text-anchor="start">₹2,499</text>
+<text x="458" y="1260" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#74675F" text-anchor="start">₹3,699</text>
+<rect x="373" y="1286" width="227" height="45" rx="15" fill="#221A16" stroke="#221A16" stroke-width="1"/>
+<text x="486.5" y="1314" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FBF9F4" text-anchor="middle">+  Add to cart</text>
 </g>
 <g id="product-card-2" data-name="product-card-2">
-<rect x="625" y="952" width="229" height="360" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<rect x="626" y="953" width="227" height="176" rx="15" fill="#EFEEE9" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M626 1129 L853 953" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M626 953 L853 1129" stroke="#D3D0C8" stroke-width="1"/>
-<text x="739.5" y="1045" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="middle">product</text>
-<circle cx="830" cy="976" r="14" fill="#FFFFFF" stroke="#D3D0C8"/>
-<text x="830" y="980" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#5A5F6E" text-anchor="middle">♡</text>
-<text x="639" y="1154" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#6E7480" text-anchor="start" letter-spacing="0.14em">BRAND</text>
-<rect x="639" y="1164" width="201" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="639" y="1177" width="120.6" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<text x="639" y="1214" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#5A5F6E" text-anchor="start">★★★★☆  (128)</text>
-<text x="639" y="1240" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#0B0B0F" text-anchor="start">₹2,499</text>
-<text x="711" y="1240" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#6E7480" text-anchor="start">₹3,699</text>
-<rect x="626" y="1266" width="227" height="45" rx="15" fill="#0B0B0F" stroke="#0B0B0F" stroke-width="1"/>
-<text x="739.5" y="1294" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">+  Add to cart</text>
+<rect x="625" y="972" width="229" height="360" rx="16" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
+<rect x="626" y="973" width="227" height="176" rx="15" fill="#E9E2D7" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M626 1149 L853 973" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M626 973 L853 1149" stroke="#C2B5A5" stroke-width="1"/>
+<text x="739.5" y="1065" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#74675F" text-anchor="middle">product</text>
+<circle cx="830" cy="996" r="14" fill="#FBF9F4" stroke="#C2B5A5"/>
+<text x="830" y="1000" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#6B5E56" text-anchor="middle">♡</text>
+<text x="639" y="1174" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#74675F" text-anchor="start" letter-spacing="0.14em">BRAND</text>
+<rect x="639" y="1184" width="201" height="7" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<rect x="639" y="1197" width="120.6" height="7" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<text x="639" y="1234" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#6B5E56" text-anchor="start">★★★★☆  (128)</text>
+<text x="639" y="1260" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#221A16" text-anchor="start">₹2,499</text>
+<text x="711" y="1260" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#74675F" text-anchor="start">₹3,699</text>
+<rect x="626" y="1286" width="227" height="45" rx="15" fill="#221A16" stroke="#221A16" stroke-width="1"/>
+<text x="739.5" y="1314" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FBF9F4" text-anchor="middle">+  Add to cart</text>
 </g>
 <g id="product-card-3" data-name="product-card-3">
-<rect x="878" y="952" width="229" height="360" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<rect x="879" y="953" width="227" height="176" rx="15" fill="#EFEEE9" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M879 1129 L1106 953" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M879 953 L1106 1129" stroke="#D3D0C8" stroke-width="1"/>
-<text x="992.5" y="1045" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="middle">product</text>
-<circle cx="1083" cy="976" r="14" fill="#FFFFFF" stroke="#D3D0C8"/>
-<text x="1083" y="980" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#5A5F6E" text-anchor="middle">♡</text>
-<text x="892" y="1154" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#6E7480" text-anchor="start" letter-spacing="0.14em">BRAND</text>
-<rect x="892" y="1164" width="201" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="892" y="1177" width="120.6" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<text x="892" y="1214" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#5A5F6E" text-anchor="start">★★★★☆  (128)</text>
-<text x="892" y="1240" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#0B0B0F" text-anchor="start">₹2,499</text>
-<text x="964" y="1240" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#6E7480" text-anchor="start">₹3,699</text>
-<rect x="879" y="1266" width="227" height="45" rx="15" fill="#0B0B0F" stroke="#0B0B0F" stroke-width="1"/>
-<text x="992.5" y="1294" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">+  Add to cart</text>
+<rect x="878" y="972" width="229" height="360" rx="16" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
+<rect x="879" y="973" width="227" height="176" rx="15" fill="#E9E2D7" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M879 1149 L1106 973" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M879 973 L1106 1149" stroke="#C2B5A5" stroke-width="1"/>
+<text x="992.5" y="1065" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#74675F" text-anchor="middle">product</text>
+<circle cx="1083" cy="996" r="14" fill="#FBF9F4" stroke="#C2B5A5"/>
+<text x="1083" y="1000" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#6B5E56" text-anchor="middle">♡</text>
+<text x="892" y="1174" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#74675F" text-anchor="start" letter-spacing="0.14em">BRAND</text>
+<rect x="892" y="1184" width="201" height="7" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<rect x="892" y="1197" width="120.6" height="7" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<text x="892" y="1234" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#6B5E56" text-anchor="start">★★★★☆  (128)</text>
+<text x="892" y="1260" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#221A16" text-anchor="start">₹2,499</text>
+<text x="964" y="1260" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#74675F" text-anchor="start">₹3,699</text>
+<rect x="879" y="1286" width="227" height="45" rx="15" fill="#221A16" stroke="#221A16" stroke-width="1"/>
+<text x="992.5" y="1314" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FBF9F4" text-anchor="middle">+  Add to cart</text>
 </g>
 <g id="product-card-4" data-name="product-card-4">
-<rect x="1131" y="952" width="229" height="360" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<rect x="1132" y="953" width="227" height="176" rx="15" fill="#EFEEE9" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M1132 1129 L1359 953" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M1132 953 L1359 1129" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1245.5" y="1045" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="middle">product</text>
-<rect x="1143" y="964" width="56" height="22" rx="11" fill="#E0334B" stroke="#E0334B" stroke-width="1"/>
-<text x="1171" y="979" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" fill="#fff" text-anchor="middle">SALE</text>
-<circle cx="1336" cy="976" r="14" fill="#FFFFFF" stroke="#D3D0C8"/>
-<text x="1336" y="980" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#5A5F6E" text-anchor="middle">♡</text>
-<text x="1145" y="1154" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#6E7480" text-anchor="start" letter-spacing="0.14em">BRAND</text>
-<rect x="1145" y="1164" width="201" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="1145" y="1177" width="120.6" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<text x="1145" y="1214" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#5A5F6E" text-anchor="start">★★★★☆  (128)</text>
-<text x="1145" y="1240" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#0B0B0F" text-anchor="start">₹2,499</text>
-<text x="1217" y="1240" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#6E7480" text-anchor="start">₹3,699</text>
-<rect x="1132" y="1266" width="227" height="45" rx="15" fill="#0B0B0F" stroke="#0B0B0F" stroke-width="1"/>
-<text x="1245.5" y="1294" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">+  Add to cart</text>
+<rect x="1131" y="972" width="229" height="360" rx="16" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
+<rect x="1132" y="973" width="227" height="176" rx="15" fill="#E9E2D7" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M1132 1149 L1359 973" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M1132 973 L1359 1149" stroke="#C2B5A5" stroke-width="1"/>
+<text x="1245.5" y="1065" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#74675F" text-anchor="middle">product</text>
+<rect x="1143" y="984" width="56" height="22" rx="11" fill="#E0334B" stroke="#E0334B" stroke-width="1"/>
+<text x="1171" y="999" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" fill="#fff" text-anchor="middle">SALE</text>
+<circle cx="1336" cy="996" r="14" fill="#FBF9F4" stroke="#C2B5A5"/>
+<text x="1336" y="1000" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#6B5E56" text-anchor="middle">♡</text>
+<text x="1145" y="1174" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#74675F" text-anchor="start" letter-spacing="0.14em">BRAND</text>
+<rect x="1145" y="1184" width="201" height="7" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<rect x="1145" y="1197" width="120.6" height="7" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<text x="1145" y="1234" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#6B5E56" text-anchor="start">★★★★☆  (128)</text>
+<text x="1145" y="1260" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#221A16" text-anchor="start">₹2,499</text>
+<text x="1217" y="1260" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#74675F" text-anchor="start">₹3,699</text>
+<rect x="1132" y="1286" width="227" height="45" rx="15" fill="#221A16" stroke="#221A16" stroke-width="1"/>
+<text x="1245.5" y="1314" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FBF9F4" text-anchor="middle">+  Add to cart</text>
 </g>
 <g id="product-card-5" data-name="product-card-5">
-<rect x="372" y="1340" width="229" height="360" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<rect x="373" y="1341" width="227" height="176" rx="15" fill="#EFEEE9" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M373 1517 L600 1341" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M373 1341 L600 1517" stroke="#D3D0C8" stroke-width="1"/>
-<text x="486.5" y="1433" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="middle">product</text>
-<circle cx="577" cy="1364" r="14" fill="#FFFFFF" stroke="#D3D0C8"/>
-<text x="577" y="1368" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#5A5F6E" text-anchor="middle">♡</text>
-<text x="386" y="1542" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#6E7480" text-anchor="start" letter-spacing="0.14em">BRAND</text>
-<rect x="386" y="1552" width="201" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="386" y="1565" width="120.6" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<text x="386" y="1602" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#5A5F6E" text-anchor="start">★★★★☆  (128)</text>
-<text x="386" y="1628" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#0B0B0F" text-anchor="start">₹2,499</text>
-<text x="458" y="1628" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#6E7480" text-anchor="start">₹3,699</text>
-<rect x="373" y="1654" width="227" height="45" rx="15" fill="#0B0B0F" stroke="#0B0B0F" stroke-width="1"/>
-<text x="486.5" y="1682" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">+  Add to cart</text>
+<rect x="372" y="1360" width="229" height="360" rx="16" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
+<rect x="373" y="1361" width="227" height="176" rx="15" fill="#E9E2D7" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M373 1537 L600 1361" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M373 1361 L600 1537" stroke="#C2B5A5" stroke-width="1"/>
+<text x="486.5" y="1453" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#74675F" text-anchor="middle">product</text>
+<circle cx="577" cy="1384" r="14" fill="#FBF9F4" stroke="#C2B5A5"/>
+<text x="577" y="1388" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#6B5E56" text-anchor="middle">♡</text>
+<text x="386" y="1562" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#74675F" text-anchor="start" letter-spacing="0.14em">BRAND</text>
+<rect x="386" y="1572" width="201" height="7" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<rect x="386" y="1585" width="120.6" height="7" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<text x="386" y="1622" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#6B5E56" text-anchor="start">★★★★☆  (128)</text>
+<text x="386" y="1648" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#221A16" text-anchor="start">₹2,499</text>
+<text x="458" y="1648" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#74675F" text-anchor="start">₹3,699</text>
+<rect x="373" y="1674" width="227" height="45" rx="15" fill="#221A16" stroke="#221A16" stroke-width="1"/>
+<text x="486.5" y="1702" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FBF9F4" text-anchor="middle">+  Add to cart</text>
 </g>
 <g id="product-card-6" data-name="product-card-6">
-<rect x="625" y="1340" width="229" height="360" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<rect x="626" y="1341" width="227" height="176" rx="15" fill="#EFEEE9" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M626 1517 L853 1341" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M626 1341 L853 1517" stroke="#D3D0C8" stroke-width="1"/>
-<text x="739.5" y="1433" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="middle">product</text>
-<circle cx="830" cy="1364" r="14" fill="#FFFFFF" stroke="#D3D0C8"/>
-<text x="830" y="1368" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#5A5F6E" text-anchor="middle">♡</text>
-<text x="639" y="1542" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#6E7480" text-anchor="start" letter-spacing="0.14em">BRAND</text>
-<rect x="639" y="1552" width="201" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="639" y="1565" width="120.6" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<text x="639" y="1602" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#5A5F6E" text-anchor="start">★★★★☆  (128)</text>
-<text x="639" y="1628" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#0B0B0F" text-anchor="start">₹2,499</text>
-<text x="711" y="1628" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#6E7480" text-anchor="start">₹3,699</text>
-<rect x="626" y="1654" width="227" height="45" rx="15" fill="#0B0B0F" stroke="#0B0B0F" stroke-width="1"/>
-<text x="739.5" y="1682" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">+  Add to cart</text>
+<rect x="625" y="1360" width="229" height="360" rx="16" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
+<rect x="626" y="1361" width="227" height="176" rx="15" fill="#E9E2D7" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M626 1537 L853 1361" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M626 1361 L853 1537" stroke="#C2B5A5" stroke-width="1"/>
+<text x="739.5" y="1453" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#74675F" text-anchor="middle">product</text>
+<circle cx="830" cy="1384" r="14" fill="#FBF9F4" stroke="#C2B5A5"/>
+<text x="830" y="1388" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#6B5E56" text-anchor="middle">♡</text>
+<text x="639" y="1562" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#74675F" text-anchor="start" letter-spacing="0.14em">BRAND</text>
+<rect x="639" y="1572" width="201" height="7" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<rect x="639" y="1585" width="120.6" height="7" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<text x="639" y="1622" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#6B5E56" text-anchor="start">★★★★☆  (128)</text>
+<text x="639" y="1648" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#221A16" text-anchor="start">₹2,499</text>
+<text x="711" y="1648" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#74675F" text-anchor="start">₹3,699</text>
+<rect x="626" y="1674" width="227" height="45" rx="15" fill="#221A16" stroke="#221A16" stroke-width="1"/>
+<text x="739.5" y="1702" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FBF9F4" text-anchor="middle">+  Add to cart</text>
 </g>
 <g id="product-card-7" data-name="product-card-7">
-<rect x="878" y="1340" width="229" height="360" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<rect x="879" y="1341" width="227" height="176" rx="15" fill="#EFEEE9" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M879 1517 L1106 1341" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M879 1341 L1106 1517" stroke="#D3D0C8" stroke-width="1"/>
-<text x="992.5" y="1433" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="middle">product</text>
-<rect x="890" y="1352" width="56" height="22" rx="11" fill="#E0334B" stroke="#E0334B" stroke-width="1"/>
-<text x="918" y="1367" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" fill="#fff" text-anchor="middle">SALE</text>
-<circle cx="1083" cy="1364" r="14" fill="#FFFFFF" stroke="#D3D0C8"/>
-<text x="1083" y="1368" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#5A5F6E" text-anchor="middle">♡</text>
-<text x="892" y="1542" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#6E7480" text-anchor="start" letter-spacing="0.14em">BRAND</text>
-<rect x="892" y="1552" width="201" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="892" y="1565" width="120.6" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<text x="892" y="1602" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#5A5F6E" text-anchor="start">★★★★☆  (128)</text>
-<text x="892" y="1628" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#0B0B0F" text-anchor="start">₹2,499</text>
-<text x="964" y="1628" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#6E7480" text-anchor="start">₹3,699</text>
-<rect x="879" y="1654" width="227" height="45" rx="15" fill="#0B0B0F" stroke="#0B0B0F" stroke-width="1"/>
-<text x="992.5" y="1682" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">+  Add to cart</text>
+<rect x="878" y="1360" width="229" height="360" rx="16" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
+<rect x="879" y="1361" width="227" height="176" rx="15" fill="#E9E2D7" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M879 1537 L1106 1361" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M879 1361 L1106 1537" stroke="#C2B5A5" stroke-width="1"/>
+<text x="992.5" y="1453" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#74675F" text-anchor="middle">product</text>
+<rect x="890" y="1372" width="56" height="22" rx="11" fill="#E0334B" stroke="#E0334B" stroke-width="1"/>
+<text x="918" y="1387" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" fill="#fff" text-anchor="middle">SALE</text>
+<circle cx="1083" cy="1384" r="14" fill="#FBF9F4" stroke="#C2B5A5"/>
+<text x="1083" y="1388" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#6B5E56" text-anchor="middle">♡</text>
+<text x="892" y="1562" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#74675F" text-anchor="start" letter-spacing="0.14em">BRAND</text>
+<rect x="892" y="1572" width="201" height="7" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<rect x="892" y="1585" width="120.6" height="7" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<text x="892" y="1622" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#6B5E56" text-anchor="start">★★★★☆  (128)</text>
+<text x="892" y="1648" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#221A16" text-anchor="start">₹2,499</text>
+<text x="964" y="1648" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#74675F" text-anchor="start">₹3,699</text>
+<rect x="879" y="1674" width="227" height="45" rx="15" fill="#221A16" stroke="#221A16" stroke-width="1"/>
+<text x="992.5" y="1702" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FBF9F4" text-anchor="middle">+  Add to cart</text>
 </g>
 <g id="product-card-8" data-name="product-card-8">
-<rect x="1131" y="1340" width="229" height="360" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<rect x="1132" y="1341" width="227" height="176" rx="15" fill="#EFEEE9" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M1132 1517 L1359 1341" stroke="#D3D0C8" stroke-width="1"/>
-<path d="M1132 1341 L1359 1517" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1245.5" y="1433" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6E7480" text-anchor="middle">product</text>
-<circle cx="1336" cy="1364" r="14" fill="#FFFFFF" stroke="#D3D0C8"/>
-<text x="1336" y="1368" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#5A5F6E" text-anchor="middle">♡</text>
-<text x="1145" y="1542" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#6E7480" text-anchor="start" letter-spacing="0.14em">BRAND</text>
-<rect x="1145" y="1552" width="201" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="1145" y="1565" width="120.6" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<text x="1145" y="1602" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#5A5F6E" text-anchor="start">★★★★☆  (128)</text>
-<text x="1145" y="1628" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#0B0B0F" text-anchor="start">₹2,499</text>
-<text x="1217" y="1628" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#6E7480" text-anchor="start">₹3,699</text>
-<rect x="1132" y="1654" width="227" height="45" rx="15" fill="#0B0B0F" stroke="#0B0B0F" stroke-width="1"/>
-<text x="1245.5" y="1682" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">+  Add to cart</text>
+<rect x="1131" y="1360" width="229" height="360" rx="16" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
+<rect x="1132" y="1361" width="227" height="176" rx="15" fill="#E9E2D7" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M1132 1537 L1359 1361" stroke="#C2B5A5" stroke-width="1"/>
+<path d="M1132 1361 L1359 1537" stroke="#C2B5A5" stroke-width="1"/>
+<text x="1245.5" y="1453" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#74675F" text-anchor="middle">product</text>
+<circle cx="1336" cy="1384" r="14" fill="#FBF9F4" stroke="#C2B5A5"/>
+<text x="1336" y="1388" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#6B5E56" text-anchor="middle">♡</text>
+<text x="1145" y="1562" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#74675F" text-anchor="start" letter-spacing="0.14em">BRAND</text>
+<rect x="1145" y="1572" width="201" height="7" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<rect x="1145" y="1585" width="120.6" height="7" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
+<text x="1145" y="1622" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#6B5E56" text-anchor="start">★★★★☆  (128)</text>
+<text x="1145" y="1648" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#221A16" text-anchor="start">₹2,499</text>
+<text x="1217" y="1648" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#74675F" text-anchor="start">₹3,699</text>
+<rect x="1132" y="1674" width="227" height="45" rx="15" fill="#221A16" stroke="#221A16" stroke-width="1"/>
+<text x="1245.5" y="1702" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FBF9F4" text-anchor="middle">+  Add to cart</text>
 </g>
-<rect x="776" y="1720" width="180" height="44" rx="10" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="866" y="1746" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#0B0B0F" text-anchor="middle">Load more</text>
+<rect x="776" y="1740" width="180" height="44" rx="10" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
+<text x="866" y="1766" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#221A16" text-anchor="middle">Load more</text>
 </g>
 <g id="annotations" data-name="annotations">
 <circle cx="852.4" cy="504" r="9" fill="#B0455A"/>
@@ -274,10 +265,10 @@
 <text x="115" y="634" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#B0455A" text-anchor="start">Category tiles surface the taxonomy above the fold</text>
 <circle cx="1010" cy="862" r="9" fill="#B0455A"/>
 <text x="1010" y="866" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">3</text>
-<text x="1025" y="866" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#B0455A" text-anchor="start">Sticky toolbar: active facets as removable chips + sort</text>
-<circle cx="382" cy="934" r="9" fill="#B0455A"/>
-<text x="382" y="938" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">4</text>
-<text x="397" y="938" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#B0455A" text-anchor="start">Card: hover reveals full-width Add to cart; wishlist ♡ top-right; badges top-left</text>
+<text x="1025" y="866" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#B0455A" text-anchor="start">No sticky toolbar: refinement stays in the quiet left column</text>
+<circle cx="382" cy="954" r="9" fill="#B0455A"/>
+<text x="382" y="958" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">4</text>
+<text x="397" y="958" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#B0455A" text-anchor="start">Card: hover reveals full-width Add to cart; wishlist ♡ top-right; badges top-left</text>
 </g>
 </g>
 </svg>
