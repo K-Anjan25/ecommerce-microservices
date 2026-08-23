@@ -46,7 +46,6 @@ function Comments({ comments, onCreateComment }: CommentsProps) {
             endIcon={<SendIcon />}
             type="submit"
             disabled={!comment.trim()}
-            className="!bg-brand !text-paper hover:!bg-brand-main"
           >
             Post
           </Button>

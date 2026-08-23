@@ -95,11 +95,31 @@ See `.env.example`. Never commit real `.env` values.
 
 ## Frontend
 
-React 18 + TypeScript, Redux, Material UI, Tailwind CSS.
+React 18 + TypeScript, Redux, Material UI, Tailwind CSS — **Cartly 2.0 design system**.
 
 - **Proxy**: `/api` → `http://localhost:8889` (API Gateway)
 - **Auth**: JWT with auto-refresh (Bearer prefix handled in the refresh interceptor)
 - **Admin**: `/admin/*` (requires `ROLE_ADMIN` / `ROLE_SUPER_ADMIN`)
+- **Design kit**: wireframes, tokens and the Figma handoff live in [`design/`](design/);
+  the engineering record is [`docs/08-frontend-redesign.md`](docs/08-frontend-redesign.md).
+
+### WordPress theme — separate repository
+
+The same design system also ships as an installable WordPress + WooCommerce
+theme: **[`cartly-wp-theme`](https://github.com/K-Anjan25/cartly-wp-theme)**. Same tokens, same shell, same product
+card, rendered by PHP instead of React.
+
+It lives in its own repo because it has a different audience and release
+cadence — see [`docs/09-frontend-strategy.md`](docs/09-frontend-strategy.md).
+`design/tokens.json` stays canonical **here**; the theme pulls it and its CI
+fails if the two drift.
+
+### Reviewing the UI without the backend
+
+```bash
+node design/preview-mock-server.mjs   # dev-only fake gateway on :8889
+cd frontend && npm start              # http://localhost:3000
+```
 
 ## Testing
 
@@ -120,3 +140,9 @@ Per-container caps (`docker-compose.yml`): postgres 384m, rabbitmq 128m, gateway
 - `docs/03-system-design.md` — components, sequence flows, data model
 - `docs/04-uml-and-flows.md` — UML diagrams + state machines
 - `docs/05-restructure-plan.md` — how the old 10-service stack was consolidated
+- `docs/06-roadmap.md` — phased roadmap (6 → 10) and guardrails
+- `docs/07-handoff-opencode.md` — running session log / handoff notes
+- `docs/08-frontend-redesign.md` — Cartly 2.0 frontend redesign
+- `docs/09-frontend-strategy.md` — **open decision:** React vs WordPress/WooCommerce
+- `design/README.md` — design tokens, wireframes and the Figma handoff
+- [`cartly-wp-theme`](https://github.com/K-Anjan25/cartly-wp-theme) — the design system as a WordPress/WooCommerce theme (separate repo)

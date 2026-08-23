@@ -14,30 +14,30 @@ const highlights = [
 function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <Box className="min-h-[calc(100vh-8rem)]">
-      <Box className="grid overflow-hidden rounded-3xl border border-ink/10 shadow-lift lg:grid-cols-2">
-        <Box className="brand-gradient relative hidden flex-col justify-between p-12 text-paper lg:flex">
+      <Box className="grid overflow-hidden rounded-xl2 border border-line bg-paper shadow-card lg:grid-cols-2">
+        <Box className="grain relative hidden flex-col justify-between bg-contrast p-12 text-oncontrast lg:flex">
           <Box className="flex items-center gap-3">
             <ShoppingBagIcon fontSize="large" className="text-accent" />
             <Typography
               variant="h5"
-              className="font-mono font-bold tracking-[0.3em]"
+              className="font-heading font-extrabold tracking-[0.2em]"
             >
               CARTLY
             </Typography>
           </Box>
 
           <Box>
-            <Typography variant="h3" className="font-bold leading-tight">
-              The marketplace that keeps things simple.
+            <Typography variant="h3" className="font-heading font-extrabold leading-[1.1] tracking-tight">
+              Everything you need, one cart.
             </Typography>
-            <Typography className="mt-3 max-w-md text-paper/80">
+            <Typography className="mt-4 max-w-md text-ink-muted">
               Shop curated products, manage your cart, and track every order —
               powered by a resilient microservices backend.
             </Typography>
             <Box className="mt-8 space-y-3">
               {highlights.map((item, idx) => (
-                <Box key={idx} className="flex items-center gap-3 text-paper/90">
-                  <Box className="flex h-9 w-9 items-center justify-center rounded-full bg-paper/15">
+                <Box key={idx} className="flex items-center gap-3 text-oncontrast">
+                  <Box className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-accent">
                     {item.icon}
                   </Box>
                   <Typography>{item.text}</Typography>
@@ -46,18 +46,18 @@ function AuthLayout({ children }: { children: React.ReactNode }) {
             </Box>
           </Box>
 
-          <Typography className="text-sm text-paper/60">
+          <Typography className="text-xs text-ink-muted">
             Spring Boot · React · RabbitMQ · PostgreSQL
           </Typography>
         </Box>
 
-        <Box className="flex items-center justify-center bg-white px-6 py-12 sm:px-12">
+        <Box className="flex items-center justify-center bg-paper px-6 py-12 sm:px-12">
           <Box className="w-full max-w-md">
             <Box className="mb-8 flex items-center gap-2 lg:hidden">
               <ShoppingBagIcon className="text-brand" />
               <Typography
                 variant="h6"
-                className="font-mono font-bold tracking-[0.25em]"
+                className="font-heading font-extrabold tracking-[0.2em]"
               >
                 CARTLY
               </Typography>

@@ -24,3 +24,6 @@ dev-server.log
 # Secrets (never commit)
 .env
 .env.local
+
+# WordPress theme build
+wordpress/cartly/node_modules/

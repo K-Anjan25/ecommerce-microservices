@@ -1,30 +1,41 @@
-import { Box, Button, Chip, Paper, Typography } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useQuery, useMutation } from "react-query";
+import { useMemo } from "react";
+import { useMutation, useQuery } from "react-query";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Skeleton } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
+import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
+
 import { OrderApi } from "../../../../api/orderApi";
 import { ProductApi } from "../../../../api/productApi";
 import { UserApi } from "../../../../api/userApi";
 import { ReturnApi } from "../../../../api/returnApi";
+import DataTable, { DataColumn, StatusPill } from "../../../../components/DataTable";
 import EmptyState from "../../../../components/EmptyState";
-import Loader from "../../../../components/Loader";
 import PageHeader from "../../../../components/PageHeader";
-import TableWithDetail from "../../../../components/Table/TableWithDetail";
-import { ORDER_PRODUCT_COLUMNS } from "../../../../constants/table";
 import { Order } from "../../../../types/order";
 import { ReturnRequest, ReturnStatus } from "../../../../types/returnRequest";
-import { OrderProductRow } from "../../../../types/table";
-import {
-  calculateTotalPriceOfOneProduct,
-  formatPrice,
-} from "../../../../utils/cart";
-import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
+import { formatPrice } from "../../../../utils/cart";
+import { formatDate } from "../../../../utils/date";
 import { showSuccess } from "../../../../utils/showSuccess";
 import { showError } from "../../../../utils/showError";
 
 interface OrderLocation {
   state?: Order;
 }
+
+type LineRow = {
+  id: string;
+  name: string;
+  cover?: string;
+  variant?: string;
+  unitPrice: number;
+  quantity: number;
+  total: number;
+};
 
 function OrderDetail() {
   const navigate = useNavigate();
@@ -45,47 +56,82 @@ function OrderDetail() {
 
   const { data: products, isLoading: productsLoading } = useQuery(
     ["admin:order-product", resolvedOrder?.id],
-    () => {
-      if (!resolvedOrder) return undefined;
-      const productIds = resolvedOrder.items.map((item) => item.productId);
-      return ProductApi.getProductsByIds(productIds);
-    },
-    { enabled: Boolean(resolvedOrder) }
+    () =>
+      resolvedOrder
+        ? ProductApi.getProductsByIds(resolvedOrder.items.map((i) => i.productId))
+        : undefined,
+    { enabled: Boolean(resolvedOrder), retry: false }
   );
 
-  const { data: user, isLoading: userLoading } = useQuery(
+  const { data: user } = useQuery(
     ["admin:user", resolvedOrder?.customerId],
-    () => {
-      if (!resolvedOrder) return undefined;
-      return UserApi.getUserById(resolvedOrder.customerId);
-    },
-    { enabled: Boolean(resolvedOrder) }
+    () => (resolvedOrder ? UserApi.getUserById(resolvedOrder.customerId) : undefined),
+    { enabled: Boolean(resolvedOrder), retry: false }
   );
 
   const { data: returns, refetch: refetchReturns } = useQuery(
     ["admin:returns", resolvedOrder?.id],
-    () => {
-      if (!resolvedOrder) return [];
-      return ReturnApi.getReturnRequestsByOrder(resolvedOrder.id);
-    },
+    () => (resolvedOrder ? ReturnApi.getReturnRequestsByOrder(resolvedOrder.id) : []),
     { enabled: Boolean(resolvedOrder) }
   );
 
   const approveMutation = useMutation(ReturnApi.approveReturnRequest, {
-    onSuccess: () => { showSuccess("Return approved"); refetchReturns(); },
+    onSuccess: () => {
+      showSuccess("Return approved");
+      refetchReturns();
+    },
+    onError: (e: any) => showError(e.response?.data?.message ?? "Could not approve"),
   });
   const rejectMutation = useMutation(ReturnApi.rejectReturnRequest, {
-    onSuccess: () => { showSuccess("Return rejected"); refetchReturns(); },
+    onSuccess: () => {
+      showSuccess("Return rejected");
+      refetchReturns();
+    },
+    onError: (e: any) => showError(e.response?.data?.message ?? "Could not reject"),
   });
   const refundMutation = useMutation(ReturnApi.refundReturnRequest, {
-    onSuccess: () => { showSuccess("Refund processed"); refetchReturns(); },
+    onSuccess: () => {
+      showSuccess("Refund processed");
+      refetchReturns();
+    },
     onError: (e: any) => {
       showError(e.response?.data?.message ?? e.response?.data?.error ?? "Refund failed");
       refetchReturns();
     },
   });
 
-  if (orderLoading && !orderFromNav) return <Loader />;
+  const byId = useMemo(() => new Map((products ?? []).map((p) => [p.id, p])), [products]);
+  const nameOf = (id: string) => byId.get(id)?.name ?? `Product ${id.slice(0, 8)}…`;
+
+  const rows: LineRow[] = useMemo(() => {
+    if (!resolvedOrder) return [];
+    return resolvedOrder.items.map((item) => {
+      const p = byId.get(item.productId);
+      const variant = item.variantId
+        ? p?.variants?.find((v) => v.id === item.variantId)
+        : undefined;
+      const unitPrice = variant?.price ?? p?.unitPrice ?? 0;
+      return {
+        id: `${item.productId}-${item.variantId ?? "base"}`,
+        name: p?.name ?? `Product ${item.productId.slice(0, 8)}…`,
+        cover: p?.images?.[0] || p?.imageUrl,
+        variant: variant?.name,
+        unitPrice,
+        quantity: item.quantity,
+        total: Math.round(unitPrice * item.quantity * 100) / 100,
+      };
+    });
+  }, [resolvedOrder, byId]);
+
+  if (orderLoading && !orderFromNav) {
+    return (
+      <div className="space-y-6">
+        <Skeleton variant="text" width={240} height={40} />
+        <Skeleton variant="rectangular" height={110} className="!rounded-lg" />
+        <Skeleton variant="rectangular" height={280} className="!rounded-lg" />
+      </div>
+    );
+  }
 
   if (!resolvedOrder) {
     return (
@@ -95,121 +141,242 @@ function OrderDetail() {
           title="Order not found"
           subtitle="We could not find the order you are looking for."
           action={
-            <Button
-              variant="contained"
-              className="!bg-brand !text-paper hover:!bg-brand-main"
-              onClick={() => navigate("/admin/orders")}
-            >
+            <button className="primary-button" onClick={() => navigate("/admin/orders")}>
               Back to orders
-            </Button>
+            </button>
           }
         />
       </div>
     );
   }
 
-  const orderRows = products?.map((product) => {
-    const quantity =
-      resolvedOrder.items.find((item) => item.productId === product?.id)
-        ?.quantity ?? 0;
-    return new OrderProductRow(
-      product.id,
-      product.name,
-      user?.firstName + " " + user?.lastName,
-      user?.email ?? "",
-      resolvedOrder.address.state,
-      product.unitPrice,
-      quantity,
-      calculateTotalPriceOfOneProduct(product.unitPrice, quantity)
-    );
-  });
+  const subtotal = rows.reduce((acc, r) => acc + r.total, 0);
 
-  const calculateSubtotal = () => {
-    return orderRows
-      ?.reduce((acc, product) => product.totalPrice + acc, 0)
-      .toFixed(2);
-  };
+  const columns: DataColumn<LineRow>[] = [
+    {
+      id: "name",
+      label: "Product",
+      minWidth: 240,
+      render: (r) => (
+        <span className="flex items-center gap-3">
+          <span className="h-10 w-10 shrink-0 overflow-hidden rounded-xs border border-line bg-sunken">
+            {r.cover ? (
+              <img src={r.cover} alt="" className="h-full w-full object-cover" />
+            ) : (
+              <span className="flex h-full items-center justify-center text-ink-faint">
+                <ImageOutlinedIcon sx={{ fontSize: 15 }} />
+              </span>
+            )}
+          </span>
+          <span className="min-w-0">
+            <span className="block truncate font-semibold">{r.name}</span>
+            {r.variant && <span className="text-xs text-ink-muted">{r.variant}</span>}
+          </span>
+        </span>
+      ),
+    },
+    {
+      id: "unitPrice",
+      label: "Unit price",
+      align: "right",
+      hideBelow: "lg",
+      render: (r) => formatPrice(r.unitPrice),
+    },
+    { id: "quantity", label: "Qty", align: "right", render: (r) => r.quantity },
+    {
+      id: "total",
+      label: "Subtotal",
+      align: "right",
+      render: (r) => <span className="font-semibold">{formatPrice(r.total)}</span>,
+    },
+  ];
+
+  const summaryRows: [string, string, boolean?][] = [
+    ["Items subtotal", formatPrice(subtotal)],
+    ...(resolvedOrder.discountAmount
+      ? ([["Discount", `−${formatPrice(resolvedOrder.discountAmount)}`, true]] as [
+          string,
+          string,
+          boolean
+        ][])
+      : []),
+    ["Shipping", resolvedOrder.shippingAmount ? formatPrice(resolvedOrder.shippingAmount) : "Free"],
+    ...(resolvedOrder.taxAmount ? ([["Tax", formatPrice(resolvedOrder.taxAmount)]] as [string, string][]) : []),
+    ...(resolvedOrder.giftWrapFee
+      ? ([["Gift wrap", formatPrice(resolvedOrder.giftWrapFee)]] as [string, string][])
+      : []),
+  ];
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Order details"
-        subtitle={`Order ${resolvedOrder.id}`}
+        eyebrow="Order"
+        title={`#${resolvedOrder.id.slice(0, 8)}…`}
+        subtitle={`Placed ${formatDate(resolvedOrder.createdDate)}`}
         actions={
-          <Button
-            variant="outlined"
-            startIcon={<ArrowBackIcon />}
-            className="border-ink/20 text-ink hover:border-brand hover:bg-brand-tint hover:text-brand"
-            onClick={() => navigate("/admin/orders")}
-          >
+          <button onClick={() => navigate("/admin/orders")} className="secondary-button !py-2">
+            <ArrowBackIcon sx={{ fontSize: 16 }} />
             Back to orders
-          </Button>
+          </button>
         }
       />
 
-      <Box className="flex flex-wrap gap-4">
-        <Box className="panel flex items-center gap-2 px-5 py-3">
-          <span className="text-sm text-ink-soft">Status:</span>
-          <span className="rounded-full bg-brand-soft px-3 py-1 text-sm font-semibold text-brand">
-            {resolvedOrder.orderStatus}
-          </span>
-        </Box>
-        <Box className="panel flex items-center gap-2 px-5 py-3">
-          <span className="text-sm text-ink-soft">Customer:</span>
-          <span className="text-sm font-semibold text-ink">
-            {user
-              ? `${user.firstName} ${user.lastName} (${user.email})`
-              : "—"}
-          </span>
-        </Box>
-      </Box>
-
-      {productsLoading || userLoading ? (
-        <Loader />
-      ) : (
-        <TableWithDetail rows={orderRows} columns={ORDER_PRODUCT_COLUMNS} />
-      )}
-
-      <Paper className="ml-auto flex w-fit items-center gap-6 p-5">
-        <div className="text-right">
-          <Typography className="text-sm text-ink-soft">Subtotal</Typography>
-          <Typography variant="h5" className="price-text">
-            {formatPrice(Number(calculateSubtotal() ?? 0))}
-          </Typography>
+      {/* ── facts row ────────────────────────────────────────────────── */}
+      <div className="grid gap-3 md:grid-cols-3">
+        <div className="panel p-5">
+          <p className="eyebrow">Status</p>
+          <div className="mt-2">
+            <StatusPill value={resolvedOrder.orderStatus} />
+          </div>
+          <p className="mt-3 font-heading text-xl font-extrabold text-ink">
+            {formatPrice(resolvedOrder.totalAmount)}
+          </p>
+          <p className="text-xs text-ink-muted">Order total</p>
         </div>
-      </Paper>
 
+        <div className="panel p-5">
+          <p className="eyebrow flex items-center gap-1.5">
+            <PersonOutlineIcon sx={{ fontSize: 14 }} />
+            Customer
+          </p>
+          {user ? (
+            <>
+              <p className="mt-2 truncate text-sm font-bold text-ink">
+                {user.firstName} {user.lastName}
+              </p>
+              <p className="truncate text-xs text-ink-soft">{user.email}</p>
+              <button
+                onClick={() => navigate("/admin/users")}
+                className="mt-3 text-xs font-semibold text-brand hover:underline"
+              >
+                View in customers →
+              </button>
+            </>
+          ) : (
+            <p className="mt-2 text-sm text-ink-muted">Guest order</p>
+          )}
+        </div>
+
+        <div className="panel p-5">
+          <p className="eyebrow flex items-center gap-1.5">
+            <PlaceOutlinedIcon sx={{ fontSize: 14 }} />
+            Ship to
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-ink-soft">
+            {resolvedOrder.address.addressDetail}
+            <br />
+            {resolvedOrder.address.district}, {resolvedOrder.address.state}
+          </p>
+          {resolvedOrder.shippingMethod && (
+            <p className="mt-2 text-xs text-ink-muted">
+              {resolvedOrder.shippingMethod === "EXPRESS" ? "Express" : "Standard"} shipping
+              {resolvedOrder.giftWrap ? " · gift wrapped" : ""}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* ── lines + totals ───────────────────────────────────────────── */}
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+        {productsLoading ? (
+          <Skeleton variant="rectangular" height={240} className="!rounded-lg" />
+        ) : (
+          <DataTable<LineRow>
+            rows={rows}
+            columns={columns}
+            getRowId={(r) => r.id}
+            caption={`${rows.length} line item${rows.length === 1 ? "" : "s"}`}
+          />
+        )}
+
+        <aside className="panel-raised h-fit p-5">
+          <h2 className="mb-4 font-heading text-base font-bold">Totals</h2>
+          <dl className="space-y-2.5 text-sm">
+            {summaryRows.map(([label, value, positive]) => (
+              <div key={label} className="flex justify-between">
+                <dt className={positive ? "text-state-success" : "text-ink-soft"}>{label}</dt>
+                <dd className={`font-semibold ${positive ? "text-state-success" : ""}`}>
+                  {value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+          <div className="mt-4 flex items-baseline justify-between border-t border-line pt-4">
+            <span className="font-heading text-base font-bold">Total</span>
+            <span className="font-heading text-xl font-extrabold">
+              {formatPrice(resolvedOrder.totalAmount)}
+            </span>
+          </div>
+        </aside>
+      </div>
+
+      {/* ── returns queue ────────────────────────────────────────────── */}
       {returns && returns.length > 0 && (
-        <Paper className="p-6 sm:p-8">
-          <Typography variant="h6" className="mb-4 font-bold">
-            Returns & refunds
-          </Typography>
-          <div className="space-y-3">
+        <section className="panel p-5 sm:p-6">
+          <h2 className="mb-4 font-heading text-base font-bold">Returns &amp; refunds</h2>
+          <ul className="space-y-3">
             {returns.map((r: ReturnRequest) => (
-              <div key={r.id} className="flex items-center justify-between rounded-xl border border-ink/10 p-4">
-                <div>
-                  <Typography className="font-semibold">Product {r.productId}</Typography>
-                  <Typography className="text-sm text-ink-soft">Qty: {r.quantity} · Reason: {r.reason || "—"}</Typography>
+              <li
+                key={r.id}
+                className="flex flex-wrap items-center justify-between gap-4 rounded-sm border border-line p-4"
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-bold text-ink">{nameOf(r.productId)}</p>
+                  <p className="text-xs text-ink-muted">
+                    Qty {r.quantity} · {r.reason || "no reason given"}
+                  </p>
                   {r.rejectionReason && (
-                    <Typography className="text-sm text-rose-600">Rejected: {r.rejectionReason}</Typography>
+                    <p className="mt-1 text-xs text-state-danger">
+                      Rejected: {r.rejectionReason}
+                    </p>
+                  )}
+                  {r.refundAmount != null && (
+                    <p className="mt-1 text-xs text-state-success">
+                      Refunded {formatPrice(r.refundAmount)}
+                      {r.refundTransactionId ? ` · ${r.refundTransactionId}` : ""}
+                    </p>
                   )}
                 </div>
-                <div className="flex items-center gap-2">
-                  <Chip label={r.status} color={r.status === ReturnStatus.REFUNDED ? "success" : r.status === ReturnStatus.APPROVED ? "info" : r.status === ReturnStatus.REJECTED ? "error" : "warning"} />
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <StatusPill value={r.status} />
                   {r.status === ReturnStatus.REQUESTED && (
                     <>
-                      <Button size="small" variant="contained" onClick={() => approveMutation.mutate(r.id)}>Approve</Button>
-                      <Button size="small" variant="outlined" onClick={() => rejectMutation.mutate({ id: r.id, reason: "Not eligible" })}>Reject</Button>
+                      <LoadingButton
+                        size="small"
+                        variant="contained"
+                        loading={approveMutation.isLoading}
+                        onClick={() => approveMutation.mutate(r.id)}
+                      >
+                        Approve
+                      </LoadingButton>
+                      <LoadingButton
+                        size="small"
+                        variant="outlined"
+                        loading={rejectMutation.isLoading}
+                        onClick={() =>
+                          rejectMutation.mutate({ id: r.id, reason: "Not eligible" })
+                        }
+                      >
+                        Reject
+                      </LoadingButton>
                     </>
                   )}
                   {r.status === ReturnStatus.APPROVED && (
-                    <Button size="small" variant="contained" onClick={() => refundMutation.mutate(r.id)}>Refund</Button>
+                    <LoadingButton
+                      size="small"
+                      variant="contained"
+                      loading={refundMutation.isLoading}
+                      onClick={() => refundMutation.mutate(r.id)}
+                    >
+                      Refund
+                    </LoadingButton>
                   )}
                 </div>
-              </div>
+              </li>
             ))}
-          </div>
-        </Paper>
+          </ul>
+        </section>
       )}
     </div>
   );

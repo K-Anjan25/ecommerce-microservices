@@ -99,7 +99,6 @@ function Account() {
             size="large"
             type="submit"
             loading={updateMutation.isLoading}
-            className="!bg-brand !text-paper hover:!bg-brand-main"
           >
             Update password
           </LoadingButton>

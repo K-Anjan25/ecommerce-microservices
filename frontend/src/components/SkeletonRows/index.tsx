@@ -1,5 +1,4 @@
-import { Box, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import React from "react";
+import { Skeleton } from "@mui/material";
 
 interface SkeletonRowsProps {
   rows?: number;
@@ -7,34 +6,32 @@ interface SkeletonRowsProps {
   hasHeader?: boolean;
 }
 
+/** Loading state shaped like DataTable, so nothing jumps when data lands. */
 function SkeletonRows({ rows = 5, columns = 4, hasHeader = true }: SkeletonRowsProps) {
   return (
-    <TableContainer component={Box} className="panel overflow-hidden">
-      <Table aria-label="loading skeleton">
-        {hasHeader && (
-          <TableHead>
-            <TableRow>
-              {Array.from({ length: columns }).map((_, i) => (
-                <TableCell key={`h-${i}`}>
-                  <Skeleton variant="text" width="60%" />
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-        )}
-        <TableBody>
-          {Array.from({ length: rows }).map((_, row) => (
-            <TableRow key={`r-${row}`}>
-              {Array.from({ length: columns }).map((_, col) => (
-                <TableCell key={`c-${col}`}>
-                  <Skeleton variant="text" width={col === 0 ? "70%" : "40%"} />
-                </TableCell>
-              ))}
-            </TableRow>
+    <div className="panel overflow-hidden">
+      {hasHeader && (
+        <div className="flex gap-4 border-b border-line bg-canvas px-4 py-2.5">
+          {Array.from({ length: columns }).map((_, i) => (
+            <div key={`h-${i}`} className={i === 0 ? "flex-[2]" : "flex-1"}>
+              <Skeleton variant="text" width="60%" height={12} />
+            </div>
           ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+        </div>
+      )}
+      {Array.from({ length: rows }).map((_, r) => (
+        <div
+          key={`r-${r}`}
+          className="flex gap-4 border-b border-line/70 px-4 py-3.5 last:border-0"
+        >
+          {Array.from({ length: columns }).map((_, c) => (
+            <div key={`c-${c}`} className={c === 0 ? "flex-[2]" : "flex-1"}>
+              <Skeleton variant="text" width={c === 0 ? "75%" : "45%"} height={14} />
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
   );
 }
 

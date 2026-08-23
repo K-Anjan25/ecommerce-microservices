@@ -184,7 +184,6 @@ function AddEditProduct() {
               size="large"
               type="submit"
               loading={busy}
-              className="!bg-brand !text-paper hover:!bg-brand-main"
             >
               {MODE === "edit" ? "Save changes" : "Create product"}
             </LoadingButton>

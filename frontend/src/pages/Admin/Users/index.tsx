@@ -1,14 +1,23 @@
-import { Box, Chip, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import BlockIcon from "@mui/icons-material/Block";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { UserApi } from "../../../api/userApi";
+import DataTable, { DataColumn, StatusPill } from "../../../components/DataTable";
 import EmptyState from "../../../components/EmptyState";
 import PageHeader from "../../../components/PageHeader";
 import SkeletonRows from "../../../components/SkeletonRows";
 import { showSuccess } from "../../../utils/showSuccess";
+
+type Row = {
+  id: string;
+  firstName?: string;
+  lastName?: string;
+  email: string;
+  role: string;
+  active: boolean;
+};
 
 function Users() {
   const queryClient = useQueryClient();
@@ -28,17 +37,56 @@ function Users() {
     }
   );
 
+  const columns: DataColumn<Row>[] = [
+    {
+      id: "name",
+      label: "Name",
+      minWidth: 180,
+      render: (u) => (
+        <span className="flex items-center gap-2.5">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-soft text-[0.625rem] font-bold text-brand">
+            {(u.firstName?.[0] ?? "").toUpperCase()}
+            {(u.lastName?.[0] ?? "").toUpperCase()}
+          </span>
+          <span className="font-semibold">
+            {u.firstName} {u.lastName}
+          </span>
+        </span>
+      ),
+    },
+    {
+      id: "email",
+      label: "Email",
+      minWidth: 200,
+      render: (u) => <span className="text-ink-soft">{u.email}</span>,
+    },
+    {
+      id: "role",
+      label: "Role",
+      hideBelow: "lg",
+      render: (u) => (
+        <span className="chip !px-2.5 !py-0.5 !text-[0.625rem] !uppercase">
+          {u.role.replace("ROLE_", "")}
+        </span>
+      ),
+    },
+    {
+      id: "active",
+      label: "Status",
+      render: (u) => <StatusPill value={u.active ? "ACTIVE" : "DISABLED"} />,
+    },
+  ];
+
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Users"
+        eyebrow="People"
+        title="Customers"
         subtitle="View and manage store accounts."
       />
 
       {isLoading ? (
-        <Paper className="panel p-0">
-          <SkeletonRows rows={5} columns={5} />
-        </Paper>
+        <SkeletonRows rows={6} columns={5} />
       ) : users?.length === 0 ? (
         <div className="panel">
           <EmptyState
@@ -48,71 +96,35 @@ function Users() {
           />
         </div>
       ) : (
-        <TableContainer component={Paper} className="panel">
-          <Table>
-            <TableHead>
-              <TableRow className="!bg-brand-tint">
-                <TableCell className="!font-semibold !text-ink">Name</TableCell>
-                <TableCell className="!font-semibold !text-ink">Email</TableCell>
-                <TableCell className="!font-semibold !text-ink">Role</TableCell>
-                <TableCell className="!font-semibold !text-ink">Status</TableCell>
-                <TableCell align="right" className="!font-semibold !text-ink">
-                  Actions
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {users?.map((user) => (
-                <TableRow key={user.id} hover>
-                  <TableCell className="!text-ink">
-                    {user.firstName} {user.lastName}
-                  </TableCell>
-                  <TableCell className="!text-ink-soft">{user.email}</TableCell>
-                  <TableCell>
-                    <Chip
-                      size="small"
-                      label={user.role.replace("ROLE_", "")}
-                      className="!font-medium !text-brand"
-                      sx={{ color: "inherit" }}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      size="small"
-                      label={user.active ? "Active" : "Disabled"}
-                      className={
-                        user.active
-                          ? "!bg-emerald-50 !text-emerald-700"
-                          : "!bg-rose-50 !text-rose-700"
-                      }
-                    />
-                  </TableCell>
-                  <TableCell align="right">
-                    <LoadingButton
-                      size="small"
-                      variant="outlined"
-                      startIcon={
-                        user.active ? <BlockIcon /> : <CheckCircleOutlineIcon />
-                      }
-                      loading={toggleMutation.isLoading}
-                      disabled={toggleMutation.isLoading}
-                      className={`normal-case ${
-                        user.active
-                          ? "!border-rose-300 !text-rose-700 hover:!bg-rose-50"
-                          : "!border-emerald-300 !text-emerald-700 hover:!bg-emerald-50"
-                      }`}
-                      onClick={() =>
-                        toggleMutation.mutate({ id: user.id, active: user.active })
-                      }
-                    >
-                      {user.active ? "Disable" : "Enable"}
-                    </LoadingButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <DataTable<Row>
+          rows={users as Row[] | undefined}
+          columns={columns}
+          getRowId={(u) => u.id}
+          caption={`${users?.length ?? 0} account${users?.length === 1 ? "" : "s"}`}
+          actions={(u) => (
+            <LoadingButton
+              size="small"
+              variant="outlined"
+              startIcon={
+                u.active ? (
+                  <BlockIcon sx={{ fontSize: 15 }} />
+                ) : (
+                  <CheckCircleOutlineIcon sx={{ fontSize: 15 }} />
+                )
+              }
+              loading={toggleMutation.isLoading}
+              disabled={toggleMutation.isLoading}
+              className={`!py-1 normal-case ${
+                u.active
+                  ? "!border-state-danger/30 !text-state-danger-on hover:!bg-state-danger-soft"
+                  : "!border-state-success/30 !text-state-success-on hover:!bg-state-success-soft"
+              }`}
+              onClick={() => toggleMutation.mutate({ id: u.id, active: u.active })}
+            >
+              {u.active ? "Disable" : "Enable"}
+            </LoadingButton>
+          )}
+        />
       )}
     </div>
   );

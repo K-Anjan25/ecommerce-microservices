@@ -1,31 +1,41 @@
+@import "./tokens.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ==========================================================================
+   Cartly 2.0 — base
+   ========================================================================== */
 @layer base {
-  body {
-    @apply bg-paper text-ink antialiased;
-  }
-
   html {
     scroll-behavior: smooth;
   }
 
-  ::selection {
-    @apply bg-brand text-paper;
+  body {
+    @apply bg-canvas text-ink antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
-  /* Visible keyboard focus without the mouse-click outline flash */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Inter Tight", Inter, system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  ::selection {
+    background-color: rgb(var(--c-brand));
+    color: rgb(var(--c-oncontrast));
+  }
+
   :focus:not(:focus-visible) {
     outline: none;
   }
   :focus-visible {
-    outline: 2px solid rgba(11, 107, 85, 0.55);
+    outline: 2px solid rgb(var(--c-brand) / 0.55);
     outline-offset: 2px;
-    border-radius: 4px;
+    border-radius: 6px;
   }
 
-  /* Slim, unobtrusive scrollbars (WebKit) */
   ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -34,28 +44,24 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: rgba(16, 42, 67, 0.22);
+    background: rgb(var(--scrollbar-thumb) / 0.2);
     border-radius: 999px;
     border: 3px solid transparent;
     background-clip: content-box;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(16, 42, 67, 0.38);
+    background: rgb(var(--scrollbar-thumb) / 0.36);
     border: 3px solid transparent;
     background-clip: content-box;
   }
 }
 
-/* Subtle entry animation shared by page content */
+/* ==========================================================================
+   Motion
+   ========================================================================== */
 @keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
 }
 
 .animate-fade-up {
@@ -63,65 +69,137 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  .animate-fade-up {
-    animation: none;
-  }
-  *,
-  *::before,
-  *::after {
+  html { scroll-behavior: auto; }
+  .animate-fade-up { animation: none; }
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
 }
 
+/* Hide scrollbar on horizontal rails without losing scroll */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ==========================================================================
+   Components
+   ========================================================================== */
 @layer components {
+  /* ---- layout ---- */
   .page-shell {
-    @apply mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8;
+    @apply mx-auto w-full max-w-container px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-gap {
+    @apply space-y-6 sm:space-y-8;
   }
 
   .page-header {
-    @apply mb-8;
+    @apply mb-6 sm:mb-8;
+  }
+
+  .eyebrow {
+    @apply text-eyebrow font-bold uppercase text-ink-muted;
   }
 
   .page-title {
-    @apply text-2xl font-bold tracking-tight text-ink sm:text-3xl;
+    @apply font-heading text-2xl font-bold tracking-tight text-ink sm:text-[2rem];
   }
 
   .page-subtitle {
-    @apply mt-1 text-sm text-ink-soft;
+    @apply mt-1 max-w-2xl text-sm text-ink-soft;
   }
 
+  .section-title {
+    @apply font-heading text-xl font-bold tracking-tight text-ink sm:text-2xl;
+  }
+
+  /* ---- surfaces ---- */
   .panel {
-    @apply rounded-xl border border-ink/10 bg-white shadow-card;
+    @apply rounded-lg border border-line bg-paper shadow-none;
   }
 
+  .panel-raised {
+    @apply rounded-lg border border-line bg-paper shadow-card;
+  }
+
+  .panel-ink {
+    @apply rounded-lg border border-white/10 bg-contrast text-oncontrast;
+  }
+
+  /* A surface that is dark in BOTH modes — hero, footer, admin rail. */
+  .surface-contrast {
+    @apply bg-contrast text-oncontrast;
+  }
+
+  .hairline {
+    @apply border-line;
+  }
+
+  /* ---- actions ---- */
   .primary-button {
-    @apply inline-flex items-center justify-center rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-paper shadow-sm transition hover:bg-brand-main disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-sm bg-brand px-4 py-2.5 text-sm font-semibold text-oncontrast transition hover:bg-brand-main disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .dark-button {
+    @apply inline-flex items-center justify-center gap-2 rounded-sm bg-contrast px-4 py-2.5 text-sm font-semibold text-oncontrast transition hover:bg-contrast-lift disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .accent-button {
+    @apply inline-flex items-center justify-center gap-2 rounded-sm bg-accent px-4 py-2.5 text-sm font-bold text-ink transition hover:bg-accent-dark disabled:cursor-not-allowed disabled:opacity-60;
   }
 
   .secondary-button {
-    @apply inline-flex items-center justify-center rounded-lg border border-ink/15 bg-white px-4 py-2 text-sm font-semibold text-ink shadow-sm transition hover:bg-brand-tint hover:text-brand disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-sm border border-line bg-paper px-4 py-2.5 text-sm font-semibold text-ink transition hover:border-brand hover:bg-brand-tint hover:text-brand disabled:cursor-not-allowed disabled:opacity-60;
   }
 
   .icon-button {
     @apply inline-flex h-10 w-10 items-center justify-center rounded-full text-ink-soft transition hover:bg-brand-soft hover:text-brand;
   }
 
+  /* ---- chips ---- */
+  .chip {
+    @apply inline-flex shrink-0 items-center gap-1.5 rounded-full border border-line bg-paper px-3.5 py-1.5 text-xs font-semibold text-ink-soft transition hover:border-ink-faint hover:text-ink;
+  }
+
+  .chip-active {
+    @apply border-brand bg-brand-soft text-brand hover:border-brand hover:text-brand;
+  }
+
+  .chip-ink {
+    @apply border-ink bg-contrast text-oncontrast hover:text-oncontrast;
+  }
+
+  .badge-sale {
+    @apply inline-flex items-center rounded-full bg-state-danger px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-wide text-white;
+  }
+
+  .badge-stock-in {
+    @apply inline-flex items-center rounded-full bg-state-success-soft px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-wide text-state-success-on;
+  }
+
+  .badge-stock-low {
+    @apply inline-flex items-center rounded-full bg-state-warning-soft px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-wide text-state-warning-on;
+  }
+
+  .badge-stock-out {
+    @apply inline-flex items-center rounded-full bg-state-danger-soft px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-wide text-state-danger-on;
+  }
+
+  /* ---- form ---- */
   .muted-label {
     @apply text-sm font-medium text-ink-soft;
   }
 
   .price-text {
-    @apply font-semibold text-brand;
+    @apply font-heading font-bold text-ink;
   }
 
   .input-control {
-    @apply h-11 w-full rounded-lg border border-ink/20 bg-white px-3 text-sm text-ink outline-none transition placeholder:text-ink-muted focus:border-brand focus:ring-2 focus:ring-brand/20 disabled:cursor-not-allowed disabled:bg-slate-100;
+    @apply h-11 w-full rounded-sm border border-line bg-paper px-3 text-sm text-ink outline-none transition placeholder:text-ink-muted focus:border-brand focus:ring-2 focus:ring-brand/15 disabled:cursor-not-allowed disabled:bg-sunken;
   }
 
+  /* ---- misc ---- */
   .text-ellipsis {
     display: -webkit-box;
     -webkit-line-clamp: 3;
@@ -130,10 +208,20 @@
   }
 
   .brand-gradient {
-    @apply bg-gradient-to-r from-brand via-brand-main to-brand-light;
+    @apply bg-gradient-to-r from-brand via-brand-light to-brand;
   }
 
   .gradient-text {
-    @apply bg-gradient-to-r from-brand via-brand-main to-brand-light bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-brand via-brand-light to-brand-main bg-clip-text text-transparent;
+  }
+
+  .product-grid {
+    @apply grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 xl:grid-cols-4;
+  }
+
+  /* dotted grain used on ink surfaces */
+  .grain {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+    background-size: 14px 14px;
   }
 }

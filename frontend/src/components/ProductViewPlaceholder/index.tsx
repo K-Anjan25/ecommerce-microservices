@@ -5,7 +5,7 @@ function ProductViewPlaceholder() {
     <div className="panel flex h-full flex-col overflow-hidden">
       <Skeleton
         variant="rectangular"
-        className="aspect-[4/3] !rounded-none !bg-ink/10"
+        className="aspect-[4/3] !rounded-none !bg-contrast/10"
       />
       <Box className="flex flex-1 flex-col gap-2 p-4">
         <Skeleton width="60%" />

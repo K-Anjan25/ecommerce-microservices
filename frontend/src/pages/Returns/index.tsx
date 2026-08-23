@@ -1,94 +1,160 @@
+import { useState } from "react";
 import { useQuery } from "react-query";
+import { useNavigate } from "react-router-dom";
+import { Skeleton } from "@mui/material";
+import AssignmentReturnOutlinedIcon from "@mui/icons-material/AssignmentReturnOutlined";
+
 import { ReturnApi } from "../../api/returnApi";
 import PageHeader from "../../components/PageHeader";
-import { Paper, Typography, Box, Chip } from "@mui/material";
 import EmptyState from "../../components/EmptyState";
-import { useNavigate } from "react-router-dom";
+import { StatusPill } from "../../components/DataTable";
 import { ReturnStatus } from "../../types/returnRequest";
-import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
+import { formatPrice } from "../../utils/cart";
+
+const FILTERS: { key: string; label: string }[] = [
+  { key: "", label: "All" },
+  { key: ReturnStatus.REQUESTED, label: "Requested" },
+  { key: ReturnStatus.APPROVED, label: "Approved" },
+  { key: ReturnStatus.REFUNDED, label: "Refunded" },
+  { key: ReturnStatus.REJECTED, label: "Rejected" },
+];
 
 function Returns() {
   const navigate = useNavigate();
-  const { data: returnRequests, isLoading } = useQuery("myReturnRequests", ReturnApi.getMyReturnRequests);
+  const [filter, setFilter] = useState("");
+  const { data: returnRequests, isLoading } = useQuery(
+    "myReturnRequests",
+    ReturnApi.getMyReturnRequests
+  );
 
-  if (isLoading) {
-    return (
-      <div className="page-shell">
-        <PageHeader title="Returns" subtitle="Your return requests." />
-        <Paper className="p-6"><Typography>Loading...</Typography></Paper>
-      </div>
-    );
-  }
+  const all = returnRequests ?? [];
+  const visible = filter ? all.filter((r) => r.status === filter) : all;
+  const countFor = (key: string) =>
+    key ? all.filter((r) => r.status === key).length : all.length;
 
   return (
     <div className="page-shell space-y-6">
       <PageHeader
+        eyebrow="Support"
         title="Returns"
-        subtitle={`${returnRequests?.length ?? 0} return request${(returnRequests?.length ?? 0) === 1 ? "" : "s"}`}
+        subtitle="Track every return request and its refund. Start a new one from an order's detail page."
+        actions={
+          <button onClick={() => navigate("/orders")} className="secondary-button !py-2">
+            View orders
+          </button>
+        }
       />
 
-      {!returnRequests || returnRequests.length === 0 ? (
-        <Paper className="p-6 sm:p-8">
+      {isLoading ? (
+        <div className="space-y-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} variant="rectangular" height={110} className="!rounded-lg" />
+          ))}
+        </div>
+      ) : all.length === 0 ? (
+        <div className="panel">
           <EmptyState
-            icon={<ReceiptLongOutlinedIcon fontSize="large" />}
+            icon={<AssignmentReturnOutlinedIcon fontSize="large" />}
             title="No returns yet"
-            subtitle="If you need to return an item, you can request a return from your order details."
+            subtitle="Need to send something back? Open the order, pick the item and request a return — you have 7 days from delivery."
             action={
-              <button
-                onClick={() => navigate("/orders")}
-                className="btn-primary"
-              >
+              <button onClick={() => navigate("/orders")} className="primary-button">
                 View orders
               </button>
             }
           />
-        </Paper>
-      ) : (
-        <div className="space-y-4">
-          {returnRequests.map((req) => (
-            <Paper key={req.id} className="p-6">
-              <Box className="flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <Typography variant="subtitle1" className="font-semibold">
-                    Return #{req.id}
-                  </Typography>
-                  <Typography className="text-sm text-ink-soft">
-                    Order #{req.orderId} · Qty: {req.quantity}
-                  </Typography>
-                  {req.reason && (
-                    <Typography className="text-sm text-ink-soft">
-                      Reason: {req.reason}
-                    </Typography>
-                  )}
-                  {req.rejectionReason && (
-                    <Typography className="text-sm text-rose-600">
-                      Rejected: {req.rejectionReason}
-                    </Typography>
-                  )}
-                  {req.refundAmount != null && req.status === ReturnStatus.REFUNDED && (
-                    <Typography className="text-sm text-ink-soft">
-                      Refunded: ₹ {req.refundAmount.toFixed(2)}
-                      {req.refundTransactionId ? ` · Ref: ${req.refundTransactionId}` : ""}
-                    </Typography>
-                  )}
-                </div>
-                <Chip
-                  label={req.status}
-                  color={
-                    req.status === ReturnStatus.APPROVED
-                      ? "success"
-                      : req.status === ReturnStatus.REJECTED
-                      ? "error"
-                      : req.status === ReturnStatus.REFUNDED
-                      ? "info"
-                      : "warning"
-                  }
-                  size="small"
-                />
-              </Box>
-            </Paper>
-          ))}
         </div>
+      ) : (
+        <>
+          <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
+            {FILTERS.map((f) => (
+              <button
+                key={f.key || "all"}
+                onClick={() => setFilter(f.key)}
+                className={`chip ${filter === f.key ? "chip-ink" : ""}`}
+              >
+                {f.label}
+                <span className={filter === f.key ? "text-white/60" : "text-ink-muted"}>
+                  {countFor(f.key)}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          {visible.length === 0 ? (
+            <div className="panel">
+              <EmptyState
+                icon={<AssignmentReturnOutlinedIcon fontSize="large" />}
+                title="Nothing in this status"
+                subtitle="Try a different filter to see your other return requests."
+                action={
+                  <button className="secondary-button" onClick={() => setFilter("")}>
+                    Show all
+                  </button>
+                }
+              />
+            </div>
+          ) : (
+            <ul className="space-y-3">
+              {visible.map((req) => (
+                <li key={req.id} className="panel p-5">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="font-heading text-sm font-bold text-ink">
+                        Return{" "}
+                        <span className="font-mono text-xs text-ink-soft">#{req.id}</span>
+                      </p>
+                      <button
+                        onClick={() => navigate(`/orderDetail/${req.orderId}`)}
+                        className="mt-0.5 text-xs font-semibold text-brand hover:underline"
+                      >
+                        Order #{req.orderId}
+                      </button>
+                    </div>
+                    <StatusPill value={req.status} />
+                  </div>
+
+                  <dl className="mt-4 grid gap-x-8 gap-y-2 text-sm sm:grid-cols-2">
+                    <div className="flex justify-between gap-3 sm:justify-start">
+                      <dt className="text-ink-muted sm:w-24">Quantity</dt>
+                      <dd className="font-semibold text-ink">{req.quantity}</dd>
+                    </div>
+                    {req.reason && (
+                      <div className="flex justify-between gap-3 sm:justify-start">
+                        <dt className="shrink-0 text-ink-muted sm:w-24">Reason</dt>
+                        <dd className="text-right text-ink sm:text-left">{req.reason}</dd>
+                      </div>
+                    )}
+                    {req.refundAmount != null && req.status === ReturnStatus.REFUNDED && (
+                      <>
+                        <div className="flex justify-between gap-3 sm:justify-start">
+                          <dt className="text-ink-muted sm:w-24">Refunded</dt>
+                          <dd className="font-semibold text-state-success">
+                            {formatPrice(req.refundAmount)}
+                          </dd>
+                        </div>
+                        {req.refundTransactionId && (
+                          <div className="flex justify-between gap-3 sm:justify-start">
+                            <dt className="shrink-0 text-ink-muted sm:w-24">Reference</dt>
+                            <dd className="truncate font-mono text-xs text-ink-soft">
+                              {req.refundTransactionId}
+                            </dd>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </dl>
+
+                  {req.rejectionReason && (
+                    <p className="mt-4 rounded-sm border border-state-danger/30 bg-state-danger-soft px-4 py-2.5 text-xs text-state-danger-on">
+                      <span className="font-bold">Rejected:</span> {req.rejectionReason}
+                    </p>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
       )}
     </div>
   );

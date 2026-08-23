@@ -6,6 +6,7 @@ import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import PaidOutlinedIcon from "@mui/icons-material/PaidOutlined";
 import TrendingUpOutlinedIcon from "@mui/icons-material/TrendingUpOutlined";
 import TodayOutlinedIcon from "@mui/icons-material/TodayOutlined";
+import { useTheme } from "@mui/material/styles";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -27,16 +28,19 @@ import { PRODUCT_ADMIN_PARAM } from "../../../constants/product";
 import { formatPrice } from "../../../utils/cart";
 
 const statusColors: Record<string, string> = {
-  PENDING: "!bg-amber-100 !text-amber-800",
-  PAID: "!bg-emerald-100 !text-emerald-700",
+  PENDING: "!bg-state-warning-soft !text-state-warning-on",
+  PAID: "!bg-state-success-soft !text-state-success-on",
   APPROVED: "!bg-brand-soft !text-brand",
-  CANCELLING: "!bg-orange-100 !text-orange-800",
-  CANCELLED: "!bg-rose-100 !text-rose-700",
-  REFUNDED: "!bg-sky-100 !text-sky-700",
+  CANCELLING: "!bg-state-warning-soft !text-state-warning-on",
+  CANCELLED: "!bg-state-danger-soft !text-state-danger-on",
+  REFUNDED: "!bg-state-info/10 !text-state-info",
 };
 
 function Home() {
   const navigate = useNavigate();
+  const muiTheme = useTheme();
+  const axis = muiTheme.palette.text.disabled;
+  const grid = muiTheme.palette.divider;
   const { data: user } = useSelector((state: AppState) => state.user);
 
   const { data: stats } = useQuery(["admin:dashboard"], OrderApi.getDashboardStats, {
@@ -145,20 +149,27 @@ function Home() {
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={stats?.dailyRevenue ?? []}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E0D4" />
-                <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#8A94A6" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={grid} />
+                <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke={axis} />
                 <YAxis
                   tick={{ fontSize: 12 }}
-                  stroke="#8A94A6"
+                  stroke={axis}
                   width={70}
                   tickFormatter={(v: number) => `₹${v >= 1000 ? `${(v / 1000).toFixed(1)}k` : v}`}
                 />
                 <Tooltip
                   formatter={(value: any) => [formatPrice(Number(value)), "Revenue"]}
                   cursor={{ fill: "rgba(11,107,85,0.06)" }}
-                  contentStyle={{ borderRadius: 12, borderColor: "#E5E0D4" }}
+                  contentStyle={{
+                    borderRadius: 12,
+                    borderColor: muiTheme.palette.divider,
+                    background: muiTheme.palette.background.paper,
+                    color: muiTheme.palette.text.primary,
+                  }}
+                  itemStyle={{ color: muiTheme.palette.text.primary }}
+                  labelStyle={{ color: muiTheme.palette.text.secondary }}
                 />
-                <Bar dataKey="revenue" fill="#0B6B55" radius={[6, 6, 0, 0]} maxBarSize={48} />
+                <Bar dataKey="revenue" fill={muiTheme.palette.primary.main} radius={[6, 6, 0, 0]} maxBarSize={48} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -173,7 +184,7 @@ function Home() {
               <Chip
                 key={status}
                 label={`${status} · ${count}`}
-                className={statusColors[status] ?? "!bg-slate-100 !text-slate-700"}
+                className={statusColors[status] ?? "!bg-sunken !text-ink-soft"}
               />
             ))}
             {!stats?.ordersByStatus && (
@@ -242,16 +253,16 @@ function Home() {
       </Box>
 
       {lowStock.length > 0 && (
-        <Box className="panel border-amber-200 bg-amber-50/60 p-6">
+        <Box className="panel border-state-warning/30 bg-state-warning-soft/60 p-6">
           <Box className="mb-3 flex items-center gap-2">
-            <WarningAmberIcon className="text-amber-600" />
-            <Typography variant="h6" className="font-semibold text-amber-900">
+            <WarningAmberIcon className="text-state-warning-on" />
+            <Typography variant="h6" className="font-semibold text-state-warning-on">
               Low stock alert
             </Typography>
             <Chip
               size="small"
               label={`${lowStock.length} product${lowStock.length > 1 ? "s" : ""}`}
-              className="!bg-amber-200 !font-semibold !text-amber-900"
+              className="!bg-state-warning-soft !font-semibold !text-state-warning-on"
             />
           </Box>
           <Box className="flex flex-wrap gap-2">
@@ -261,8 +272,8 @@ function Home() {
                 label={`${product.name} (${product.quantityInStock ?? 0} left)`}
                 className={
                   (product.quantityInStock ?? 0) <= 0
-                    ? "!bg-rose-100 !font-medium !text-rose-700"
-                    : "!bg-white !font-medium !text-amber-800"
+                    ? "!bg-state-danger-soft !font-medium !text-state-danger-on"
+                    : "!bg-white !font-medium !text-state-warning-on"
                 }
                 onClick={() => navigate(`/admin/addEditProduct/${product.id}`)}
               />

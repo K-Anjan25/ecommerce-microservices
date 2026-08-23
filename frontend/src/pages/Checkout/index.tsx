@@ -1,18 +1,28 @@
-import { Box, Button, Checkbox, Divider, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Typography } from "@mui/material";
+import { Box, Checkbox, Divider, FormControlLabel } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
+import BoltOutlinedIcon from "@mui/icons-material/BoltOutlined";
+import CreditCardIcon from "@mui/icons-material/CreditCard";
+import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
+import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
+import RedeemOutlinedIcon from "@mui/icons-material/RedeemOutlined";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
 import { OrderApi } from "../../api/orderApi";
 import { PaymentApi } from "../../api/paymentApi";
 import { AddressApi } from "../../api/addressApi";
 import { ShippingApi } from "../../api/shippingApi";
 import { CouponApi } from "../../api/couponApi";
-import Card from "../../components/Card";
+import CartLine from "../../components/CartLine";
+import CheckoutSteps from "../../components/CheckoutSteps";
 import EmptyState from "../../components/EmptyState";
-import PageHeader from "../../components/PageHeader";
 import SelectInput from "../../components/SelectInput";
 import TextInput from "../../components/TextInput";
 import createOrderForm from "../../forms/orderForm";
@@ -28,8 +38,87 @@ import {
 } from "../../utils/cart";
 import { showError } from "../../utils/showError";
 import { showSuccess } from "../../utils/showSuccess";
-import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import statesAndDistrict from "../../formdata.json";
+
+const FORM_ID = "checkout-form";
+
+/** Section wrapper — numbered, so the single-scroll flow stays legible. */
+function Section({
+  step,
+  title,
+  subtitle,
+  icon: Icon,
+  children,
+}: {
+  step: number;
+  title: string;
+  subtitle?: string;
+  icon: typeof PlaceOutlinedIcon;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="panel p-5 sm:p-6">
+      <div className="mb-5 flex items-start gap-3">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-contrast text-xs font-bold text-oncontrast">
+          {step}
+        </span>
+        <div className="min-w-0">
+          <h2 className="flex items-center gap-2 font-heading text-base font-bold text-ink">
+            <Icon sx={{ fontSize: 17 }} className="text-ink-muted" />
+            {title}
+          </h2>
+          {subtitle && <p className="mt-0.5 text-xs text-ink-muted">{subtitle}</p>}
+        </div>
+      </div>
+      {children}
+    </section>
+  );
+}
+
+/** Selectable option card — used for delivery + payment method. */
+function OptionCard({
+  active,
+  onClick,
+  title,
+  copy,
+  price,
+  icon: Icon,
+}: {
+  active: boolean;
+  onClick: () => void;
+  title: string;
+  copy: string;
+  price?: string;
+  icon: typeof BoltOutlinedIcon;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={`flex flex-1 items-start gap-3 rounded-sm border p-4 text-left transition ${
+        active
+          ? "border-brand bg-brand-tint ring-1 ring-brand"
+          : "border-line bg-paper hover:border-ink-faint"
+      }`}
+    >
+      <span
+        className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
+          active ? "bg-brand text-oncontrast" : "bg-sunken text-ink-soft"
+        }`}
+      >
+        <Icon sx={{ fontSize: 17 }} />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="flex items-baseline justify-between gap-2">
+          <span className="text-sm font-bold text-ink">{title}</span>
+          {price && <span className="shrink-0 text-sm font-bold text-ink">{price}</span>}
+        </span>
+        <span className="mt-0.5 block text-xs text-ink-soft">{copy}</span>
+      </span>
+    </button>
+  );
+}
 
 function Checkout() {
   const navigate = useNavigate();
@@ -42,14 +131,13 @@ function Checkout() {
   const [giftWrap, setGiftWrap] = useState(false);
   const [couponInput, setCouponInput] = useState("");
   const [coupon, setCoupon] = useState<{ code: string; discount: number } | null>(null);
+  const [reviewOpen, setReviewOpen] = useState(false);
   const subtotal = Number(calculateTotalPriceOfCartItems(items));
   const itemCount = calculateCountOfCartItems(items);
 
-  const { data: defaultAddress } = useQuery(
-    "defaultAddress",
-    AddressApi.getDefaultAddress,
-    { retry: false }
-  );
+  const { data: defaultAddress } = useQuery("defaultAddress", AddressApi.getDefaultAddress, {
+    retry: false,
+  });
 
   const applyAddress = (address: SavedAddress) => {
     form.setValues({
@@ -122,13 +210,9 @@ function Checkout() {
   const giftWrapFee = giftWrap ? 50 : 0;
   const discount = coupon?.discount ?? 0;
   const taxRate = taxRule?.rate ?? 0.18;
-  const taxLabel = taxRule
-    ? `${taxRule.taxName} ${Math.round(taxRate * 100)}%`
-    : "18% GST";
+  const taxLabel = taxRule ? `${taxRule.taxName} ${Math.round(taxRate * 100)}%` : "18% GST";
   // Mirrors the backend: tax applies to subtotal + shipping - discount + gift wrap.
-  const tax = Number(
-    ((subtotal + shippingCost - discount + giftWrapFee) * taxRate).toFixed(2)
-  );
+  const tax = Number(((subtotal + shippingCost - discount + giftWrapFee) * taxRate).toFixed(2));
   const total = subtotal + shippingCost - discount + giftWrapFee + tax;
 
   // A cart change invalidates the applied coupon (discount depends on subtotal).
@@ -201,14 +285,13 @@ function Checkout() {
     id: state.state_name,
   }));
 
-  const getDistricts = (stateName: string) => {
-    return statesAndDistrict
+  const getDistricts = (stateName: string) =>
+    statesAndDistrict
       .find((state: any) => state.state_name === stateName)
       ?.districts.map((district: any) => ({
         name: district.district_name,
         id: district.district_name,
       }));
-  };
 
   useEffect(() => {
     setDistricts(getDistricts(form.values.state) ?? []);
@@ -217,9 +300,7 @@ function Checkout() {
 
   useEffect(() => {
     const savedFormData = sessionStorage.getItem("checkout_form");
-    if (savedFormData) {
-      form.setValues(JSON.parse(savedFormData));
-    }
+    if (savedFormData) form.setValues(JSON.parse(savedFormData));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -232,19 +313,16 @@ function Checkout() {
   if (items.length === 0) {
     return (
       <div className="page-shell">
+        <CheckoutSteps current="details" />
         <div className="panel">
           <EmptyState
             icon={<ShoppingCartOutlinedIcon fontSize="large" />}
             title="Your cart is empty"
             subtitle="Add products to your cart before checking out."
             action={
-              <Button
-                variant="contained"
-                className="!bg-brand !text-paper hover:!bg-brand-main"
-                onClick={() => navigate("/")}
-              >
+              <button className="primary-button" onClick={() => navigate("/")}>
                 Continue shopping
-              </Button>
+              </button>
             }
           />
         </div>
@@ -252,218 +330,356 @@ function Checkout() {
     );
   }
 
-  return (
-    <div className="page-shell space-y-8">
-      <PageHeader
-        title="Checkout"
-        subtitle={`${itemCount} item${itemCount === 1 ? "" : "s"} · secure payment`}
-      />
-
-      <div className="grid gap-8 lg:grid-cols-[1fr_400px]">
-        <div className="space-y-6">
-          {items.map((item) => (
-            <Card
-              key={`${item.product.id}-${item.variantId ?? "base"}`}
-              product={item.product}
-              variantId={item.variantId}
-              variantName={item.variantName}
-            />
-          ))}
+  /* ── shared summary block (aside on desktop, sheet-free on mobile) ─── */
+  const summaryRows = (
+    <dl className="space-y-2.5 text-sm">
+      <div className="flex justify-between">
+        <dt className="text-ink-soft">Subtotal ({itemCount} items)</dt>
+        <dd className="font-semibold">{formatPrice(subtotal)}</dd>
+      </div>
+      {coupon && (
+        <div className="flex justify-between">
+          <dt className="font-semibold text-state-success">Coupon {coupon.code}</dt>
+          <dd className="font-semibold text-state-success">−{formatPrice(coupon.discount)}</dd>
         </div>
+      )}
+      <div className="flex justify-between">
+        <dt className="text-ink-soft">
+          Shipping
+          {hasShippingQuote && (
+            <span className="block text-[0.6875rem] text-ink-muted">
+              {shippingQuote?.carrier} · {shippingQuote?.estimatedDaysMin}–
+              {shippingQuote?.estimatedDaysMax} days
+            </span>
+          )}
+        </dt>
+        <dd className="font-semibold">
+          {shippingCost === 0 ? (
+            <span className="text-state-success">FREE</span>
+          ) : (
+            formatPrice(shippingCost)
+          )}
+        </dd>
+      </div>
+      {isLoggedIn && pincodeValid && !shippingFetching && !hasShippingQuote && (
+        <p className="text-[0.6875rem] text-ink-muted">
+          No courier rate found for this pincode — flat rate applies.
+        </p>
+      )}
+      <div className="flex justify-between">
+        <dt className="text-ink-soft">Tax ({taxLabel})</dt>
+        <dd className="font-semibold">{formatPrice(tax)}</dd>
+      </div>
+      {giftWrap && (
+        <div className="flex justify-between">
+          <dt className="text-ink-soft">Gift wrap</dt>
+          <dd className="font-semibold">{formatPrice(giftWrapFee)}</dd>
+        </div>
+      )}
+    </dl>
+  );
 
-        <div className="panel h-fit p-6 lg:sticky lg:top-24">
-          <Typography variant="h5" className="font-bold">
-            Payment details
-          </Typography>
-          <Typography className="mt-1 text-sm text-ink-soft">
-            {paymentProvider === "CASH"
-              ? "Pay in cash when your order is delivered."
-              : "Razorpay will open to complete your payment."}
-          </Typography>
-          <Divider className="my-4" />
+  return (
+    <div className="page-shell pb-28 lg:pb-8">
+      <CheckoutSteps current="details" />
 
-          <form onSubmit={form.handleSubmit} className="space-y-3">
-            {!isLoggedIn && (
-              <TextInput
-                name="customerEmail"
-                label="Email for order updates"
-                form={form}
-                type="email"
-              />
-            )}
+      <div className="mb-6">
+        <p className="eyebrow">Step 2 of 3</p>
+        <h1 className="page-title mt-1">Checkout</h1>
+        <p className="page-subtitle">
+          {itemCount} item{itemCount === 1 ? "" : "s"} · everything below is confirmed before
+          payment is taken.
+        </p>
+      </div>
 
-            {defaultAddress && (
-              <Button
-                size="small"
-                variant="outlined"
-                fullWidth
-                onClick={() => applyAddress(defaultAddress)}
-              >
-                Use default address
-              </Button>
-            )}
-
-            <SelectInput name="state" label="State" form={form} data={states} />
-            <SelectInput
-              name="district"
-              label="District"
-              form={form}
-              data={districts}
-            />
-            <TextInput
-              name="pincode"
-              label="Delivery pincode"
-              form={form}
-              inputProps={{ maxLength: 6, inputMode: "numeric" }}
-            />
-            <TextInput
-              name="addressDetail"
-              label="Address detail"
-              form={form}
-              multiline
-              rows={3}
-            />
-
-            <FormControl size="small" fullWidth>
-              <InputLabel id="shipping-method-label">Shipping method</InputLabel>
-              <Select
-                labelId="shipping-method-label"
-                value={shippingMethod}
-                label="Shipping method"
-                onChange={(e) => setShippingMethod(e.target.value as ShippingMethod)}
-              >
-                <MenuItem value={ShippingMethod.STANDARD}>Standard (3-5 days)</MenuItem>
-                <MenuItem value={ShippingMethod.EXPRESS}>Express (1-2 days)</MenuItem>
-              </Select>
-            </FormControl>
-
-            <FormControl size="small" fullWidth>
-              <InputLabel id="payment-provider-label">Payment method</InputLabel>
-              <Select
-                labelId="payment-provider-label"
-                value={paymentProvider}
-                label="Payment method"
-                onChange={(e) => setPaymentProvider(e.target.value as PaymentProvider)}
-              >
-                <MenuItem value="RAZORPAY">Razorpay (card / UPI)</MenuItem>
-                <MenuItem value="CASH">Cash on delivery</MenuItem>
-              </Select>
-              {paymentProvider === "RAZORPAY" && (
-                <Typography variant="caption" className="text-ink-soft">
-                  Requires Razorpay keys to be configured.
-                </Typography>
-              )}
-            </FormControl>
-
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={giftWrap}
-                  onChange={(e) => setGiftWrap(e.target.checked)}
-                  name="giftWrap"
-                  color="primary"
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+        {/* ══ left: the flow ══════════════════════════════════════════ */}
+        <form id={FORM_ID} onSubmit={form.handleSubmit} className="space-y-4">
+          <Section
+            step={1}
+            title="Delivery address"
+            subtitle={isLoggedIn ? undefined : "Guest checkout — no account needed"}
+            icon={PlaceOutlinedIcon}
+          >
+            <div className="space-y-3">
+              {!isLoggedIn && (
+                <TextInput
+                  name="customerEmail"
+                  label="Email for order updates"
+                  form={form}
+                  type="email"
                 />
-              }
-              label="Gift wrap (+₹50)"
-            />
+              )}
 
-              {isLoggedIn && (
-                <div className="flex items-end gap-2">
-                  <TextInput
-                    name="couponCode"
-                    label="Coupon code"
-                    form={form}
-                    value={couponInput}
-                    onChange={(e: any) => setCouponInput(e.target.value)}
-                    disabled={Boolean(coupon)}
-                  />
-                  {coupon ? (
-                    <Button variant="outlined" onClick={() => setCoupon(null)}>
+              {defaultAddress && (
+                <button
+                  type="button"
+                  onClick={() => applyAddress(defaultAddress)}
+                  className="flex w-full items-center justify-between gap-3 rounded-sm border border-line bg-canvas px-4 py-3 text-left transition hover:border-brand hover:bg-brand-tint"
+                >
+                  <span className="min-w-0">
+                    <span className="block text-sm font-bold text-ink">Use saved address</span>
+                    <span className="block truncate text-xs text-ink-soft">
+                      {defaultAddress.addressDetail}, {defaultAddress.district},{" "}
+                      {defaultAddress.state}
+                    </span>
+                  </span>
+                  <span className="shrink-0 text-xs font-bold text-brand">Apply</span>
+                </button>
+              )}
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <SelectInput name="state" label="State" form={form} data={states} />
+                <SelectInput name="district" label="District" form={form} data={districts} />
+              </div>
+              <TextInput
+                name="pincode"
+                label="Delivery pincode"
+                form={form}
+                inputProps={{ maxLength: 6, inputMode: "numeric" }}
+              />
+              <TextInput
+                name="addressDetail"
+                label="Address detail"
+                form={form}
+                multiline
+                rows={3}
+              />
+            </div>
+          </Section>
+
+          <Section
+            step={2}
+            title="Delivery method"
+            subtitle={
+              pincodeValid && hasShippingQuote
+                ? "Rate quoted for your pincode"
+                : "Flat rate — free over ₹500"
+            }
+            icon={LocalShippingOutlinedIcon}
+          >
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <OptionCard
+                active={shippingMethod === ShippingMethod.STANDARD}
+                onClick={() => setShippingMethod(ShippingMethod.STANDARD)}
+                title="Standard"
+                copy="3–5 working days"
+                price={subtotal >= 500 ? "Free" : formatPrice(50)}
+                icon={LocalShippingOutlinedIcon}
+              />
+              <OptionCard
+                active={shippingMethod === ShippingMethod.EXPRESS}
+                onClick={() => setShippingMethod(ShippingMethod.EXPRESS)}
+                title="Express"
+                copy="1–2 working days"
+                price={subtotal >= 500 ? "Free" : formatPrice(100)}
+                icon={BoltOutlinedIcon}
+              />
+            </div>
+          </Section>
+
+          <Section
+            step={3}
+            title="Payment"
+            subtitle={
+              paymentProvider === "CASH"
+                ? "Pay in cash when your order is delivered"
+                : "Razorpay will open to complete your payment"
+            }
+            icon={CreditCardIcon}
+          >
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <OptionCard
+                active={paymentProvider === "RAZORPAY"}
+                onClick={() => setPaymentProvider("RAZORPAY")}
+                title="Card / UPI"
+                copy="Razorpay · requires configured keys"
+                icon={CreditCardIcon}
+              />
+              <OptionCard
+                active={paymentProvider === "CASH"}
+                onClick={() => setPaymentProvider("CASH")}
+                title="Cash on delivery"
+                copy="Pay the courier on arrival"
+                icon={PaymentsOutlinedIcon}
+              />
+            </div>
+          </Section>
+
+          <Section
+            step={4}
+            title="Credits & extras"
+            subtitle="Coupons, gift wrap and loyalty in one place"
+            icon={RedeemOutlinedIcon}
+          >
+            <div className="space-y-4">
+              {isLoggedIn ? (
+                coupon ? (
+                  <div className="flex items-center justify-between gap-3 rounded-sm border border-state-success/30 bg-state-success-soft px-4 py-3">
+                    <span className="min-w-0">
+                      <span className="block text-sm font-bold text-state-success">
+                        {coupon.code} applied
+                      </span>
+                      <span className="text-xs text-state-success-on">
+                        You saved {formatPrice(coupon.discount)}
+                      </span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setCoupon(null)}
+                      className="shrink-0 text-xs font-bold text-state-success-on underline-offset-2 hover:underline"
+                    >
                       Remove
-                    </Button>
-                  ) : (
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-start gap-2">
+                    <div className="flex-1">
+                      <TextInput
+                        name="couponCode"
+                        label="Coupon / gift card code"
+                        form={form}
+                        value={couponInput}
+                        onChange={(e: any) => setCouponInput(e.target.value)}
+                      />
+                    </div>
                     <LoadingButton
                       variant="contained"
                       onClick={applyCoupon}
                       loading={couponMutation.isLoading}
-                      className="!bg-brand !text-paper hover:!bg-brand-main"
+                      className="!h-10"
                     >
                       Apply
                     </LoadingButton>
-                  )}
-                </div>
-              )}
-              {coupon && (
-                <div className="flex justify-between text-sm">
-                  <span className="font-semibold text-emerald-700">
-                    Coupon {coupon.code}
-                  </span>
-                  <span className="font-semibold text-emerald-700">
-                    -{formatPrice(coupon.discount)}
-                  </span>
-                </div>
+                  </div>
+                )
+              ) : (
+                <p className="rounded-sm border border-line bg-canvas px-4 py-3 text-xs text-ink-soft">
+                  Sign in to apply coupons, gift cards and loyalty points.
+                </p>
               )}
 
-              <Box className="rounded-xl bg-brand-tint p-4">
-              <div className="flex justify-between text-sm">
-                <span className="text-ink-soft">
-                  Subtotal ({itemCount} items)
-                </span>
-                <span className="font-semibold">
-                  {formatPrice(subtotal)}
-                </span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-ink-soft">
-                  Shipping
-                  {hasShippingQuote && (
-                    <span className="ml-1 text-xs text-ink-soft/70">
-                      ({shippingQuote?.carrier} ·{" "}
-                      {shippingQuote?.estimatedDaysMin}–
-                      {shippingQuote?.estimatedDaysMax} days)
-                    </span>
-                  )}
-                </span>
-                <span className="font-semibold">
-                  {shippingCost === 0 ? "FREE" : formatPrice(shippingCost)}
-                </span>
-              </div>
-              {isLoggedIn && pincodeValid && !shippingFetching && !hasShippingQuote && (
-                <div className="text-xs text-ink-soft/70">
-                  No courier rate found for this pincode — flat rate applies.
-                </div>
-              )}
-              <div className="flex justify-between text-sm">
-                <span className="text-ink-soft">Tax ({taxLabel})</span>
-                <span className="font-semibold">{formatPrice(tax)}</span>
-              </div>
-              {giftWrap && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-ink-soft">Gift wrap</span>
-                  <span className="font-semibold">{formatPrice(giftWrapFee)}</span>
-                </div>
-              )}
-              <Divider className="my-2" />
-              <div className="flex justify-between">
-                <span className="font-semibold">Total</span>
-                <span className="price-text">{formatPrice(total)}</span>
-              </div>
-            </Box>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={giftWrap}
+                    onChange={(e) => setGiftWrap(e.target.checked)}
+                    name="giftWrap"
+                    color="primary"
+                  />
+                }
+                label={<span className="text-sm">Gift wrap this order (+₹50)</span>}
+              />
+            </div>
+          </Section>
 
+          {/* review — collapsed by default; the cart is one click back */}
+          <section className="panel">
+            <button
+              type="button"
+              onClick={() => setReviewOpen((o) => !o)}
+              aria-expanded={reviewOpen}
+              className="flex w-full items-center justify-between gap-3 p-5 text-left sm:p-6"
+            >
+              <span className="flex items-center gap-3">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sunken text-xs font-bold text-ink">
+                  {itemCount}
+                </span>
+                <span>
+                  <span className="block font-heading text-base font-bold text-ink">
+                    Review items
+                  </span>
+                  <span className="text-xs text-ink-muted">
+                    {reviewOpen ? "Hide" : "Show"} what you&apos;re buying
+                  </span>
+                </span>
+              </span>
+              <ExpandMoreIcon
+                className={`shrink-0 text-ink-muted transition ${reviewOpen ? "rotate-180" : ""}`}
+              />
+            </button>
+            {reviewOpen && (
+              <div className="border-t border-line px-5 sm:px-6">
+                <ul className="divide-y divide-line">
+                  {items.map((item) => (
+                    <CartLine
+                      key={`${item.product.id}-${item.variantId ?? "base"}`}
+                      item={item}
+                      readOnly
+                    />
+                  ))}
+                </ul>
+                <div className="py-4">
+                  <button
+                    type="button"
+                    onClick={() => navigate("/cart")}
+                    className="secondary-button !py-2"
+                  >
+                    Edit cart
+                  </button>
+                </div>
+              </div>
+            )}
+          </section>
+        </form>
+
+        {/* ══ right: sticky summary ═══════════════════════════════════ */}
+        <aside className="lg:sticky lg:top-24 lg:h-fit">
+          <div className="panel-raised p-5">
+            <h2 className="mb-4 font-heading text-base font-bold">Order summary</h2>
+            {summaryRows}
+            <Divider className="!my-4" />
+            <div className="flex items-baseline justify-between">
+              <span className="font-heading text-base font-bold">Total</span>
+              <span className="font-heading text-2xl font-extrabold">{formatPrice(total)}</span>
+            </div>
             <LoadingButton
-              fullWidth
+              form={FORM_ID}
               type="submit"
+              fullWidth
               variant="contained"
               size="large"
               loading={busy}
-              className="!bg-brand !text-paper hover:!bg-brand-main"
+              className="!mt-5 !hidden !py-3 lg:!flex"
             >
-              Pay and place order
+              Pay {formatPrice(total)}
             </LoadingButton>
-            <Button fullWidth onClick={() => navigate("/cart")}>
-              Back to cart
-            </Button>
-          </form>
+            <p className="mt-4 flex items-center justify-center gap-1.5 text-[0.6875rem] text-ink-muted">
+              <LockOutlinedIcon sx={{ fontSize: 13 }} />
+              256-bit secure · PCI compliant
+            </p>
+            <Box className="mt-3 flex flex-wrap justify-center gap-1.5">
+              {["Visa", "Mastercard", "UPI", "COD"].map((m) => (
+                <span
+                  key={m}
+                  className="rounded-full border border-line px-2.5 py-1 text-[0.625rem] font-semibold text-ink-muted"
+                >
+                  {m}
+                </span>
+              ))}
+            </Box>
+          </div>
+        </aside>
+      </div>
+
+      {/* ══ mobile sticky pay bar ═════════════════════════════════════ */}
+      <div className="fixed inset-x-0 bottom-[3.875rem] z-40 border-t border-line bg-paper/95 p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-md lg:hidden">
+        <div className="mx-auto flex max-w-container items-center gap-3">
+          <div className="min-w-0">
+            <p className="text-[0.625rem] uppercase tracking-wide text-ink-muted">Total</p>
+            <p className="font-heading text-lg font-extrabold leading-none">
+              {formatPrice(total)}
+            </p>
+          </div>
+          <LoadingButton
+            form={FORM_ID}
+            type="submit"
+            variant="contained"
+            loading={busy}
+            className="!ml-auto !flex-1 !py-3"
+          >
+            Pay now
+          </LoadingButton>
         </div>
       </div>
     </div>

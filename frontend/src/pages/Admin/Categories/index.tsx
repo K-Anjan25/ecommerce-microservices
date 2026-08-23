@@ -60,8 +60,7 @@ function Categories() {
             variant="contained"
             loading={createMutation.isLoading}
             disabled={!categoryName.trim()}
-            className="!bg-brand !text-paper hover:!bg-brand-main"
-            onClick={addCategory}
+                        onClick={addCategory}
           >
             Add
           </LoadingButton>

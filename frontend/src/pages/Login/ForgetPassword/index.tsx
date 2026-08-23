@@ -53,7 +53,6 @@ function ForgetPassword() {
           fullWidth
           type="submit"
           loading={loading}
-          className="!bg-brand !text-paper hover:!bg-brand-main"
         >
           Send
         </LoadingButton>

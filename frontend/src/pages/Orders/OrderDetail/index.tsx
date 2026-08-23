@@ -1,19 +1,36 @@
-import { useQuery, useMutation } from "react-query";
-import { useParams, useNavigate } from "react-router-dom";
-import { OrderApi } from "../../../api/orderApi";
-import { ReturnApi } from "../../../api/returnApi";
-import PageHeader from "../../../components/PageHeader";
-import { Paper, Typography, Box, Button, Chip, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
-import Loader from "../../../components/Loader";
-import EmptyState from "../../../components/EmptyState";
+import { useMemo, useState } from "react";
+import { useMutation, useQuery } from "react-query";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Skeleton,
+} from "@mui/material";
+import { LoadingButton } from "@mui/lab";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PictureAsPdfOutlinedIcon from "@mui/icons-material/PictureAsPdfOutlined";
+import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
+import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
+import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
+
+import { OrderApi } from "../../../api/orderApi";
+import { ProductApi } from "../../../api/productApi";
+import { ReturnApi } from "../../../api/returnApi";
+import PageHeader from "../../../components/PageHeader";
+import EmptyState from "../../../components/EmptyState";
+import { StatusPill } from "../../../components/DataTable";
 import { showSuccess } from "../../../utils/showSuccess";
 import { showError } from "../../../utils/showError";
-import { useState } from "react";
-import { ReturnStatus, ReturnRequest } from "../../../types/returnRequest";
+import { ReturnRequest } from "../../../types/returnRequest";
 import { OrderItem } from "../../../types/order";
+import { formatPrice } from "../../../utils/cart";
+import { formatDate } from "../../../utils/date";
+
+/** Happy-path progression shown as a timeline; cancelled/refunded fall back. */
+const FLOW = ["PENDING", "PAID", "APPROVED"];
 
 function UserOrderDetail() {
   const { orderId } = useParams();
@@ -27,7 +44,22 @@ function UserOrderDetail() {
     { enabled: Boolean(orderId) }
   );
 
-  const { data: returns } = useQuery(
+  const productIds = useMemo(
+    () => Array.from(new Set((order?.items ?? []).map((i) => i.productId))),
+    [order]
+  );
+
+  /* The old screen printed "Product <uuid>" for every line. Resolve the real
+     products so items, the return dialog and the returns list all read. */
+  const { data: products } = useQuery(
+    ["user:order:products", productIds.join(",")],
+    () => ProductApi.getProductsByIds(productIds),
+    { enabled: productIds.length > 0, retry: false }
+  );
+  const byId = useMemo(() => new Map((products ?? []).map((p) => [p.id, p])), [products]);
+  const nameOf = (id: string) => byId.get(id)?.name ?? `Product ${id.slice(0, 8)}…`;
+
+  const { data: returns, refetch: refetchReturns } = useQuery(
     ["returns:order", orderId],
     () => ReturnApi.getReturnRequestsByOrder(orderId!),
     { enabled: Boolean(orderId) }
@@ -38,8 +70,10 @@ function UserOrderDetail() {
       showSuccess("Return request submitted");
       setOpen(false);
       setForm({ productId: "", quantity: 1, reason: "" });
+      refetchReturns();
     },
-    onError: () => showError("Failed to submit return request"),
+    onError: (e: any) =>
+      showError(e.response?.data?.message ?? "Failed to submit return request"),
   });
 
   const invoiceMutation = useMutation(OrderApi.getInvoice, {
@@ -56,6 +90,12 @@ function UserOrderDetail() {
     onError: () => showError("Could not download invoice"),
   });
 
+  /** Opening the dialog from a line preselects that line. */
+  const openReturn = (item: OrderItem) => {
+    setForm({ productId: item.productId, quantity: 1, reason: "" });
+    setOpen(true);
+  };
+
   const handleSubmit = () => {
     if (!form.productId || form.quantity < 1) {
       showError("Select a product and quantity");
@@ -71,114 +111,359 @@ function UserOrderDetail() {
   };
 
   if (isLoading) {
-    return <Loader />;
+    return (
+      <div className="page-shell space-y-6">
+        <Skeleton variant="text" width={220} height={40} />
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+          <Skeleton variant="rectangular" height={340} className="!rounded-lg" />
+          <Skeleton variant="rectangular" height={260} className="!rounded-lg" />
+        </div>
+      </div>
+    );
   }
 
   if (!order) {
     return (
       <div className="page-shell">
-        <PageHeader title="Order" subtitle="Order details." />
-        <Paper className="p-6"><Typography>Order not found</Typography></Paper>
+        <div className="panel">
+          <EmptyState
+            icon={<ReceiptLongOutlinedIcon fontSize="large" />}
+            title="Order not found"
+            subtitle="We couldn't find that order. It may belong to another account."
+            action={
+              <button className="primary-button" onClick={() => navigate("/orders")}>
+                Back to orders
+              </button>
+            }
+          />
+        </div>
       </div>
     );
   }
 
-  const productReturns = returns?.filter((r: ReturnRequest) => r.productId) ?? [];
+  const productReturns = returns ?? [];
+  const returnFor = (productId: string) =>
+    productReturns.find((r: ReturnRequest) => r.productId === productId);
+
+  const subtotal = order.items.reduce((acc, item) => {
+    const p = byId.get(item.productId);
+    const variant = item.variantId ? p?.variants?.find((v) => v.id === item.variantId) : undefined;
+    return acc + (variant?.price ?? p?.unitPrice ?? 0) * item.quantity;
+  }, 0);
+
+  const currentStep = FLOW.indexOf(order.orderStatus);
+  const terminal = ["CANCELLED", "REFUNDED"].includes(order.orderStatus);
 
   return (
     <div className="page-shell space-y-6">
       <PageHeader
-        title={`Order #${order.id}`}
-        subtitle={new Date(order.createdDate).toLocaleString()}
+        eyebrow="Order"
+        title={`Order #${order.id.slice(0, 8)}…`}
+        subtitle={`Placed ${formatDate(order.createdDate)}`}
         actions={
           <>
-            <Button
-              startIcon={<PictureAsPdfOutlinedIcon />}
+            <button
+              onClick={() => navigate("/orders")}
+              className="secondary-button !py-2"
+            >
+              <ArrowBackIcon sx={{ fontSize: 16 }} />
+              All orders
+            </button>
+            <LoadingButton
+              variant="contained"
+              startIcon={<PictureAsPdfOutlinedIcon sx={{ fontSize: 17 }} />}
               onClick={() => invoiceMutation.mutate(orderId!)}
-              disabled={invoiceMutation.isLoading}
+              loading={invoiceMutation.isLoading}
             >
               Invoice
-            </Button>
-            <Button startIcon={<ArrowBackIcon />} onClick={() => navigate("/orders")}>
-              Back to orders
-            </Button>
+            </LoadingButton>
           </>
         }
       />
 
-      <Paper className="p-6">
-        <Typography variant="h6" className="mb-4 font-bold">
-          Items
-        </Typography>
-        <div className="space-y-3">
-          {order.items.map((item: OrderItem) => {
-            const hasReturn = productReturns.some((r: ReturnRequest) => r.productId === item.productId);
-            return (
-              <div key={item.productId} className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-ink/10 p-4">
-                <div>
-                  <Typography className="font-semibold">Product {item.productId}</Typography>
-                  <Typography className="text-sm text-ink-soft">Qty: {item.quantity}</Typography>
-                </div>
-                <div className="flex items-center gap-2">
-                  {hasReturn ? (
-                    <Chip label="Return requested" size="small" color="info" />
-                  ) : (
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      onClick={() => setOpen(true)}
-                    >
-                      Request return
-                    </Button>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+      {/* ── status timeline ─────────────────────────────────────────── */}
+      <section className="panel p-5">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <p className="eyebrow">Status</p>
+          <StatusPill value={order.orderStatus} />
         </div>
-      </Paper>
+        {terminal ? (
+          <p className="text-sm text-ink-soft">
+            This order was {order.orderStatus.toLowerCase()}. Any refund is issued to the
+            original payment method.
+          </p>
+        ) : (
+          <ol className="flex items-center gap-2">
+            {["Placed", "Paid", "Approved", "Delivered"].map((label, i) => {
+              const done = i <= currentStep;
+              return (
+                <li key={label} className="flex flex-1 items-center gap-2">
+                  <span className="flex flex-col items-center gap-1.5">
+                    <span
+                      className={`h-3 w-3 rounded-full ${done ? "bg-brand" : "bg-line"}`}
+                    />
+                    <span
+                      className={`whitespace-nowrap text-[0.625rem] font-bold uppercase tracking-wide ${
+                        done ? "text-ink" : "text-ink-muted"
+                      }`}
+                    >
+                      {label}
+                    </span>
+                  </span>
+                  {i < 3 && (
+                    <span
+                      className={`mb-5 h-px flex-1 ${i < currentStep ? "bg-brand" : "bg-line"}`}
+                    />
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+        )}
+      </section>
 
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="xs" fullWidth>
-        <DialogTitle>Request return</DialogTitle>
-        <DialogContent>
-          <div className="space-y-3 pt-2">
-            <FormControl fullWidth size="small">
-              <InputLabel>Product</InputLabel>
-              <Select
-                value={form.productId}
-                label="Product"
-                onChange={(e) => setForm({ ...form, productId: e.target.value })}
-              >
-                {order.items.map((item) => (
-                  <MenuItem key={item.productId} value={item.productId}>
-                    Product {item.productId} (Qty: {item.quantity})
-                  </MenuItem>
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+        {/* ── items ─────────────────────────────────────────────────── */}
+        <div className="space-y-4">
+          <section className="panel overflow-hidden">
+            <div className="border-b border-line px-5 py-4">
+              <h2 className="font-heading text-base font-bold">
+                Items · {order.items.length}
+              </h2>
+            </div>
+            <ul className="divide-y divide-line">
+              {order.items.map((item: OrderItem) => {
+                const p = byId.get(item.productId);
+                const cover = p?.images?.[0] || p?.imageUrl;
+                const variant = item.variantId
+                  ? p?.variants?.find((v) => v.id === item.variantId)
+                  : undefined;
+                const unit = variant?.price ?? p?.unitPrice ?? 0;
+                const existing = returnFor(item.productId);
+                return (
+                  <li
+                    key={`${item.productId}-${item.variantId ?? "base"}`}
+                    className="flex gap-4 p-5"
+                  >
+                    <button
+                      onClick={() => navigate(`/products/${item.productId}`)}
+                      className="h-16 w-16 shrink-0 overflow-hidden rounded-sm border border-line bg-sunken"
+                      aria-label={`View ${nameOf(item.productId)}`}
+                    >
+                      {cover ? (
+                        <img src={cover} alt="" className="h-full w-full object-cover" />
+                      ) : (
+                        <span className="flex h-full items-center justify-center text-ink-faint">
+                          <ImageOutlinedIcon sx={{ fontSize: 19 }} />
+                        </span>
+                      )}
+                    </button>
+
+                    <div className="flex min-w-0 flex-1 flex-wrap items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="truncate font-heading text-sm font-bold text-ink">
+                          {nameOf(item.productId)}
+                        </p>
+                        <p className="mt-0.5 text-xs text-ink-muted">
+                          Qty {item.quantity}
+                          {unit ? ` · ${formatPrice(unit)} each` : ""}
+                        </p>
+                        {variant && (
+                          <span className="chip mt-1.5 !px-2 !py-0.5 !text-[0.625rem]">
+                            {variant.name}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex flex-col items-end gap-2">
+                        {!!unit && (
+                          <span className="price-text text-sm">
+                            {formatPrice(unit * item.quantity)}
+                          </span>
+                        )}
+                        {existing ? (
+                          <StatusPill value={existing.status} />
+                        ) : (
+                          <button
+                            onClick={() => openReturn(item)}
+                            className="secondary-button !px-3 !py-1.5 !text-xs"
+                          >
+                            Request return
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+
+          {productReturns.length > 0 && (
+            <section className="panel p-5">
+              <h2 className="mb-4 font-heading text-base font-bold">Returns on this order</h2>
+              <ul className="space-y-2.5">
+                {productReturns.map((r: ReturnRequest) => (
+                  <li
+                    key={r.id}
+                    className="flex flex-wrap items-center justify-between gap-3 rounded-sm border border-line px-4 py-3"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-ink">
+                        {nameOf(r.productId)}
+                      </p>
+                      <p className="text-xs text-ink-muted">
+                        Qty {r.quantity}
+                        {r.reason ? ` · ${r.reason}` : ""}
+                      </p>
+                    </div>
+                    <StatusPill value={r.status} />
+                  </li>
                 ))}
-              </Select>
-            </FormControl>
-            <TextField
-              label="Quantity"
-              type="number"
-              size="small"
-              fullWidth
-              value={form.quantity}
-              onChange={(e) => setForm({ ...form, quantity: Number(e.target.value) })}
-              inputProps={{ min: 1, max: order.items.find((i: OrderItem) => i.productId === form.productId)?.quantity ?? 1 }}
-            />
-            <TextField
-              label="Reason (optional)"
-              size="small"
-              fullWidth
-              value={form.reason}
-              onChange={(e) => setForm({ ...form, reason: e.target.value })}
-            />
+              </ul>
+            </section>
+          )}
+        </div>
+
+        {/* ── summary + address ─────────────────────────────────────── */}
+        <aside className="space-y-4 lg:sticky lg:top-24 lg:h-fit">
+          <section className="panel-raised p-5">
+            <h2 className="mb-4 font-heading text-base font-bold">Payment summary</h2>
+            <dl className="space-y-2.5 text-sm">
+              {!!subtotal && (
+                <div className="flex justify-between">
+                  <dt className="text-ink-soft">Subtotal</dt>
+                  <dd className="font-semibold">{formatPrice(subtotal)}</dd>
+                </div>
+              )}
+              {!!order.discountAmount && (
+                <div className="flex justify-between">
+                  <dt className="text-state-success">Discount</dt>
+                  <dd className="font-semibold text-state-success">
+                    −{formatPrice(order.discountAmount)}
+                  </dd>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <dt className="text-ink-soft">Shipping</dt>
+                <dd className="font-semibold">
+                  {order.shippingAmount ? formatPrice(order.shippingAmount) : "Free"}
+                </dd>
+              </div>
+              {!!order.taxAmount && (
+                <div className="flex justify-between">
+                  <dt className="text-ink-soft">Tax</dt>
+                  <dd className="font-semibold">{formatPrice(order.taxAmount)}</dd>
+                </div>
+              )}
+              {!!order.giftWrapFee && (
+                <div className="flex justify-between">
+                  <dt className="text-ink-soft">Gift wrap</dt>
+                  <dd className="font-semibold">{formatPrice(order.giftWrapFee)}</dd>
+                </div>
+              )}
+            </dl>
+            <div className="mt-4 flex items-baseline justify-between border-t border-line pt-4">
+              <span className="font-heading text-base font-bold">Total paid</span>
+              <span className="font-heading text-xl font-extrabold">
+                {formatPrice(order.totalAmount)}
+              </span>
+            </div>
+          </section>
+
+          <section className="panel p-5">
+            <h2 className="mb-3 flex items-center gap-2 font-heading text-sm font-bold">
+              <PlaceOutlinedIcon sx={{ fontSize: 17 }} className="text-ink-muted" />
+              Delivery address
+            </h2>
+            <p className="text-sm leading-relaxed text-ink-soft">
+              {order.address.addressDetail}
+              <br />
+              {order.address.district}, {order.address.state}
+            </p>
+            {order.shippingMethod && (
+              <p className="mt-3 flex items-center gap-2 border-t border-line pt-3 text-xs text-ink-muted">
+                <LocalShippingOutlinedIcon sx={{ fontSize: 15 }} />
+                {order.shippingMethod === "EXPRESS" ? "Express" : "Standard"} shipping
+                {order.giftWrap ? " · gift wrapped" : ""}
+              </p>
+            )}
+          </section>
+        </aside>
+      </div>
+
+      {/* ── return dialog ───────────────────────────────────────────── */}
+      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="xs" fullWidth>
+        <DialogTitle className="!font-heading !font-bold">Request a return</DialogTitle>
+        <DialogContent dividers>
+          <div className="space-y-4 py-1">
+            <div>
+              <label htmlFor="ret-product" className="eyebrow mb-1.5 block">
+                Item
+              </label>
+              <select
+                id="ret-product"
+                className="input-control"
+                value={form.productId}
+                onChange={(e) => setForm({ ...form, productId: e.target.value, quantity: 1 })}
+              >
+                <option value="">Select an item</option>
+                {order.items.map((item) => (
+                  <option key={item.productId} value={item.productId}>
+                    {nameOf(item.productId)} (qty {item.quantity})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="ret-qty" className="eyebrow mb-1.5 block">
+                Quantity
+              </label>
+              <input
+                id="ret-qty"
+                type="number"
+                className="input-control"
+                min={1}
+                max={
+                  order.items.find((i: OrderItem) => i.productId === form.productId)?.quantity ?? 1
+                }
+                value={form.quantity}
+                onChange={(e) => setForm({ ...form, quantity: Number(e.target.value) })}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="ret-reason" className="eyebrow mb-1.5 block">
+                Reason (optional)
+              </label>
+              <textarea
+                id="ret-reason"
+                rows={3}
+                className="input-control !h-auto py-2.5"
+                placeholder="Wrong size, damaged on arrival, changed my mind…"
+                value={form.reason}
+                onChange={(e) => setForm({ ...form, reason: e.target.value })}
+              />
+            </div>
+
+            <p className="text-xs text-ink-muted">
+              Returns can be requested within 7 days of delivery. Once an admin approves it,
+              stock is restored and the refund is issued to your original payment method.
+            </p>
           </div>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleSubmit} className="!bg-brand !text-paper">
-            Submit
-          </Button>
+        <DialogActions className="!px-6 !py-4">
+          <button className="secondary-button !py-2" onClick={() => setOpen(false)}>
+            Cancel
+          </button>
+          <LoadingButton
+            variant="contained"
+            onClick={handleSubmit}
+            loading={createMutation.isLoading}
+          >
+            Submit request
+          </LoadingButton>
         </DialogActions>
       </Dialog>
     </div>

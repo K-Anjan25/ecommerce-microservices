@@ -79,7 +79,7 @@ function Profile() {
               </Avatar>
               <Button
                 size="small"
-                className="absolute -bottom-2 left-1/2 !min-w-0 -translate-x-1/2 !rounded-full !bg-brand !p-2 !text-paper hover:!bg-brand-main"
+                className="absolute -bottom-2 left-1/2 !min-w-0 -translate-x-1/2 !rounded-full !bg-brand !p-2 !text-oncontrast hover:!bg-brand-main"
                 onClick={() => fileRef.current?.click()}
                 aria-label="Upload profile picture"
               >
@@ -107,7 +107,6 @@ function Profile() {
             size="large"
             type="submit"
             loading={updateMutation.isLoading}
-            className="!bg-brand !text-paper hover:!bg-brand-main"
           >
             Save changes
           </LoadingButton>

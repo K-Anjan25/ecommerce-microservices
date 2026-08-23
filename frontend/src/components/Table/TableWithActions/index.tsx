@@ -1,16 +1,8 @@
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { Table as MuiTable } from "@mui/material";
-import TablePagination from "@mui/material/TablePagination";
-import EditIcon from "@mui/icons-material/Edit";
+import DeleteForeverIcon from "@mui/icons-material/DeleteOutline";
+import EditIcon from "@mui/icons-material/EditOutlined";
+import DataTable, { DataColumn, StatusPill, TableIconButton } from "../../DataTable";
 import { Column } from "../../../types/table";
 import type { TableRow as TableRowType } from "../../../types/table";
-import { IconButton } from "@mui/material";
 
 export interface TableProps {
   rows: TableRowType[] | undefined;
@@ -24,6 +16,28 @@ export interface TableProps {
   page: number;
 }
 
+/** Columns whose values should read as status pills / monospace ids. */
+const STATUS_IDS = new Set(["orderStatus", "status"]);
+const MONO_IDS = new Set(["id"]);
+
+export const toDataColumns = (columns: readonly Column[]): DataColumn<TableRowType>[] =>
+  columns.map((c, i) => ({
+    id: String(c.id),
+    label: c.label,
+    align: c.align,
+    minWidth: c.minWidth,
+    mono: MONO_IDS.has(String(c.id)),
+    // keep the first two columns at every width; push the rest behind breakpoints
+    hideBelow: i > 2 ? "lg" : undefined,
+    render: STATUS_IDS.has(String(c.id))
+      ? (row) => <StatusPill value={String((row as any)[c.id] ?? "")} />
+      : undefined,
+  }));
+
+/**
+ * Admin table with per-row edit/delete. Thin adapter over DataTable so the
+ * admin has exactly one table look (wireframe 05).
+ */
 function TableWithActions({
   deleteItem,
   editItem,
@@ -36,68 +50,31 @@ function TableWithActions({
   columns,
 }: TableProps) {
   return (
-    <>
-      <TableContainer
-        component={Paper}
-        sx={{ marginTop: "16px", maxWidth: "1200px" }}
-      >
-        <MuiTable sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column?.align}
-                  style={{ minWidth: column?.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-              <TableCell align="center">Edit</TableCell>
-              <TableCell align="center">Delete</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows?.map((row) => {
-              return (
-                <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
-                  {columns.map((column) => {
-                    const value = (row as any)[column?.id];
-                    return (
-                      <TableCell key={column.id} align={column?.align}>
-                        {value}
-                      </TableCell>
-                    );
-                  })}
-                  <TableCell align="center">
-                    <IconButton color="primary" onClick={() => editItem(row)}>
-                      <EditIcon />
-                    </IconButton>
-                  </TableCell>
-                  <TableCell align="center">
-                    <IconButton
-                      color="secondary"
-                      onClick={() => deleteItem(row.id)}
-                    >
-                      <DeleteForeverIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </MuiTable>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={totalSize || 0}
-          rowsPerPage={itemsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeItemsPerPage}
-        />
-      </TableContainer>
-    </>
+    <DataTable<TableRowType>
+      rows={rows}
+      columns={toDataColumns(columns)}
+      getRowId={(row) => row.id}
+      caption={
+        totalSize !== undefined
+          ? `${totalSize} record${totalSize === 1 ? "" : "s"}`
+          : undefined
+      }
+      actions={(row) => (
+        <>
+          <TableIconButton label="Edit" onClick={() => editItem(row)}>
+            <EditIcon sx={{ fontSize: 16 }} />
+          </TableIconButton>
+          <TableIconButton label="Delete" tone="danger" onClick={() => deleteItem(row.id)}>
+            <DeleteForeverIcon sx={{ fontSize: 16 }} />
+          </TableIconButton>
+        </>
+      )}
+      page={page}
+      itemsPerPage={itemsPerPage}
+      totalSize={totalSize}
+      onPageChange={handleChangePage}
+      onItemsPerPageChange={handleChangeItemsPerPage}
+    />
   );
 }
 
