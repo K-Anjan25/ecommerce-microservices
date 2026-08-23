@@ -445,6 +445,22 @@ All verified with `tsc + vite build`.
       structural linter (islands, quoting, heredocs) checking balanced delimiters, alternative
       syntax pairing, ABSPATH guards and stray closing tags. 31/31 files pass. It is NOT a
       substitute for `php -l` / phpcs on a real host — run those before going live.
+### 7.4.20 WordPress theme verified on real WordPress (2026-08-23, sixteenth session)
+- [x] Booted **WordPress 6.5.5 + the Cartly theme** inside the sandbox using
+      **WordPress Playground** (PHP 8.2 + WordPress compiled to WASM via `@wp-playground/cli`),
+      which needs neither a PHP binary nor MySQL. Every template renders:
+      front page, single post, category archive, page, search, 404 and wp-admin —
+      **HTTP 200/404 with zero PHP fatals, warnings or parse errors**.
+- [x] `bin/preview.sh` + two blueprints + `bin/preview-seed.php` committed, so anyone can
+      reproduce the preview with one command.
+- ⚠️ **WooCommerce could not be installed in this sandbox.** Outbound network is limited to the
+  npm registry and the GitHub API; `wordpress.org`, `downloads.wordpress.org`,
+  `playground.wordpress.net` and `objects.githubusercontent.com` (where GitHub release assets
+  redirect) are all unreachable. WordPress itself was recovered from the
+  `@wp-playground/wordpress-builds` npm tarball. So the **commerce** templates
+  (`content-product.php`, shop archive, cart, checkout) are structurally linted and
+  syntax-checked but have **not been rendered against a live WooCommerce** — run
+  `./bin/preview.sh` (with WooCommerce) on a machine with normal network before shipping.
 - Next stop is the roadmap: Phase 9 leftovers (CMS/store settings, audit log, staff Manager
   role) and Phase 10.
 
