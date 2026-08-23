@@ -11,7 +11,7 @@ platform plus a creative layer, all within the host's 2 GB Docker budget.
 > | 7 — Commerce completion | **Complete** |
 > | 8 — Marketing & creative | **Complete** |
 > | 9 — Admin & analytics | **Complete**; analytics, coupons, returns, storefront CMS, Manager role and cross-service audit log done |
-> | 10 — Hardening | **Ongoing**; CI, dark mode, order authorization, rate limits and correlated JSON logs done; backup drill, i18n and PWA remain |
+> | 10 — Hardening | **Ongoing**; CI, dark mode, order authorization, rate limits, correlated JSON logs and backup/restore workflow done; i18n and PWA remain |
 
 ## 6.0 Guardrails (hard constraints, every phase must respect)
 
