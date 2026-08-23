@@ -21,6 +21,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
+import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
 
 import { AppState } from "../../store";
 import { logout } from "../../store/actions/userAction";
@@ -33,6 +34,7 @@ import { BrandMark } from "../../brand";
 import { CommerceSearch } from "../../features/catalog";
 import { useStoreSettings } from "../../features/storefront";
 import { MiniCartDrawer } from "../../features/cart";
+import { useI18n } from "../../features/i18n";
 
 const CartBadge = styled(Badge)({
   "& .MuiBadge-badge": {
@@ -73,6 +75,7 @@ const Navbar = () => {
   const { data: user, error } = useSelector((state: AppState) => state.user);
   const carts = useSelector((state: AppState) => state.cart);
   const { isDark, toggle: toggleScheme } = useColorSchemeContext();
+  const { language, toggleLanguage, t } = useI18n();
 
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -166,6 +169,15 @@ const Navbar = () => {
   const isActive = (path: string, exact = false) =>
     exact ? location.pathname === path : location.pathname.startsWith(path);
 
+  const navLabel = (path: string, fallback: string) => {
+    const keys: Record<string, Parameters<typeof t>[0]> = {
+      "/": "nav.shop", "/flash-sales": "nav.deals", "/gift-cards": "nav.gifts",
+      "/loyalty": "nav.rewards", "/orders": "nav.orders", "/returns": "nav.returns",
+      "/addresses": "nav.addresses", "/compare": "nav.compare", "/account": "nav.account",
+    };
+    return keys[path] ? t(keys[path]) : fallback;
+  };
+
   const initials =
     (user.firstName?.at(0)?.toUpperCase() ?? "") +
     (user.lastName?.at(0)?.toUpperCase() ?? "");
@@ -228,7 +240,7 @@ const Navbar = () => {
                     : "border-transparent text-ink-soft hover:border-ink/40 hover:text-ink"
                 }`}
               >
-                {item.label}
+                {navLabel(item.path, item.label)}
               </button>
             ))}
           </nav>
@@ -243,6 +255,16 @@ const Navbar = () => {
           />
 
           <div className="ml-auto flex items-center gap-1">
+            <Tooltip title={language === "en" ? "हिन्दी" : "English"}>
+              <button
+                aria-label={language === "en" ? "हिन्दी में देखें" : "View in English"}
+                onClick={toggleLanguage}
+                className="icon-button gap-1 !w-auto px-2 text-xs font-bold"
+              >
+                <LanguageOutlinedIcon sx={{ fontSize: 18 }} />
+                {language === "en" ? "हि" : "EN"}
+              </button>
+            </Tooltip>
             <Tooltip title={isDark ? "Switch to light" : "Switch to dark"}>
               <button
                 aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
@@ -325,7 +347,7 @@ const Navbar = () => {
                   <MenuItem onClick={() => handleCloseUserMenu("Profile")}>Profile</MenuItem>
                   {SECONDARY.map((s) => (
                     <MenuItem key={s.path} onClick={() => handleCloseUserMenu(s.path)}>
-                      {s.label}
+                      {navLabel(s.path, s.label)}
                     </MenuItem>
                   ))}
                   {isStaff && [
@@ -346,10 +368,10 @@ const Navbar = () => {
             ) : (
               <div className="ml-2 hidden items-center gap-2 sm:flex">
                 <button onClick={() => navigate("/login")} className="secondary-button !py-2">
-                  Login
+                  {t("nav.login")}
                 </button>
                 <button onClick={() => navigate("/register")} className="dark-button !py-2">
-                  Register
+                  {t("nav.register")}
                 </button>
               </div>
             )}
@@ -396,7 +418,7 @@ const Navbar = () => {
                     : "text-ink-soft hover:bg-sunken hover:text-ink"
                 }`}
               >
-                {item.label}
+                {navLabel(item.path, item.label)}
                 <ChevronRightIcon sx={{ fontSize: 16 }} />
               </button>
             ))}
@@ -412,7 +434,7 @@ const Navbar = () => {
                     : "text-ink-soft hover:bg-sunken hover:text-ink"
                 }`}
               >
-                {item.label}
+                {navLabel(item.path, item.label)}
                 <ChevronRightIcon sx={{ fontSize: 16 }} />
               </button>
             ))}
@@ -452,6 +474,13 @@ const Navbar = () => {
 
           <div className="space-y-2 border-t border-line p-4">
             <button
+              onClick={toggleLanguage}
+              className="flex w-full items-center justify-between rounded-sm px-3 py-2.5 text-sm font-semibold text-ink-soft transition hover:bg-sunken hover:text-ink"
+            >
+              <span className="flex items-center gap-2"><LanguageOutlinedIcon sx={{ fontSize: 18 }} />Language</span>
+              <span>{language === "en" ? "हिन्दी" : "English"}</span>
+            </button>
+            <button
               onClick={toggleScheme}
               aria-pressed={isDark}
               className="flex w-full items-center justify-between rounded-sm px-3 py-2.5 text-sm font-semibold text-ink-soft transition hover:bg-sunken hover:text-ink"
@@ -471,15 +500,15 @@ const Navbar = () => {
 
             {user.isLogedIn ? (
               <button onClick={() => dispatch(logout())} className="secondary-button w-full">
-                Logout
+                {t("nav.logout")}
               </button>
             ) : (
               <>
                 <button onClick={() => go("/login")} className="secondary-button w-full">
-                  Login
+                  {t("nav.login")}
                 </button>
                 <button onClick={() => go("/register")} className="dark-button w-full">
-                  Create account
+                  {t("nav.register")}
                 </button>
               </>
             )}

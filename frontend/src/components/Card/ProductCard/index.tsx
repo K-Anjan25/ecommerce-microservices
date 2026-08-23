@@ -34,6 +34,7 @@ import {
 import { formatPrice } from "../../../utils/cart";
 import { addToCompare, isInCompare } from "../../../utils/compare";
 import useCountdown from "../../../hooks/useCountdown";
+import { useI18n } from "../../../features/i18n";
 
 type CardProps = {
   product: ProductAdmin | undefined;
@@ -51,6 +52,7 @@ const ProductCard = ({ product }: CardProps) => {
   const { productId } = useParams();
   const queryClient = useQueryClient();
   const dispatch = useDispatch<any>();
+  const { t } = useI18n();
   const cartItems = useSelector((state: AppState) => state.cart);
 
   const [selectedVariantId, setSelectedVariantId] = useState<string>("");
@@ -361,7 +363,7 @@ const ProductCard = ({ product }: CardProps) => {
                   className="primary-button !h-12 min-w-[11rem] flex-1 sm:flex-none"
                 >
                   <AddShoppingCartIcon sx={{ fontSize: 18 }} />
-                  {quantity ? "Add one more" : "Add to cart"}
+                  {quantity ? t("product.addMore") : t("product.add")}
                 </button>
                 <Tooltip title="Compare">
                   <button

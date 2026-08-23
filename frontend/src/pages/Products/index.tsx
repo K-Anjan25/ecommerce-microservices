@@ -19,6 +19,7 @@ import Card from "../../components/Card";
 import ProductViewPlaceholder from "../../components/ProductViewPlaceholder";
 import EmptyState from "../../components/EmptyState";
 import { useStoreSettings } from "../../features/storefront";
+import { useI18n } from "../../features/i18n";
 
 const SORTS = [
   { value: "DATE_DESC", label: "Newest" },
@@ -46,6 +47,7 @@ const TRUST = [
 function Products() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useI18n();
   const { ref, inView } = useInView();
   const resultsRef = useRef<HTMLDivElement>(null);
 
@@ -459,7 +461,7 @@ function Products() {
             onClick={() => setFiltersOpen(true)}
             className="border-b border-ink pb-1 text-xs font-semibold uppercase tracking-[0.1em] text-ink lg:hidden"
           >
-            Refine{activeFilters.length ? ` (${activeFilters.length})` : ""}
+            {t("common.refine")}{activeFilters.length ? ` (${activeFilters.length})` : ""}
           </button>
         </div>
 
@@ -470,7 +472,7 @@ function Products() {
                 {item.label} <CloseIcon sx={{ fontSize: 13 }} />
               </button>
             ))}
-            <button onClick={clearAll} className="text-xs text-ink-muted underline">Clear all</button>
+            <button onClick={clearAll} className="text-xs text-ink-muted underline">{t("common.clear")}</button>
           </div>
         )}
 

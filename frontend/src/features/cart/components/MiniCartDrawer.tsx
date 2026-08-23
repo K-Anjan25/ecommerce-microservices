@@ -17,6 +17,7 @@ import {
   calculateTotalPriceOfCartItems,
   formatPrice,
 } from "../../../utils/cart";
+import { useI18n } from "../../i18n";
 
 type Props = { open: boolean; onClose: () => void };
 
@@ -25,6 +26,7 @@ export default function MiniCartDrawer({ open, onClose }: Props) {
   const items = useSelector((state: AppState) => state.cart);
   const dispatch = useDispatch<any>();
   const navigate = useNavigate();
+  const { t } = useI18n();
   const count = calculateCountOfCartItems(items);
   const subtotal = Number(calculateTotalPriceOfCartItems(items));
 
@@ -43,7 +45,7 @@ export default function MiniCartDrawer({ open, onClose }: Props) {
       <div className="flex h-full flex-col">
         <header className="flex h-[4.5rem] items-center justify-between border-b border-line px-5 sm:px-7">
           <div>
-            <p className="font-display text-2xl text-ink">Your bag</p>
+            <p className="font-display text-2xl text-ink">{t("cart.label")}</p>
             <p className="text-[0.6875rem] uppercase tracking-[0.12em] text-ink-muted">
               {count} item{count === 1 ? "" : "s"}
             </p>
@@ -56,12 +58,12 @@ export default function MiniCartDrawer({ open, onClose }: Props) {
         {items.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center px-8 text-center">
             <ShoppingBagOutlinedIcon sx={{ fontSize: 40 }} className="text-ink-faint" />
-            <p className="mt-5 font-display text-3xl text-ink">Your bag is empty</p>
+            <p className="mt-5 font-display text-3xl text-ink">{t("cart.empty")}</p>
             <p className="mt-2 max-w-xs text-sm leading-relaxed text-ink-muted">
               Discover considered pieces selected for everyday life.
             </p>
             <button onClick={() => go("/")} className="primary-button mt-6">
-              Explore the collection
+              {t("cart.explore")}
             </button>
           </div>
         ) : (
@@ -128,18 +130,18 @@ export default function MiniCartDrawer({ open, onClose }: Props) {
 
             <footer className="border-t border-ink bg-paper px-5 py-5 sm:px-7">
               <div className="flex items-baseline justify-between">
-                <span className="text-sm text-ink-soft">Subtotal</span>
+                <span className="text-sm text-ink-soft">{t("cart.subtotal")}</span>
                 <span className="font-display text-3xl text-ink">{formatPrice(subtotal)}</span>
               </div>
               <p className="mt-1 text-xs text-ink-muted">Shipping, tax and discounts are confirmed at checkout.</p>
               <button onClick={() => go("/checkout")} className="primary-button mt-5 w-full !py-3">
-                Checkout
+                {t("cart.checkout")}
               </button>
               <button
                 onClick={() => go("/cart")}
                 className="mt-3 w-full border-b border-ink pb-1 text-xs font-semibold uppercase tracking-[0.1em] text-ink"
               >
-                Review bag
+                {t("cart.review")}
               </button>
             </footer>
           </>

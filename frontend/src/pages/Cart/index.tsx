@@ -31,6 +31,7 @@ import {
 import { showSuccess } from "../../utils/showSuccess";
 import { showError } from "../../utils/showError";
 import statesAndDistrict from "../../formdata.json";
+import { useI18n } from "../../features/i18n";
 
 const FREE_SHIPPING_THRESHOLD = 999;
 
@@ -41,6 +42,7 @@ function Cart() {
   const [modalOpen, setModalOpen] = useState(searchParams.get("order") === "true");
   const [districts, setDistricts] = useState<{ name: string; id: string }[]>([]);
   const dispatch = useDispatch<any>();
+  const { t } = useI18n();
 
   const form = useFormik({
     ...createOrderForm(),
@@ -137,11 +139,11 @@ function Cart() {
         <div className="panel">
           <EmptyState
             icon={<ShoppingCartOutlinedIcon fontSize="large" />}
-            title="Your cart is empty"
+            title={t("cart.empty")}
             subtitle="Looks like you haven't added any products yet. Explore the shop and find something you like."
             action={
               <button className="primary-button" onClick={() => navigate("/")}>
-                Continue shopping
+                {t("cart.continue")}
               </button>
             }
           />
@@ -157,14 +159,14 @@ function Cart() {
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="eyebrow">Step 1 of 3</p>
-          <h1 className="page-title mt-1">Your cart</h1>
+          <h1 className="page-title mt-1">{t("cart.title")}</h1>
           <p className="page-subtitle">
             {itemCount} item{itemCount === 1 ? "" : "s"} · review quantities before checkout
           </p>
         </div>
         <button onClick={() => navigate("/")} className="secondary-button !py-2">
           <ArrowBackIcon sx={{ fontSize: 16 }} />
-          Continue shopping
+          {t("cart.continue")}
         </button>
       </div>
 
@@ -241,7 +243,7 @@ function Cart() {
             </div>
 
             <button onClick={() => navigate("/checkout")} className="primary-button mt-5 w-full !py-3">
-              Checkout
+              {t("cart.checkout")}
             </button>
             <LoadingButton
               variant="text"

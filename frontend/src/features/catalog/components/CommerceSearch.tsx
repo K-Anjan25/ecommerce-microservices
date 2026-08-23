@@ -4,6 +4,7 @@ import NorthWestIcon from "@mui/icons-material/NorthWest";
 import { ProductSearchSuggestion } from "../../../types/product";
 import { formatPrice } from "../../../utils/cart";
 import { useProductSuggestions } from "../hooks/useProductSuggestions";
+import { useI18n } from "../../i18n";
 
 type Props = {
   value: string;
@@ -22,11 +23,12 @@ export default function CommerceSearch({
   onChange,
   onSubmit,
   onProductSelect,
-  placeholder = "Search products, brands and categories",
+  placeholder,
   autoFocusRef,
   className = "",
   prominent = false,
 }: Props) {
+  const { t } = useI18n();
   const listId = useId();
   const localRef = useRef<HTMLInputElement>(null);
   const { suggestions, isLoading, clear } = useProductSuggestions(value);
@@ -97,7 +99,7 @@ export default function CommerceSearch({
             setActive(-1);
           }
         }}
-        placeholder={placeholder}
+        placeholder={placeholder ?? t("search.placeholder")}
         aria-label="Search Cartly catalog"
         aria-autocomplete="list"
         aria-controls={open ? listId : undefined}
@@ -114,7 +116,7 @@ export default function CommerceSearch({
           prominent ? "h-9 px-4 text-xs" : "h-7 px-3 text-[0.6875rem]"
         }`}
       >
-        Search
+        {t("search.action")}
       </button>
 
       {open && suggestions.length > 0 && (
@@ -124,7 +126,7 @@ export default function CommerceSearch({
           className="absolute inset-x-0 top-[calc(100%+0.5rem)] z-[70] overflow-hidden rounded-lg border border-line bg-paper p-2 shadow-pop"
         >
           <li className="px-3 pb-2 pt-1 text-eyebrow font-bold uppercase text-ink-muted">
-{isLoading ? "Finding products…" : "Products"}
+{isLoading ? t("common.loading") : t("search.products")}
           </li>
           {suggestions.map((suggestion, index) => (
             <li key={suggestion.id} id={`${listId}-${index}`} role="option" aria-selected={active === index}>
@@ -162,7 +164,7 @@ export default function CommerceSearch({
             </li>
           ))}
           <li className="border-t border-line px-3 pb-1 pt-2 text-[0.6875rem] text-ink-muted">
-            Use ↑ ↓ to browse · Enter to search · Esc to close
+            {t("search.hint")}
           </li>
         </ul>
       )}

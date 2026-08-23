@@ -15,6 +15,7 @@ import Loader from "./components/Loader";
 import configureStore from "./config/configureStore";
 import { ColorSchemeContext } from "./context/colorScheme";
 import useColorScheme, { applyScheme, resolveInitialScheme } from "./hooks/useColorScheme";
+import { I18nProvider } from "./features/i18n";
 import "./style.css";
 
 /* Paint the right scheme before React mounts, so there is no light flash. */
@@ -34,6 +35,7 @@ function Root() {
   const ctx = useMemo(() => ({ scheme, toggle, isDark }), [scheme, toggle, isDark]);
 
   return (
+    <I18nProvider>
     <ColorSchemeContext.Provider value={ctx}>
       <ThemeProvider theme={muiTheme}>
         <CssBaseline />
@@ -56,6 +58,7 @@ function Root() {
         </QueryClientProvider>
       </ThemeProvider>
     </ColorSchemeContext.Provider>
+    </I18nProvider>
   );
 }
 

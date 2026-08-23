@@ -20,6 +20,7 @@ import { Product, ProductAdmin } from "../../types/product";
 import { formatPrice } from "../../utils/cart";
 import { addToCompare, isInCompare } from "../../utils/compare";
 import { showSuccess } from "../../utils/showSuccess";
+import { useI18n } from "../../features/i18n";
 
 type CardProps = {
   product: Product | ProductAdmin;
@@ -39,6 +40,7 @@ type CardProps = {
 const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
   const dispatch = useDispatch<any>();
   const navigate = useNavigate();
+  const { t } = useI18n();
   const cartItems = useSelector((state: AppState) => state.cart);
   const quantity =
     cartItems.find(
@@ -193,7 +195,7 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
             >
               <RemoveIcon sx={{ fontSize: 16 }} />
             </button>
-            <span className="text-sm font-bold">{quantity} in cart</span>
+            <span className="text-sm font-bold">{quantity} {t("product.inCart")}</span>
             <button
               onClick={handleAdd}
               aria-label="Increase quantity"
@@ -207,7 +209,7 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
             onClick={onClick}
             className="flex h-10 w-full items-center justify-center rounded-sm border border-line bg-paper text-xs font-bold uppercase tracking-wide text-ink-soft"
           >
-            View product
+            {t("product.view")}
           </button>
         ) : (
           <button
@@ -215,7 +217,7 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
             className="flex h-10 w-full items-center justify-center gap-2 rounded-sm bg-contrast text-xs font-bold text-oncontrast transition hover:bg-action sm:text-sm"
           >
             <AddShoppingCartIcon sx={{ fontSize: 16 }} />
-            Add to cart
+            {t("product.add")}
           </button>
         )}
       </div>

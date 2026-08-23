@@ -39,6 +39,7 @@ import {
 import { showError } from "../../utils/showError";
 import { showSuccess } from "../../utils/showSuccess";
 import statesAndDistrict from "../../formdata.json";
+import { useI18n } from "../../features/i18n";
 
 const FORM_ID = "checkout-form";
 
@@ -123,6 +124,7 @@ function OptionCard({
 function Checkout() {
   const navigate = useNavigate();
   const dispatch = useDispatch<any>();
+  const { t } = useI18n();
   const items = useSelector((state: AppState) => state.cart);
   const isLoggedIn = useSelector((state: AppState) => state.user.data.isLogedIn);
   const [districts, setDistricts] = useState<{ name: string; id: string }[]>([]);
@@ -385,7 +387,7 @@ function Checkout() {
 
       <div className="mb-6">
         <p className="eyebrow">Step 2 of 3</p>
-        <h1 className="mt-2 font-display text-5xl font-normal tracking-[-0.03em] text-ink">Checkout</h1>
+        <h1 className="mt-2 font-display text-5xl font-normal tracking-[-0.03em] text-ink">{t("checkout.title")}</h1>
         <p className="page-subtitle">
           {itemCount} item{itemCount === 1 ? "" : "s"} · everything below is confirmed before
           payment is taken.
@@ -630,7 +632,7 @@ function Checkout() {
             {summaryRows}
             <Divider className="!my-4" />
             <div className="flex items-baseline justify-between">
-              <span className="font-medium">Total</span>
+              <span className="font-medium">{t("checkout.total")}</span>
               <span className="font-display text-3xl">{formatPrice(total)}</span>
             </div>
             <LoadingButton
@@ -666,7 +668,7 @@ function Checkout() {
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper/95 p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-md lg:hidden">
         <div className="mx-auto flex max-w-container items-center gap-3">
           <div className="min-w-0">
-            <p className="text-[0.625rem] uppercase tracking-wide text-ink-muted">Total</p>
+            <p className="text-[0.625rem] uppercase tracking-wide text-ink-muted">{t("checkout.total")}</p>
             <p className="font-display text-xl leading-none">
               {formatPrice(total)}
             </p>
@@ -678,7 +680,7 @@ function Checkout() {
             loading={busy}
             className="!ml-auto !flex-1 !py-3"
           >
-            Pay now
+            {t("checkout.pay")}
           </LoadingButton>
         </div>
       </div>
