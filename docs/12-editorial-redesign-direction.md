@@ -48,6 +48,6 @@ Cartly should feel designed for a premium curated mix of home, apparel, beauty a
 3. **Done:** reworked cart and checkout typography/surfaces; checkout sections and summary now use editorial rules instead of stacked cards, and the mobile pay bar is correctly pinned after removing the mobile shop tabs.
 4. **Done:** added a Woo-style editorial mini-cart drawer with image-led lines, variant-aware totals, quantity controls and direct guest checkout. Cart review is now public so the existing guest checkout is reachable end to end.
 5. Redraw the remaining SVG product/mobile frames from the selected concept rather than merely recoloring the rejected structure.
-6. Run responsive visual review at 390, 768, 1280 and 1440px before continuing to admin screens.
+6. **In progress:** customer account surfaces now share the editorial system — photographic authentication, unboxed profile/security forms and rule-based order history. Responsive browser capture remains blocked by the sandbox's browser-download network restriction; static breakpoint review and production builds continue.
 
 Exploratory images live in `design/concepts/`. They are mood concepts, not production product photography.

@@ -130,14 +130,14 @@ function Orders() {
           />
         </div>
       ) : (
-        <ul className="space-y-3">
+        <ul className="border-t border-ink">
           {userOrders.map((order: Order) => {
             const items = order.items;
             const known = items.map((i) => byId.get(i.productId)).filter(Boolean);
             return (
-              <li key={order.id} className="panel overflow-hidden">
+              <li key={order.id} className="border-b border-line py-6">
                 {/* header strip */}
-                <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-line bg-canvas px-5 py-3">
+                <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
                   <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
                     <div>
                       <p className="text-eyebrow font-bold uppercase text-ink-muted">Order</p>
@@ -160,16 +160,16 @@ function Orders() {
                 </div>
 
                 {/* body */}
-                <div className="flex flex-wrap items-center justify-between gap-4 p-5">
+                <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
                   <div className="flex min-w-0 flex-1 items-center gap-3">
-                    <div className="flex shrink-0 -space-x-3">
+                    <div className="flex shrink-0 gap-2">
                       {items.slice(0, 4).map((item, idx) => {
                         const p = byId.get(item.productId);
                         const cover = p?.images?.[0] || p?.imageUrl;
                         return (
                           <span
                             key={`${item.productId}-${item.variantId ?? "base"}-${idx}`}
-                            className="h-12 w-12 overflow-hidden rounded-sm border-2 border-paper bg-sunken"
+                            className="h-16 w-12 overflow-hidden bg-sunken"
                           >
                             {cover ? (
                               <img src={cover} alt="" className="h-full w-full object-cover" />
@@ -182,13 +182,13 @@ function Orders() {
                         );
                       })}
                       {items.length > 4 && (
-                        <span className="flex h-12 w-12 items-center justify-center rounded-sm border-2 border-paper bg-contrast text-xs font-bold text-oncontrast">
+                        <span className="flex h-16 w-12 items-center justify-center bg-contrast text-xs font-bold text-oncontrast">
                           +{items.length - 4}
                         </span>
                       )}
                     </div>
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-ink">
+                      <p className="truncate font-display text-xl text-ink">
                         {known.length
                           ? known
                               .slice(0, 2)
