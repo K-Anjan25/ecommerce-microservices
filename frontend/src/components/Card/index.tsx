@@ -90,6 +90,19 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
   return (
     <article
       onClick={onClick}
+      role={onClick ? "link" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      aria-label={onClick ? `View ${product.name}` : undefined}
+      onKeyDown={(event) => {
+        if (
+          onClick &&
+          event.target === event.currentTarget &&
+          (event.key === "Enter" || event.key === " ")
+        ) {
+          event.preventDefault();
+          onClick(event as unknown as React.MouseEvent);
+        }
+      }}
       className="group relative flex h-full cursor-pointer flex-col overflow-hidden bg-transparent transition duration-300"
     >
       {/* ── cover ─────────────────────────────────────────────────────── */}

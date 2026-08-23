@@ -126,6 +126,12 @@ function AdminLayout() {
 
   return (
     <div className="flex min-h-screen bg-canvas">
+      <a
+        href="#admin-main"
+        className="fixed left-3 top-3 z-[100] -translate-y-20 bg-action px-4 py-2 text-sm font-semibold text-oncontrast transition focus:translate-y-0"
+      >
+        Skip to content
+      </a>
       <aside className="sticky top-0 hidden h-screen shrink-0 overflow-y-auto lg:block">{Rail}</aside>
 
       <Drawer anchor="left" open={open} onClose={() => setOpen(false)}>
@@ -149,9 +155,9 @@ function AdminLayout() {
           </div>
         </div>
 
-        <div className="px-4 py-6 sm:px-6 lg:px-8">
+        <main id="admin-main" tabIndex={-1} className="px-4 py-6 sm:px-6 lg:px-8">
           <Outlet />
-        </div>
+        </main>
       </div>
     </div>
   );

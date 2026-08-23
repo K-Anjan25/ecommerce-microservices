@@ -13,7 +13,7 @@ const messages = {
     "cart.label": "Your bag", "cart.empty": "Your bag is empty", "cart.explore": "Explore the collection",
     "cart.subtotal": "Subtotal", "cart.checkout": "Checkout", "cart.review": "Review bag", "cart.title": "Your cart", "cart.continue": "Continue shopping",
     "product.add": "Add to cart", "product.addMore": "Add one more", "product.view": "View product", "product.inCart": "in cart",
-    "common.refine": "Refine", "common.clear": "Clear all", "common.loading": "Loading…",
+    "common.refine": "Refine", "common.clear": "Clear all", "common.loading": "Loading…", "common.skip": "Skip to content",
     "checkout.title": "Checkout", "checkout.total": "Total", "checkout.pay": "Pay now",
     "mobile.you": "You", "mobile.search": "Search", "mobile.cart": "Cart"
   },
@@ -26,7 +26,7 @@ const messages = {
     "cart.label": "आपका बैग", "cart.empty": "आपका बैग खाली है", "cart.explore": "कलेक्शन देखें",
     "cart.subtotal": "उप-योग", "cart.checkout": "चेकआउट", "cart.review": "बैग की समीक्षा करें", "cart.title": "आपका कार्ट", "cart.continue": "खरीदारी जारी रखें",
     "product.add": "बैग में जोड़ें", "product.addMore": "एक और जोड़ें", "product.view": "उत्पाद देखें", "product.inCart": "बैग में",
-    "common.refine": "फ़िल्टर", "common.clear": "सभी हटाएँ", "common.loading": "लोड हो रहा है…",
+    "common.refine": "फ़िल्टर", "common.clear": "सभी हटाएँ", "common.loading": "लोड हो रहा है…", "common.skip": "मुख्य सामग्री पर जाएँ",
     "checkout.title": "चेकआउट", "checkout.total": "कुल", "checkout.pay": "अभी भुगतान करें",
     "mobile.you": "आप", "mobile.search": "खोजें", "mobile.cart": "बैग"
   }

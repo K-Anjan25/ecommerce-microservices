@@ -17,6 +17,10 @@
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
+  html[lang="hi"] body {
+    font-family: "Noto Sans Devanagari", Inter, system-ui, sans-serif;
+  }
+
   h1, h2, h3, h4, h5, h6 {
     font-family: "Inter Tight", Inter, system-ui, sans-serif;
     letter-spacing: -0.02em;

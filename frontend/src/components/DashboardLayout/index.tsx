@@ -4,6 +4,7 @@ import Navbar from "../Navbar";
 import MobileTabBar from "../MobileTabBar";
 import { BrandMark } from "../../brand";
 import { CheckoutHeader } from "../../features/checkout";
+import { useI18n } from "../../features/i18n";
 
 const FOOTER_LINKS: { title: string; items: { label: string; to: string }[] }[] = [
   {
@@ -40,12 +41,21 @@ function DashboardLayout() {
   const location = useLocation();
   const isShop = location.pathname === "/";
   const isCheckout = location.pathname === "/checkout";
+  const { t } = useI18n();
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
+      <a
+        href="#main-content"
+        className="fixed left-3 top-3 z-[100] -translate-y-20 bg-action px-4 py-2 text-sm font-semibold text-oncontrast transition focus:translate-y-0"
+      >
+        {t("common.skip")}
+      </a>
       {isCheckout ? <CheckoutHeader /> : <Navbar />}
 
       <main
+        id="main-content"
+        tabIndex={-1}
         key={location.pathname}
         className={`animate-fade-up flex-1 ${isCheckout ? "page-shell pb-10 pt-6 sm:pt-8" : `pb-24 lg:pb-12 ${isShop ? "pt-6" : "page-shell pt-6 sm:pt-8"}`}`}
       >
@@ -59,8 +69,8 @@ function DashboardLayout() {
           <div>
             <BrandMark inverse />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-ink-muted">
-              Everything you need, one cart. Built on Spring Boot microservices with a
-              React storefront — catalog, checkout, payments and loyalty in one place.
+              A considered collection for home and life. Thoughtful objects, honest pricing,
+              secure checkout and support that stays with you after delivery.
             </p>
             <div className="mt-5 flex flex-wrap gap-2">
               {["Visa", "Mastercard", "UPI", "Razorpay", "COD"].map((p) => (
@@ -96,7 +106,7 @@ function DashboardLayout() {
         <div className="border-t border-white/10">
           <div className="page-shell flex flex-col items-center justify-between gap-2 py-5 text-xs text-ink-muted sm:flex-row">
             <span>© {new Date().getFullYear()} Cartly. All rights reserved.</span>
-            <span className="font-mono">api-gateway · user · product · commerce</span>
+            <span>Curated for everyday · Hyderabad, India</span>
           </div>
         </div>
       </footer>
