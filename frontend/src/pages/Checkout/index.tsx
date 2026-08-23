@@ -57,13 +57,13 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="panel p-5 sm:p-6">
+    <section className="border-t border-line py-7 sm:py-8">
       <div className="mb-5 flex items-start gap-3">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-contrast text-xs font-bold text-oncontrast">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center border border-ink font-display text-base text-ink">
           {step}
         </span>
         <div className="min-w-0">
-          <h2 className="flex items-center gap-2 font-heading text-base font-bold text-ink">
+          <h2 className="flex items-center gap-2 font-display text-2xl font-normal text-ink">
             <Icon sx={{ fontSize: 17 }} className="text-ink-muted" />
             {title}
           </h2>
@@ -96,14 +96,14 @@ function OptionCard({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`flex flex-1 items-start gap-3 rounded-sm border p-4 text-left transition ${
+      className={`flex flex-1 items-start gap-3 border p-4 text-left transition ${
         active
-          ? "border-brand bg-brand-tint ring-1 ring-brand"
+          ? "border-brand bg-brand-tint"
           : "border-line bg-paper hover:border-ink-faint"
       }`}
     >
       <span
-        className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
+        className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center ${
           active ? "bg-action text-oncontrast" : "bg-sunken text-ink-soft"
         }`}
       >
@@ -385,7 +385,7 @@ function Checkout() {
 
       <div className="mb-6">
         <p className="eyebrow">Step 2 of 3</p>
-        <h1 className="page-title mt-1">Checkout</h1>
+        <h1 className="mt-2 font-display text-5xl font-normal tracking-[-0.03em] text-ink">Checkout</h1>
         <p className="page-subtitle">
           {itemCount} item{itemCount === 1 ? "" : "s"} · everything below is confirmed before
           payment is taken.
@@ -415,7 +415,7 @@ function Checkout() {
                 <button
                   type="button"
                   onClick={() => applyAddress(defaultAddress)}
-                  className="flex w-full items-center justify-between gap-3 rounded-sm border border-line bg-canvas px-4 py-3 text-left transition hover:border-brand hover:bg-brand-tint"
+                  className="flex w-full items-center justify-between gap-3 border border-line bg-canvas px-4 py-3 text-left transition hover:border-brand hover:bg-brand-tint"
                 >
                   <span className="min-w-0">
                     <span className="block text-sm font-bold text-ink">Use saved address</span>
@@ -515,7 +515,7 @@ function Checkout() {
             <div className="space-y-4">
               {isLoggedIn ? (
                 coupon ? (
-                  <div className="flex items-center justify-between gap-3 rounded-sm border border-state-success/30 bg-state-success-soft px-4 py-3">
+                  <div className="flex items-center justify-between gap-3 border border-state-success/30 bg-state-success-soft px-4 py-3">
                     <span className="min-w-0">
                       <span className="block text-sm font-bold text-state-success">
                         {coupon.code} applied
@@ -554,7 +554,7 @@ function Checkout() {
                   </div>
                 )
               ) : (
-                <p className="rounded-sm border border-line bg-canvas px-4 py-3 text-xs text-ink-soft">
+                <p className="border border-line bg-canvas px-4 py-3 text-xs text-ink-soft">
                   Sign in to apply coupons, gift cards and loyalty points.
                 </p>
               )}
@@ -574,19 +574,19 @@ function Checkout() {
           </Section>
 
           {/* review — collapsed by default; the cart is one click back */}
-          <section className="panel">
+          <section className="border-y border-line">
             <button
               type="button"
               onClick={() => setReviewOpen((o) => !o)}
               aria-expanded={reviewOpen}
-              className="flex w-full items-center justify-between gap-3 p-5 text-left sm:p-6"
+              className="flex w-full items-center justify-between gap-3 py-5 text-left"
             >
               <span className="flex items-center gap-3">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sunken text-xs font-bold text-ink">
+                <span className="flex h-8 w-8 items-center justify-center border border-line font-display text-sm text-ink">
                   {itemCount}
                 </span>
                 <span>
-                  <span className="block font-heading text-base font-bold text-ink">
+                  <span className="block font-display text-xl text-ink">
                     Review items
                   </span>
                   <span className="text-xs text-ink-muted">
@@ -599,7 +599,7 @@ function Checkout() {
               />
             </button>
             {reviewOpen && (
-              <div className="border-t border-line px-5 sm:px-6">
+              <div className="border-t border-line">
                 <ul className="divide-y divide-line">
                   {items.map((item) => (
                     <CartLine
@@ -625,13 +625,13 @@ function Checkout() {
 
         {/* ══ right: sticky summary ═══════════════════════════════════ */}
         <aside className="lg:sticky lg:top-24 lg:h-fit">
-          <div className="panel-raised p-5">
-            <h2 className="mb-4 font-heading text-base font-bold">Order summary</h2>
+          <div className="border-t border-ink py-5">
+            <h2 className="mb-5 font-display text-2xl font-normal">Order summary</h2>
             {summaryRows}
             <Divider className="!my-4" />
             <div className="flex items-baseline justify-between">
-              <span className="font-heading text-base font-bold">Total</span>
-              <span className="font-heading text-2xl font-extrabold">{formatPrice(total)}</span>
+              <span className="font-medium">Total</span>
+              <span className="font-display text-3xl">{formatPrice(total)}</span>
             </div>
             <LoadingButton
               form={FORM_ID}
@@ -663,11 +663,11 @@ function Checkout() {
       </div>
 
       {/* ══ mobile sticky pay bar ═════════════════════════════════════ */}
-      <div className="fixed inset-x-0 bottom-[3.875rem] z-40 border-t border-line bg-paper/95 p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-md lg:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper/95 p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-md lg:hidden">
         <div className="mx-auto flex max-w-container items-center gap-3">
           <div className="min-w-0">
             <p className="text-[0.625rem] uppercase tracking-wide text-ink-muted">Total</p>
-            <p className="font-heading text-lg font-extrabold leading-none">
+            <p className="font-display text-xl leading-none">
               {formatPrice(total)}
             </p>
           </div>
