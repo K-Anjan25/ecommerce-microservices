@@ -9,6 +9,7 @@ import StorefrontIcon from "@mui/icons-material/Storefront";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import AssignmentReturnIcon from "@mui/icons-material/AssignmentReturn";
+import WebOutlinedIcon from "@mui/icons-material/WebOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { Drawer } from "@mui/material";
@@ -22,6 +23,7 @@ const NAV = [
   { path: "/admin/categories", label: "Categories", icon: CategoryIcon, exact: false },
   { path: "/admin/coupons", label: "Coupons", icon: ConfirmationNumberIcon, exact: false },
   { path: "/admin/returns", label: "Returns", icon: AssignmentReturnIcon, exact: false },
+  { path: "/admin/storefront", label: "Storefront", icon: WebOutlinedIcon, exact: false },
   { path: "/admin/users", label: "Customers", icon: PeopleOutlineIcon, exact: false },
 ] as const;
 
@@ -112,14 +114,14 @@ function AdminLayout() {
 
   return (
     <div className="-mx-4 -mt-6 flex min-h-[calc(100vh-4rem)] sm:-mx-6 sm:-mt-8 lg:-mx-8">
-      <aside className="sticky top-16 hidden h-[calc(100vh-4rem)] shrink-0 overflow-y-auto lg:block">{Rail}</aside>
+      <aside className="sticky top-[7.5rem] hidden h-[calc(100vh-7.5rem)] shrink-0 overflow-y-auto lg:block">{Rail}</aside>
 
       <Drawer anchor="left" open={open} onClose={() => setOpen(false)}>
         {Rail}
       </Drawer>
 
       <div className="min-w-0 flex-1">
-        <div className="sticky top-16 z-30 flex items-center gap-3 border-b border-line bg-paper/95 px-4 py-3 backdrop-blur-md sm:px-6 lg:py-4">
+        <div className="sticky top-[7.5rem] z-30 flex items-center gap-3 border-b border-line bg-paper/95 px-4 py-3 backdrop-blur-md sm:px-6 lg:py-4">
           <button
             aria-label="Open navigation"
             className="icon-button -ml-2 lg:hidden"

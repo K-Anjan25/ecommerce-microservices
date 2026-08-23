@@ -31,6 +31,8 @@ import { showError } from "../../utils/showError";
 import { useColorSchemeContext } from "../../context/colorScheme";
 import BrandMark from "../BrandMark";
 import CommerceSearch from "../CommerceSearch";
+import { StoreSettingsApi } from "../../api/storeSettingsApi";
+import { DEFAULT_STORE_SETTINGS } from "../../types/storeSettings";
 
 const CartBadge = styled(Badge)({
   "& .MuiBadge-badge": {
@@ -88,6 +90,11 @@ const Navbar = () => {
     staleTime: 5 * 60 * 1000,
     retry: false,
   });
+  const { data: storeSettings = DEFAULT_STORE_SETTINGS } = useQuery(
+    "store-settings",
+    StoreSettingsApi.get,
+    { staleTime: 5 * 60 * 1000, retry: false }
+  );
 
   const activeCategory = (location.state as { category?: string } | null)?.category ?? "";
 
@@ -166,13 +173,19 @@ const Navbar = () => {
   return (
     <>
       {/* ── announcement ─────────────────────────────────────────────── */}
-      {announce && (
+      {announce && storeSettings.announcementEnabled && (
         <div className="relative bg-contrast text-oncontrast">
           <div className="page-shell flex h-9 items-center justify-center gap-3">
-            <p className="truncate text-[0.6875rem] font-semibold tracking-wide sm:text-xs">
-              Free shipping over ₹999
-              <span className="mx-2 text-ink-muted">·</span>
-              <span className="text-accent">Flash sale live</span> — grab it before it ends
+            <p className="truncate pr-6 text-[0.6875rem] font-semibold tracking-wide sm:text-xs">
+              {storeSettings.announcementText}
+              {storeSettings.announcementLinkText && (
+                <>
+                  <span className="mx-2 text-ink-muted">·</span>
+                  <a className="text-accent hover:underline" href={storeSettings.announcementLinkUrl || "/flash-sales"}>
+                    {storeSettings.announcementLinkText}
+                  </a>
+                </>
+              )}
             </p>
             <button
               aria-label="Dismiss announcement"

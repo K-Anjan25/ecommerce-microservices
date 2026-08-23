@@ -17,6 +17,20 @@ const CATEGORIES = [
 
 const BRANDS = ["Acme", "Northwind", "Lumen", "Kite", "Orbit", "Cobalt"];
 
+let STORE_SETTINGS = {
+  announcementEnabled: true,
+  announcementText: "Free shipping over ₹999",
+  announcementLinkText: "Flash sale live",
+  announcementLinkUrl: "/flash-sales",
+  heroEyebrow: "New season · 2026",
+  heroTitle: "Everything you",
+  heroEmphasis: "need, one cart.",
+  heroDescription: "A catalog you can actually search, a checkout that doesn't fight you, and rewards that stack.",
+  primaryCtaLabel: "Shop the catalog",
+  secondaryCtaLabel: "View flash sales",
+  freeShippingThreshold: 999,
+};
+
 const NAMES = [
   "Studio Pro Headphones", "Linen Throw Blanket", "Trail Runner 3", "Ceramic Pour-Over",
   "Merino Crew Sweater", "Desk Lamp Arc", "Vitamin C Serum", "Cast Iron Skillet",
@@ -131,6 +145,21 @@ createServer((req, res) => {
   const q = url.searchParams;
 
   if (req.method === "OPTIONS") return json(res, {});
+
+  if (p === "/v1/store-settings" && req.method === "GET") return json(res, STORE_SETTINGS);
+  if (p === "/v1/store-settings" && req.method === "PUT") {
+    let raw = "";
+    req.on("data", (chunk) => { raw += chunk; });
+    req.on("end", () => {
+      try {
+        STORE_SETTINGS = { ...STORE_SETTINGS, ...JSON.parse(raw) };
+        json(res, STORE_SETTINGS);
+      } catch {
+        json(res, { message: "Invalid settings payload" }, 400);
+      }
+    });
+    return;
+  }
 
   if (p === "/v1/categories") return json(res, CATEGORIES);
 

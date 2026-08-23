@@ -87,7 +87,7 @@ spring:
         - id: product-write
           uri: ${PRODUCT_SERVICE_URI:http://localhost:8080}
           predicates:
-            - Path=/v1/products/**,/v1/categories/**,/v1/comments/**
+            - Path=/v1/products/**,/v1/categories/**,/v1/comments/**,/v1/store-settings
             - Method=POST,PUT,DELETE
           filters:
             - AuthFilter
@@ -95,7 +95,7 @@ spring:
         - id: product-read
           uri: ${PRODUCT_SERVICE_URI:http://localhost:8080}
           predicates:
-            - Path=/v1/products/**,/v1/categories/**,/v1/comments/**
+            - Path=/v1/products/**,/v1/categories/**,/v1/comments/**,/v1/store-settings
             - Method=GET
 
         - id: shipping-service

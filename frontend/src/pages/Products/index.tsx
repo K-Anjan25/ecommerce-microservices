@@ -20,6 +20,8 @@ import Card from "../../components/Card";
 import ProductViewPlaceholder from "../../components/ProductViewPlaceholder";
 import EmptyState from "../../components/EmptyState";
 import CommerceSearch from "../../components/CommerceSearch";
+import { StoreSettingsApi } from "../../api/storeSettingsApi";
+import { DEFAULT_STORE_SETTINGS } from "../../types/storeSettings";
 
 const SORTS = [
   { value: "DATE_DESC", label: "Newest" },
@@ -124,6 +126,12 @@ function Products() {
     setSearchValue(value);
     delayedSearchTerm(value);
   };
+
+  const { data: storeSettings = DEFAULT_STORE_SETTINGS } = useQuery(
+    "store-settings",
+    StoreSettingsApi.get,
+    { staleTime: 5 * 60 * 1000, retry: false }
+  );
 
   const { data: bestsellers } = useQuery("bestsellers", ProductApi.getBestsellers, {
     enabled:
@@ -301,30 +309,29 @@ function Products() {
       <section className="page-shell">
         <div className="grid gap-4 lg:grid-cols-[1.25fr_1fr]">
           <div className="grain relative overflow-hidden rounded-xl2 bg-contrast px-7 py-10 text-oncontrast sm:px-12 sm:py-16">
-            <p className="eyebrow !text-accent">New season · 2026</p>
+            <p className="eyebrow !text-accent">{storeSettings.heroEyebrow}</p>
             <h1 className="mt-4 font-heading text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
-              Everything you
+              {storeSettings.heroTitle}
               <br />
               <span className="font-display font-normal italic text-accent">
-                need, one cart.
+                {storeSettings.heroEmphasis}
               </span>
             </h1>
             <p className="mt-5 max-w-md text-sm leading-relaxed text-ink-muted sm:text-base">
-              A catalog you can actually search, a checkout that doesn&apos;t fight you, and
-              rewards that stack. Browse {products.length ? `${products.length}+` : "the"} products below.
+              {storeSettings.heroDescription} Browse {products.length ? `${products.length}+` : "the"} products below.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <button
                 onClick={() => resultsRef.current?.scrollIntoView({ behavior: "smooth" })}
                 className="accent-button"
               >
-                Shop the catalog <ArrowForwardIcon sx={{ fontSize: 17 }} />
+                {storeSettings.primaryCtaLabel} <ArrowForwardIcon sx={{ fontSize: 17 }} />
               </button>
               <button
                 onClick={() => navigate("/flash-sales")}
                 className="inline-flex items-center justify-center gap-2 rounded-sm border border-white/25 px-4 py-2.5 text-sm font-semibold text-oncontrast transition hover:bg-white/10"
               >
-                View flash sales
+                {storeSettings.secondaryCtaLabel}
               </button>
             </div>
             <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-ink-muted">
@@ -374,7 +381,11 @@ function Products() {
               </span>
               <div className="min-w-0">
                 <p className="truncate text-sm font-bold text-ink">{title}</p>
-                <p className="truncate text-xs text-ink-muted">{copy}</p>
+                <p className="truncate text-xs text-ink-muted">
+                  {title === "Free shipping"
+                    ? `On orders over ₹${storeSettings.freeShippingThreshold.toLocaleString("en-IN")}`
+                    : copy}
+                </p>
               </div>
             </div>
           ))}
