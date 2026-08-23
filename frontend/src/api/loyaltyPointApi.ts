@@ -1,5 +1,5 @@
 import { LoyaltyPoint, LoyaltyPointType } from "../types/loyaltyPoint";
-import { api } from "./axios";
+import { api } from "./client";
 
 const getBalance = async () => {
   const { data } = await api.get<number>("/v1/loyalty/balance");

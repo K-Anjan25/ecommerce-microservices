@@ -1,6 +1,6 @@
 # Frontend session and API hardening
 
-The shared Axios transport now enforces the following boundaries:
+The shared Fetch transport (`src/api/client.ts`, path retained to avoid noisy import churn) enforces the following boundaries:
 
 - Absolute request URLs are disabled; feature APIs cannot accidentally send the
   bearer token to an arbitrary origin.

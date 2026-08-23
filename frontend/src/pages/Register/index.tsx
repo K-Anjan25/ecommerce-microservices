@@ -7,7 +7,7 @@ import registerForm from "../../forms/registerForm";
 import { showSuccess } from "../../utils/showSuccess";
 import { Link, useNavigate } from "react-router-dom";
 import { RegisterForm } from "../../types/user";
-import { api } from "../../api/axios";
+import { api } from "../../api/client";
 import { useState } from "react";
 import { showError } from "../../utils/showError";
 

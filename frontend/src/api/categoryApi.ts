@@ -1,5 +1,5 @@
 import { Category } from "../types/category";
-import { api } from "./axios";
+import { api } from "./client";
 
 // Public endpoint - no authentication required
 const getCategories = async () => {

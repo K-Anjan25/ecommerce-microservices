@@ -10,7 +10,6 @@
     "@mui/material": "^5.11.0",
     "@types/lodash.debounce": "^4.0.7",
     "@types/node": "^20.18.0",
-    "axios": "^1.19.0",
     "formik": "^2.2.9",
     "lodash.debounce": "^4.0.8",
     "react": "^18.2.0",

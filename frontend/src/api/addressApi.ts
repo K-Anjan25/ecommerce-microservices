@@ -1,5 +1,5 @@
 import { SavedAddress } from "../types/address";
-import { api } from "./axios";
+import { api } from "./client";
 
 const getSavedAddresses = async () => {
   const { data } = await api.get<SavedAddress[]>("/v1/addresses");

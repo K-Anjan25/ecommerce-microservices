@@ -3,7 +3,7 @@ import {
   CreateCouponRequest,
   UpdateCouponRequest,
 } from "../types/coupon";
-import { api } from "./axios";
+import { api } from "./client";
 
 // Admin-only coupon management (ROLE_ADMIN through the gateway).
 const getCoupons = async () => {

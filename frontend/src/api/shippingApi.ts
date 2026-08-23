@@ -1,5 +1,5 @@
 import { ShippingQuote, TaxRule } from "../types/shipping";
-import { api } from "./axios";
+import { api } from "./client";
 
 // POST /v1/shipping/calculate — pincode-based quote (requires an authenticated
 // user: the gateway AuthFilter guards /v1/shipping/**). Returns an inactive

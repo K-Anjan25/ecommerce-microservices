@@ -8,8 +8,7 @@ The frontend moved from **11 findings (6 high)** to **0 known vulnerabilities**.
 
 ## Changes applied
 
-- Axios `1.13.6` → `1.19.0`, removing active prototype-pollution,
-  header-injection, credential-leak, recursion, and proxy advisories.
+- Axios was first upgraded to `1.19.0` to remove active advisories, then removed entirely in favor of the native Fetch API and Cartly's small typed transport.
 - Vite `5.4` → `8.2.2` and `@vitejs/plugin-react` `4.x` → `6.1.0`, removing
   the vulnerable esbuild/dev-server and path-traversal chain.
 - React Router DOM `6.5` → `7.18.2`, removing the remaining redirect and SSR

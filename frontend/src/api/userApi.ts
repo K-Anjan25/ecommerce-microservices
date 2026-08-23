@@ -1,7 +1,7 @@
 import { AccountForm } from "../types/account";
 import { ProfileForm } from "../types/profile";
 import { Login, UserCredentials, AdminUser } from "../types/user";
-import { api } from "./axios";
+import { api } from "./client";
 
 const getUserById = async (customerId: string) => {
   const { data } = await api.get<UserCredentials>(

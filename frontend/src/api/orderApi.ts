@@ -1,6 +1,6 @@
 import { CreateOrderRequest, DashboardStats, Order } from "../types/order";
 import { Pagination } from "../types/pagination";
-import { api } from "./axios";
+import { api } from "./client";
 
 // API Methods - Requires authenticated user (ROLE_USER or ROLE_ADMIN)
 const getOrders = async (pageNo: number = 0, pageSize: number = 10) => {

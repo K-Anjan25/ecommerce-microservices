@@ -1,5 +1,4 @@
-import { AxiosError } from "axios";
-import { api } from "../../api/axios";
+import { api, HttpError } from "../../api/client";
 import { UserError } from "../../types/error";
 import {
   Login,
@@ -19,7 +18,7 @@ export const login = (creds: LoginForm) => async (dispatch: UserDispatch) => {
     dispatch({ type: "LOGIN_SUCCESS" });
     dispatch(userMe());
   } catch (error) {
-    const err = error as AxiosError<UserError>;
+    const err = error as HttpError<UserError>;
     dispatch({
       type: "LOGIN_ERROR",
       payload: err.response?.data?.message ?? "Something went wrong",
@@ -38,7 +37,7 @@ export const userMe = () => async (dispatch: UserDispatch) => {
     const { data } = await api.get<User>("/user/me");
     dispatch({ type: "USER_SUCCESS", payload: data });
   } catch (error) {
-    const err = error as AxiosError<UserError>;
+    const err = error as HttpError<UserError>;
     if (err.response?.status === 403) {
       dispatch({ type: "USER_ERROR" });
       dispatch(refreshToken());
@@ -56,7 +55,7 @@ export const refreshToken = () => async (dispatch: UserDispatch) => {
     setToken(data);
     dispatch(userMe());
   } catch (error) {
-    const err = error as AxiosError<UserError>;
+    const err = error as HttpError<UserError>;
     if (err.response?.status === 403) {
       removeToken();
       dispatch({ type: "REFRESH_TOKEN_ERROR" });

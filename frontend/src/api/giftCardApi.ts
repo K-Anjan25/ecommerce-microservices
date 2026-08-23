@@ -1,5 +1,5 @@
 import { GiftCard, PurchaseGiftCardRequest } from "../types/giftCard";
-import { api } from "./axios";
+import { api } from "./client";
 
 const purchaseGiftCard = async (request: PurchaseGiftCardRequest) => {
   const { data } = await api.post<GiftCard>("/v1/gift-cards/purchase", request);

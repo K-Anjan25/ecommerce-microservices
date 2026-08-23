@@ -1,5 +1,5 @@
 import { CreateCommentRequest } from "../types/comment";
-import { api } from "./axios";
+import { api } from "./client";
 
 const saveComment = async (comment: CreateCommentRequest) => {
   const { data } = await api.post("/v1/comments", comment);

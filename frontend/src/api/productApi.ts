@@ -10,7 +10,7 @@ import {
   ProductSearchResponse,
   ProductSearchSuggestion,
 } from "../types/product";
-import { api } from "./axios";
+import { api } from "./client";
 
 // Public endpoints - no authentication required
 const getProducts = async (params: ProductParam = { ...PRODUCT_PARAM }) => {

@@ -16,6 +16,4 @@ Benefits:
 `formatDate` includes date and time, matching the previous Moment `LLL` output.
 `formatCalendarDate` is available for date-only surfaces.
 
-The remaining large application/vendor chunks are primarily Material UI and
-Axios. Replacing either is an architectural migration, not a safe tree-shaking
-change; continue route-level lazy loading before considering those rewrites.
+Axios was subsequently removed in favor of the native Fetch API, eliminating 22 installed packages and reducing the shared API chunk. The remaining large vendor cost is primarily Material UI; replacing it is an architectural migration, not a safe tree-shaking change, so continue route-level lazy loading before considering that rewrite.

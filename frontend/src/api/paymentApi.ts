@@ -1,4 +1,4 @@
-import { api } from "./axios";
+import { api } from "./client";
 import { PaymentRequest, PaymentResponse } from "../types/payment";
 
 const initiatePayment = async (

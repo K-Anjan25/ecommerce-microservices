@@ -1,4 +1,4 @@
-import { api } from "./axios";
+import { api } from "./client";
 import { AuditLogEntry } from "../types/audit";
 
 const source = (name: AuditLogEntry["source"]) => (entry: Omit<AuditLogEntry, "source">) => ({
