@@ -1,7 +1,7 @@
 import React from "react";
 import { Avatar, Box, Paper, Typography } from "@mui/material";
 import { Comment as CommentType } from "../../../types/comment";
-import moment from "moment";
+import { formatDate } from "../../../utils/date";
 
 interface CommentProps {
   comment: CommentType;
@@ -24,7 +24,7 @@ function Comment({ comment }: CommentProps) {
               {comment?.creator}
             </Typography>
             <Typography variant="caption" className="text-ink-muted">
-              {moment(comment?.createdDate).format("DD MMM YYYY, h:mm a")}
+              {formatDate(comment?.createdDate)}
             </Typography>
           </Box>
           <Typography className="mt-1 text-ink-soft">{comment?.text}</Typography>
