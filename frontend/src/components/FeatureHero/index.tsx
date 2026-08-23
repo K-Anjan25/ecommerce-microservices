@@ -4,48 +4,37 @@ interface FeatureHeroProps {
   eyebrow: string;
   title: React.ReactNode;
   description?: React.ReactNode;
-  /** Big number on the right — balance, count, savings. */
   metric?: { value: React.ReactNode; label: string; sub?: string };
   actions?: React.ReactNode;
-  /** Extra content under the description (progress bars, codes, countdowns). */
   children?: React.ReactNode;
 }
 
-/**
- * Ink hero shared by the account/marketing pages (loyalty, referral, gift
- * cards, flash sales). One consistent opening beat instead of each page
- * starting with a different grey Paper.
- */
-function FeatureHero({
-  eyebrow,
-  title,
-  description,
-  metric,
-  actions,
-  children,
-}: FeatureHeroProps) {
+/** Editorial opening shared by loyalty, referral, gift cards and flash sales. */
+function FeatureHero({ eyebrow, title, description, metric, actions, children }: FeatureHeroProps) {
   return (
-    <section className="grain overflow-hidden rounded-xl2 bg-contrast px-6 py-8 text-oncontrast sm:px-10 sm:py-10">
-      <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
-        <div className="min-w-0 flex-1">
-          <p className="eyebrow !text-accent">{eyebrow}</p>
-          <h1 className="mt-3 font-heading text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
+    <section className="border-y border-line py-9 sm:py-12">
+      <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+        <div className="min-w-0">
+          <p className="eyebrow !text-brand">{eyebrow}</p>
+          <h1 className="mt-4 max-w-3xl font-display text-5xl font-normal leading-[0.98] tracking-[-0.03em] text-ink sm:text-6xl">
             {title}
           </h1>
           {description && (
-            <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink-muted">{description}</p>
+            <p className="mt-5 max-w-xl text-sm leading-relaxed text-ink-soft">{description}</p>
           )}
-          {children && <div className="mt-6">{children}</div>}
+          {children && <div className="mt-6 max-w-xl">{children}</div>}
           {actions && <div className="mt-7 flex flex-wrap gap-3">{actions}</div>}
         </div>
 
         {metric && (
-          <div className="shrink-0 rounded-lg border border-white/10 bg-white/5 px-7 py-6 text-center md:min-w-[13rem]">
-            <p className="font-heading text-4xl font-extrabold tracking-tight text-accent sm:text-5xl">
+          <div className="shrink-0 border-l border-line pl-6 md:min-w-[13rem] md:pl-9">
+            <p className="font-display text-5xl tracking-[-0.03em] text-brand sm:text-6xl">
               {metric.value}
             </p>
-            <p className="mt-1 text-eyebrow font-bold uppercase text-oncontrast">{metric.label}</p>
-            {metric.sub && <p className="mt-2 text-xs text-ink-muted">{metric.sub}</p>}
+            <p className="mt-2 text-[0.625rem] font-semibold uppercase tracking-[0.16em] text-ink">
+              {metric.label}
+            </p>
+            {metric.sub && <p className="mt-2 max-w-[12rem] text-xs text-ink-muted">{metric.sub}</p>}
           </div>
         )}
       </div>
@@ -55,17 +44,14 @@ function FeatureHero({
 
 export default FeatureHero;
 
-/** Numbered "how it works" strip used under several FeatureHeroes. */
 export function HowItWorks({ steps }: { steps: { title: string; copy: string }[] }) {
   return (
-    <ol className="grid gap-3 sm:grid-cols-3">
-      {steps.map((s, i) => (
-        <li key={s.title} className="panel p-5">
-          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-soft text-xs font-bold text-brand">
-            {i + 1}
-          </span>
-          <p className="mt-3 font-heading text-sm font-bold text-ink">{s.title}</p>
-          <p className="mt-1 text-xs leading-relaxed text-ink-soft">{s.copy}</p>
+    <ol className="grid border-y border-line sm:grid-cols-3">
+      {steps.map((step, index) => (
+        <li key={step.title} className="border-b border-line py-6 sm:border-b-0 sm:border-r sm:px-6 sm:first:pl-0 sm:last:border-r-0 sm:last:pr-0">
+          <span className="font-display text-3xl text-brand">0{index + 1}</span>
+          <p className="mt-3 text-sm font-semibold text-ink">{step.title}</p>
+          <p className="mt-1 max-w-xs text-xs leading-relaxed text-ink-soft">{step.copy}</p>
         </li>
       ))}
     </ol>
