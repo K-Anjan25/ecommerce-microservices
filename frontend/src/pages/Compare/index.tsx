@@ -73,7 +73,7 @@ function Compare() {
     {
       label: "Price",
       render: (p) => (
-        <span className="font-heading text-base font-extrabold text-ink">
+        <span className="font-display text-xl text-ink">
           {formatPrice(p.unitPrice)}
         </span>
       ),
@@ -158,7 +158,7 @@ function Compare() {
       {isLoading ? (
         <Skeleton variant="rectangular" height={420} className="!rounded-lg" />
       ) : (
-        <div className="panel overflow-x-auto">
+        <div className="overflow-x-auto border-t border-ink">
           <table className="w-full min-w-[40rem] border-collapse text-sm">
             <thead>
               <tr>
@@ -178,7 +178,7 @@ function Compare() {
                       <div className="relative w-full">
                         <button
                           onClick={() => navigate(`/products/${p.id}`)}
-                          className="block aspect-[4/3] w-full overflow-hidden rounded-sm border border-line bg-sunken"
+                          className="block aspect-[4/5] w-full overflow-hidden bg-sunken"
                           aria-label={`View ${p.name}`}
                         >
                           {p.images?.[0] || p.imageUrl ? (
@@ -197,12 +197,12 @@ function Compare() {
                           onClick={() => handleRemove(p.id)}
                           aria-label={`Remove ${p.name} from compare`}
                           title="Remove"
-                          className="absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full border border-line bg-paper text-ink-soft shadow-card transition hover:border-state-danger hover:text-state-danger"
+                          className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center border border-line bg-paper/90 text-ink-soft transition hover:border-state-danger hover:text-state-danger"
                         >
                           <CloseIcon sx={{ fontSize: 14 }} />
                         </button>
                       </div>
-                      <p className="line-clamp-2 text-center font-heading text-sm font-bold text-ink">
+                      <p className="line-clamp-2 text-center font-display text-xl font-normal leading-tight text-ink">
                         {p.name}
                       </p>
                     </div>

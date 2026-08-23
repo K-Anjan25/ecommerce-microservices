@@ -66,15 +66,15 @@ function Returns() {
         </div>
       ) : (
         <>
-          <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
+          <div className="no-scrollbar flex gap-6 overflow-x-auto border-b border-line">
             {FILTERS.map((f) => (
               <button
                 key={f.key || "all"}
                 onClick={() => setFilter(f.key)}
-                className={`chip ${filter === f.key ? "chip-ink" : ""}`}
+                className={`shrink-0 border-b-2 py-3 text-xs font-semibold uppercase tracking-[0.08em] ${filter === f.key ? "border-brand text-brand" : "border-transparent text-ink-muted"}`}
               >
                 {f.label}
-                <span className={filter === f.key ? "text-white/60" : "text-ink-muted"}>
+                <span className={"ml-1 text-ink-muted"}>
                   {countFor(f.key)}
                 </span>
               </button>
@@ -95,12 +95,12 @@ function Returns() {
               />
             </div>
           ) : (
-            <ul className="space-y-3">
+            <ul className="border-t border-ink">
               {visible.map((req) => (
-                <li key={req.id} className="panel p-5">
+                <li key={req.id} className="border-b border-line py-6">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="font-heading text-sm font-bold text-ink">
+                      <p className="font-display text-xl text-ink">
                         Return{" "}
                         <span className="font-mono text-xs text-ink-soft">#{req.id}</span>
                       </p>
@@ -146,7 +146,7 @@ function Returns() {
                   </dl>
 
                   {req.rejectionReason && (
-                    <p className="mt-4 rounded-sm border border-state-danger/30 bg-state-danger-soft px-4 py-2.5 text-xs text-state-danger-on">
+                    <p className="mt-4 border border-state-danger/30 bg-state-danger-soft px-4 py-2.5 text-xs text-state-danger-on">
                       <span className="font-bold">Rejected:</span> {req.rejectionReason}
                     </p>
                   )}
