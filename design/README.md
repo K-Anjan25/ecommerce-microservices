@@ -6,6 +6,11 @@ tokens the frontend is generated from.
 ```
 design/
 ├── tokens.json                 # Tokens Studio (Figma plugin) compatible
+├── palettes/
+│   ├── README.md               # six palette options + how to switch
+│   ├── comparison.png/.svg     # side-by-side sheet (same UI, six palettes)
+│   ├── 00-ink-violet.svg …     # one panel per candidate
+│   └── generate.mjs
 ├── wireframes/
 │   ├── generate.mjs            # regenerates every SVG below
 │   ├── 01-global-shell-desktop.svg
@@ -64,6 +69,10 @@ a token JSON**. Both round-trip cleanly.
 | `99 · Archive` | The 1.x green/cream screens for before/after |
 
 ---
+
+> **Choosing a palette?** See [`design/palettes/README.md`](palettes/README.md) —
+> six options rendered as the same storefront fragment, including the currently
+> shipped one. Swapping costs three files because token names never change.
 
 ## 2. The design direction
 
