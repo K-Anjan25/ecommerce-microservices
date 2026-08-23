@@ -142,11 +142,11 @@
 <rect x="1010" y="163" width="42" height="2" rx="1" fill="#D3D0C8" stroke="none" stroke-width="1"/>
 <circle cx="1070" cy="164" r="10" fill="#5B3DF5" stroke="#5B3DF5"/>
 <text x="1070" y="168" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#fff" text-anchor="middle">2</text>
-<text x="1086" y="168" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#0B0B0F" text-anchor="start">Address</text>
+<text x="1086" y="168" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#0B0B0F" text-anchor="start">Details</text>
 <rect x="1128" y="163" width="42" height="2" rx="1" fill="#D3D0C8" stroke="none" stroke-width="1"/>
 <circle cx="1188" cy="164" r="10" fill="#FFFFFF" stroke="#D3D0C8"/>
 <text x="1188" y="168" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#8A8F9E" text-anchor="middle">3</text>
-<text x="1204" y="168" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#8A8F9E" text-anchor="start">Pay</text>
+<text x="1204" y="168" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#8A8F9E" text-anchor="start">Done</text>
 <rect x="934" y="190" width="358" height="172" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
 <text x="950" y="220" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#0B0B0F" text-anchor="start">3 items</text>
 <text x="1276" y="220" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#5B3DF5" text-anchor="end">Edit</text>

@@ -185,10 +185,10 @@ design review — the real stack is `docker compose up -d --build`.
 
 ## 6. Not done yet (next design tickets)
 
-- [ ] Product detail page (frame 03) — buy box + sticky rail + tabs are drawn but
-      `pages/Products/Product/index.tsx` still uses the 1.x single-column layout.
-- [ ] Cart/checkout merge (frame 04) — the stepper and sticky summary are drawn;
-      `pages/Cart` and `pages/Checkout` are still two separate screens.
+- [x] Product detail (frame 03) — **built**.
+- [x] Cart → checkout (frame 04) — **built**. Implementation note: they stayed two
+      routes joined by the shared `CheckoutSteps` header, so the cart remains
+      bookmarkable and the checkout form stays isolated.
 - [ ] Admin table density pass (frame 05 bottom) across Orders/Products/Users.
 - [ ] Dark mode — token modes are structured for it, values not chosen.
 - [ ] Real product photography; the grid currently leans on whatever `imageUrl`

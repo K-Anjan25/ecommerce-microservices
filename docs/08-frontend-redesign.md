@@ -76,6 +76,37 @@ already assumed.
   payment badges.
 - `components/AuthLayout` — ink split panel instead of the green gradient.
 
+### Product detail (wireframe 03)
+- `components/Card/ProductCard/index.tsx` — **rewritten**. Vertical thumbnail rail +
+  4:3 main image with prev/next; buy box with brand eyebrow, `Rating`, price row
+  (effective / compare-at / save %), **variant chips instead of a `Select`**
+  (sold-out variants disabled + struck through), stock badge, CTA row at the price's
+  eye-line, price-drop alert; a 4-row delivery/returns/security/gift trust panel;
+  a **sticky selection rail** (live line total, loyalty preview, frequently bought
+  together); and **tabs** — Description · Specifications · Reviews · Shipping &
+  returns — replacing the single endless column. Specs are derived from the product
+  plus the selected variant's `attributes` JSON (parsed defensively).
+- `pages/Products/Product/index.tsx` — breadcrumb replaces the "Back to shop"
+  button; a layout-matched skeleton replaces the two generic card placeholders.
+
+### Cart → checkout (wireframe 04)
+- `components/CheckoutSteps` — **new**. Shared 3-step progress header
+  (Cart → Address & payment → Confirmation); completed steps are clickable.
+- `components/CartLine` — **new**. Compact cart row (thumb, name, brand, variant
+  chip, stock warning, qty stepper, line total, remove). The cart previously reused
+  the *grid* product card, which is a browse component (4:3 cover, description,
+  compare button) and made the cart read like a search result.
+- `pages/Cart/index.tsx` — **rewritten**: stepper, free-shipping progress nudge,
+  line-item panel, and a **sticky summary** whose primary CTA is now *Checkout*
+  (the COD quick-order modal is preserved as a secondary text action).
+- `pages/Checkout/index.tsx` — **re-composed, logic untouched**. Numbered sections
+  (1 address · 2 delivery method · 3 payment · 4 credits & extras · collapsible
+  review), selectable option **cards** replacing the two `Select` dropdowns,
+  coupon state rendered as an applied/empty pair, sticky order summary on desktop
+  and a **fixed pay bar** on mobile. Every mutation, query, tax/shipping formula and
+  session-storage behaviour is byte-for-byte the original — the submit buttons live
+  outside the `<form>` and reach it via `form="checkout-form"`.
+
 ### Storefront (wireframe 02)
 - `pages/Products/index.tsx` — **rewritten** around the new order: hero → trust
   strip → category tiles → bestsellers → **sticky toolbar** → facet sidebar +
@@ -117,7 +148,12 @@ already assumed.
 3. **`paper` is now white, not cream.** Page backgrounds must use `bg-canvas`.
 4. **MUI `Drawer` needs `PaperProps`**, not `slotProps.paper`, at the version
    pinned here — `slotProps` type-checks on `Menu` but not on `Drawer`.
-5. The mock gateway is a **design tool**, never imported by the app; the real
+5. **Checkout's submit buttons are outside its `<form>`** (they live in the sticky
+   aside and the mobile pay bar) and are wired with `form="checkout-form"`. If you
+   rename `FORM_ID`, rename all three.
+6. **The mobile pay bar sits at `bottom-[3.875rem]`** — exactly the height of
+   `MobileTabBar`. Change one and change the other.
+7. The mock gateway is a **design tool**, never imported by the app; the real
    contract is still `docker compose up -d --build`.
 
 ---
@@ -144,10 +180,10 @@ CI's backend + compose jobs are unaffected.
 
 ## 8.6 Remaining redesign work
 
-- [ ] **Product detail** (`pages/Products/Product`) to frame 03 — gallery,
-      buy box, sticky rail, tabs.
-- [ ] **Cart + checkout merge** to frame 04 — stepper, one scroll, sticky summary,
-      mobile pay bar. (`pages/Cart` + `pages/Checkout` are still separate.)
+- [x] **Product detail** to frame 03 — gallery, buy box, sticky rail, tabs. *(done)*
+- [x] **Cart → checkout** to frame 04 — stepper, sticky summary, mobile pay bar.
+      *(done — they remain two routes joined by one stepper, which keeps the cart
+      shareable/bookmarkable and the checkout form isolated.)*
 - [ ] Admin table density pass (Orders / Products / Users) to frame 05.
 - [ ] Remaining feature pages (GiftCards, FlashSales, Referral, Returns,
       LoyaltyPoints, Compare, Addresses) inherit the tokens but were not

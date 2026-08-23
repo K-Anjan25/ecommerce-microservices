@@ -1,13 +1,13 @@
 import React from "react";
 import { useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import { ProductApi } from "../../../api/productApi";
-import ProductCard from "../../../components/Card/ProductCard";
-import ProductViewPlaceholder from "../../../components/ProductViewPlaceholder";
-import EmptyState from "../../../components/EmptyState";
+import { Skeleton } from "@mui/material";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Box, Button } from "@mui/material";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+
+import { ProductApi } from "../../../api/productApi";
+import ProductDetail from "../../../components/Card/ProductCard";
+import EmptyState from "../../../components/EmptyState";
 
 function Product() {
   const { productId } = useParams();
@@ -22,20 +22,54 @@ function Product() {
     ProductApi.getProductById(productId ?? "")
   );
 
+  const crumbs: { label: string; to?: string }[] = [
+    { label: "Home", to: "/" },
+    ...(product?.category?.name ? [{ label: product.category.name, to: "/" }] : []),
+    { label: product?.name ?? "Product" },
+  ];
+
   return (
     <div className="space-y-6">
-      <Button
-        startIcon={<ArrowBackIcon />}
-        onClick={() => navigate("/")}
-        className="!text-brand"
-      >
-        Back to shop
-      </Button>
+      {/* breadcrumb replaces the old "Back to shop" button */}
+      <nav aria-label="Breadcrumb">
+        <ol className="flex flex-wrap items-center gap-1 text-xs text-ink-muted">
+          {crumbs.map((c, i) => (
+            <li key={c.label + i} className="flex items-center gap-1">
+              {c.to ? (
+                <button
+                  onClick={() => navigate(c.to!)}
+                  className="font-semibold transition hover:text-ink"
+                >
+                  {c.label}
+                </button>
+              ) : (
+                <span className="max-w-[16rem] truncate font-semibold text-ink">{c.label}</span>
+              )}
+              {i < crumbs.length - 1 && <ChevronRightIcon sx={{ fontSize: 13 }} />}
+            </li>
+          ))}
+        </ol>
+      </nav>
 
       {isLoading && (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <ProductViewPlaceholder />
-          <ProductViewPlaceholder />
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+          <div className="grid gap-6 md:grid-cols-[5.5rem_minmax(0,1fr)]">
+            <div className="hidden gap-2 md:flex md:flex-col">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} variant="rectangular" height={72} className="!rounded-sm" />
+              ))}
+            </div>
+            <div className="space-y-6">
+              <Skeleton variant="rectangular" className="!aspect-[4/3] !h-auto !rounded-lg" />
+              <div className="space-y-3">
+                <Skeleton width="30%" />
+                <Skeleton width="70%" height={40} />
+                <Skeleton width="40%" height={48} />
+                <Skeleton variant="rectangular" height={48} className="!rounded-sm" />
+              </div>
+            </div>
+          </div>
+          <Skeleton variant="rectangular" height={280} className="!rounded-lg" />
         </div>
       )}
 
@@ -46,23 +80,15 @@ function Product() {
             title="Couldn't load this product"
             subtitle="Something went wrong while fetching the product. Try again."
             action={
-              <Button
-                variant="contained"
-                className="!bg-brand !text-paper hover:!bg-brand-main"
-                onClick={() => refetch()}
-              >
+              <button className="primary-button" onClick={() => refetch()}>
                 Try again
-              </Button>
+              </button>
             }
           />
         </div>
       )}
 
-      {product && !isError && (
-        <Box className="mx-auto max-w-5xl">
-          <ProductCard product={product} />
-        </Box>
-      )}
+      {product && !isError && <ProductDetail product={product} />}
     </div>
   );
 }

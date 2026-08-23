@@ -378,101 +378,121 @@ ${body}
 /* ======================================================== 03 product detail */
 {
   const W = 1440,
-    H = 1180,
+    H = 1240,
     M = 80,
     CW = W - M * 2;
   const b = [];
   b.push(box(0, 0, W, 116, { r: 0, fill: C.paper, stroke: C.lineSoft }));
   b.push(text(M, 66, "GLOBAL SHELL (see frame 01)", { size: 11, weight: 600, fill: C.ink400 }));
-
-  b.push(text(M, 152, "Home  ›  Electronics  ›  Headphones  ›  Acme Studio Pro", { size: 11, weight: 500, fill: C.ink500 }));
+  b.push(text(M, 152, "Home  >  Electronics  >  Headphones  >  Acme Studio Pro", { size: 11, weight: 500, fill: C.ink500 }));
 
   const gy = 176;
-  const GALW = 620;
+  const THUMB = 76;
+  const GALX = M + THUMB + 16;
+  const GALW = 520;
   b.push(
     g("gallery", [
-      imgBox(M + 92, gy, GALW - 92, 520, "main image", { r: 20 }),
-      ...Array.from({ length: 4 }, (_, i) => imgBox(M, gy + i * 92, 76, 76, "", { r: 12 })),
-      pill(M + 112, gy + 20, 78, 26, "−32%", { fill: C.danger, stroke: C.danger, color: "#fff" }),
+      ...Array.from({ length: 4 }, (_, i) => imgBox(M, gy + i * (THUMB + 12), THUMB, THUMB, "", { r: 10 })),
+      imgBox(GALX, gy, GALW, 390, "main image (4:3)", { r: 16 }),
+      pill(GALX + 16, gy + 16, 70, 26, "-32%", { fill: C.danger, stroke: C.danger, color: "#fff" }),
     ])
   );
 
-  const bx = M + GALW + 48;
-  const bw = CW - GALW - 48 - 320;
+  /* buy box sits under the gallery-column x, to the right of it */
+  const bx = GALX + GALW + 44;
+  const RAILW = 280;
+  const sx = W - M - RAILW;
+  const bw = sx - bx - 36;
+
   b.push(
     g("buy-box", [
-      text(bx, gy + 18, "ACME", { size: 10, weight: 700, fill: C.ink400, tracking: "0.16em" }),
-      text(bx, gy + 54, "Acme Studio Pro Headphones", { size: 28, weight: 700 }),
-      text(bx, gy + 84, "★★★★☆  4.6 · 128 reviews · 340 sold", { size: 12, weight: 500, fill: C.ink500 }),
-      text(bx, gy + 132, "₹2,499", { size: 32, weight: 700 }),
-      text(bx + 128, gy + 132, "₹3,699", { size: 14, weight: 400, fill: C.ink400 }),
-      pill(bx + 190, gy + 114, 74, 24, "Save 32%", { fill: C.accent, stroke: C.accent, color: C.ink }),
-      text(bx, gy + 156, "Inclusive of all taxes", { size: 11, weight: 400, fill: C.ink400 }),
+      text(bx, gy + 14, "ACME", { size: 10, weight: 700, fill: C.ink400, tracking: "0.16em" }),
+      text(bx, gy + 46, "Acme Studio Pro", { size: 24, weight: 700 }),
+      text(bx, gy + 74, "Headphones", { size: 24, weight: 700 }),
+      text(bx, gy + 100, "4.6  ·  128 reviews", { size: 11, weight: 500, fill: C.ink500 }),
 
-      sectionLabel(bx, gy + 196, "Colour"),
-      ...["Black", "Sand", "Sage"].map((c, i) =>
-        pill(bx + i * 84, gy + 208, 76, 32, c, i === 0 ? { fill: C.ink, stroke: C.ink, color: C.paper } : {})
+      text(bx, gy + 146, "Rs 2,499", { size: 30, weight: 700 }),
+      text(bx + 152, gy + 146, "Rs 3,699", { size: 12, weight: 400, fill: C.ink400 }),
+      pill(bx + 222, gy + 128, 78, 24, "Save 32%", { fill: C.accent, stroke: C.accent, color: C.ink, size: 10 }),
+      text(bx, gy + 168, "Inclusive of all taxes", { size: 10, weight: 400, fill: C.ink400 }),
+
+      sectionLabel(bx, gy + 206, "Variant"),
+      ...["Black S", "Sand M", "Sage L"].map((c, i) =>
+        pill(bx + i * 102, gy + 218, 94, 32, c, i === 1 ? { fill: C.ink, stroke: C.ink, color: C.paper, size: 10 } : { size: 10 })
       ),
-      sectionLabel(bx, gy + 276, "Size / variant"),
-      ...["S", "M", "L", "XL"].map((c, i) =>
-        pill(bx + i * 60, gy + 288, 52, 32, c, i === 1 ? { fill: C.ink, stroke: C.ink, color: C.paper } : {})
+      pill(bx, gy + 268, 150, 24, "In stock · 12 left", { fill: "#E3F7EF", stroke: "#E3F7EF", color: C.success, size: 10 }),
+
+      /* CTA row */
+      box(bx, gy + 312, 100, 48, { r: 10, fill: C.paper, stroke: C.line }),
+      text(bx + 50, gy + 342, "-   1   +", { anchor: "middle", size: 13, weight: 700 }),
+      button(bx + 112, gy + 312, 140, 48, "Add to cart", "primary"),
+      pill(bx + 262, gy + 318, 44, 36, "Cmp", { size: 9 }),
+
+      pill(bx, gy + 376, 208, 30, "Price-drop alert (email me)", { size: 10 }),
+
+      /* delivery / trust panel */
+      box(bx, gy + 424, bw, 168, { r: 14, fill: C.paper, stroke: C.line }),
+      ...[
+        ["Free delivery over Rs 999", "Standard 4-6 days · express at checkout"],
+        ["7-day returns", "Request from order detail · refund to source"],
+        ["Secure checkout", "UPI · cards · Razorpay · cash on delivery"],
+        ["Gift wrap & gift cards", "Add a message at checkout"],
+      ].map(([t, c], i) =>
+        [
+          `<circle cx="${bx + 26}" cy="${gy + 452 + i * 40}" r="12" fill="${C.brandSoft}"/>`,
+          text(bx + 48, gy + 450 + i * 40, t, { size: 11, weight: 700 }),
+          text(bx + 48, gy + 464 + i * 40, c, { size: 9, weight: 400, fill: C.ink500 }),
+        ].join("\n")
       ),
-      pill(bx, gy + 336, 150, 26, "In stock · 12 left", { fill: "#E3F7EF", stroke: "#E3F7EF", color: C.success }),
-
-      box(bx, gy + 384, 120, 48, { r: 12, fill: C.paper, stroke: C.line }),
-      text(bx + 60, gy + 414, "-   1   +", { anchor: "middle", size: 13, weight: 700 }),
-      button(bx + 132, gy + 384, 200, 48, "Add to cart", "primary"),
-      button(bx + 344, gy + 384, 140, 48, "Buy now", "dark"),
-      pill(bx, gy + 448, 120, 30, "Wishlist"),
-      pill(bx + 128, gy + 448, 118, 30, "Compare"),
-      pill(bx + 254, gy + 448, 150, 30, "Price-drop alert"),
-
-      box(bx, gy + 500, bw, 96, { r: 14, fill: C.paper, stroke: C.line }),
-      text(bx + 16, gy + 530, "Delivery to 500081 by Fri, 28 Aug", { size: 12, weight: 600 }),
-      text(bx + 16, gy + 556, "7-day returns  ·  Secure checkout  ·  Cash on delivery", {
-        size: 11,
-        weight: 400,
-        fill: C.ink500,
-      }),
-      text(bx + 16, gy + 578, "Gift wrap available at checkout", { size: 11, weight: 400, fill: C.ink500 }),
     ])
   );
 
-  // sticky summary rail
-  const sx = W - M - 288;
   b.push(
     g("sticky-rail", [
-      box(sx, gy, 288, 300, { r: 16, fill: C.paper, stroke: C.line }),
-      text(sx + 18, gy + 32, "Order summary", { size: 13, weight: 700 }),
-      lines(sx + 18, gy + 50, 252, 4, { gap: 20, h: 9 }),
-      button(sx + 18, gy + 150, 252, 44, "Add to cart", "primary"),
-      text(sx + 18, gy + 218, "Loyalty: earn 24 pts", { size: 11, weight: 600, fill: C.brand }),
-      text(sx + 18, gy + 240, "Apply a coupon at checkout", { size: 11, weight: 400, fill: C.ink500 }),
-      box(sx, gy + 320, 288, 240, { r: 16, fill: C.paper, stroke: C.line }),
-      text(sx + 18, gy + 352, "Frequently bought together", { size: 12, weight: 700 }),
+      box(sx, gy, RAILW, 250, { r: 16, fill: C.paper, stroke: C.line }),
+      sectionLabel(sx + 18, gy + 30, "Your selection"),
+      text(sx + 18, gy + 56, "Acme Studio Pro", { size: 13, weight: 700 }),
+      pill(sx + 18, gy + 68, 74, 22, "Sand M", { size: 9 }),
+      ...[
+        ["Unit price", "Rs 2,499"],
+        ["In cart", "1"],
+        ["Line total", "Rs 2,499"],
+      ].map(([k, v], i) =>
+        [
+          text(sx + 18, gy + 122 + i * 24, k, { size: 11, weight: i === 2 ? 700 : 500, fill: i === 2 ? C.ink : C.ink500 }),
+          text(sx + RAILW - 18, gy + 122 + i * 24, v, { anchor: "end", size: 11, weight: 700 }),
+        ].join("\n")
+      ),
+      button(sx + 18, gy + 186, RAILW - 36, 42, "Add to cart", "primary"),
+      text(sx + 18, gy + 244, "Earn 24 loyalty points", { size: 10, weight: 700, fill: C.brand }),
+
+      box(sx, gy + 274, RAILW, 224, { r: 16, fill: C.paper, stroke: C.line }),
+      sectionLabel(sx + 18, gy + 304, "Frequently bought together"),
       ...Array.from({ length: 3 }, (_, i) =>
-        [imgBox(sx + 18, gy + 368 + i * 60, 48, 48, "", { r: 10 }), lines(sx + 78, gy + 382 + i * 60, 180, 2, { gap: 13 })].join("\n")
+        [
+          imgBox(sx + 18, gy + 320 + i * 60, 48, 48, "", { r: 10 }),
+          lines(sx + 78, gy + 334 + i * 60, RAILW - 100, 2, { gap: 13 }),
+        ].join("\n")
       ),
     ])
   );
 
-  // tabs
-  const ty2 = gy + 640;
+  const ty2 = gy + 636;
   b.push(
     g("detail-tabs", [
-      box(M, ty2, CW, 300, { r: 16, fill: C.paper, stroke: C.line }),
-      ...["Description", "Specifications", "Reviews (128)", "Q&A", "Shipping & returns"].map((t, i) =>
-        pill(M + 20 + i * 150, ty2 + 18, 138, 32, t, i === 0 ? { fill: C.ink, stroke: C.ink, color: C.paper } : {})
+      box(M, ty2, CW, 268, { r: 16, fill: C.paper, stroke: C.line }),
+      ...["Description", "Specifications", "Reviews (128)", "Shipping & returns"].map((t, i) =>
+        pill(M + 20 + i * 168, ty2 + 18, 156, 32, t, i === 0 ? { fill: C.ink, stroke: C.ink, color: C.paper, size: 10 } : { size: 10 })
       ),
-      lines(M + 20, ty2 + 84, CW - 300, 6, { gap: 20, h: 9 }),
+      lines(M + 20, ty2 + 86, CW - 320, 6, { gap: 20, h: 9 }),
     ])
   );
 
   b.push(
     g("annotations", [
-      note(bx + 500, gy + 400, 1, "Primary CTA row is fixed at the same eye-line as the price"),
-      note(sx - 10, gy - 16, 2, "Sticky rail keeps cart + cross-sell in view while scrolling"),
-      note(M + 20, ty2 - 16, 3, "Long content moves below the fold into tabs (was one long column)"),
+      note(M + 20, gy - 40, 1, "Variants are chips, not a dropdown; CTA row sits directly under the price"),
+      note(sx - 4, gy - 18, 2, "Sticky rail: live line total + cross-sell stay in view"),
+      note(M + 20, ty2 - 18, 3, "Long content moves into tabs (was one endless column)"),
     ])
   );
 
@@ -481,7 +501,7 @@ ${body}
     w: W,
     h: H,
     title: "03 · Product detail (desktop)",
-    subtitle: "Gallery + buy box + sticky summary rail · tabs for long-form content",
+    subtitle: "Thumb rail + gallery · buy box (variant chips) · sticky selection rail · tabs",
     body: b.join("\n"),
   });
 }
@@ -489,118 +509,171 @@ ${body}
 /* ============================================================= 04 cart+checkout */
 {
   const W = 1440,
-    H = 1000,
+    H = 1180,
     M = 80,
     CW = W - M * 2;
   const b = [];
   b.push(box(0, 0, W, 116, { r: 0, fill: C.paper, stroke: C.lineSoft }));
   b.push(text(M, 66, "GLOBAL SHELL (see frame 01)", { size: 11, weight: 600, fill: C.ink400 }));
 
-  // stepper
+  /* 3-step progress header — matches components/CheckoutSteps */
   b.push(
     g("checkout-stepper", [
-      ...["Cart", "Address", "Payment", "Done"].map((s, i) => {
-        const x = M + i * 200;
-        const active = i <= 1;
+      ...["Cart", "Address & payment", "Confirmation"].map((s, i) => {
+        const x = M + i * 300;
+        const done = i === 0;
+        const active = i === 1;
         return [
-          `<circle cx="${x + 14}" cy="${162}" r="14" fill="${active ? C.brand : C.paper}" stroke="${active ? C.brand : C.line}"/>`,
-          text(x + 14, 167, String(i + 1), { anchor: "middle", size: 11, weight: 700, fill: active ? "#fff" : C.ink400 }),
-          text(x + 38, 167, s, { size: 13, weight: active ? 700 : 500, fill: active ? C.ink : C.ink400 }),
-          i < 3 ? box(x + 100, 161, 84, 2, { r: 1, fill: C.line, stroke: "none" }) : "",
-        ].join("\n");
-      }),
-    ])
-  );
-
-  const cy = 204;
-  const MAINW = CW - 380;
-  b.push(
-    g("line-items", [
-      box(M, cy, MAINW, 300, { r: 16, fill: C.paper, stroke: C.line }),
-      text(M + 20, cy + 34, "Your cart · 3 items", { size: 15, weight: 700 }),
-      ...Array.from({ length: 3 }, (_, i) => {
-        const y = cy + 56 + i * 78;
-        return [
-          imgBox(M + 20, y, 62, 62, "", { r: 10 }),
-          lines(M + 96, y + 12, 260, 2, { gap: 15 }),
-          pill(M + 96, y + 44, 74, 20, "Size M", { size: 9 }),
-          box(M + MAINW - 250, y + 16, 96, 32, { r: 8, fill: C.paper, stroke: C.line }),
-          text(M + MAINW - 202, y + 37, "-   1   +", { anchor: "middle", size: 12, weight: 700 }),
-          text(M + MAINW - 20, y + 37, "₹2,499", { anchor: "end", size: 14, weight: 700 }),
-          text(M + MAINW - 128, y + 37, "Remove", { size: 13, fill: C.ink400 }),
-        ].join("\n");
-      }),
-    ])
-  );
-
-  b.push(
-    g("address-block", [
-      box(M, cy + 324, MAINW, 240, { r: 16, fill: C.paper, stroke: C.line }),
-      text(M + 20, cy + 358, "Delivery address", { size: 15, weight: 700 }),
-      text(M + MAINW - 20, cy + 358, "+ New address", { anchor: "end", size: 12, weight: 600, fill: C.brand }),
-      ...Array.from({ length: 2 }, (_, i) =>
-        [
-          box(M + 20 + i * ((MAINW - 60) / 2 + 20), cy + 376, (MAINW - 60) / 2, 96, {
-            r: 12,
-            fill: i === 0 ? C.brandSoft : C.paper,
-            stroke: i === 0 ? C.brand : C.line,
+          `<circle cx="${x + 14}" cy="162" r="14" fill="${done ? C.brand : active ? C.ink : C.paper}" stroke="${done ? C.brand : active ? C.ink : C.line}"/>`,
+          text(x + 14, 167, done ? "v" : String(i + 1), {
+            anchor: "middle", size: 11, weight: 700, fill: done || active ? "#fff" : C.ink400,
           }),
-          text(M + 38 + i * ((MAINW - 60) / 2 + 20), cy + 404, i === 0 ? "Home · default" : "Office", { size: 12, weight: 700 }),
-          lines(M + 38 + i * ((MAINW - 60) / 2 + 20), cy + 416, 200, 3, { gap: 14 }),
-        ].join("\n")
-      ),
-      sectionLabel(M + 20, cy + 502, "Delivery method"),
-      ...["Standard · Free · 4–6 d", "Express · ₹99 · 2 d", "Same day · ₹199"].map((s, i) =>
-        pill(M + 20 + i * 210, cy + 514, 196, 34, s, i === 0 ? { fill: C.ink, stroke: C.ink, color: C.paper, size: 10 } : { size: 10 })
-      ),
+          text(x + 38, 167, s, { size: 13, weight: active ? 700 : 500, fill: active ? C.ink : done ? C.brand : C.ink400 }),
+          i < 2 ? box(x + 190, 161, 90, 2, { r: 1, fill: i === 0 ? C.brand : C.line, stroke: "none" }) : "",
+        ].join("\n");
+      }),
     ])
   );
 
+  b.push(text(M, 214, "STEP 2 OF 3", { size: 10, weight: 700, fill: C.ink400, tracking: "0.16em" }));
+  b.push(text(M, 246, "Checkout", { size: 28, weight: 700 }));
+
+  const cy = 274;
+  const RAILW = 340;
+  const sx = W - M - RAILW;
+  const MAINW = sx - M - 28;
+
+  /** numbered section header */
+  const secHead = (y, n, title, sub) =>
+    [
+      `<circle cx="${M + 40}" cy="${y + 26}" r="15" fill="${C.ink}"/>`,
+      text(M + 40, y + 31, String(n), { anchor: "middle", size: 11, weight: 700, fill: "#fff" }),
+      text(M + 66, y + 24, title, { size: 14, weight: 700 }),
+      sub ? text(M + 66, y + 40, sub, { size: 10, weight: 400, fill: C.ink400 }) : "",
+    ].join("\n");
+
+  /* 1 · delivery address */
+  let y = cy;
   b.push(
-    g("payment-block", [
-      box(M, cy + 584, MAINW, 190, { r: 16, fill: C.paper, stroke: C.line }),
-      text(M + 20, cy + 618, "Payment", { size: 15, weight: 700 }),
-      ...["UPI", "Card", "Razorpay", "Cash on delivery"].map((s, i) =>
-        pill(M + 20 + i * 150, cy + 636, 138, 40, s, i === 0 ? { fill: C.brandSoft, stroke: C.brand, color: C.brand } : {})
-      ),
-      input(M + 20, cy + 694, MAINW - 200, 44, "Gift card / coupon code"),
-      button(M + MAINW - 170, cy + 694, 150, 44, "Apply", "ghost"),
+    g("s1-address", [
+      box(M, y, MAINW, 250, { r: 16, fill: C.paper, stroke: C.line }),
+      secHead(y, 1, "Delivery address", "Guest checkout - no account needed"),
+      box(M + 24, y + 72, MAINW - 48, 52, { r: 10, fill: C.canvas, stroke: C.line }),
+      text(M + 40, y + 94, "Use saved address", { size: 11, weight: 700 }),
+      text(M + 40, y + 110, "12 Rose Lane, Hyderabad, Telangana", { size: 10, weight: 400, fill: C.ink500 }),
+      text(M + MAINW - 40, y + 102, "Apply", { anchor: "end", size: 10, weight: 700, fill: C.brand }),
+      input(M + 24, y + 136, (MAINW - 60) / 2, 40, "State"),
+      input(M + 36 + (MAINW - 60) / 2, y + 136, (MAINW - 60) / 2, 40, "District"),
+      input(M + 24, y + 186, MAINW - 48, 40, "Delivery pincode"),
     ])
   );
 
-  // sticky summary
-  const sx = W - M - 340;
+  /* 2 · delivery method */
+  y += 266;
+  b.push(
+    g("s2-delivery", [
+      box(M, y, MAINW, 146, { r: 16, fill: C.paper, stroke: C.line }),
+      secHead(y, 2, "Delivery method", "Rate quoted for your pincode"),
+      ...[
+        ["Standard", "3-5 working days", "Free"],
+        ["Express", "1-2 working days", "Rs 100"],
+      ].map(([t, c, p], i) => {
+        const x = M + 24 + i * ((MAINW - 60) / 2 + 12);
+        const w2 = (MAINW - 60) / 2;
+        const active = i === 0;
+        return [
+          box(x, y + 72, w2, 56, { r: 10, fill: active ? C.brandSoft : C.paper, stroke: active ? C.brand : C.line }),
+          `<circle cx="${x + 26}" cy="${y + 100}" r="13" fill="${active ? C.brand : C.sunken}"/>`,
+          text(x + 48, y + 96, t, { size: 11, weight: 700 }),
+          text(x + 48, y + 112, c, { size: 9, weight: 400, fill: C.ink500 }),
+          text(x + w2 - 14, y + 100, p, { anchor: "end", size: 11, weight: 700 }),
+        ].join("\n");
+      }),
+    ])
+  );
+
+  /* 3 · payment */
+  y += 162;
+  b.push(
+    g("s3-payment", [
+      box(M, y, MAINW, 146, { r: 16, fill: C.paper, stroke: C.line }),
+      secHead(y, 3, "Payment", "Razorpay will open to complete your payment"),
+      ...[
+        ["Card / UPI", "Razorpay"],
+        ["Cash on delivery", "Pay the courier on arrival"],
+      ].map(([t, c], i) => {
+        const x = M + 24 + i * ((MAINW - 60) / 2 + 12);
+        const w2 = (MAINW - 60) / 2;
+        const active = i === 0;
+        return [
+          box(x, y + 72, w2, 56, { r: 10, fill: active ? C.brandSoft : C.paper, stroke: active ? C.brand : C.line }),
+          `<circle cx="${x + 26}" cy="${y + 100}" r="13" fill="${active ? C.brand : C.sunken}"/>`,
+          text(x + 48, y + 96, t, { size: 11, weight: 700 }),
+          text(x + 48, y + 112, c, { size: 9, weight: 400, fill: C.ink500 }),
+        ].join("\n");
+      }),
+    ])
+  );
+
+  /* 4 · credits & extras */
+  y += 162;
+  b.push(
+    g("s4-credits", [
+      box(M, y, MAINW, 150, { r: 16, fill: C.paper, stroke: C.line }),
+      secHead(y, 4, "Credits & extras", "Coupons, gift cards, loyalty and gift wrap in one row"),
+      input(M + 24, y + 72, MAINW - 160, 42, "Coupon / gift card code"),
+      button(M + MAINW - 128, y + 72, 104, 42, "Apply", "primary"),
+      box(M + 24, y + 126, 14, 14, { r: 4, fill: C.brand, stroke: C.brand }),
+      text(M + 46, y + 137, "Gift wrap this order (+Rs 50)", { size: 11, weight: 500, fill: C.ink500 }),
+    ])
+  );
+
+  /* 5 · review (collapsed) */
+  y += 166;
+  b.push(
+    g("s5-review", [
+      box(M, y, MAINW, 78, { r: 16, fill: C.paper, stroke: C.line }),
+      `<circle cx="${M + 40}" cy="${y + 39}" r="15" fill="${C.sunken}"/>`,
+      text(M + 40, y + 44, "3", { anchor: "middle", size: 11, weight: 700, fill: C.ink }),
+      text(M + 66, y + 34, "Review items", { size: 14, weight: 700 }),
+      text(M + 66, y + 50, "Show what you're buying (collapsed by default)", { size: 10, weight: 400, fill: C.ink400 }),
+      text(M + MAINW - 32, y + 45, "v", { anchor: "end", size: 14, weight: 700, fill: C.ink400 }),
+    ])
+  );
+
+  /* sticky summary */
   b.push(
     g("order-summary-sticky", [
-      box(sx, cy, 340, 440, { r: 16, fill: C.paper, stroke: C.line }),
+      box(sx, cy, RAILW, 430, { r: 16, fill: C.paper, stroke: C.line }),
       text(sx + 20, cy + 36, "Order summary", { size: 15, weight: 700 }),
       ...[
-        ["Subtotal", "₹7,497"],
-        ["Discount (SAVE10)", "−₹749"],
-        ["Shipping", "Free"],
-        ["Tax (GST 18%)", "₹1,214"],
-        ["Loyalty points", "−₹120"],
-        ["Gift wrap", "₹49"],
+        ["Subtotal (3 items)", "Rs 7,497"],
+        ["Coupon SAVE10", "-Rs 749"],
+        ["Shipping", "FREE"],
+        ["Tax (GST 18%)", "Rs 1,214"],
+        ["Gift wrap", "Rs 49"],
       ].map(([k, v], i) =>
         [
-          text(sx + 20, cy + 76 + i * 30, k, { size: 12, weight: 500, fill: C.ink500 }),
-          text(sx + 320, cy + 76 + i * 30, v, { anchor: "end", size: 12, weight: 600 }),
+          text(sx + 20, cy + 76 + i * 30, k, { size: 12, weight: 500, fill: i === 1 ? C.success : C.ink500 }),
+          text(sx + RAILW - 20, cy + 76 + i * 30, v, { anchor: "end", size: 12, weight: 700, fill: i === 1 || i === 2 ? C.success : C.ink }),
         ].join("\n")
       ),
-      box(sx + 20, cy + 268, 300, 1, { r: 0, fill: C.line, stroke: "none" }),
-      text(sx + 20, cy + 300, "Total", { size: 16, weight: 700 }),
-      text(sx + 320, cy + 300, "₹7,891", { anchor: "end", size: 20, weight: 700 }),
-      button(sx + 20, cy + 322, 300, 50, "Place order", "primary"),
-      text(sx + 170, cy + 396, "256-bit secure · PCI compliant", { anchor: "middle", size: 10, weight: 500, fill: C.ink400 }),
-      pill(sx + 20, cy + 410, 300, 22, "Guest checkout available — no account needed", { size: 9, color: C.ink500 }),
+      box(sx + 20, cy + 244, RAILW - 40, 1, { r: 0, fill: C.line, stroke: "none" }),
+      text(sx + 20, cy + 278, "Total", { size: 16, weight: 700 }),
+      text(sx + RAILW - 20, cy + 280, "Rs 7,891", { anchor: "end", size: 22, weight: 700 }),
+      button(sx + 20, cy + 300, RAILW - 40, 50, "Pay Rs 7,891", "primary"),
+      text(sx + RAILW / 2, cy + 374, "256-bit secure · PCI compliant", { anchor: "middle", size: 10, weight: 500, fill: C.ink400 }),
+      ...["Visa", "Mastercard", "UPI", "COD"].map((m, i) =>
+        pill(sx + 22 + i * 78, cy + 388, 72, 22, m, { size: 9, color: C.ink500 })
+      ),
     ])
   );
 
   b.push(
     g("annotations", [
-      note(M + 20, 130, 1, "Cart and checkout merge into one scroll with a 4-step progress header"),
-      note(sx - 12, cy - 16, 2, "Summary is sticky — total always visible, CTA never off-screen"),
-      note(M + 20, cy + 800, 3, "Coupon / gift card / loyalty all collapse into one credits row"),
+      note(M + 20, 130, 1, "Cart and checkout are one flow behind a shared 3-step progress header"),
+      note(sx, cy - 20, 2, "Summary is sticky - total always visible, CTA never off-screen"),
+      note(M + 20, y + 100, 3, "Coupon / gift card / loyalty / gift wrap collapse into one credits section"),
     ])
   );
 
@@ -608,8 +681,8 @@ ${body}
     name: "04-cart-checkout-desktop",
     w: W,
     h: H,
-    title: "04 · Cart → checkout (desktop, single flow)",
-    subtitle: "Stepper · line items · address · payment · sticky order summary",
+    title: "04 · Cart -> checkout (desktop, single flow)",
+    subtitle: "3-step header · numbered sections (address / delivery / payment / credits / review) · sticky summary",
     body: b.join("\n"),
   });
 }
@@ -863,7 +936,7 @@ ${body}
     p.push(text(ox + 20, oy + 74, "←", { size: 18, weight: 700 }));
     p.push(text(ox + SW2 / 2, oy + 76, "Checkout", { anchor: "middle", size: 14, weight: 700 }));
     // stepper
-    ["Cart", "Address", "Pay"].forEach((s, i) => {
+    ["Cart", "Details", "Done"].forEach((s, i) => {
       const x = ox + 24 + i * 118;
       const active = i <= 1;
       p.push(`<circle cx="${x + 10}" cy="${oy + 116}" r="10" fill="${active ? C.brand : C.paper}" stroke="${active ? C.brand : C.line}"/>`);

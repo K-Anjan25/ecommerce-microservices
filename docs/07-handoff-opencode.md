@@ -337,6 +337,22 @@ All verified with `tsc + vite build`.
 - Details, gotchas (sticky offsets, `paper` is now white, AdminLayout negative margins) and the
   remaining redesign backlog: **`docs/08-frontend-redesign.md`**.
 
+### 7.4.14 Frontend redesign part 2 — PDP + checkout (2026-08-23, tenth session)
+- [x] **Product detail rebuilt to wireframe 03**: thumbnail rail + 4:3 gallery, buy box with
+      **variant chips instead of a Select**, price row with compare-at/save %, trust panel,
+      **sticky selection rail** (live line total, loyalty preview, frequently bought together),
+      and tabs (Description / Specifications / Reviews / Shipping & returns) replacing the one
+      endless column. Breadcrumb + layout-matched skeleton on the page wrapper.
+- [x] **Cart → checkout rebuilt to wireframe 04**: new `CheckoutSteps` (shared 3-step header)
+      and `CartLine` (compact cart row — the cart used to reuse the *grid* product card).
+      Cart gains a free-shipping progress nudge and a sticky summary whose primary CTA is now
+      Checkout. Checkout re-composed into numbered sections with selectable option cards
+      instead of dropdowns, a sticky desktop summary and a fixed mobile pay bar —
+      **all order/payment/coupon/tax/shipping logic untouched**.
+- [x] Wireframes 03/04 regenerated so the drawings match what shipped (3-step stepper,
+      no Buy-now/Wishlist, four tabs, credits section).
+- [x] `tsc --noEmit` + `npm run build` clean. Still no backend changes.
+
 ---
 
 ## 7.5 Phase-end verification runbook (MANDATORY at each phase end)
