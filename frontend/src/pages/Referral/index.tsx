@@ -1,81 +1,123 @@
-import { useQuery } from "react-query";
-import { ReferralApi } from "../../api/referralApi";
-import PageHeader from "../../components/PageHeader";
-import { Paper, Typography, Box, Button, TextField, Chip } from "@mui/material";
 import { useState } from "react";
+import { useQuery } from "react-query";
 import { toast } from "react-toastify";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import CheckIcon from "@mui/icons-material/Check";
+import IosShareIcon from "@mui/icons-material/IosShare";
+
+import { ReferralApi } from "../../api/referralApi";
+import FeatureHero, { HowItWorks } from "../../components/FeatureHero";
 import { showSuccess } from "../../utils/showSuccess";
 
 function Referral() {
   const { data: referralCode } = useQuery("referralCode", ReferralApi.getMyReferralCode);
   const [inputCode, setInputCode] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [checking, setChecking] = useState(false);
+
+  const shareUrl = referralCode
+    ? `${window.location.origin}/register?ref=${referralCode}`
+    : "";
+
+  const copy = async (value: string, message: string) => {
+    try {
+      await navigator.clipboard.writeText(value);
+      showSuccess(message);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Couldn't copy — select the code manually");
+    }
+  };
+
+  const share = async () => {
+    if (!shareUrl) return;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "Join me on Cartly", url: shareUrl });
+        return;
+      } catch {
+        /* user dismissed the share sheet */
+      }
+    }
+    copy(shareUrl, "Invite link copied!");
+  };
 
   const handleValidate = async () => {
+    if (!inputCode.trim()) return;
+    setChecking(true);
     try {
-      const valid = await ReferralApi.validateReferralCode(inputCode);
-      if (valid) {
-        showSuccess("Referral code is valid!");
-      } else {
-        toast.error("Invalid referral code");
-      }
+      const valid = await ReferralApi.validateReferralCode(inputCode.trim());
+      valid ? showSuccess("Referral code is valid!") : toast.error("Invalid referral code");
     } catch (e: any) {
       toast.error(e.response?.data?.message ?? "Failed to validate referral code");
+    } finally {
+      setChecking(false);
     }
   };
 
   return (
     <div className="page-shell space-y-6">
-      <PageHeader
-        title="Referral Program"
-        subtitle="Share your code and earn rewards when friends sign up."
+      <FeatureHero
+        eyebrow="Referrals"
+        title="Invite a friend, you both win."
+        description="Share your code. When someone signs up with it and places their first order, credit lands on both accounts."
+        actions={
+          <>
+            <button onClick={share} className="accent-button" disabled={!referralCode}>
+              <IosShareIcon sx={{ fontSize: 17 }} />
+              Share invite link
+            </button>
+            <button
+              onClick={() => referralCode && copy(referralCode, "Referral code copied!")}
+              disabled={!referralCode}
+              className="inline-flex items-center justify-center gap-2 rounded-sm border border-white/25 px-4 py-2.5 text-sm font-semibold text-paper transition hover:bg-white/10 disabled:opacity-50"
+            >
+              {copied ? <CheckIcon sx={{ fontSize: 17 }} /> : <ContentCopyIcon sx={{ fontSize: 16 }} />}
+              {copied ? "Copied" : "Copy code"}
+            </button>
+          </>
+        }
+      >
+        <div className="inline-flex flex-wrap items-center gap-4 rounded-lg border border-dashed border-white/25 bg-white/5 px-6 py-4">
+          <span className="text-eyebrow font-bold uppercase text-ink-muted">Your code</span>
+          <span className="font-mono text-2xl font-bold tracking-[0.2em] text-accent">
+            {referralCode ?? "······"}
+          </span>
+        </div>
+      </FeatureHero>
+
+      <HowItWorks
+        steps={[
+          { title: "Share your code", copy: "Send the code or the invite link to anyone who hasn't shopped with Cartly yet." },
+          { title: "They sign up", copy: "Your friend enters the code when creating their account." },
+          { title: "You both get credit", copy: "Credit is applied once their first order is paid for." },
+        ]}
       />
 
-      <Paper className="p-6 sm:p-10">
-        <Typography variant="h6" className="mb-2 font-bold">
-          Your referral code
-        </Typography>
-        <Typography className="mb-4 text-ink-soft">
-          Share this code with friends. When they sign up, you both get rewarded!
-        </Typography>
-        <Box className="flex items-center gap-4">
-          <Chip
-            label={referralCode ?? "Loading..."}
-            className="!bg-brand-soft !font-mono !text-base !font-bold"
-          />
-          <Button
-            variant="outlined"
-            size="small"
-            onClick={() => {
-              if (referralCode) {
-                navigator.clipboard.writeText(referralCode);
-                showSuccess("Referral code copied!");
-              }
-            }}
-          >
-            Copy
-          </Button>
-        </Box>
-      </Paper>
-
-      <Paper className="p-6 sm:p-8">
-        <Typography variant="h6" className="mb-4 font-bold">
-          Validate a referral code
-        </Typography>
-        <Box className="flex gap-4">
-          <TextField
-            label="Referral code"
+      <section className="panel p-5 sm:p-6">
+        <h2 className="font-heading text-base font-bold">Got a code from a friend?</h2>
+        <p className="mt-1 text-sm text-ink-soft">
+          Check it here before you sign up, so you know it will be accepted.
+        </p>
+        <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+          <input
             value={inputCode}
             onChange={(e) => setInputCode(e.target.value.toUpperCase())}
-            className="flex-1"
+            onKeyDown={(e) => e.key === "Enter" && handleValidate()}
+            placeholder="Enter referral code"
+            aria-label="Referral code"
+            className="input-control font-mono uppercase tracking-widest sm:max-w-xs"
           />
-          <Button
-            variant="contained"
-                        onClick={handleValidate}
+          <button
+            onClick={handleValidate}
+            disabled={!inputCode.trim() || checking}
+            className="primary-button"
           >
-            Validate
-          </Button>
-        </Box>
-      </Paper>
+            {checking ? "Checking…" : "Validate"}
+          </button>
+        </div>
+      </section>
     </div>
   );
 }

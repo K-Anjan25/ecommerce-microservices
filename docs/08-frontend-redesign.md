@@ -120,6 +120,34 @@ already assumed.
   add-to-cart bar that becomes a −/qty/+ stepper). Variant-aware cart wiring is
   unchanged.
 
+### Feature pages (account / marketing)
+- `components/FeatureHero` — **new**. One ink opening beat (eyebrow, headline,
+  optional big metric, actions, slot) shared by Loyalty, Referral, Gift Cards and
+  Flash Sales; every one of those pages used to start with a different grey
+  `Paper`. Ships `HowItWorks`, the numbered 3-step strip underneath.
+- `pages/LoyaltyPoints` — hero with balance + progress to the next tier, three
+  stat tiles (balance / lifetime earned / lifetime redeemed), how-it-works, and a
+  proper history list. **Fixed a React key warning** — entries were wrapped in a
+  keyless `<>` with the key on the inner `ListItem`.
+- `pages/FlashSales` — hero with a live countdown driven by the soonest-ending
+  sale and the deepest discount as the metric; `product-grid` instead of MUI
+  `Grid`; real empty and loading states.
+- `pages/Referral` — code presented as a dashed ink ticket, `navigator.share`
+  with clipboard fallback, copy-confirmation state, how-it-works, validate box.
+- `pages/GiftCards` — amount presets + custom field, validity chips, and a **live
+  gift-card preview** that fills in as you type; result card with one-tap code copy.
+- `pages/Returns` — status filter chips with counts, shared `StatusPill`, refund
+  amount/reference surfaced, link through to the originating order.
+  **Fixed a dead class** — the empty state used `btn-primary`, which does not exist.
+- `pages/Compare` — image-headed columns with per-column remove, and rows now
+  **mark the winning product** (cheapest price, best rating, most stock) instead of
+  leaving the reader to diff the numbers.
+- `pages/Addresses` — **fixed two real bugs**: the state list was hardcoded to five
+  states (so an address in e.g. Telangana could not be saved) and now uses the same
+  `formdata.json` dataset as checkout with a dependent district select; and
+  `defaultAddress` existed in the payload but had **no UI**, so no address could
+  ever be made default from this page.
+
 ### Admin tables (wireframe 05, bottom)
 - `components/DataTable` — **new**. One table primitive for the whole admin:
   full-bleed in its panel, sticky uppercase-eyebrow header on `bg-canvas`,
@@ -207,9 +235,10 @@ CI's backend + compose jobs are unaffected.
       shareable/bookmarkable and the checkout form isolated.)*
 - [x] Admin table density pass to frame 05 — shared `DataTable`, mobile card
       fallback, unified status pills. *(done)*
-- [ ] Remaining feature pages (GiftCards, FlashSales, Referral, Returns,
-      LoyaltyPoints, Compare, Addresses) inherit the tokens but were not
-      re-composed.
+- [x] Feature pages (GiftCards, FlashSales, Referral, Returns, LoyaltyPoints,
+      Compare, Addresses) re-composed. *(done)*
+- [ ] `pages/Orders` + both `OrderDetail` screens still use raw MUI `Paper`
+      stacks rather than the panel/DataTable language.
 - [ ] Dark mode — token structure supports a second mode; values unchosen.
 - [ ] Roadmap Phase 9 leftovers are unaffected: CMS/store settings, audit log,
       staff (Manager) role.

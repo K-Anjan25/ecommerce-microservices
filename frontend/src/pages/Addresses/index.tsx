@@ -1,27 +1,59 @@
+import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { useState } from "react";
+import {
+  Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControlLabel,
+  Skeleton,
+} from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+
 import { AddressApi } from "../../api/addressApi";
 import PageHeader from "../../components/PageHeader";
-import { Paper, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Select, MenuItem, FormControl, InputLabel, Chip, Box } from "@mui/material";
+import EmptyState from "../../components/EmptyState";
 import { showSuccess } from "../../utils/showSuccess";
 import { showError } from "../../utils/showError";
 import { SavedAddress } from "../../types/address";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
-import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
+import statesAndDistrict from "../../formdata.json";
+
+const EMPTY = { state: "", district: "", addressDetail: "", defaultAddress: false };
 
 function Addresses() {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ state: "", district: "", addressDetail: "", defaultAddress: false });
+  const [form, setForm] = useState(EMPTY);
 
-  const { data: addresses, isLoading } = useQuery("savedAddresses", AddressApi.getSavedAddresses);
+  const { data: addresses, isLoading } = useQuery(
+    "savedAddresses",
+    AddressApi.getSavedAddresses
+  );
+
+  /* The full state/district dataset — the same one checkout uses. This page
+     previously hardcoded five states, so an address in e.g. Telangana could
+     not be saved at all. */
+  const states = useMemo(
+    () => (statesAndDistrict as any[]).map((s) => s.state_name as string),
+    []
+  );
+  const districts = useMemo(
+    () =>
+      ((statesAndDistrict as any[]).find((s) => s.state_name === form.state)?.districts ??
+        []).map((d: any) => d.district_name as string),
+    [form.state]
+  );
 
   const createMutation = useMutation(AddressApi.createSavedAddress, {
     onSuccess: () => {
       showSuccess("Address saved");
       setOpen(false);
-      setForm({ state: "", district: "", addressDetail: "", defaultAddress: false });
+      setForm(EMPTY);
       queryClient.invalidateQueries("savedAddresses");
       queryClient.invalidateQueries("defaultAddress");
     },
@@ -34,111 +66,178 @@ function Addresses() {
       queryClient.invalidateQueries("savedAddresses");
       queryClient.invalidateQueries("defaultAddress");
     },
+    onError: () => showError("Failed to delete address"),
   });
 
   const handleSubmit = () => {
-    if (!form.state || !form.district || !form.addressDetail) {
-      showError("All fields are required");
+    if (!form.state || !form.district || !form.addressDetail.trim()) {
+      showError("State, district and address detail are all required");
       return;
     }
     createMutation.mutate(form);
   };
 
+  const list = addresses ?? [];
+
   return (
     <div className="page-shell space-y-6">
       <PageHeader
+        eyebrow="Account"
         title="Saved addresses"
-        subtitle="Manage your delivery addresses."
+        subtitle="Addresses you save here can be applied at checkout in one tap."
         actions={
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-                        onClick={() => setOpen(true)}
-          >
+          <button onClick={() => setOpen(true)} className="primary-button !py-2">
+            <AddIcon sx={{ fontSize: 17 }} />
             Add address
-          </Button>
+          </button>
         }
       />
 
       {isLoading ? (
-        <Paper className="p-6"><Typography>Loading...</Typography></Paper>
-      ) : addresses?.length === 0 ? (
+        <div className="grid gap-4 md:grid-cols-2">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <Skeleton key={i} variant="rectangular" height={140} className="!rounded-lg" />
+          ))}
+        </div>
+      ) : list.length === 0 ? (
         <div className="panel">
-          <Paper className="p-8 text-center">
-            <MapOutlinedIcon fontSize="large" className="!text-ink-soft" />
-            <Typography className="mt-2 text-ink-soft">No saved addresses yet.</Typography>
-          </Paper>
+          <EmptyState
+            icon={<MapOutlinedIcon fontSize="large" />}
+            title="No saved addresses"
+            subtitle="Save an address once and checkout stops asking for it every time."
+            action={
+              <button className="primary-button" onClick={() => setOpen(true)}>
+                Add your first address
+              </button>
+            }
+          />
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
-          {addresses?.map((addr: SavedAddress) => (
-            <Paper key={addr.id} className="p-5">
-              <Box className="flex items-start justify-between">
-                <div>
-                  <Typography className="font-semibold">{addr.addressDetail}</Typography>
-                  <Typography className="text-sm text-ink-soft">
-                    {addr.district}, {addr.state}
-                  </Typography>
-                  {addr.defaultAddress && (
-                    <Chip label="Default" size="small" className="mt-2 !bg-brand-soft !text-brand" />
-                  )}
-                </div>
-                <Button
-                  size="small"
-                  color="error"
-                  startIcon={<DeleteIcon />}
-                  onClick={() => deleteMutation.mutate(addr.id)}
+          {list.map((addr: SavedAddress) => (
+            <article
+              key={addr.id}
+              className={`panel relative p-5 ${addr.defaultAddress ? "!border-brand" : ""}`}
+            >
+              <div className="flex items-start gap-3">
+                <span
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
+                    addr.defaultAddress
+                      ? "bg-brand text-paper"
+                      : "bg-sunken text-ink-soft"
+                  }`}
                 >
-                  Delete
-                </Button>
-              </Box>
-            </Paper>
+                  <HomeOutlinedIcon sx={{ fontSize: 18 }} />
+                </span>
+                <div className="min-w-0 flex-1">
+                  {addr.defaultAddress && (
+                    <span className="mb-1.5 inline-flex rounded-full bg-brand-soft px-2.5 py-0.5 text-[0.625rem] font-bold uppercase tracking-wide text-brand">
+                      Default
+                    </span>
+                  )}
+                  <p className="font-heading text-sm font-bold leading-snug text-ink">
+                    {addr.addressDetail}
+                  </p>
+                  <p className="mt-1 text-sm text-ink-soft">
+                    {addr.district}, {addr.state}
+                  </p>
+                </div>
+                <button
+                  onClick={() => deleteMutation.mutate(addr.id)}
+                  disabled={deleteMutation.isLoading}
+                  aria-label="Delete address"
+                  title="Delete address"
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xs border border-line text-ink-soft transition hover:border-state-danger hover:bg-rose-50 hover:text-state-danger disabled:opacity-50"
+                >
+                  <DeleteOutlineIcon sx={{ fontSize: 16 }} />
+                </button>
+              </div>
+            </article>
           ))}
         </div>
       )}
 
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="xs" fullWidth>
-        <DialogTitle>Add new address</DialogTitle>
-        <DialogContent>
-          <div className="space-y-3 pt-2">
-            <FormControl fullWidth size="small">
-              <InputLabel>State</InputLabel>
-              <Select
+        <DialogTitle className="!font-heading !font-bold">Add a new address</DialogTitle>
+        <DialogContent dividers>
+          <div className="space-y-4 py-1">
+            <div>
+              <label htmlFor="addr-state" className="eyebrow mb-1.5 block">
+                State
+              </label>
+              <select
+                id="addr-state"
+                className="input-control"
                 value={form.state}
-                label="State"
-                onChange={(e) => setForm({ ...form, state: e.target.value })}
+                onChange={(e) => setForm({ ...form, state: e.target.value, district: "" })}
               >
-                <MenuItem value="">Select state</MenuItem>
-                <MenuItem value="Karnataka">Karnataka</MenuItem>
-                <MenuItem value="Maharashtra">Maharashtra</MenuItem>
-                <MenuItem value="Delhi">Delhi</MenuItem>
-                <MenuItem value="Tamil Nadu">Tamil Nadu</MenuItem>
-                <MenuItem value="West Bengal">West Bengal</MenuItem>
-              </Select>
-            </FormControl>
-            <TextField
-              label="District"
-              size="small"
-              fullWidth
-              value={form.district}
-              onChange={(e) => setForm({ ...form, district: e.target.value })}
-            />
-            <TextField
-              label="Address detail"
-              size="small"
-              fullWidth
-              multiline
-              rows={2}
-              value={form.addressDetail}
-              onChange={(e) => setForm({ ...form, addressDetail: e.target.value })}
+                <option value="">Select state</option>
+                {states.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="addr-district" className="eyebrow mb-1.5 block">
+                District
+              </label>
+              <select
+                id="addr-district"
+                className="input-control"
+                value={form.district}
+                disabled={!form.state}
+                onChange={(e) => setForm({ ...form, district: e.target.value })}
+              >
+                <option value="">
+                  {form.state ? "Select district" : "Pick a state first"}
+                </option>
+                {districts.map((d: string) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="addr-detail" className="eyebrow mb-1.5 block">
+                Address detail
+              </label>
+              <textarea
+                id="addr-detail"
+                rows={3}
+                className="input-control !h-auto py-2.5"
+                placeholder="Flat / house no, street, landmark"
+                value={form.addressDetail}
+                onChange={(e) => setForm({ ...form, addressDetail: e.target.value })}
+              />
+            </div>
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={form.defaultAddress}
+                  onChange={(e) => setForm({ ...form, defaultAddress: e.target.checked })}
+                />
+              }
+              label={<span className="text-sm">Use as my default delivery address</span>}
             />
           </div>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleSubmit}>
-            Save
-          </Button>
+        <DialogActions className="!px-6 !py-4">
+          <button className="secondary-button !py-2" onClick={() => setOpen(false)}>
+            Cancel
+          </button>
+          <LoadingButton
+            variant="contained"
+            onClick={handleSubmit}
+            loading={createMutation.isLoading}
+          >
+            Save address
+          </LoadingButton>
         </DialogActions>
       </Dialog>
     </div>

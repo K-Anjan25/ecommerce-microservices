@@ -367,6 +367,24 @@ All verified with `tsc + vite build`.
 - [x] Swept 19 files of redundant `!bg-brand !text-paper hover:!bg-brand-main` button overrides
       (the theme already supplies them, and the overrides killed the button shadow).
 
+### 7.4.16 Feature pages re-composed (2026-08-23, twelfth session)
+- [x] New `components/FeatureHero` (+ `HowItWorks`) gives Loyalty / Referral / Gift Cards /
+      Flash Sales one shared ink opening beat instead of four different grey Papers.
+- [x] Re-composed: **LoyaltyPoints** (tier progress, stat tiles, history list),
+      **FlashSales** (live countdown off the soonest-ending sale, product-grid, empty state),
+      **Referral** (ticket-style code, navigator.share + clipboard fallback),
+      **GiftCards** (presets, validity chips, live gift-card preview, copyable result),
+      **Returns** (status filter chips with counts, shared StatusPill, refund reference),
+      **Compare** (image-headed columns, per-column remove, winning value marked per row),
+      **Addresses** (full state dataset + dependent districts, default-address toggle).
+- [x] **Bugs fixed along the way** (all pre-existing):
+      1. `Addresses` hardcoded five states — an address in Telangana could not be saved.
+      2. `Addresses` sent `defaultAddress` but had no UI for it — no address could be defaulted.
+      3. `Returns` empty state used `btn-primary`, a class that does not exist.
+      4. `LoyaltyPoints` history mapped into a keyless `<>` fragment (React key warning).
+- [x] `tsc --noEmit` + `npm run build` clean; all 10 routes serve 200 against the mock gateway.
+- Remaining: `pages/Orders` and both `OrderDetail` screens; dark mode.
+
 ---
 
 ## 7.5 Phase-end verification runbook (MANDATORY at each phase end)
