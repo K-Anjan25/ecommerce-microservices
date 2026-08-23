@@ -3,7 +3,6 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Alert, FormControlLabel, Skeleton, Switch, TextField } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
-import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 
 import PageHeader from "../../../components/PageHeader";
 import { StoreSettingsApi, DEFAULT_STORE_SETTINGS } from "../../../features/storefront";
@@ -90,7 +89,7 @@ export default function StoreSettingsPage() {
           <div className="panel space-y-5 p-5 sm:p-6">
             <div className="flex items-center justify-between gap-4 border-b border-line pb-4">
               <div>
-                <p className="font-heading text-lg font-bold text-ink">Homepage content</p>
+                <p className="font-display text-2xl text-ink">Homepage content</p>
                 <p className="mt-1 text-sm text-ink-muted">Changes become public as soon as they are published.</p>
               </div>
               <FormControlLabel
@@ -133,7 +132,7 @@ export default function StoreSettingsPage() {
 
           <aside className="sticky top-[9rem]">
             <p className="eyebrow mb-3">Live content preview</p>
-            <div className="overflow-hidden rounded-xl2 border border-line bg-paper shadow-lift">
+            <div className="overflow-hidden border border-line bg-paper">
               {form.announcementEnabled && (
                 <div className="flex min-h-9 items-center justify-center gap-2 bg-contrast px-4 text-center text-[0.6875rem] font-semibold text-oncontrast">
                   {form.announcementText || "Announcement text"}
@@ -142,25 +141,29 @@ export default function StoreSettingsPage() {
                   )}
                 </div>
               )}
-              <div className="grain bg-contrast p-7 text-oncontrast sm:p-9">
-                <span className="flex h-10 w-10 items-center justify-center rounded-md bg-accent text-ink">
-                  <StorefrontOutlinedIcon sx={{ fontSize: 19 }} />
-                </span>
-                <p className="eyebrow mt-8 !text-accent">{form.heroEyebrow || "Eyebrow"}</p>
-                <h2 className="mt-3 font-heading text-4xl font-extrabold leading-[1.03]">
-                  {form.heroTitle || "Hero title"}
-                  <span className="mt-1 block font-display font-normal italic text-accent">
-                    {form.heroEmphasis || "Emphasized line"}
-                  </span>
-                </h2>
-                <p className="mt-4 text-sm leading-relaxed text-ink-muted">
-                  {form.heroDescription || "Hero description"}
-                </p>
-                <div className="mt-6 flex flex-wrap gap-2">
-                  <span className="accent-button">{form.primaryCtaLabel || "Primary action"}</span>
-                  <span className="rounded-sm border border-white/20 px-4 py-2.5 text-sm font-semibold">
-                    {form.secondaryCtaLabel || "Secondary action"}
-                  </span>
+              <div className="grid sm:grid-cols-[0.9fr_1.1fr]">
+                <img
+                  src="/images/editorial/hero.jpg"
+                  alt=""
+                  className="h-full min-h-[17rem] w-full object-cover"
+                />
+                <div className="flex flex-col justify-center p-7">
+                  <p className="eyebrow !text-brand">{form.heroEyebrow || "Eyebrow"}</p>
+                  <h2 className="mt-3 font-display text-4xl font-normal leading-[0.98] tracking-[-0.03em] text-ink">
+                    {form.heroTitle || "Hero title"}
+                    <span className="mt-1 block italic text-brand">
+                      {form.heroEmphasis || "Emphasized line"}
+                    </span>
+                  </h2>
+                  <p className="mt-4 text-sm leading-relaxed text-ink-soft">
+                    {form.heroDescription || "Hero description"}
+                  </p>
+                  <div className="mt-6 flex flex-wrap items-center gap-4">
+                    <span className="primary-button">{form.primaryCtaLabel || "Primary action"}</span>
+                    <span className="border-b border-ink pb-1 text-xs font-semibold uppercase tracking-[0.08em] text-ink">
+                      {form.secondaryCtaLabel || "Secondary action"}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
