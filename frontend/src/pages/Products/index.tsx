@@ -340,6 +340,9 @@ function Products() {
             <img
               src="/images/editorial/hero.jpg"
               alt="A warm home interior with considered everyday objects"
+              width={1024}
+              height={1152}
+              fetchPriority="high"
               className="h-full w-full object-cover object-center"
             />
             <div className="absolute bottom-0 left-0 bg-paper/95 px-5 py-4 backdrop-blur-sm">
@@ -407,7 +410,14 @@ function Products() {
                 >
                   <span className={`mx-auto flex aspect-square w-full items-center justify-center overflow-hidden rounded-full border ${active ? "border-brand" : "border-line"}`}>
                     {categoryImage ? (
-                      <img src={categoryImage} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                      <img
+                        src={categoryImage}
+                        alt=""
+                        width={1024}
+                        height={1024}
+                        loading="lazy"
+                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                      />
                     ) : (
                       <span className="font-display text-3xl">{c.name.charAt(0).toUpperCase()}</span>
                     )}
