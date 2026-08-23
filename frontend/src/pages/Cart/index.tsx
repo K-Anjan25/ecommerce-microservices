@@ -172,7 +172,7 @@ function Cart() {
         {/* ── line items ─────────────────────────────────────────── */}
         <div className="space-y-4">
           {/* free-shipping nudge */}
-          <div className="panel p-4">
+          <div className="border-y border-line py-4">
             <div className="flex items-center gap-2 text-sm">
               <LocalShippingOutlinedIcon sx={{ fontSize: 18 }} className="text-brand" />
               {freeShippingGap > 0 ? (
@@ -195,7 +195,7 @@ function Cart() {
             </div>
           </div>
 
-          <div className="panel px-4 sm:px-5">
+          <div className="border-y border-line">
             <ul className="divide-y divide-line">
               {items.map((item) => (
                 <CartLine key={`${item.product.id}-${item.variantId ?? "base"}`} item={item} />
@@ -215,8 +215,8 @@ function Cart() {
 
         {/* ── sticky summary ─────────────────────────────────────── */}
         <aside className="lg:sticky lg:top-24 lg:h-fit">
-          <div className="panel-raised p-5">
-            <h2 className="font-heading text-base font-bold">Order summary</h2>
+          <div className="border-t border-ink py-5">
+            <h2 className="font-display text-2xl font-normal">Order summary</h2>
 
             <dl className="mt-4 space-y-2.5 text-sm">
               <div className="flex justify-between">
@@ -236,8 +236,8 @@ function Cart() {
             </dl>
 
             <div className="mt-4 flex items-baseline justify-between border-t border-line pt-4">
-              <span className="font-heading text-base font-bold">Total so far</span>
-              <span className="font-heading text-xl font-extrabold">{formatPrice(subtotal)}</span>
+              <span className="font-medium">Total so far</span>
+              <span className="font-display text-2xl">{formatPrice(subtotal)}</span>
             </div>
 
             <button onClick={() => navigate("/checkout")} className="primary-button mt-5 w-full !py-3">
