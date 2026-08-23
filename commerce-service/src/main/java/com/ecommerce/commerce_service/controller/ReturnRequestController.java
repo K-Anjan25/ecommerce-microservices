@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +32,12 @@ public class ReturnRequestController {
     @GetMapping("/order/{orderId}")
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<List<ReturnRequestDto>> getReturnRequestsByOrder(@PathVariable UUID orderId){
-        return ResponseEntity.ok(returnRequestService.getReturnRequestsByOrder(orderId));
+        List<ReturnRequestDto> requests = returnRequestService.getReturnRequestsByOrder(orderId);
+        if (!isStaff() && requests.stream().anyMatch(request ->
+                request.getCustomerId() == null || !request.getCustomerId().toString().equals(currentPrincipal()))) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.ok(requests);
     }
 
     @GetMapping("/my")
@@ -64,5 +70,18 @@ public class ReturnRequestController {
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER')")
     public ResponseEntity<ReturnRequestDto> refundReturnRequest(@PathVariable UUID returnRequestId){
         return ResponseEntity.ok(returnRequestService.refundReturnRequest(returnRequestId));
+    }
+
+    private String currentPrincipal() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication == null ? "" : String.valueOf(authentication.getPrincipal());
+    }
+
+    private boolean isStaff() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null && authentication.getAuthorities().stream()
+                .map(authority -> authority.getAuthority())
+                .anyMatch(role -> role.equals("ROLE_ADMIN") || role.equals("ROLE_MANAGER")
+                        || role.equals("ROLE_SUPER_ADMIN"));
     }
 }

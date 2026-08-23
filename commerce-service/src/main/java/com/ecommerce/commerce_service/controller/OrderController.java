@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -36,6 +38,7 @@ public class OrderController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER')")
     public ResponseEntity<Pagination<OrderDto>> getAll(@RequestParam(required = false,defaultValue = "0")  int pageNo,
                                                        @RequestParam(required = false,defaultValue = "10") int pageSize){
         return ResponseEntity.ok(orderService.getAllOrders(pageNo,pageSize));
@@ -56,17 +59,23 @@ public class OrderController {
 
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderDto> getById(@PathVariable UUID orderId){
-        return ResponseEntity.ok(orderService.getOrderById(orderId));
+        OrderDto order = orderService.getOrderById(orderId);
+        if (!canAccess(order)) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        return ResponseEntity.ok(order);
     }
 
     @GetMapping("/{orderId}/track")
     public ResponseEntity<List<OrderStatusHistoryDto>> trackOrder(@PathVariable UUID orderId){
+        OrderDto order = orderService.getOrderById(orderId);
+        if (!canAccess(order)) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         return ResponseEntity.ok(orderService.getOrderTracking(orderId));
     }
 
-    /** Regenerates the invoice PDF from current order data (authenticated users). */
+    /** Regenerates the invoice PDF from current order data (owner or staff only). */
     @GetMapping("/{orderId}/invoice")
     public ResponseEntity<byte[]> downloadInvoice(@PathVariable UUID orderId) {
+        OrderDto order = orderService.getOrderById(orderId);
+        if (!canAccess(order)) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         byte[] pdf = invoiceService.getOrderInvoicePdf(orderId);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -89,5 +98,17 @@ public class OrderController {
     @GetMapping("/bought-together/{productId}")
     public ResponseEntity<List<UUID>> getBoughtTogether(@PathVariable UUID productId){
         return ResponseEntity.ok(orderService.getBoughtTogether(productId));
+    }
+
+    private boolean canAccess(OrderDto order) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) return false;
+        boolean staff = authentication.getAuthorities().stream()
+                .map(authority -> authority.getAuthority())
+                .anyMatch(role -> role.equals("ROLE_ADMIN") || role.equals("ROLE_MANAGER")
+                        || role.equals("ROLE_SUPER_ADMIN"));
+        if (staff) return true;
+        return order.getCustomerId() != null
+                && order.getCustomerId().toString().equals(String.valueOf(authentication.getPrincipal()));
     }
 }
