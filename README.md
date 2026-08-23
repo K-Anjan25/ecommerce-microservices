@@ -139,5 +139,6 @@ Per-container caps (`docker-compose.yml`): postgres 384m, rabbitmq 128m, gateway
 - `docs/06-roadmap.md` — phased roadmap (6 → 10) and guardrails
 - `docs/07-handoff-opencode.md` — running session log / handoff notes
 - `docs/08-frontend-redesign.md` — Cartly 2.0 frontend redesign
+- `docs/09-frontend-strategy.md` — **open decision:** React vs WordPress/WooCommerce
 - `design/README.md` — design tokens, wireframes and the Figma handoff
 - `wordpress/cartly/README.md` — the design system as a WordPress/WooCommerce theme
