@@ -43,25 +43,25 @@ public class ReturnRequestController {
 
     /** Admin refund/returns queue: every return request, newest first. */
     @GetMapping("/all")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER')")
     public ResponseEntity<List<ReturnRequestDto>> getAllReturnRequests(){
         return ResponseEntity.ok(returnRequestService.getAllReturnRequests());
     }
 
     @PostMapping("/{returnRequestId}/approve")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER')")
     public ResponseEntity<ReturnRequestDto> approveReturnRequest(@PathVariable UUID returnRequestId){
         return ResponseEntity.ok(returnRequestService.approveReturnRequest(returnRequestId));
     }
 
     @PostMapping("/{returnRequestId}/reject")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER')")
     public ResponseEntity<ReturnRequestDto> rejectReturnRequest(@PathVariable UUID returnRequestId, @RequestParam String reason){
         return ResponseEntity.ok(returnRequestService.rejectReturnRequest(returnRequestId, reason));
     }
 
     @PostMapping("/{returnRequestId}/refund")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER')")
     public ResponseEntity<ReturnRequestDto> refundReturnRequest(@PathVariable UUID returnRequestId){
         return ResponseEntity.ok(returnRequestService.refundReturnRequest(returnRequestId));
     }

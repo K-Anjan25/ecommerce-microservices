@@ -42,7 +42,12 @@ function AdminLayout() {
   const isActive = (path: string, exact: boolean) =>
     exact ? location.pathname === path : location.pathname.startsWith(path);
 
-  const current = NAV.find((n) => isActive(n.path, n.exact)) ?? NAV[0];
+  const managerOnly =
+    user.roles?.includes("ROLE_MANAGER") && !user.roles?.includes("ROLE_ADMIN");
+  const visibleNav = managerOnly
+    ? NAV.filter((item) => ["/admin", "/admin/orders", "/admin/returns"].includes(item.path))
+    : NAV;
+  const current = visibleNav.find((n) => isActive(n.path, n.exact)) ?? visibleNav[0];
 
   const initials =
     (user.firstName?.at(0)?.toUpperCase() ?? "") + (user.lastName?.at(0)?.toUpperCase() ?? "");
@@ -66,7 +71,7 @@ function AdminLayout() {
       </div>
 
       <nav className="flex-1 space-y-0.5 px-3 py-2">
-        {NAV.map(({ path, label, icon: Icon, exact }) => {
+        {visibleNav.map(({ path, label, icon: Icon, exact }) => {
           const active = isActive(path, exact);
           return (
             <button
@@ -105,7 +110,11 @@ function AdminLayout() {
               {user.firstName} {user.lastName}
             </p>
             <p className="truncate text-[0.625rem] text-ink-muted">
-              {user.roles?.includes("ROLE_SUPER_ADMIN") ? "Super admin" : "Admin"}
+              {user.roles?.includes("ROLE_SUPER_ADMIN")
+                ? "Super admin"
+                : managerOnly
+                ? "Store manager"
+                : "Admin"}
             </p>
           </div>
         </div>

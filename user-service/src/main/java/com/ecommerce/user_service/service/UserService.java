@@ -286,6 +286,25 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    /** Admin-controlled staff boundary: customers may become managers, never admins. */
+    public AdminUserDto setStaffRole(UUID userId, String requestedRole) {
+        Role role = getRoleEnumName(requestedRole);
+        if (role != Role.ROLE_USER && role != Role.ROLE_MANAGER) {
+            throw new IllegalArgumentException("Staff role must be ROLE_USER or ROLE_MANAGER");
+        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(NO_USER_FOUND_BY_EMAIL + userId));
+        if (Role.ROLE_ADMIN.name().equals(user.getRole()) || Role.ROLE_SUPER_ADMIN.name().equals(user.getRole())) {
+            throw new IllegalArgumentException("Administrator roles cannot be changed here");
+        }
+        user.setRole(role.name());
+        user.setAuthorities(role.getAuthorities());
+        User saved = userRepository.save(user);
+        return new AdminUserDto(saved.getId(), saved.getFirstName(), saved.getLastName(),
+                saved.getEmail(), saved.getRole(), saved.isActive(), saved.isNotLocked(),
+                saved.getJoinDate(), saved.getLastLoginDate(), saved.getProfileImageUrl());
+    }
+
     private String generateUniqueReferralCode() {
         String code;
         do {

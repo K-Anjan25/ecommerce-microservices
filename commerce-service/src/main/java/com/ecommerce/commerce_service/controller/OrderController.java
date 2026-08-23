@@ -81,7 +81,7 @@ public class OrderController {
 
     /** Phase 9 analytics for the admin dashboard (admin-only). */
     @GetMapping("/stats/dashboard")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER')")
     public ResponseEntity<com.ecommerce.commerce_service.dto.stats.DashboardStatsDto> getDashboardStats() {
         return ResponseEntity.ok(orderService.getDashboardStats());
     }

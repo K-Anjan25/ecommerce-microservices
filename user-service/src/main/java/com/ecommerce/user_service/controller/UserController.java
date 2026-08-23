@@ -100,9 +100,17 @@ public class UserController {
     }
 
     @PostMapping("/add")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_SUPER_ADMIN')")
     public ResponseEntity<String> addUser(@RequestBody AddUserRequest user)  {
         userService.addNewUser(user);
         return ResponseEntity.ok(ADD_USER_RES);
+    }
+
+    @PutMapping("/role/{userId}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_SUPER_ADMIN')")
+    public ResponseEntity<AdminUserDto> updateStaffRole(@PathVariable UUID userId,
+                                                         @RequestParam String role) {
+        return ResponseEntity.ok(userService.setStaffRole(userId, role));
     }
 
     @PutMapping("/update")

@@ -42,6 +42,13 @@ const enableUser = async (userId: string) => {
   return data;
 };
 
+const updateStaffRole = async (userId: string, role: "ROLE_USER" | "ROLE_MANAGER") => {
+  const { data } = await api.put<AdminUser>(`/user/role/${userId}`, undefined, {
+    params: { role },
+  });
+  return data;
+};
+
 export const UserApi = {
   getUserById,
   resetPassword,
@@ -50,4 +57,5 @@ export const UserApi = {
   getAllUsers,
   disableUser,
   enableUser,
+  updateStaffRole,
 };

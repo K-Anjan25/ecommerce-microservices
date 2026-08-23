@@ -481,7 +481,7 @@ All verified with `tsc + vite build`.
   WooCommerce (see 7.4.20). That is the top item in the theme repo.
 
 ### 7.4.22 Where the platform repo goes next
-- Roadmap Phase 9 leftovers: audit log and staff Manager role. **CMS/store settings is now done** (2026-08-23): singleton product-service configuration, public GET/admin PUT, admin live-preview editor, and storefront-driven announcement/hero/shipping copy.
+- Roadmap Phase 9 leftover: audit log. **CMS/store settings is done**, and **Manager role is now complete** (2026-08-23): admins can promote/demote customers; managers can access analytics, orders and the returns/refund queue but cannot reach users, catalog mutation, coupons or storefront settings.
 - Then Phase 10: structured logs, rate limiting, backups, i18n, PWA.
 - `main` is still at the pre-redesign merge — **PR #2 carries this entire session** and needs
   merging before `main` reflects reality.

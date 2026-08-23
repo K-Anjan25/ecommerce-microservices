@@ -84,6 +84,7 @@ const Navbar = () => {
   const searchRef = useRef<HTMLInputElement>(null);
 
   const isAdmin = user?.roles?.includes("ROLE_ADMIN");
+  const isStaff = isAdmin || user?.roles?.includes("ROLE_MANAGER");
   const cartCount = calculateCountOfCartItems(carts);
 
   const { data: categories = [] } = useQuery("nav-categories", CategoryApi.getCategories, {
@@ -327,7 +328,7 @@ const Navbar = () => {
                       {s.label}
                     </MenuItem>
                   ))}
-                  {isAdmin && [
+                  {isStaff && [
                     <Divider key="d" />,
                     <MenuItem key="admin" onClick={() => handleCloseUserMenu("Admin")}>
                       <DashboardIcon sx={{ fontSize: 18, mr: 1.2 }} /> Admin console
@@ -436,7 +437,7 @@ const Navbar = () => {
               </>
             )}
 
-            {user.isLogedIn && isAdmin && (
+            {user.isLogedIn && isStaff && (
               <button
                 onClick={() => {
                   setToLocalStorage("admin-nav", 0);
