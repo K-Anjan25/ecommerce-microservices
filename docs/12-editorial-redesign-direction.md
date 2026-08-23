@@ -50,4 +50,6 @@ Cartly should feel designed for a premium curated mix of home, apparel, beauty a
 5. Redraw the remaining SVG product/mobile frames from the selected concept rather than merely recoloring the rejected structure.
 6. **In progress:** customer account surfaces now share the editorial system — photographic authentication, unboxed profile/security forms and rule-based order history. Responsive browser capture remains blocked by the sandbox's browser-download network restriction; static breakpoint review and production builds continue.
 
+7. **Done:** separated the admin console from the customer storefront shell. Admin no longer renders under the shop announcement/header/footer; it has an independent full-height studio shell, editorial Cartly identity and correct sticky offsets.
+
 Exploratory images live in `design/concepts/`. They are mood concepts, not production product photography.

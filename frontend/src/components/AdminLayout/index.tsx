@@ -15,6 +15,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Drawer } from "@mui/material";
 
 import { AppState } from "../../store";
+import { BrandMark } from "../../brand";
 
 const NAV = [
   { path: "/admin", label: "Dashboard", icon: SpaceDashboardOutlinedIcon, exact: true },
@@ -50,9 +51,9 @@ function AdminLayout() {
     <div className="flex h-full w-64 flex-col bg-contrast text-oncontrast">
       <div className="flex items-center justify-between px-5 py-5">
         <div>
-          <p className="font-heading text-base font-extrabold tracking-[0.18em]">CARTLY</p>
-          <span className="mt-1 inline-flex rounded-full bg-action px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-widest">
-            Admin
+          <BrandMark inverse />
+          <span className="mt-2 block text-[0.5625rem] font-semibold uppercase tracking-[0.2em] text-accent">
+            Studio administration
           </span>
         </div>
         <button
@@ -113,15 +114,15 @@ function AdminLayout() {
   );
 
   return (
-    <div className="-mx-4 -mt-6 flex min-h-[calc(100vh-4rem)] sm:-mx-6 sm:-mt-8 lg:-mx-8">
-      <aside className="sticky top-[4.5rem] hidden h-[calc(100vh-4.5rem)] shrink-0 overflow-y-auto lg:block">{Rail}</aside>
+    <div className="flex min-h-screen bg-canvas">
+      <aside className="sticky top-0 hidden h-screen shrink-0 overflow-y-auto lg:block">{Rail}</aside>
 
       <Drawer anchor="left" open={open} onClose={() => setOpen(false)}>
         {Rail}
       </Drawer>
 
       <div className="min-w-0 flex-1">
-        <div className="sticky top-[4.5rem] z-30 flex items-center gap-3 border-b border-line bg-paper/95 px-4 py-3 backdrop-blur-md sm:px-6 lg:py-4">
+        <div className="sticky top-0 z-30 flex items-center gap-3 border-b border-line bg-paper/95 px-4 py-3 backdrop-blur-md sm:px-6 lg:py-4">
           <button
             aria-label="Open navigation"
             className="icon-button -ml-2 lg:hidden"
@@ -130,7 +131,7 @@ function AdminLayout() {
             <MenuIcon />
           </button>
           <div className="min-w-0">
-            <p className="truncate font-heading text-lg font-bold text-ink">{current.label}</p>
+            <p className="truncate font-display text-2xl text-ink">{current.label}</p>
             <p className="truncate text-xs text-ink-muted">
               Admin console · {new Date().toLocaleDateString("en-IN", { dateStyle: "medium" })}
             </p>

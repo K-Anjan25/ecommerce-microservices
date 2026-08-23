@@ -71,30 +71,6 @@ function App() {
             <Route path="register" element={<Register />} />
             <Route
               element={
-                <RequireAuth
-                  allowedRoles={["ROLE_ADMIN", "ROLE_SUPER_ADMIN"]}
-                  roles={data.roles}
-                />
-              }
-            >
-              <Route path="admin" element={<AdminLayout />}>
-                <Route index element={<Home />} />
-                <Route path="products" element={<AdminProducts />} />
-                <Route path="orders" element={<AdminOrders />} />
-                <Route path="orderDetail/:orderId" element={<OrderDetail />} />
-                <Route path="categories" element={<AdminCategories />} />
-                <Route path="users" element={<AdminUsers />} />
-                <Route path="coupons" element={<AdminCoupons />} />
-                <Route path="returns" element={<AdminReturns />} />
-                <Route path="storefront" element={<AdminStoreSettings />} />
-                <Route
-                  path="addEditProduct/:productId?"
-                  element={<AddEditProducts />}
-                />
-              </Route>
-            </Route>
-            <Route
-              element={
                 <RequireAuth allowedRoles={["ROLE_USER"]} roles={data.roles} />
               }
             >
@@ -113,6 +89,30 @@ function App() {
             <Route path="cart" element={<Cart />} />
             <Route path="checkout" element={<Checkout />} />
           </Route>
+            <Route
+              element={
+                <RequireAuth
+                  allowedRoles={["ROLE_ADMIN", "ROLE_SUPER_ADMIN"]}
+                  roles={data.roles}
+                />
+              }
+            >
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<Home />} />
+                <Route path="products" element={<AdminProducts />} />
+                <Route path="orders" element={<AdminOrders />} />
+                <Route path="orderDetail/:orderId" element={<OrderDetail />} />
+                <Route path="categories" element={<AdminCategories />} />
+                <Route path="users" element={<AdminUsers />} />
+                <Route path="coupons" element={<AdminCoupons />} />
+                <Route path="returns" element={<AdminReturns />} />
+                <Route path="storefront" element={<AdminStoreSettings />} />
+                <Route
+                  path="addEditProduct/:productId?"
+                  element={<AddEditProducts />}
+                />
+              </Route>
+            </Route>
           <Route path="*" element={<NotFound />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
         </Routes>
