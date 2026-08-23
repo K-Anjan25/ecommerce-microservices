@@ -120,6 +120,26 @@ already assumed.
   add-to-cart bar that becomes a −/qty/+ stepper). Variant-aware cart wiring is
   unchanged.
 
+### Order screens
+- `pages/Orders` — order cards with a canvas header strip (id / date / total /
+  `StatusPill`), stacked product thumbnails resolved in **one** batched
+  `findByIds` call across all orders, and buy-again + details actions. Loading is
+  a skeleton instead of the word "Loading...".
+- `pages/Orders/OrderDetail` — **rewritten**: status timeline, real product names
+  and thumbnails, per-line return buttons that **preselect that item** in the
+  dialog, a payment summary (subtotal / discount / shipping / tax / gift wrap →
+  total), the delivery address, and the returns already raised on the order.
+- `pages/Admin/Orders/OrderDetail` — **rewritten**: three fact cards
+  (status + total, customer, ship-to), line items through `DataTable` with
+  thumbnails and variants, a totals aside, and the returns queue with
+  `StatusPill` + `LoadingButton` approve/reject/refund.
+- **Fixed across all three**: the detail screens printed `Product <uuid>` for
+  every line and every return, because product ids were never resolved to
+  products. They now batch-resolve and fall back to a truncated id only when a
+  product has been deleted.
+- Dead code removed: `ORDER_PRODUCT_COLUMNS` and `OrderProductRow` had no
+  remaining consumers after the admin rewrite.
+
 ### Feature pages (account / marketing)
 - `components/FeatureHero` — **new**. One ink opening beat (eyebrow, headline,
   optional big metric, actions, slot) shared by Loyalty, Referral, Gift Cards and
@@ -237,8 +257,7 @@ CI's backend + compose jobs are unaffected.
       fallback, unified status pills. *(done)*
 - [x] Feature pages (GiftCards, FlashSales, Referral, Returns, LoyaltyPoints,
       Compare, Addresses) re-composed. *(done)*
-- [ ] `pages/Orders` + both `OrderDetail` screens still use raw MUI `Paper`
-      stacks rather than the panel/DataTable language.
+- [x] `pages/Orders` + both `OrderDetail` screens. *(done)*
 - [ ] Dark mode — token structure supports a second mode; values unchosen.
 - [ ] Roadmap Phase 9 leftovers are unaffected: CMS/store settings, audit log,
       staff (Manager) role.

@@ -385,6 +385,25 @@ All verified with `tsc + vite build`.
 - [x] `tsc --noEmit` + `npm run build` clean; all 10 routes serve 200 against the mock gateway.
 - Remaining: `pages/Orders` and both `OrderDetail` screens; dark mode.
 
+### 7.4.17 Order screens re-composed (2026-08-23, thirteenth session)
+- [x] **`pages/Orders`**: order cards with a canvas header strip (id / date / total / StatusPill),
+      stacked product thumbnails resolved in ONE batched `findByIds` across all orders, buy-again
+      + details, skeleton loading.
+- [x] **`pages/Orders/OrderDetail`**: status timeline, real product names/thumbnails, per-line
+      return buttons that preselect that item, payment summary (subtotal / discount / shipping /
+      tax / gift wrap -> total), delivery address, existing returns.
+- [x] **`pages/Admin/Orders/OrderDetail`**: three fact cards (status+total, customer, ship-to),
+      line items via `DataTable` with thumbnails/variants, totals aside, returns queue with
+      StatusPill + LoadingButton approve/reject/refund.
+- [x] **Bug fixed**: both detail screens rendered `Product <uuid>` for every line and every
+      return — product ids were never resolved. They now batch-resolve, falling back to a
+      truncated id only when the product has been deleted.
+- [x] Dead code removed: `ORDER_PRODUCT_COLUMNS` / `OrderProductRow` had no consumers left.
+- [x] `design/preview-mock-server.mjs` extended with orders, returns, loyalty balance+history,
+      referral code and saved addresses — and its paths corrected to match the real API
+      (`/v1/loyalty/*`, `/user/referral/*`, `/v1/addresses`, `/v1/returns/order/{id}`).
+- Remaining redesign work: **dark mode only**.
+
 ---
 
 ## 7.5 Phase-end verification runbook (MANDATORY at each phase end)

@@ -44,36 +44,6 @@ export class OrderRow {
   }
 }
 
-export class OrderProductRow {
-  id: string;
-  productName: string;
-  customerName: string;
-  customerEmail: string;
-  city: string;
-  unitPrice: number;
-  quantity: number;
-  totalPrice: number;
-  constructor(
-    id: string,
-    productName: string,
-    customerName: string,
-    customerEmail: string,
-    city: string,
-    unitPrice: number,
-    quantity: number,
-    totalPrice: number
-  ) {
-    this.productName = productName;
-    this.customerName = customerName;
-    this.customerEmail = customerEmail;
-    this.unitPrice = unitPrice;
-    this.city = city;
-    this.id = id;
-    this.quantity = quantity;
-    this.totalPrice = totalPrice;
-  }
-}
-
 export type TableRow = InstanceType<
-  typeof ProductRow | typeof OrderRow | typeof OrderProductRow
+  typeof ProductRow | typeof OrderRow
 >;

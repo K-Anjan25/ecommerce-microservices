@@ -1,18 +1,25 @@
+import { useMemo } from "react";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Skeleton } from "@mui/material";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
+
 import { OrderApi } from "../../api/orderApi";
+import { ProductApi } from "../../api/productApi";
 import EmptyState from "../../components/EmptyState";
 import PageHeader from "../../components/PageHeader";
-import { Button, Paper, Typography } from "@mui/material";
-import { Order } from "../../types/order";
-import { ProductApi } from "../../api/productApi";
-import { formatDate } from "../../utils/date";
-import { useDispatch, useSelector } from "react-redux";
+import { StatusPill } from "../../components/DataTable";
 import { AppState } from "../../store";
 import { addToCart } from "../../store/actions/cartAction";
+import { Order } from "../../types/order";
+import { formatDate } from "../../utils/date";
+import { formatPrice } from "../../utils/cart";
 import { showSuccess } from "../../utils/showSuccess";
-import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import { showError } from "../../utils/showError";
 
 function Orders() {
   const navigate = useNavigate();
@@ -27,18 +34,34 @@ function Orders() {
 
   const userOrders = orders ?? [];
 
+  /* Resolve every product referenced across every order in one request, so the
+     list can show real thumbnails and names instead of bare ids. */
+  const allProductIds = useMemo(
+    () => Array.from(new Set(userOrders.flatMap((o) => o.items.map((i) => i.productId)))),
+    [userOrders]
+  );
+
+  const { data: productList } = useQuery(
+    ["user:orders:products", allProductIds.join(",")],
+    () => ProductApi.getProductsByIds(allProductIds),
+    { enabled: allProductIds.length > 0, retry: false }
+  );
+
+  const byId = useMemo(
+    () => new Map((productList ?? []).map((p) => [p.id, p])),
+    [productList]
+  );
+
   const handleBuyAgain = async (order: Order) => {
     // Fetch the real products so cart lines have prices/images; items whose
     // product no longer exists are skipped instead of adding broken lines.
     try {
-      const productIds = Array.from(
-        new Set(order.items.map((item) => item.productId))
-      );
+      const productIds = Array.from(new Set(order.items.map((item) => item.productId)));
       const products = await ProductApi.getProductsByIds(productIds);
-      const byId = new Map(products.map((p) => [p.id, p]));
+      const lookup = new Map(products.map((p) => [p.id, p]));
       let added = 0;
       order.items.forEach((item) => {
-        const product = byId.get(item.productId);
+        const product = lookup.get(item.productId);
         if (!product) return;
         const variant = item.variantId
           ? product.variants?.find((v) => v.id === item.variantId)
@@ -54,92 +77,154 @@ function Orders() {
         added += 1;
       });
       if (added === 0) {
-        showSuccess("These products are no longer available");
+        showError("These products are no longer available");
         return;
       }
       showSuccess("Items added to cart");
       navigate("/cart");
     } catch {
-      showSuccess("Could not re-add these items — products are no longer available");
+      showError("Could not re-add these items — products are no longer available");
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="page-shell">
-        <PageHeader title="Orders" subtitle="Your order history." />
-        <Paper className="p-6"><Typography>Loading...</Typography></Paper>
-      </div>
-    );
-  }
+  const spent = userOrders
+    .filter((o) => o.orderStatus !== "CANCELLED")
+    .reduce((a, o) => a + (o.totalAmount ?? 0), 0);
 
   return (
     <div className="page-shell space-y-6">
       <PageHeader
-        title="Orders"
-        subtitle={`${userOrders.length} order${userOrders.length === 1 ? "" : "s"} in your history`}
+        eyebrow="Account"
+        title="Your orders"
+        subtitle={
+          userOrders.length
+            ? `${userOrders.length} order${userOrders.length === 1 ? "" : "s"} · ${formatPrice(
+                spent
+              )} spent`
+            : "Everything you've bought, with invoices and returns."
+        }
+        actions={
+          <button onClick={() => navigate("/returns")} className="secondary-button !py-2">
+            View returns
+          </button>
+        }
       />
 
-      {userOrders.length === 0 ? (
+      {isLoading ? (
+        <div className="space-y-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} variant="rectangular" height={148} className="!rounded-lg" />
+          ))}
+        </div>
+      ) : userOrders.length === 0 ? (
         <div className="panel">
           <EmptyState
             icon={<ReceiptLongOutlinedIcon fontSize="large" />}
             title="No orders yet"
-            subtitle="When you place orders, they will show up here."
+            subtitle="Once you place an order it shows up here with its status, invoice and a one-tap re-order."
             action={
-              <Button
-                variant="contained"
-                                onClick={() => navigate("/")}
-              >
-                Continue shopping
-              </Button>
+              <button className="primary-button" onClick={() => navigate("/")}>
+                Start shopping
+              </button>
             }
           />
         </div>
       ) : (
-        <div className="space-y-4">
-          {userOrders.map((order: Order) => (
-            <Paper key={order.id} className="p-6">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <Typography variant="subtitle1" className="font-semibold">
-                    Order #{order.id}
-                  </Typography>
-                  <Typography className="text-sm text-ink-soft">
-                    {formatDate(order.createdDate)} · {order.items.length} item{order.items.length === 1 ? "" : "s"}
-                  </Typography>
-                  <Typography className="text-sm text-ink-soft">
-                    Status: <span className="font-semibold">{order.orderStatus}</span>
-                  </Typography>
+        <ul className="space-y-3">
+          {userOrders.map((order: Order) => {
+            const items = order.items;
+            const known = items.map((i) => byId.get(i.productId)).filter(Boolean);
+            return (
+              <li key={order.id} className="panel overflow-hidden">
+                {/* header strip */}
+                <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-line bg-canvas px-5 py-3">
+                  <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
+                    <div>
+                      <p className="text-eyebrow font-bold uppercase text-ink-muted">Order</p>
+                      <p className="font-mono text-xs font-semibold text-ink">#{order.id}</p>
+                    </div>
+                    <div>
+                      <p className="text-eyebrow font-bold uppercase text-ink-muted">Placed</p>
+                      <p className="text-xs font-semibold text-ink">
+                        {formatDate(order.createdDate)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-eyebrow font-bold uppercase text-ink-muted">Total</p>
+                      <p className="text-xs font-semibold text-ink">
+                        {formatPrice(order.totalAmount)}
+                      </p>
+                    </div>
+                  </div>
+                  <StatusPill value={order.orderStatus} />
                 </div>
-                <div className="flex items-center gap-3">
-                  <Typography className="price-text text-lg">
-                    {new Intl.NumberFormat("en-IN", {
-                      style: "currency",
-                      currency: "INR",
-                      minimumFractionDigits: 2,
-                    }).format(order.totalAmount)}
-                  </Typography>
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    startIcon={<ShoppingCartOutlinedIcon />}
-                    onClick={() => handleBuyAgain(order)}
-                  >
-                    Buy again
-                  </Button>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    onClick={() => navigate(`/orderDetail/${order.id}`)}
-                  >
-                    View details
-                  </Button>
+
+                {/* body */}
+                <div className="flex flex-wrap items-center justify-between gap-4 p-5">
+                  <div className="flex min-w-0 flex-1 items-center gap-3">
+                    <div className="flex shrink-0 -space-x-3">
+                      {items.slice(0, 4).map((item, idx) => {
+                        const p = byId.get(item.productId);
+                        const cover = p?.images?.[0] || p?.imageUrl;
+                        return (
+                          <span
+                            key={`${item.productId}-${item.variantId ?? "base"}-${idx}`}
+                            className="h-12 w-12 overflow-hidden rounded-sm border-2 border-paper bg-sunken"
+                          >
+                            {cover ? (
+                              <img src={cover} alt="" className="h-full w-full object-cover" />
+                            ) : (
+                              <span className="flex h-full items-center justify-center text-ink-faint">
+                                <ImageOutlinedIcon sx={{ fontSize: 17 }} />
+                              </span>
+                            )}
+                          </span>
+                        );
+                      })}
+                      {items.length > 4 && (
+                        <span className="flex h-12 w-12 items-center justify-center rounded-sm border-2 border-paper bg-ink text-xs font-bold text-paper">
+                          +{items.length - 4}
+                        </span>
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-ink">
+                        {known.length
+                          ? known
+                              .slice(0, 2)
+                              .map((p) => p!.name)
+                              .join(", ")
+                          : `${items.length} item${items.length === 1 ? "" : "s"}`}
+                        {known.length > 2 && ` +${known.length - 2} more`}
+                      </p>
+                      <p className="text-xs text-ink-muted">
+                        {items.length} item{items.length === 1 ? "" : "s"}
+                        {order.shippingMethod ? ` · ${order.shippingMethod.toLowerCase()} shipping` : ""}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex shrink-0 flex-wrap gap-2">
+                    <button
+                      onClick={() => handleBuyAgain(order)}
+                      className="secondary-button !py-2"
+                    >
+                      <ShoppingCartOutlinedIcon sx={{ fontSize: 16 }} />
+                      Buy again
+                    </button>
+                    <button
+                      onClick={() => navigate(`/orderDetail/${order.id}`)}
+                      className="dark-button !py-2"
+                    >
+                      Details
+                      <ChevronRightIcon sx={{ fontSize: 16 }} />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </Paper>
-          ))}
-        </div>
+              </li>
+            );
+          })}
+        </ul>
       )}
     </div>
   );

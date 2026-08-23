@@ -54,6 +54,67 @@ const PRODUCTS = NAMES.map((name, i) => {
   };
 });
 
+/* ── orders (so the order screens can be reviewed too) ──────────────────── */
+const ORDER_STATUSES = ["APPROVED", "PAID", "PENDING"];
+const ORDERS = ORDER_STATUSES.map((status, i) => {
+  const items = PRODUCTS.slice(i * 2, i * 2 + 2 + i).map((p) => ({
+    productId: p.id,
+    quantity: 1 + (i % 3),
+    variantId: undefined,
+  }));
+  const subtotal = items.reduce((a, it) => {
+    const p = PRODUCTS.find((x) => x.id === it.productId);
+    return a + p.unitPrice * it.quantity;
+  }, 0);
+  const shipping = subtotal >= 999 ? 0 : 50;
+  const discount = i === 0 ? Math.round(subtotal * 0.1) : 0;
+  const tax = Math.round((subtotal + shipping - discount) * 0.18);
+  return {
+    id: `ord-${1000 + i}-a4f2c9d1`,
+    customerId: "user-1",
+    address: {
+      state: "Telangana",
+      district: "Hyderabad",
+      addressDetail: "12 Rose Lane, Uppal",
+    },
+    items,
+    orderStatus: status,
+    createdDate: new Date(Date.now() - i * 4 * 86400000).toISOString(),
+    totalAmount: subtotal + shipping - discount + tax,
+    discountAmount: discount,
+    shippingAmount: shipping,
+    taxAmount: tax,
+    shippingMethod: i === 1 ? "EXPRESS" : "STANDARD",
+    giftWrap: i === 0,
+    giftWrapFee: i === 0 ? 50 : 0,
+  };
+});
+
+const RETURNS = [
+  {
+    id: "ret-501",
+    orderId: ORDERS[0].id,
+    customerId: "user-1",
+    productId: ORDERS[0].items[0].productId,
+    quantity: 1,
+    reason: "Arrived with a scratch on the lid",
+    status: "REQUESTED",
+    createdDate: new Date(Date.now() - 86400000).toISOString(),
+  },
+  {
+    id: "ret-502",
+    orderId: ORDERS[1].id,
+    customerId: "user-1",
+    productId: ORDERS[1].items[0].productId,
+    quantity: 1,
+    reason: "Wrong size",
+    status: "REFUNDED",
+    refundAmount: 1499,
+    refundTransactionId: "rfnd_9Kd21Xa",
+    createdDate: new Date(Date.now() - 5 * 86400000).toISOString(),
+  },
+];
+
 const json = (res, body, status = 200) => {
   res.writeHead(status, {
     "content-type": "application/json",
@@ -167,8 +228,72 @@ createServer((req, res) => {
       })),
     });
 
-  if (p === "/v1/orders" || p === "/v1/orders/my") return json(res, []);
-  if (p === "/v1/coupons" || p === "/v1/returns/all") return json(res, []);
+  if (p === "/v1/orders/my") return json(res, ORDERS);
+  if (p === "/v1/orders")
+    return json(res, { data: ORDERS, totalSize: ORDERS.length, totalPage: 1 });
+  if (/^\/v1\/orders\/[^/]+\/invoice$/.test(p))
+    return json(res, { message: "mock: invoices are not generated in the preview" }, 501);
+  if (/^\/v1\/orders\/[^/]+$/.test(p)) {
+    const found = ORDERS.find((o) => o.id === p.split("/").pop());
+    return found ? json(res, found) : json(res, { message: "not found" }, 404);
+  }
+
+  if (p === "/v1/returns/my") return json(res, RETURNS);
+  if (p === "/v1/returns/all") return json(res, RETURNS);
+  if (/^\/v1\/returns\/order\/[^/]+$/.test(p)) {
+    const oid = p.split("/").pop();
+    return json(res, RETURNS.filter((r) => r.orderId === oid));
+  }
+
+  if (p === "/v1/loyalty/balance") return json(res, 1240);
+  if (p === "/v1/loyalty/history")
+    return json(
+      res,
+      [
+        ["Order ord-1000 — points earned", 240, "EARNED"],
+        ["Redeemed at checkout", -150, "REDEEMED"],
+        ["Order ord-1001 — points earned", 310, "EARNED"],
+        ["Signup bonus", 100, "EARNED"],
+      ].map(([description, points, type], i) => ({
+        id: `lp-${i + 1}`,
+        description,
+        points,
+        type,
+        createdDate: new Date(Date.now() - i * 3 * 86400000).toISOString(),
+      }))
+    );
+
+  if (p === "/user/referral/code") return json(res, "CARTLY7X4K2");
+  if (p.startsWith("/user/referral/validate/"))
+    return json(res, p.split("/").pop() === "CARTLY7X4K2");
+
+  if (p === "/v1/addresses")
+    return json(res, [
+      {
+        id: "addr-1",
+        state: "Telangana",
+        district: "Hyderabad",
+        addressDetail: "12 Rose Lane, Uppal",
+        defaultAddress: true,
+      },
+      {
+        id: "addr-2",
+        state: "Karnataka",
+        district: "Bengaluru Urban",
+        addressDetail: "8 Curie Road, Indiranagar",
+        defaultAddress: false,
+      },
+    ]);
+  if (p === "/v1/addresses/default")
+    return json(res, {
+      id: "addr-1",
+      state: "Telangana",
+      district: "Hyderabad",
+      addressDetail: "12 Rose Lane, Uppal",
+      defaultAddress: true,
+    });
+
+  if (p === "/v1/coupons") return json(res, []);
 
   return json(res, { message: `mock: no handler for ${req.method} ${p}` }, 404);
 }).listen(PORT, "0.0.0.0", () =>
