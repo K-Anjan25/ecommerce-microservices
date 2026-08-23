@@ -103,6 +103,13 @@ React 18 + TypeScript, Redux, Material UI, Tailwind CSS — **Cartly 2.0 design 
 - **Design kit**: wireframes, tokens and the Figma handoff live in [`design/`](design/);
   the engineering record is [`docs/08-frontend-redesign.md`](docs/08-frontend-redesign.md).
 
+### WordPress theme
+
+The same design system also ships as an installable WordPress + WooCommerce
+theme in [`wordpress/cartly/`](wordpress/cartly) — same tokens, same shell,
+same product card. See its [README](wordpress/cartly/README.md) for install and
+setup.
+
 ### Reviewing the UI without the backend
 
 ```bash
@@ -133,3 +140,4 @@ Per-container caps (`docker-compose.yml`): postgres 384m, rabbitmq 128m, gateway
 - `docs/07-handoff-opencode.md` — running session log / handoff notes
 - `docs/08-frontend-redesign.md` — Cartly 2.0 frontend redesign
 - `design/README.md` — design tokens, wireframes and the Figma handoff
+- `wordpress/cartly/README.md` — the design system as a WordPress/WooCommerce theme

@@ -423,8 +423,30 @@ All verified with `tsc + vite build`.
       recharts follow the mode.
 - [x] `design/tokens.json` gained a `colorDark` collection; `design/palettes/` gained a dark
       panel so the values are reviewable.
-- **The frontend redesign backlog in `docs/08` §8.6 is now empty.** Next stop is the roadmap:
-  Phase 9 leftovers (CMS/store settings, audit log, staff Manager role) and Phase 10.
+- **The frontend redesign backlog in `docs/08` §8.6 is now empty.**
+
+### 7.4.19 WordPress theme (2026-08-23, fifteenth session)
+- [x] `wordpress/cartly/` — the Cartly 2.0 design system as an installable WordPress theme with
+      WooCommerce support. Classic PHP templates (not a block theme) because the design depends
+      on a sticky shell, a category rail and a mobile tab bar that FSE cannot express cleanly.
+- [x] Shares the design source of truth: `assets/src/tokens.css` is a copy of
+      `frontend/src/tokens.css`, and `tailwind.config.js` mirrors the React one. Compiled CSS is
+      **committed** (`assets/css/cartly.css`) so the theme installs without Node.
+- [x] Shell: dismissible announcement, sticky header with centred search + ⌘K, sticky category
+      rail (auto-fills from `product_cat` when no menu is assigned), mobile drawer, bottom tab
+      bar with a live cart badge, inverse footer, dark mode painted before first paint.
+- [x] WooCommerce styled mostly by **re-hooking** (`inc/woocommerce.php`) rather than copying
+      templates — overridden templates rot against Woo upgrades. Only 4 templates are forked,
+      each stamped with its `@version`: `content-product.php` (the card),
+      `loop/no-products-found.php`, `cart/cart-empty.php`, `global/quantity-input.php`.
+- [x] `theme.json` exposes palette / type / spacing / shadows to the block editor.
+- [x] Customizer sections for the announcement bar, storefront hero and footer.
+- [x] ⚠️ **No PHP runtime in this sandbox**, so the theme ships `bin/lint-php.py` — a PHP-aware
+      structural linter (islands, quoting, heredocs) checking balanced delimiters, alternative
+      syntax pairing, ABSPATH guards and stray closing tags. 31/31 files pass. It is NOT a
+      substitute for `php -l` / phpcs on a real host — run those before going live.
+- Next stop is the roadmap: Phase 9 leftovers (CMS/store settings, audit log, staff Manager
+  role) and Phase 10.
 
 ---
 

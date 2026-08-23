@@ -176,6 +176,7 @@ moved. That means ~30 pages that were never touched still picked up the new look
 | Frame 07 (card anatomy) | `components/Card/index.tsx` |
 | Frame 05 (admin) | `components/AdminLayout`, `pages/Admin/Home` |
 | Auth split panel | `components/AuthLayout` |
+| The whole system, as a WordPress theme | `wordpress/cartly/` (see its README) |
 
 ---
 
