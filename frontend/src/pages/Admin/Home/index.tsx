@@ -145,20 +145,20 @@ function Home() {
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={stats?.dailyRevenue ?? []}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E0D4" />
-                <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#8A94A6" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E3DD" />
+                <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#8A8F9E" />
                 <YAxis
                   tick={{ fontSize: 12 }}
-                  stroke="#8A94A6"
+                  stroke="#8A8F9E"
                   width={70}
                   tickFormatter={(v: number) => `₹${v >= 1000 ? `${(v / 1000).toFixed(1)}k` : v}`}
                 />
                 <Tooltip
                   formatter={(value: any) => [formatPrice(Number(value)), "Revenue"]}
                   cursor={{ fill: "rgba(11,107,85,0.06)" }}
-                  contentStyle={{ borderRadius: 12, borderColor: "#E5E0D4" }}
+                  contentStyle={{ borderRadius: 12, borderColor: "#E5E3DD" }}
                 />
-                <Bar dataKey="revenue" fill="#0B6B55" radius={[6, 6, 0, 0]} maxBarSize={48} />
+                <Bar dataKey="revenue" fill="#5B3DF5" radius={[6, 6, 0, 0]} maxBarSize={48} />
               </BarChart>
             </ResponsiveContainer>
           </div>
