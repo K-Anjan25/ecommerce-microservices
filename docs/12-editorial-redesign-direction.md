@@ -43,7 +43,7 @@ Cartly should feel designed for a premium curated mix of home, apparel, beauty a
 
 ## Next build pass
 
-1. Art-direct real category and hero imagery rather than reusing arbitrary catalog covers.
+1. **Done for the design system:** added a coherent seven-image editorial art-direction set for the homepage campaign and core categories. These are explicitly brand placeholders, not merchant product photos; replace the set together when commissioned photography is available.
 2. **Done:** reworked product detail into a tall editorial gallery + quiet sticky purchasing column; removed the duplicate selection rail and boxed tabs.
 3. **Done:** reworked cart and checkout typography/surfaces; checkout sections and summary now use editorial rules instead of stacked cards, and the mobile pay bar is correctly pinned after removing the mobile shop tabs.
 4. **Done:** added a Woo-style editorial mini-cart drawer with image-led lines, variant-aware totals, quantity controls and direct guest checkout. Cart review is now public so the existing guest checkout is reachable end to end.

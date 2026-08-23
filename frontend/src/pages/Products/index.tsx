@@ -27,6 +27,15 @@ const SORTS = [
   { value: "PRICE_DESC", label: "Price: high → low" },
 ];
 
+const CATEGORY_IMAGES: Record<string, string> = {
+  electronics: "/images/editorial/category-electronics.jpg",
+  home: "/images/editorial/category-home.jpg",
+  fashion: "/images/editorial/category-fashion.jpg",
+  beauty: "/images/editorial/category-beauty.jpg",
+  sports: "/images/editorial/category-sports.jpg",
+  grocery: "/images/editorial/category-grocery.jpg",
+};
+
 const TRUST = [
   { icon: LocalShippingOutlinedIcon, title: "Free shipping", copy: "On orders over ₹999" },
   { icon: ReplayOutlinedIcon, title: "7-day returns", copy: "No-questions refunds" },
@@ -326,34 +335,19 @@ function Products() {
             </div>
           </div>
 
-          {/* featured slot — bestseller cover, falls back to a quiet panel */}
+          {/* Art-directed campaign image — intentionally separate from catalog data. */}
           <div className="relative order-1 min-h-[24rem] overflow-hidden bg-sunken lg:min-h-[34rem]">
-            {bestsellers?.[0]?.imageUrl || bestsellers?.[0]?.images?.[0] ? (
-              <button
-                onClick={() => navigate(`products/${bestsellers[0].id}`)}
-                className="group block h-full w-full text-left"
-              >
-                <img
-                  src={bestsellers[0].images?.[0] || bestsellers[0].imageUrl}
-                  alt={bestsellers[0].name}
-                  className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-contrast/90 to-transparent p-6 pt-16 text-oncontrast">
-                  <span className="badge-sale !bg-accent !text-ink">Bestseller</span>
-                  <p className="mt-2 font-heading text-xl font-bold">{bestsellers[0].name}</p>
-                </div>
-              </button>
-            ) : (
-              <div className="flex h-full flex-col justify-center gap-4 p-10">
-                <p className="eyebrow">Featured</p>
-                <p className="font-heading text-2xl font-bold leading-snug text-ink">
-                  Fresh stock lands every week.
-                </p>
-                <p className="text-sm text-ink-soft">
-                  Filter by brand, price or rating — the facets update as you go.
-                </p>
-              </div>
-            )}
+            <img
+              src="/images/editorial/hero.jpg"
+              alt="A warm home interior with considered everyday objects"
+              className="h-full w-full object-cover object-center"
+            />
+            <div className="absolute bottom-0 left-0 bg-paper/95 px-5 py-4 backdrop-blur-sm">
+              <p className="text-[0.625rem] font-semibold uppercase tracking-[0.18em] text-ink-muted">
+                The Cartly edit · Vol. 01
+              </p>
+              <p className="mt-1 font-display text-xl text-ink">Beautiful things for everyday life</p>
+            </div>
           </div>
         </div>
 
@@ -396,7 +390,10 @@ function Products() {
             {categories.slice(0, 6).map((c) => {
               const active = filter === c.name;
               const categoryProduct = products.find((product) => product.categoryName === c.name);
-              const categoryImage = categoryProduct?.images?.[0] || categoryProduct?.imageUrl;
+              const categoryImage =
+                CATEGORY_IMAGES[c.name.toLowerCase()] ||
+                categoryProduct?.images?.[0] ||
+                categoryProduct?.imageUrl;
               return (
                 <button
                   key={c.id}
