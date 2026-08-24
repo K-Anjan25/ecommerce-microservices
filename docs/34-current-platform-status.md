@@ -78,3 +78,7 @@ Archived palette sheets are historical exploration only and are labelled accordi
 ## Checkout completion UX
 
 The enclosed checkout now ends on a dedicated confirmation screen for gift-card-funded, COD, provider-pending and provider-settled outcomes. Guest capability material is never placed in the URL or browser storage; see [35-checkout-confirmation.md](35-checkout-confirmation.md).
+
+## Pending cancellation
+
+Signed-in and capability-authenticated guest customers can cancel eligible pending/COD orders with idempotent inventory, credit and coupon compensation. Pending online-provider payments require provider reconciliation rather than unsafe local cancellation; see [37-pending-order-cancellation.md](37-pending-order-cancellation.md).

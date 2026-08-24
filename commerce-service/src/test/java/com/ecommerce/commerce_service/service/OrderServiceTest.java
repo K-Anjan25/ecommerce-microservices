@@ -13,7 +13,11 @@ import com.ecommerce.commerce_service.model.Order;
 import com.ecommerce.commerce_service.model.OrderAddress;
 import com.ecommerce.commerce_service.model.OrderItem;
 import com.ecommerce.commerce_service.model.OrderStatus;
+import com.ecommerce.commerce_service.model.Payment;
+import com.ecommerce.commerce_service.model.PaymentProvider;
+import com.ecommerce.commerce_service.model.PaymentStatus;
 import com.ecommerce.commerce_service.repository.OrderRepository;
+import com.ecommerce.commerce_service.repository.PaymentRepository;
 import com.ecommerce.commerce_service.repository.OrderStatusHistoryRepository;
 import com.ecommerce.commerce_service.repository.OrderItemRepository;
 import com.ecommerce.commerce_service.service.LoyaltyPointService;
@@ -82,6 +86,9 @@ class OrderServiceTest {
     @Mock
     private LoyaltyPointService loyaltyPointService;
 
+    @Mock
+    private PaymentRepository paymentRepository;
+
     private OrderService orderService;
 
     private UUID productId;
@@ -94,7 +101,7 @@ class OrderServiceTest {
         orderService = new OrderService(orderRepository, orderMapper, commerceInventoryService,
                 couponService, orderStatusHistoryRepository, rabbitMQMessageProducer, orderItemRepository,
                 shippingRateService, taxRuleService, checkoutTokenService, productCatalogClient,
-                giftCardService, loyaltyPointService);
+                giftCardService, loyaltyPointService, paymentRepository);
 
         productId = UUID.randomUUID();
         orderId = UUID.randomUUID();
@@ -275,6 +282,44 @@ class OrderServiceTest {
         assertThatThrownBy(() -> orderService.getGuestOrder(orderId, "wrong"))
                 .isInstanceOf(SecurityException.class);
         verify(orderMapper, never()).orderToOrderDto(testOrder);
+    }
+
+    @Test
+    void customerCanCancelPendingCashOrderAndRestoreReservations() {
+        UUID customerId = UUID.randomUUID();
+        Order order = Order.builder().id(orderId).customerId(customerId).orderStatus(OrderStatus.PENDING)
+                .items(List.of(OrderItem.builder().productId(productId).quantity(2).build()))
+                .inventoryOperationId("cancel-stock").creditsRestored(true).inventoryRestored(false).build();
+        Payment payment = Payment.builder().orderId(orderId).provider(PaymentProvider.CASH)
+                .status(PaymentStatus.PENDING.name()).build();
+        when(orderRepository.findLockedById(orderId)).thenReturn(order);
+        when(paymentRepository.findByOrderId(orderId)).thenReturn(Optional.of(payment));
+        when(orderRepository.save(order)).thenReturn(order);
+        when(orderMapper.orderToOrderDto(order)).thenReturn(testOrderDto);
+
+        assertThat(orderService.cancelPendingOrder(orderId, customerId, null)).isSameAs(testOrderDto);
+
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.CANCELLED);
+        assertThat(payment.getStatus()).isEqualTo(PaymentStatus.FAILED.name());
+        verify(commerceInventoryService).restoreStock(eq("order-payment-failed-cancel-stock"), anyList());
+        verify(couponService).releaseOrderUsage(orderId);
+    }
+
+    @Test
+    void onlinePendingOrderCannotBeCancelledWithoutProviderReconciliation() {
+        UUID customerId = UUID.randomUUID();
+        Order order = Order.builder().id(orderId).customerId(customerId).orderStatus(OrderStatus.PENDING)
+                .items(List.of(OrderItem.builder().productId(productId).quantity(1).build())).build();
+        Payment payment = Payment.builder().orderId(orderId).provider(PaymentProvider.STRIPE)
+                .status(PaymentStatus.PENDING.name()).build();
+        when(orderRepository.findLockedById(orderId)).thenReturn(order);
+        when(paymentRepository.findByOrderId(orderId)).thenReturn(Optional.of(payment));
+
+        assertThatThrownBy(() -> orderService.cancelPendingOrder(orderId, customerId, null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("provider reconciliation");
+        verify(commerceInventoryService, never()).restoreStock(anyString(), any());
+        verify(orderRepository, never()).save(any());
     }
 
     @Test

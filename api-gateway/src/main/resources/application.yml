@@ -41,6 +41,12 @@ spring:
             - Path=/v1/orders/*/guest
             - Method=GET
 
+        - id: guest-order-cancel
+          uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
+          predicates:
+            - Path=/v1/orders/*/guest/cancel
+            - Method=POST
+
         - id: order-service
           uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
           predicates:

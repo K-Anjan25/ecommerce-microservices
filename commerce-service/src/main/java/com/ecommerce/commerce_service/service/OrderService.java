@@ -18,8 +18,11 @@ import com.ecommerce.commerce_service.exception.ProductNotInStockException;
 import com.ecommerce.commerce_service.model.Order;
 import com.ecommerce.commerce_service.model.OrderStatus;
 import com.ecommerce.commerce_service.model.ShippingMethod;
+import com.ecommerce.commerce_service.model.PaymentProvider;
+import com.ecommerce.commerce_service.model.PaymentStatus;
 import com.ecommerce.commerce_service.model.OrderStatusHistory;
 import com.ecommerce.commerce_service.repository.OrderRepository;
+import com.ecommerce.commerce_service.repository.PaymentRepository;
 import com.ecommerce.commerce_service.repository.OrderStatusHistoryRepository;
 import com.ecommerce.commerce_service.repository.OrderItemRepository;
 import com.ecommerce.commerce_service.dto.shippingRate.ShippingCalculationRequest;
@@ -66,6 +69,7 @@ public class OrderService {
     private final ProductCatalogClient productCatalogClient;
     private final GiftCardService giftCardService;
     private final LoyaltyPointService loyaltyPointService;
+    private final PaymentRepository paymentRepository;
 
     @Value("${rabbitmq.exchanges.notification}")
     private String notificationExchange;
@@ -308,6 +312,46 @@ public class OrderService {
     }
 
     @Transactional
+    public OrderDto cancelPendingOrder(UUID orderId, UUID authenticatedCustomerId, String guestCapability) {
+        Order order = orderRepository.findLockedById(orderId);
+        if (order == null) throw new OrderNotFoundException("Order not found: " + orderId);
+        if (order.getCustomerId() != null) {
+            if (authenticatedCustomerId == null || !order.getCustomerId().equals(authenticatedCustomerId)) {
+                throw new SecurityException("Order does not belong to this customer");
+            }
+        } else if (!checkoutTokenService.matches(guestCapability, order.getCheckoutTokenHash())) {
+            throw new SecurityException("Guest order capability is invalid");
+        }
+        if (order.getOrderStatus() != OrderStatus.PENDING) {
+            throw new IllegalArgumentException("Only a pending order can be cancelled");
+        }
+
+        paymentRepository.findByOrderId(orderId).ifPresent(payment -> {
+            if (payment.getProvider() != PaymentProvider.CASH
+                    && (PaymentStatus.PENDING.name().equals(payment.getStatus())
+                        || PaymentStatus.SUCCESS.name().equals(payment.getStatus()))) {
+                throw new IllegalArgumentException(
+                        "Online payment cancellation requires provider reconciliation; contact support");
+            }
+            if (payment.getProvider() == PaymentProvider.CASH
+                    && PaymentStatus.PENDING.name().equals(payment.getStatus())) {
+                payment.setStatus(PaymentStatus.FAILED.name());
+                payment.setFailureReason("Order cancelled before delivery");
+                payment.setUpdatedAt(LocalDateTime.now());
+                paymentRepository.save(payment);
+            }
+        });
+
+        restoreReservedCredits(order);
+        restoreOrderInventory(order);
+        couponService.releaseOrderUsage(orderId);
+        order.setOrderStatus(OrderStatus.CANCELLED);
+        Order saved = orderRepository.save(order);
+        recordStatusOnce(orderId, OrderStatus.CANCELLED, "Cancelled by customer; reservations restored");
+        return orderMapper.orderToOrderDto(saved);
+    }
+
+    @Transactional
     public void applyPaymentStatus(UUID orderId, String paymentStatus, String provider) {
         Order lockedOrder = orderRepository.findLockedById(orderId);
         java.util.Optional.ofNullable(lockedOrder).ifPresent(order -> {
@@ -331,6 +375,7 @@ public class OrderService {
                 order.setOrderStatus(OrderStatus.CANCELLED);
                 restoreReservedCredits(order);
                 restoreOrderInventory(order);
+                couponService.releaseOrderUsage(order.getId());
                 recordStatusOnce(orderId, OrderStatus.CANCELLED,
                         "Payment failed; reserved credits and inventory restored");
             } else if ("PENDING".equalsIgnoreCase(paymentStatus)) {

@@ -4,7 +4,7 @@ import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { OrderApi } from "../../api/orderApi";
@@ -13,6 +13,8 @@ import EmptyState from "../../components/EmptyState";
 import { StatusPill } from "../../components/DataTable";
 import { formatPrice } from "../../utils/cart";
 import { formatDate } from "../../utils/date";
+import { showError } from "../../utils/showError";
+import { showSuccess } from "../../utils/showSuccess";
 
 function readCapability() {
   const raw = window.location.hash.startsWith("#") ? window.location.hash.slice(1) : "";
@@ -29,11 +31,23 @@ function GuestOrder() {
     if (window.location.hash) window.history.replaceState({}, document.title, window.location.pathname);
   }, []);
 
-  const { data: order, isLoading, isError } = useQuery(
+  const { data: order, isLoading, isError, refetch } = useQuery(
     ["guest-order", orderId],
     () => OrderApi.getGuestOrder(orderId!, capability),
     { enabled: Boolean(orderId && capability), retry: false }
   );
+  const cancelMutation = useMutation(
+    () => OrderApi.cancelGuestOrder(orderId!, capability),
+    {
+      onSuccess: () => {
+        showSuccess("Order cancelled and reservations restored");
+        refetch();
+      },
+      onError: (error: any) =>
+        showError(error.response?.data?.message ?? "This order cannot be cancelled automatically"),
+    }
+  );
+
   const productIds = useMemo(
     () => Array.from(new Set((order?.items ?? []).map((item) => item.productId))),
     [order]
@@ -71,7 +85,19 @@ function GuestOrder() {
             <h1 className="font-display text-4xl font-normal text-ink sm:text-5xl">Order #{order.id.slice(0, 8)}</h1>
             <p className="mt-2 text-sm text-ink-muted">Placed {formatDate(order.createdDate)}</p>
           </div>
-          <StatusPill value={order.orderStatus} />
+          <div className="flex items-center gap-3">
+            <StatusPill value={order.orderStatus} />
+            {order.orderStatus === "PENDING" && (
+              <button
+                type="button"
+                className="secondary-button !border-state-danger !py-2 text-state-danger"
+                disabled={cancelMutation.isLoading}
+                onClick={() => cancelMutation.mutate()}
+              >
+                {cancelMutation.isLoading ? "Cancelling…" : "Cancel order"}
+              </button>
+            )}
+          </div>
         </div>
       </header>
 

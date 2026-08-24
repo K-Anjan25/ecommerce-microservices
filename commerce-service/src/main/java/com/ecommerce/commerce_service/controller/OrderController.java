@@ -65,6 +65,21 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getGuestOrder(orderId, checkoutToken));
     }
 
+
+    @PostMapping("/{orderId}/cancel")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity<OrderDto> cancelMyOrder(@PathVariable UUID orderId) {
+        UUID customerId = UUID.fromString(String.valueOf(
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal()));
+        return ResponseEntity.ok(orderService.cancelPendingOrder(orderId, customerId, null));
+    }
+
+    @PostMapping("/{orderId}/guest/cancel")
+    public ResponseEntity<OrderDto> cancelGuestOrder(@PathVariable UUID orderId,
+            @RequestHeader(value = "X-Checkout-Token", required = false) String checkoutToken) {
+        return ResponseEntity.ok(orderService.cancelPendingOrder(orderId, null, checkoutToken));
+    }
+
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderDto> getById(@PathVariable UUID orderId){
         OrderDto order = orderService.getOrderById(orderId);

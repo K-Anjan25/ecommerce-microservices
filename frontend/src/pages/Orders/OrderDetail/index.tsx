@@ -38,7 +38,7 @@ function UserOrderDetail() {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ productId: "", quantity: 1, reason: "" });
 
-  const { data: order, isLoading } = useQuery(
+  const { data: order, isLoading, refetch: refetchOrder } = useQuery(
     ["user:order", orderId],
     () => OrderApi.getOrderById(orderId!),
     { enabled: Boolean(orderId) }
@@ -88,6 +88,15 @@ function UserOrderDetail() {
       URL.revokeObjectURL(url);
     },
     onError: () => showError("Could not download invoice"),
+  });
+
+  const cancelMutation = useMutation(() => OrderApi.cancelMyOrder(orderId!), {
+    onSuccess: () => {
+      showSuccess("Order cancelled and reservations restored");
+      refetchOrder();
+    },
+    onError: (error: any) =>
+      showError(error.response?.data?.message ?? "This order cannot be cancelled automatically"),
   });
 
   /** Opening the dialog from a line preselects that line. */
@@ -168,6 +177,16 @@ function UserOrderDetail() {
               <ArrowBackIcon sx={{ fontSize: 16 }} />
               All orders
             </button>
+            {order.orderStatus === "PENDING" && (
+              <LoadingButton
+                variant="outlined"
+                color="error"
+                onClick={() => cancelMutation.mutate()}
+                loading={cancelMutation.isLoading}
+              >
+                Cancel order
+              </LoadingButton>
+            )}
             <LoadingButton
               variant="contained"
               startIcon={<PictureAsPdfOutlinedIcon sx={{ fontSize: 17 }} />}

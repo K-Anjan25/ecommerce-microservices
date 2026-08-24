@@ -17,6 +17,18 @@ const getGuestOrder = async (orderId: string, checkoutToken: string) => {
   return data;
 };
 
+const cancelGuestOrder = async (orderId: string, checkoutToken: string) => {
+  const { data } = await api.post<Order>(`/v1/orders/${orderId}/guest/cancel`, undefined, {
+    headers: { "X-Checkout-Token": checkoutToken },
+  });
+  return data;
+};
+
+const cancelMyOrder = async (orderId: string) => {
+  const { data } = await api.post<Order>(`/v1/orders/${orderId}/cancel`);
+  return data;
+};
+
 const getOrderById = async (orderId: string) => {
   const { data } = await api.get<Order>(`/v1/orders/${orderId}`);
   return data;
@@ -52,6 +64,8 @@ export const OrderApi = {
   getMyOrders,
   getOrderById,
   getGuestOrder,
+  cancelGuestOrder,
+  cancelMyOrder,
   createOrder,
   getInvoice,
   getDashboardStats,

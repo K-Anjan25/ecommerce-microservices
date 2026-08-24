@@ -73,6 +73,7 @@ public class RateLimitFilter implements GlobalFilter, Ordered {
         if ("POST".equals(method) && "/user/password-reset/confirm".equals(path)) return new Rule("password-reset-confirm", 10);
         if ("POST".equals(method) && "/v1/orders".equals(path)) return new Rule("guest-order", 20);
         if ("GET".equals(method) && path.matches("/v1/orders/[^/]+/guest")) return new Rule("guest-order-track", 60);
+        if ("POST".equals(method) && path.matches("/v1/orders/[^/]+/guest/cancel")) return new Rule("guest-order-cancel", 10);
         if ("POST".equals(method) && "/v1/payments".equals(path)) return new Rule("payment", 20);
         if ("POST".equals(method) && path.startsWith("/v1/payments/webhooks/")) return new Rule("payment-webhook", 120);
         if ("POST".equals(method) && path.startsWith("/v1/comments")) return new Rule("comment", 30);
