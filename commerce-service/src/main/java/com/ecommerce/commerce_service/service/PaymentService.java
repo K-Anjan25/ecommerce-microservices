@@ -173,8 +173,18 @@ public class PaymentService {
      */
     @Transactional
     public ProviderPaymentResult refundOrderPayment(UUID orderId, BigDecimal amount) {
-        Payment payment = paymentRepository.findByOrderId(orderId)
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Refund amount must be positive");
+        }
+        Payment payment = paymentRepository.findLockedByOrderId(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("No payment found for order " + orderId));
+        if (!PaymentStatus.SUCCESS.name().equals(payment.getStatus())) {
+            throw new IllegalArgumentException("Only a captured successful payment can be refunded");
+        }
+        BigDecimal alreadyRefunded = payment.getRefundedAmount() == null ? BigDecimal.ZERO : payment.getRefundedAmount();
+        if (alreadyRefunded.add(amount).compareTo(payment.getAmount()) > 0) {
+            throw new IllegalArgumentException("Refund exceeds the captured provider payment");
+        }
 
         Map<PaymentProvider, PaymentProviderClient> providers = providerClients.stream()
                 .collect(Collectors.toMap(PaymentProviderClient::provider, Function.identity()));
@@ -188,17 +198,25 @@ public class PaymentService {
                 orderId, payment.getProvider(), result.isSuccess(), result.getMessage());
 
         if (result.isSuccess()) {
-            rabbitMQMessageProducer.publish(
-                    PaymentStatusEvent.builder()
-                            .orderId(orderId)
-                            .status(PaymentStatus.REFUNDED.name())
-                            .provider(payment.getProvider().name())
-                            .transactionId(result.getTransactionId())
-                            .amount(amount)
-                            .currency(payment.getCurrency())
-                            .build(),
-                    exchange,
-                    paymentStatusRoutingKey);
+            BigDecimal cumulativeRefund = alreadyRefunded.add(amount);
+            payment.setRefundedAmount(cumulativeRefund);
+            payment.setUpdatedAt(LocalDateTime.now());
+            boolean fullyRefunded = cumulativeRefund.compareTo(payment.getAmount()) == 0;
+            if (fullyRefunded) {
+                payment.setStatus(PaymentStatus.REFUNDED.name());
+                rabbitMQMessageProducer.publish(
+                        PaymentStatusEvent.builder()
+                                .orderId(orderId)
+                                .status(PaymentStatus.REFUNDED.name())
+                                .provider(payment.getProvider().name())
+                                .transactionId(result.getTransactionId())
+                                .amount(cumulativeRefund)
+                                .currency(payment.getCurrency())
+                                .build(),
+                        exchange,
+                        paymentStatusRoutingKey);
+            }
+            paymentRepository.save(payment);
             sendRefundEmail(payment, amount, result);
         }
         return result;

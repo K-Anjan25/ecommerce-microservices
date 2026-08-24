@@ -54,6 +54,9 @@ public class Payment {
     @Column(length = 500)
     private String failureReason;
 
+    @Column(precision = 19, scale = 2)
+    private BigDecimal refundedAmount;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

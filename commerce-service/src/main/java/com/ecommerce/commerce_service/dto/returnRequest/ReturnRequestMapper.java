@@ -21,6 +21,8 @@ public class ReturnRequestMapper {
                 .quantity(returnRequest.getQuantity())
                 .status(returnRequest.getStatus())
                 .refundAmount(returnRequest.getRefundAmount())
+                .giftCardRefundAmount(returnRequest.getGiftCardRefundAmount())
+                .providerRefundAmount(returnRequest.getProviderRefundAmount())
                 .refundTransactionId(returnRequest.getRefundTransactionId())
                 .reason(returnRequest.getReason())
                 .rejectionReason(returnRequest.getRejectionReason())

@@ -65,4 +65,22 @@ class PaymentServiceTest {
         assertThatThrownBy(() -> service.processPayment(request, UUID.randomUUID()))
                 .isInstanceOf(SecurityException.class);
     }
+    @Test
+    void rejectsRefundBeyondCapturedProviderAmount() {
+        PaymentRepository payments = mock(PaymentRepository.class);
+        UUID orderId = UUID.randomUUID();
+        Payment payment = Payment.builder().orderId(orderId).amount(new BigDecimal("100.00"))
+                .refundedAmount(new BigDecimal("80.00")).provider(PaymentProvider.RAZORPAY)
+                .status(PaymentStatus.SUCCESS.name()).build();
+        when(payments.findLockedByOrderId(orderId)).thenReturn(Optional.of(payment));
+        PaymentService service = new PaymentService(payments, mock(OrderRepository.class),
+                mock(RabbitMQMessageProducer.class), List.of(), mock(InvoiceService.class),
+                new CheckoutTokenService(), mock(LoyaltyPointService.class));
+
+        assertThatThrownBy(() -> service.refundOrderPayment(orderId, new BigDecimal("30.00")))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("exceeds");
+        verify(payments, never()).save(any());
+    }
+
 }

@@ -157,6 +157,8 @@ function AdminReturns() {
                   {r.status === ReturnStatus.REFUNDED && r.refundAmount != null && (
                     <Typography variant="body2" className="text-state-info">
                       Refunded {formatPrice(r.refundAmount)}
+                      {r.giftCardRefundAmount ? ` · ${formatPrice(r.giftCardRefundAmount)} to gift card` : ""}
+                      {r.providerRefundAmount ? ` · ${formatPrice(r.providerRefundAmount)} to provider` : ""}
                       {r.refundTransactionId ? ` · Ref ${r.refundTransactionId}` : ""}
                     </Typography>
                   )}

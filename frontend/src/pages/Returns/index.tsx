@@ -133,6 +133,16 @@ function Returns() {
                             {formatPrice(req.refundAmount)}
                           </dd>
                         </div>
+                        {(req.giftCardRefundAmount || req.providerRefundAmount) && (
+                          <div className="flex justify-between gap-3 sm:justify-start">
+                            <dt className="text-ink-muted sm:w-24">Returned to</dt>
+                            <dd className="text-right text-xs text-ink-soft sm:text-left">
+                              {req.giftCardRefundAmount ? `${formatPrice(req.giftCardRefundAmount)} gift card` : ""}
+                              {req.giftCardRefundAmount && req.providerRefundAmount ? " · " : ""}
+                              {req.providerRefundAmount ? `${formatPrice(req.providerRefundAmount)} payment` : ""}
+                            </dd>
+                          </div>
+                        )}
                         {req.refundTransactionId && (
                           <div className="flex justify-between gap-3 sm:justify-start">
                             <dt className="shrink-0 text-ink-muted sm:w-24">Reference</dt>

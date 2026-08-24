@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -31,6 +32,7 @@ public class ReturnRequestService {
     private final OrderRepository orderRepository;
     private final CommerceInventoryService commerceInventoryService;
     private final PaymentService paymentService;
+    private final GiftCardService giftCardService;
 
     @Transactional
     public ReturnRequestDto createReturnRequest(CreateReturnRequest request, UUID authenticatedCustomerId) {
@@ -132,32 +134,77 @@ public class ReturnRequestService {
                     + returnRequest.getStatus() + ")");
         }
 
-        Order order = orderRepository.findById(returnRequest.getOrderId())
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+        Order order = orderRepository.findLockedById(returnRequest.getOrderId());
+        if (order == null) throw new IllegalArgumentException("Order not found");
 
-        BigDecimal unitPrice = order.getItems().stream()
+        var orderedItem = order.getItems().stream()
                 .filter(item -> item.getProductId().equals(returnRequest.getProductId()))
                 .filter(item -> Objects.equals(
                         item.getVariantId() == null ? null : item.getVariantId().toString(),
                         returnRequest.getVariantId()))
                 .findFirst()
-                .map(item -> item.getPrice() == null ? BigDecimal.ZERO : item.getPrice())
-                .orElse(BigDecimal.ZERO);
+                .orElseThrow(() -> new IllegalArgumentException("Returned line is not part of the order"));
 
-        BigDecimal refundAmount = unitPrice.multiply(BigDecimal.valueOf(returnRequest.getQuantity()));
+        BigDecimal merchandiseSubtotal = order.getItems().stream()
+                .map(item -> nvl(item.getPrice()).multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal lineGross = nvl(orderedItem.getPrice())
+                .multiply(BigDecimal.valueOf(returnRequest.getQuantity()));
+        BigDecimal merchandiseDiscount = nvl(order.getDiscountAmount()).add(nvl(order.getLoyaltyDiscountAmount()));
+        BigDecimal lineDiscount = merchandiseSubtotal.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO
+                : merchandiseDiscount.multiply(lineGross).divide(merchandiseSubtotal, 2, RoundingMode.HALF_UP)
+                        .min(lineGross);
+        BigDecimal refundableNet = lineGross.subtract(lineDiscount).max(BigDecimal.ZERO);
 
-        // Charge the provider; on failure the request stays APPROVED and the
-        // admin sees the provider message.
-        ProviderPaymentResult result = paymentService.refundOrderPayment(order.getId(), refundAmount);
-        if (!result.isSuccess()) {
-            throw new RuntimeException("Refund failed: " + result.getMessage());
+        // Shipping and gift wrap are not refunded for a line return. Tax is
+        // returned only in proportion to the discounted merchandise value.
+        BigDecimal taxableAmount = merchandiseSubtotal.add(nvl(order.getShippingAmount()))
+                .add(nvl(order.getGiftWrapFee())).subtract(merchandiseDiscount).max(BigDecimal.ZERO);
+        BigDecimal lineTax = taxableAmount.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO
+                : nvl(order.getTaxAmount()).multiply(refundableNet)
+                        .divide(taxableAmount, 2, RoundingMode.HALF_UP);
+        BigDecimal refundAmount = refundableNet.add(lineTax).setScale(2, RoundingMode.HALF_UP);
+        if (refundAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Calculated refund amount must be positive");
         }
+
+        // Multi-tender policy: restore gift-card value first, then refund only
+        // the remainder to the captured provider payment.
+        BigDecimal giftOriginallyApplied = nvl(order.getGiftCardAmount());
+        BigDecimal giftAlreadyRefunded = nvl(order.getGiftCardRefundedAmount());
+        BigDecimal giftRemaining = giftOriginallyApplied.subtract(giftAlreadyRefunded).max(BigDecimal.ZERO);
+        BigDecimal giftRefund = refundAmount.min(giftRemaining);
+        BigDecimal providerRefund = refundAmount.subtract(giftRefund);
+
+        if (giftRefund.compareTo(BigDecimal.ZERO) > 0) {
+            giftCardService.restoreOrderCredit(order.getGiftCardId(), giftRefund);
+        }
+
+        ProviderPaymentResult providerResult = null;
+        if (providerRefund.compareTo(BigDecimal.ZERO) > 0) {
+            providerResult = paymentService.refundOrderPayment(order.getId(), providerRefund);
+            if (!providerResult.isSuccess()) {
+                throw new RuntimeException("Refund failed: " + providerResult.getMessage());
+            }
+        }
+
+        order.setGiftCardRefundedAmount(giftAlreadyRefunded.add(giftRefund));
+        order.setProviderRefundedAmount(nvl(order.getProviderRefundedAmount()).add(providerRefund));
+        orderRepository.save(order);
 
         returnRequest.setStatus(ReturnStatus.REFUNDED);
         returnRequest.setRefundAmount(refundAmount);
-        returnRequest.setRefundTransactionId(result.getTransactionId());
+        returnRequest.setGiftCardRefundAmount(giftRefund);
+        returnRequest.setProviderRefundAmount(providerRefund);
+        returnRequest.setRefundTransactionId(providerResult == null
+                ? "GIFT-CARD-" + (order.getGiftCardCodeLast4() == null ? "CREDIT" : order.getGiftCardCodeLast4())
+                : providerResult.getTransactionId());
         ReturnRequest saved = returnRequestRepository.save(returnRequest);
         return returnRequestMapper.returnRequestToReturnRequestDto(saved);
+    }
+
+    private BigDecimal nvl(BigDecimal value) {
+        return value == null ? BigDecimal.ZERO : value;
     }
 
     private ReturnRequest lockedReturn(UUID id) {

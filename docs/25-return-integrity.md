@@ -14,3 +14,7 @@ refund attempts. Refund price lookup matches the exact variant snapshot.
 
 Inventory restoration failure now fails approval instead of silently marking a
 return approved without restoring stock.
+
+## Mixed-tender follow-up
+
+Discount-aware tax calculation, gift-card-first allocation, provider refund caps, and partial-refund state handling are documented in [30-mixed-tender-refunds.md](30-mixed-tender-refunds.md).

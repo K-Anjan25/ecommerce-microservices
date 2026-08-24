@@ -65,6 +65,12 @@ public class Order extends AdvanceBaseModal {
     @Column(precision = 19, scale = 2)
     private BigDecimal giftCardAmount;
 
+    @Column(precision = 19, scale = 2)
+    private BigDecimal giftCardRefundedAmount;
+
+    @Column(precision = 19, scale = 2)
+    private BigDecimal providerRefundedAmount;
+
     private Boolean creditsRestored;
 
     /** SHA-256 capability used only to authorize guest payment initiation. */
