@@ -51,7 +51,7 @@ The roadmap feature build is no longer the main activity. Current work is **Phas
 These are not hidden TODOs; they are the remaining production boundaries:
 
 1. **Interactive payment-provider handoff.** Signed Stripe/Razorpay webhooks now own settlement truth, but the frontend still needs production SDK/challenge flows and live-provider certification.
-2. **Provider reconciliation execution.** Stale online payments now create a durable, read-only operations queue and resolve only through verified callbacks. Provider API polling/expiry, late-capture handling, alerting and the production operations runbook remain.
+2. **Provider reconciliation execution.** Stale online payments now use authenticated Stripe/Razorpay status lookups where possible and create a durable operations queue for ambiguity. Provider-specific expiry, late-capture handling, alerting and the production operations runbook remain.
 3. **Customer gift-card purchasing.** Disabled until a payment-backed issuance intent can activate value only after verified capture. Admin issuance is restricted, reason-required and audited.
 4. **Production database migrations.** Development still relies on Hibernate `ddl-auto`; production needs versioned migrations, rollout and rollback exercises.
 5. **High-assurance SEO rendering.** Metadata exists, but the React SPA is not SSR/pre-rendered.

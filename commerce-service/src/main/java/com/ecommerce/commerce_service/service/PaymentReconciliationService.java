@@ -6,9 +6,12 @@ import com.ecommerce.commerce_service.model.PaymentReconciliationCase;
 import com.ecommerce.commerce_service.model.PaymentStatus;
 import com.ecommerce.commerce_service.repository.PaymentReconciliationCaseRepository;
 import com.ecommerce.commerce_service.repository.PaymentRepository;
-import lombok.RequiredArgsConstructor;
+import com.ecommerce.commerce_service.service.provider.PaymentProviderClient;
+import com.ecommerce.commerce_service.service.provider.ProviderPaymentStatus;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -19,16 +22,36 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Keeps provider-pending payments visible to operations without guessing at
- * settlement. A stale payment remains pending until a signed provider webhook
- * proves success or failure; this service only creates and resolves work items.
+ * Reconciles old provider-pending payments without guessing at settlement. A
+ * provider-authenticated terminal snapshot may be applied through the normal
+ * locked payment flow; an unavailable/ambiguous snapshot only creates a
+ * durable operations case and leaves local reservations untouched.
  */
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class PaymentReconciliationService {
     private final PaymentRepository paymentRepository;
     private final PaymentReconciliationCaseRepository caseRepository;
+    private final List<PaymentProviderClient> providerClients;
+    private final PaymentService paymentService;
+
+    @Autowired
+    public PaymentReconciliationService(
+            PaymentRepository paymentRepository,
+            PaymentReconciliationCaseRepository caseRepository,
+            List<PaymentProviderClient> providerClients,
+            @Lazy PaymentService paymentService) {
+        this.paymentRepository = paymentRepository;
+        this.caseRepository = caseRepository;
+        this.providerClients = providerClients;
+        this.paymentService = paymentService;
+    }
+
+    /** Lightweight constructor retained for isolated queue tests. */
+    PaymentReconciliationService(PaymentRepository paymentRepository,
+                                 PaymentReconciliationCaseRepository caseRepository) {
+        this(paymentRepository, caseRepository, List.of(), null);
+    }
 
     @Value("${payment.reconciliation.pending-ttl:PT30M}")
     private Duration pendingTtl = Duration.ofMinutes(30);
@@ -37,18 +60,20 @@ public class PaymentReconciliationService {
     private int batchSize = 100;
 
     @Scheduled(fixedDelayString = "${payment.reconciliation.scan-delay-ms:60000}")
-    @Transactional
     public void scanStalePendingPayments() {
+        // Do not hold a database transaction while making provider HTTP calls.
+        // Each successful reconciliation owns its own payment transaction and
+        // each queued case is persisted by the repository boundary.
         LocalDateTime cutoff = LocalDateTime.now().minus(pendingTtl);
         int safeBatchSize = Math.max(1, Math.min(batchSize, 500));
         List<Payment> stalePayments = paymentRepository.findStalePendingOnline(
                 PaymentStatus.PENDING.name(), PaymentProvider.CASH, cutoff, PageRequest.of(0, safeBatchSize));
 
         for (Payment payment : stalePayments) {
-            openCaseIfNeeded(payment);
+            reconcileOrOpenCase(payment);
         }
         if (!stalePayments.isEmpty()) {
-            log.warn("Payment reconciliation scan found {} stale pending online payment(s)", stalePayments.size());
+            log.warn("Payment reconciliation scan inspected {} stale pending online payment(s)", stalePayments.size());
         }
     }
 
@@ -61,7 +86,7 @@ public class PaymentReconciliationService {
         return caseRepository.findByStatusOrderByCreatedAtAsc(status);
     }
 
-    /** Called in the same transaction as the verified payment state transition. */
+    /** Called in the same transaction as a verified webhook/provider transition. */
     public void resolveForPayment(Long paymentId, String resolutionReason) {
         if (paymentId == null) {
             return;
@@ -79,6 +104,38 @@ public class PaymentReconciliationService {
                 });
     }
 
+    private void reconcileOrOpenCase(Payment payment) {
+        PaymentProviderClient client = providerClients.stream()
+                .filter(candidate -> candidate.provider() == payment.getProvider())
+                .findFirst()
+                .orElse(null);
+
+        if (client == null || paymentService == null) {
+            openCaseIfNeeded(payment);
+            return;
+        }
+
+        ProviderPaymentStatus snapshot = client.lookup(payment);
+        if (!snapshot.isSettled() && !snapshot.isFailed()) {
+            openCaseIfNeeded(payment);
+            return;
+        }
+
+        try {
+            // The provider API response is authenticated with the provider
+            // secret, but PaymentService still rechecks amount and currency.
+            paymentService.reconcileProviderPayment(
+                    payment.getProvider(), payment.getTransactionId(), snapshot.isSettled(),
+                    snapshot.getFailureReason(), snapshot.getAmount(), snapshot.getCurrency());
+        } catch (RuntimeException reconciliationFailure) {
+            // Mismatch, missing fields or a provider race must become visible
+            // to operations; never release local reservations speculatively.
+            openCaseIfNeeded(payment);
+            log.error("Provider status for payment {} could not be applied; case retained for review",
+                    payment.getId(), reconciliationFailure);
+        }
+    }
+
     private void openCaseIfNeeded(Payment payment) {
         if (payment.getId() == null || payment.getOrderId() == null
                 || payment.getProvider() == null || payment.getAmount() == null
@@ -87,7 +144,7 @@ public class PaymentReconciliationService {
             return;
         }
         // A payment has a single lifecycle. Once a case has been resolved by a
-        // verified callback, it must not be reopened by a later scan.
+        // verified callback or provider API snapshot, it must not be reopened.
         if (caseRepository.findByPaymentId(payment.getId()).isPresent()) {
             return;
         }

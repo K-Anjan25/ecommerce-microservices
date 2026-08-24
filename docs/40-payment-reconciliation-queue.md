@@ -15,7 +15,7 @@ The scheduled scanner only creates a `PaymentReconciliationCase`. It does **not*
 - release inventory, coupon usage, gift-card value or loyalty points;
 - mark the order paid.
 
-Those state changes remain behind a signature-verified provider webhook. This is especially important for Razorpay Orders, which do not expose the same server-side cancellation operation as Stripe PaymentIntents. A late `payment.captured` or `payment.failed` callback is still reconciled by the existing locked, amount-and-currency-verified payment flow.
+Those state changes remain behind either a signature-verified provider webhook or an authenticated provider API snapshot. This is especially important for Razorpay Orders, which do not expose the same server-side cancellation operation as Stripe PaymentIntents. A late `payment.captured` or `payment.failed` callback is still reconciled by the existing locked, amount-and-currency-verified payment flow.
 
 When that verified transition is applied, its open case is marked `RESOLVED` in the same commerce transaction. The unique payment constraint prevents duplicate cases, and resolved cases are not reopened by later scans.
 
@@ -33,4 +33,6 @@ The admin console exposes the same queue at **Admin → Payment review** with au
 
 ## Remaining production work
 
-This queue makes stale pending payments observable and durable, but it is not a provider reconciliation engine. Production still needs provider API status polling/expiry rules, late-capture handling (including any required refund or fulfilment decision), alerting, retention and an exercised operations runbook for each enabled provider.
+The scheduled worker now performs authenticated status lookups for Stripe PaymentIntents and Razorpay Orders. A provider-confirmed `succeeded`/`paid` snapshot, or a terminal Stripe cancellation, is passed through the existing locked amount-and-currency-verified payment transition. Ambiguous responses and provider errors still remain as open cases. Provider HTTP calls use bounded five-second connect and ten-second read timeouts so a provider outage cannot stall the scheduler indefinitely.
+
+Production still needs provider-specific expiry rules, late-capture handling (including any required refund or fulfilment decision), alerting, retention and an exercised operations runbook for each enabled provider.

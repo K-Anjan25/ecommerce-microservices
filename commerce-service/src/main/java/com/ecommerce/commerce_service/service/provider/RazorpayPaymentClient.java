@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
@@ -122,6 +123,49 @@ public class RazorpayPaymentClient implements PaymentProviderClient {
     }
 
     @Override
+    public ProviderPaymentStatus lookup(Payment payment) {
+        String keyId = paymentProviderProperties.getRazorpay().getKeyId();
+        String keySecret = paymentProviderProperties.getRazorpay().getKeySecret();
+        if (isBlank(keyId) || isBlank(keySecret)) {
+            return ProviderPaymentStatus.unknown("Razorpay credentials are missing");
+        }
+        if (isBlank(payment.getTransactionId())) {
+            return ProviderPaymentStatus.unknown("Razorpay order reference is missing");
+        }
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.set(HttpHeaders.AUTHORIZATION, basicAuth(keyId, keySecret));
+            ResponseEntity<Map> response = restTemplate.exchange(
+                    RAZORPAY_ORDER_URL + "/" + payment.getTransactionId(),
+                    org.springframework.http.HttpMethod.GET,
+                    new HttpEntity<>(headers), Map.class);
+            Map<String, Object> body = response.getBody();
+            String providerId = body == null ? null : text(body.get("id"));
+            String status = body == null ? null : text(body.get("status"));
+            if (!response.getStatusCode().is2xxSuccessful() || isBlank(providerId) || isBlank(status)) {
+                return ProviderPaymentStatus.unknown("Razorpay status was not available");
+            }
+            Object rawAmount = body.get("amount");
+            BigDecimal amount = rawAmount instanceof Number
+                    ? BigDecimal.valueOf(((Number) rawAmount).longValue(), 2) : null;
+            return ProviderPaymentStatus.builder()
+                    .found(true)
+                    .settled("paid".equalsIgnoreCase(status))
+                    // Razorpay Orders expose no reliable terminal-expiry state
+                    // here; created/attempted orders must stay pending.
+                    .failed(false)
+                    .transactionId(providerId)
+                    .amount(amount)
+                    .currency(body.get("currency") == null ? null : text(body.get("currency")).toUpperCase())
+                    .message("Razorpay order status: " + status)
+                    .build();
+        } catch (Exception exception) {
+            log.warn("Razorpay status lookup failed for order {}", payment.getOrderId());
+            return ProviderPaymentStatus.unknown("Razorpay status lookup failed");
+        }
+    }
+
+    @Override
     public ProviderPaymentResult cancel(Payment payment) {
         // Razorpay Orders have no equivalent server-side cancel endpoint. Do
         // not release Cartly reservations while that provider order can still capture.
@@ -131,6 +175,10 @@ public class RazorpayPaymentClient implements PaymentProviderClient {
                 .build();
     }
 
+
+    private String text(Object value) {
+        return value == null ? null : String.valueOf(value);
+    }
 
     private String basicAuth(String keyId, String keySecret) {
         String token = keyId + ":" + keySecret;

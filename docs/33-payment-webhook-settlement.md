@@ -24,7 +24,7 @@ They bypass customer JWT authentication because providers authenticate with HMAC
 
 Stripe verification checks the `Stripe-Signature` HMAC and enforces a five-minute timestamp replay window. Razorpay verification uses `X-Razorpay-Signature` with its dedicated webhook secret. Signatures are compared in constant time before JSON is parsed or payment state is touched.
 
-Verified settlement/failure events reconcile the provider reference under payment and order locks. The signed callback amount and currency must exactly match the authoritative payment snapshot. Only a `PENDING` payment can transition, making repeated callbacks idempotent. Successful reconciliation awards loyalty once; failures trigger the existing credit and inventory compensation path.
+Verified settlement/failure events reconcile the provider reference under payment and order locks. The signed callback amount and currency must exactly match the authoritative payment snapshot. Only a `PENDING` payment can transition, making repeated callbacks idempotent. Successful reconciliation awards loyalty once; failures trigger the existing credit and inventory compensation path. A scheduled reconciliation worker can also use authenticated Stripe PaymentIntent and Razorpay Order snapshots for stale payments, while ambiguous provider responses remain in the operations queue.
 
 Configure `STRIPE_WEBHOOK_SECRET` and `RAZORPAY_WEBHOOK_SECRET` separately from provider API credentials.
 

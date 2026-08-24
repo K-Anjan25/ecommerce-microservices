@@ -125,6 +125,51 @@ public class StripePaymentClient implements PaymentProviderClient {
     }
 
     @Override
+    public ProviderPaymentStatus lookup(Payment payment) {
+        String secretKey = paymentProviderProperties.getStripe().getSecretKey();
+        if (isBlank(secretKey)) {
+            return ProviderPaymentStatus.unknown("Stripe secret key is missing");
+        }
+        if (isBlank(payment.getTransactionId())) {
+            return ProviderPaymentStatus.unknown("Stripe payment intent reference is missing");
+        }
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.set(HttpHeaders.AUTHORIZATION, basicAuth(secretKey));
+            ResponseEntity<Map> response = restTemplate.exchange(
+                    STRIPE_PAYMENT_INTENT_URL + "/" + payment.getTransactionId(),
+                    org.springframework.http.HttpMethod.GET,
+                    new HttpEntity<>(headers), Map.class);
+            Map<String, Object> body = response.getBody();
+            String providerId = body == null ? null : text(body.get("id"));
+            String status = body == null ? null : text(body.get("status"));
+            if (!response.getStatusCode().is2xxSuccessful() || isBlank(providerId) || isBlank(status)) {
+                return ProviderPaymentStatus.unknown("Stripe status was not available");
+            }
+            Object rawAmount = "succeeded".equalsIgnoreCase(status)
+                    ? body.get("amount_received") : body.get("amount");
+            BigDecimal amount = rawAmount instanceof Number
+                    ? BigDecimal.valueOf(((Number) rawAmount).longValue(), 2) : null;
+            return ProviderPaymentStatus.builder()
+                    .found(true)
+                    .settled("succeeded".equalsIgnoreCase(status))
+                    // Only a provider-cancelled intent is terminally failed.
+                    // requires_action / processing / requires_payment_method
+                    // remain pending for a future customer/provider action.
+                    .failed("canceled".equalsIgnoreCase(status))
+                    .failureReason("canceled".equalsIgnoreCase(status) ? "Stripe payment intent was cancelled" : null)
+                    .transactionId(providerId)
+                    .amount(amount)
+                    .currency(body.get("currency") == null ? null : text(body.get("currency")).toUpperCase())
+                    .message("Stripe payment status: " + status)
+                    .build();
+        } catch (Exception exception) {
+            log.warn("Stripe status lookup failed for order {}", payment.getOrderId());
+            return ProviderPaymentStatus.unknown("Stripe status lookup failed");
+        }
+    }
+
+    @Override
     public ProviderPaymentResult cancel(Payment payment) {
         String secretKey = paymentProviderProperties.getStripe().getSecretKey();
         if (secretKey == null || secretKey.isBlank()) {
@@ -160,6 +205,14 @@ public class StripePaymentClient implements PaymentProviderClient {
         }
     }
 
+
+    private String text(Object value) {
+        return value == null ? null : String.valueOf(value);
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.isBlank();
+    }
 
     private String basicAuth(String secretKey) {
         String token = secretKey + ":";
