@@ -93,6 +93,13 @@ class CreditSecurityTest {
                 .getAnnotation(PreAuthorize.class);
         assertThat(purchasePolicy).isNotNull();
         assertThat(purchasePolicy.value()).contains("ROLE_USER");
+
+        PreAuthorize refundPolicy = GiftCardPurchaseController.class
+                .getDeclaredMethod("refund", UUID.class)
+                .getAnnotation(PreAuthorize.class);
+        assertThat(refundPolicy).isNotNull();
+        assertThat(refundPolicy.value()).contains("ROLE_ADMIN", "ROLE_SUPER_ADMIN")
+                .doesNotContain("ROLE_USER");
     }
 
 }
