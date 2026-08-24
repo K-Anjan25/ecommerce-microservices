@@ -16,7 +16,7 @@ The platform is **not “all completed” in the absolute production sense**. It
 |---|---|---|
 | 6 — Merchandising & catalog | Complete | Variants, multiple images, sale/brand/rating, hierarchy, facets, autocomplete and editorial catalog implemented |
 | 7 — Commerce completion | Complete | Server pricing, shipping, tax, guest checkout, invoices, addresses, returns and mixed-tender refunds implemented |
-| 8 — Marketing & creative | Complete with boundary | Recommendations, alerts, loyalty, referral, wrapping, flash sales, comparison and gift-card redemption implemented; unpaid customer gift-card purchase was intentionally removed |
+| 8 — Marketing & creative | Complete with boundary | Recommendations, alerts, loyalty, referral, wrapping, flash sales, comparison, redemption and payment-backed gift-card issuance implemented; provider certification remains |
 | 9 — Admin & analytics | Complete | Dashboard, CMS, coupons, return queue, roles and audit ledger implemented |
 | 10 — Hardening | Baseline complete; ongoing | CI, authorization, rate limits, logs, backups, PWA, i18n, dark mode, accessibility, headers and transaction integrity implemented; operations continue |
 
@@ -52,7 +52,7 @@ These are not hidden TODOs; they are the remaining production boundaries:
 
 1. **Interactive payment-provider handoff.** Razorpay browser Checkout and Stripe Payment Element now hand off provider operations while keeping webhook settlement authoritative. Live-provider certification and production return-path testing remain.
 2. **Provider reconciliation execution.** Stale online payments now use authenticated Stripe/Razorpay status lookups where possible and create a durable operations queue for ambiguity. Provider-specific expiry, late-capture handling, alerting and the production operations runbook remain.
-3. **Customer gift-card purchasing.** Disabled until a payment-backed issuance intent can activate value only after verified capture. Admin issuance is restricted, reason-required and audited.
+3. **Customer gift-card purchasing.** Payment-backed pending issuance is now implemented and activates only after verified capture. Live-provider certification, refund handling and late-capture decisions remain.
 4. **Production database migrations.** Development still relies on Hibernate `ddl-auto`; production needs versioned migrations, rollout and rollback exercises.
 5. **High-assurance SEO rendering.** Metadata exists, but the React SPA is not SSR/pre-rendered.
 6. **Localized merchant CMS content.** Core UI is en/hi; merchant-authored storefront fields remain single-language.

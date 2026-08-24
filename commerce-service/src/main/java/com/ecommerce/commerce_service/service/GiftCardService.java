@@ -40,6 +40,32 @@ public class GiftCardService {
         return giftCardMapper.giftCardToGiftCardDto(saved);
     }
 
+    /**
+     * Internal settlement path for customer purchases. This method is called
+     * only from GiftCardPurchaseFinalizer after PaymentService has applied a
+     * verified provider settlement.
+     */
+    @Transactional
+    public GiftCardDto issuePurchasedGiftCard(UUID customerId, BigDecimal amount,
+                                               LocalDate expiryDate, String recipientEmail) {
+        if (customerId == null || amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("A customer and positive gift-card amount are required");
+        }
+        if (expiryDate == null || expiryDate.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Gift card expiry date must be today or later");
+        }
+        GiftCard giftCard = GiftCard.builder()
+                .code(generateGiftCardCode())
+                .balance(amount)
+                .initialBalance(amount)
+                .expiryDate(expiryDate)
+                .status(GiftCardStatus.ACTIVE)
+                .purchasedBy(customerId)
+                .recipientEmail(recipientEmail)
+                .build();
+        return giftCardMapper.giftCardToGiftCardDto(giftCardRepository.save(giftCard));
+    }
+
     public GiftCardDto getGiftCardByCode(String code) {
         GiftCard giftCard = giftCardRepository.findByCode(code)
                 .orElseThrow(() -> new RuntimeException("Gift card not found"));

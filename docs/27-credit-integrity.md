@@ -12,9 +12,9 @@ than an eight-hex-character prefix.
 Standalone browser redemption endpoints were removed: credit mutation must be
 bound to an authoritative order transaction, not an arbitrary amount supplied by
 a client. The service methods remain internal building blocks for that checkout
-integration. The unpaid customer gift-card purchase flow has now been removed. Administrative
-issuance is role-restricted, reason-required, and audited; customer purchases stay
-disabled until live provider capture and webhook reconciliation are connected.
+integration. Customer gift-card purchasing now creates a pending issuance intent
+and only activates value after provider settlement. Administrative issuance is
+role-restricted, reason-required, and audited.
 
 
 ## Follow-up

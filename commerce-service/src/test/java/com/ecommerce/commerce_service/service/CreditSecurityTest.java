@@ -3,6 +3,8 @@ package com.ecommerce.commerce_service.service;
 import com.ecommerce.commerce_service.dto.giftCard.GiftCardMapper;
 import com.ecommerce.commerce_service.dto.giftCard.IssueGiftCardRequest;
 import com.ecommerce.commerce_service.controller.GiftCardController;
+import com.ecommerce.commerce_service.controller.GiftCardPurchaseController;
+import com.ecommerce.commerce_service.dto.giftCard.CreateGiftCardPurchaseRequest;
 import com.ecommerce.commerce_service.dto.loyaltyPoint.LoyaltyPointMapper;
 import com.ecommerce.commerce_service.repository.GiftCardRepository;
 import com.ecommerce.commerce_service.repository.LoyaltyPointRepository;
@@ -85,6 +87,12 @@ class CreditSecurityTest {
         assertThat(policy.value()).contains("ROLE_ADMIN", "ROLE_SUPER_ADMIN").doesNotContain("ROLE_USER");
         assertThat(java.util.Arrays.stream(GiftCardController.class.getDeclaredMethods())
                 .noneMatch(method -> method.getName().equals("purchaseGiftCard"))).isTrue();
+
+        PreAuthorize purchasePolicy = GiftCardPurchaseController.class
+                .getDeclaredMethod("purchase", CreateGiftCardPurchaseRequest.class)
+                .getAnnotation(PreAuthorize.class);
+        assertThat(purchasePolicy).isNotNull();
+        assertThat(purchasePolicy.value()).contains("ROLE_USER");
     }
 
 }

@@ -13,3 +13,19 @@ export interface GiftCard {
   status: GiftCardStatus;
   recipientEmail?: string;
 }
+
+export type GiftCardPurchaseProvider = "STRIPE" | "RAZORPAY";
+
+export interface GiftCardPurchaseRequest {
+  amount: number;
+  contactEmail: string;
+  recipientEmail?: string;
+  expiryDate: string;
+  provider: GiftCardPurchaseProvider;
+}
+
+export interface GiftCardPurchaseResponse {
+  purchaseId: string;
+  orderId: string;
+  payment: import("./payment").PaymentResponse;
+}

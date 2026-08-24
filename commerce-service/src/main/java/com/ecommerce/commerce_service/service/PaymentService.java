@@ -52,6 +52,7 @@ public class PaymentService {
     private final OrderService orderService;
     private final PaymentOutboxService paymentOutboxService;
     private final PaymentReconciliationService paymentReconciliationService;
+    private final GiftCardPurchaseFinalizer giftCardPurchaseFinalizer;
 
     @Value("${rabbitmq.exchanges.internal}")
     private String exchange;
@@ -146,6 +147,7 @@ public class PaymentService {
         // not the source of truth for this in-process commerce boundary.
         orderService.applyPaymentStatus(savedPayment.getOrderId(), savedPayment.getStatus(),
                 savedPayment.getProvider().name());
+        giftCardPurchaseFinalizer.applyPaymentStatus(savedPayment.getOrderId(), savedPayment.getStatus());
 
         PaymentStatusEvent statusEvent = PaymentStatusEvent.builder()
                 .orderId(savedPayment.getOrderId())
@@ -213,6 +215,7 @@ public class PaymentService {
         paymentReconciliationService.resolveForPayment(saved.getId(),
                 "Verified " + targetStatus.toLowerCase() + " webhook received");
         orderService.applyPaymentStatus(order.getId(), targetStatus, provider.name());
+        giftCardPurchaseFinalizer.applyPaymentStatus(order.getId(), targetStatus);
 
         if (succeeded && order.getCustomerId() != null) {
             try {

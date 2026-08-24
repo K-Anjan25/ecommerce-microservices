@@ -9,7 +9,7 @@ platform plus a creative layer, all within the host's 2 GB Docker budget.
 > |---|---|
 > | 6 — Merchandising & catalog | **Baseline complete** — variants, images, hierarchy, facets, suggestions and editorial catalog UX |
 > | 7 — Commerce completion | **Baseline complete** — authoritative checkout, shipping/tax, guest orders, invoices, returns and mixed-tender refunds |
-> | 8 — Marketing & creative | **Baseline complete with one deliberate boundary** — customer gift-card purchase is disabled until payment-backed issuance exists; admin issuance and redemption remain available |
+> | 8 — Marketing & creative | **Baseline complete with production boundary** — payment-backed customer gift-card issuance, admin issuance and redemption are implemented; live-provider certification and late-capture handling remain |
 > | 9 — Admin & analytics | **Baseline complete** — dashboard, coupons, returns, storefront CMS, Manager restrictions and cross-service audit log |
 > | 10 — Platform engineering | **Baseline complete / ongoing** — CI, security, accessibility, PWA, en/hi, dark mode, backup/restore, observability and consistency hardening; production operations remain continuous work |
 
@@ -108,8 +108,8 @@ sale/brand; faceted search returns correct counts; all existing smoke tests pass
 - **Recommendations:** "related" (same category), "bought together" (co-occurrence
   count in order history), "bestsellers" (order-line aggregate) — rule-based SQL.
 - **Gift cards:** admin issuance + code redemption at authoritative checkout
-  (alongside coupons), balance ledger table. Customer purchase stays disabled until
-  provider capture/webhook reconciliation can activate value safely.
+  (alongside coupons), balance ledger table. Customer purchase creates a pending
+  issuance intent and activates value only after provider capture/webhook reconciliation.
 - **Loyalty points:** points per ₹ spent, balance, redeem as discount, history.
 - **Referral program:** unique referral code per user, credit on signup/order.
 - **Gift wrapping:** optional line at checkout with fixed fee + message.

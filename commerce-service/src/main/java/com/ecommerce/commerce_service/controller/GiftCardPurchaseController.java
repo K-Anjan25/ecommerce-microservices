@@ -1,0 +1,43 @@
+package com.ecommerce.commerce_service.controller;
+
+import com.ecommerce.commerce_service.dto.giftCard.CreateGiftCardPurchaseRequest;
+import com.ecommerce.commerce_service.dto.giftCard.GiftCardPurchaseResponse;
+import com.ecommerce.commerce_service.dto.payment.PaymentResponse;
+import com.ecommerce.commerce_service.service.GiftCardPurchaseService;
+import com.ecommerce.commerce_service.service.PaymentService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+import java.util.UUID;
+
+/** Starts a customer gift-card purchase; stored value is finalized after settlement. */
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/v1/gift-cards")
+public class GiftCardPurchaseController {
+    private final GiftCardPurchaseService purchaseService;
+    private final PaymentService paymentService;
+
+    @PostMapping("/purchase")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity<GiftCardPurchaseResponse> purchase(
+            @Valid @RequestBody CreateGiftCardPurchaseRequest request) {
+        UUID customerId = UUID.fromString(String.valueOf(
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal()));
+        GiftCardPurchaseService.PurchaseStart start = purchaseService.create(request, customerId);
+        PaymentResponse payment = paymentService.processPayment(start.getPaymentRequest(), customerId);
+        return new ResponseEntity<>(GiftCardPurchaseResponse.builder()
+                .purchaseId(start.getPurchaseId())
+                .orderId(start.getOrderId())
+                .payment(payment)
+                .build(), HttpStatus.CREATED);
+    }
+}

@@ -1,20 +1,78 @@
-import { Skeleton } from "@mui/material";
+import { Skeleton, TextField } from "@mui/material";
 import CardGiftcardOutlinedIcon from "@mui/icons-material/CardGiftcardOutlined";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { useQuery } from "react-query";
+import React, { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useSelector } from "react-redux";
+import { AppState } from "../../store";
+import { useNavigate } from "react-router-dom";
 
 import { GiftCardApi } from "../../api/giftCardApi";
 import EmptyState from "../../components/EmptyState";
 import FeatureHero from "../../components/FeatureHero";
-import { GiftCardStatus } from "../../types/giftCard";
+import { GiftCardPurchaseRequest, GiftCardStatus } from "../../types/giftCard";
 import { formatPrice } from "../../utils/cart";
+import { showError } from "../../utils/showError";
 import { showSuccess } from "../../utils/showSuccess";
 
+function defaultExpiryDate() {
+  const date = new Date();
+  date.setFullYear(date.getFullYear() + 1);
+  return date.toISOString().slice(0, 10);
+}
+
 function GiftCards() {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const userEmail = useSelector((state: AppState) => state.user.data.email ?? "");
   const { data: cards = [], isLoading } = useQuery("myGiftCards", GiftCardApi.getMyGiftCards, {
     retry: false,
   });
+  const [amount, setAmount] = useState("1000");
+  const [contactEmail, setContactEmail] = useState(userEmail);
+  const [recipientEmail, setRecipientEmail] = useState("");
+  const [expiryDate, setExpiryDate] = useState(defaultExpiryDate());
+
+  const purchaseMutation = useMutation(GiftCardApi.purchaseGiftCard, {
+    onSuccess: (result) => {
+      queryClient.invalidateQueries("myGiftCards");
+      if (result.payment.status === "FAILED") {
+        showError(result.payment.message ?? "Gift card payment failed");
+        return;
+      }
+      if (result.payment.provider === "STRIPE" && result.payment.clientSecret) {
+        sessionStorage.setItem("stripe-payment-context", JSON.stringify({
+          orderId: result.orderId,
+          amount: Number(result.payment.amount),
+          currency: result.payment.currency,
+          transactionId: result.payment.transactionId,
+          signedIn: true,
+        }));
+        navigate("/stripe-payment", {
+          replace: true,
+          state: { orderId: result.orderId, payment: result.payment, signedIn: true },
+        });
+        return;
+      }
+      showError("The provider did not return a payment session; the purchase remains pending for review");
+    },
+    onError: (error: any) => {
+      showError(error.response?.data?.message ?? "Gift card purchase could not be started");
+    },
+  });
+
+  const submitPurchase = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const request: GiftCardPurchaseRequest = {
+      amount: Number(amount),
+      contactEmail: contactEmail.trim(),
+      recipientEmail: recipientEmail.trim() || undefined,
+      expiryDate,
+      provider: "STRIPE",
+    };
+    purchaseMutation.mutate(request);
+  };
 
   return (
     <div className="page-shell space-y-8">
@@ -24,16 +82,59 @@ function GiftCards() {
         description="Review cards already issued to your account, copy an active code, and apply it securely during checkout."
       />
 
-      <section className="grid gap-4 border-y border-line py-5 sm:grid-cols-[auto_1fr] sm:items-center sm:gap-6">
-        <span className="flex h-11 w-11 items-center justify-center bg-sunken text-ink-soft">
-          <LockOutlinedIcon sx={{ fontSize: 20 }} />
-        </span>
-        <div>
-          <h2 className="font-heading text-sm font-bold text-ink">Customer purchases are temporarily unavailable</h2>
-          <p className="mt-1 max-w-3xl text-sm leading-relaxed text-ink-soft">
-            Cartly will not create stored value before a payment provider confirms capture. Existing cards remain valid; a provider-backed purchase and webhook flow will restore new purchases later.
-          </p>
+      <section className="border-y border-line py-6 sm:py-8">
+        <div className="flex items-start gap-3">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center bg-sunken text-ink-soft">
+            <LockOutlinedIcon sx={{ fontSize: 20 }} />
+          </span>
+          <div>
+            <h2 className="font-heading text-sm font-bold text-ink">Give Cartly credit, securely</h2>
+            <p className="mt-1 max-w-3xl text-sm leading-relaxed text-ink-soft">
+              Your card is created only after Stripe confirms the payment. Until then, the purchase stays a pending payment intent and cannot be spent.
+            </p>
+          </div>
         </div>
+        <form onSubmit={submitPurchase} className="mt-6 grid gap-4 sm:grid-cols-2">
+          <TextField
+            label="Amount (₹)"
+            type="number"
+            value={amount}
+            onChange={(event) => setAmount(event.target.value)}
+            inputProps={{ min: 1, max: 100000, step: "0.01" }}
+            required
+            fullWidth
+          />
+          <TextField
+            label="Receipt email"
+            type="email"
+            value={contactEmail}
+            onChange={(event) => setContactEmail(event.target.value)}
+            required
+            fullWidth
+          />
+          <TextField
+            label="Recipient email (optional)"
+            type="email"
+            value={recipientEmail}
+            onChange={(event) => setRecipientEmail(event.target.value)}
+            fullWidth
+          />
+          <TextField
+            label="Expiry date"
+            type="date"
+            value={expiryDate}
+            onChange={(event) => setExpiryDate(event.target.value)}
+            InputLabelProps={{ shrink: true }}
+            required
+            fullWidth
+          />
+          <div className="sm:col-span-2 flex flex-wrap items-center justify-between gap-3">
+            <p className="text-xs text-ink-muted">Payment method: Stripe cards and supported wallets</p>
+            <button type="submit" className="primary-button" disabled={purchaseMutation.isLoading}>
+              {purchaseMutation.isLoading ? "Preparing secure payment…" : "Continue to payment"}
+            </button>
+          </div>
+        </form>
       </section>
 
       <section className="border-t border-ink">

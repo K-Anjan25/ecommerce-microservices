@@ -25,6 +25,6 @@ The browser displays an estimate, but cannot set any monetary amount. The order 
 - Credits remain reserved while an order awaits external payment. A failed payment cancels the order and restores gift-card value and loyalty points exactly once under an order lock.
 - A gift card that covers the complete post-tax amount marks the order paid without invoking an external provider.
 
-## Known boundary
+## Gift-card purchase boundary
 
-Customer gift-card issuance remains an explicitly documented demo flow until a provider-backed gift-card purchase transaction and webhook reconciliation are implemented. Order redemption does not make that issuance endpoint production stored value.
+Customer gift-card purchasing now creates a payment-backed pending issuance intent. Order redemption does not make that issuance endpoint production stored value: only a verified provider settlement can activate the separately issued card. Live provider certification, late-capture/refund decisions and operational monitoring remain production work.

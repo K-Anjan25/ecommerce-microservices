@@ -19,6 +19,11 @@ import java.util.UUID;
 public class Order extends AdvanceBaseModal {
 
     private UUID customerId;
+
+    /** Distinguishes virtual stored-value purchases from merchandise orders. */
+    @Column(length = 32)
+    private String orderType;
+
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 

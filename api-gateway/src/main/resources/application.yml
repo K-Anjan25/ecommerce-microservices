@@ -140,6 +140,13 @@ spring:
           filters:
             - AuthFilter
 
+        - id: gift-card-service
+          uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
+          predicates:
+            - Path=/v1/gift-cards/**
+          filters:
+            - AuthFilter
+
         - id: shipping-service
           uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
           predicates:
