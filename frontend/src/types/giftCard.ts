@@ -13,9 +13,3 @@ export interface GiftCard {
   status: GiftCardStatus;
   recipientEmail?: string;
 }
-
-export interface PurchaseGiftCardRequest {
-  amount: number;
-  recipientEmail?: string;
-  expiryDate: string;
-}

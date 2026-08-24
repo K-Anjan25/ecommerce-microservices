@@ -1,6 +1,8 @@
 package com.ecommerce.commerce_service.service;
 
 import com.ecommerce.commerce_service.dto.giftCard.GiftCardMapper;
+import com.ecommerce.commerce_service.dto.giftCard.IssueGiftCardRequest;
+import com.ecommerce.commerce_service.controller.GiftCardController;
 import com.ecommerce.commerce_service.dto.loyaltyPoint.LoyaltyPointMapper;
 import com.ecommerce.commerce_service.repository.GiftCardRepository;
 import com.ecommerce.commerce_service.repository.LoyaltyPointRepository;
@@ -8,6 +10,7 @@ import com.ecommerce.commerce_service.model.GiftCard;
 import com.ecommerce.commerce_service.model.GiftCardStatus;
 import com.ecommerce.commerce_service.model.LoyaltyPoint;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -70,6 +73,18 @@ class CreditSecurityTest {
         verify(repository).findLockedByCustomerId(any());
         verify(repository).sumPointsByCustomerId(any());
         verify(repository, never()).save(any());
+    }
+
+    @Test
+    void giftCardIssuanceEndpointExcludesCustomers() throws Exception {
+        PreAuthorize policy = GiftCardController.class
+                .getDeclaredMethod("issueGiftCard", IssueGiftCardRequest.class)
+                .getAnnotation(PreAuthorize.class);
+
+        assertThat(policy).isNotNull();
+        assertThat(policy.value()).contains("ROLE_ADMIN", "ROLE_SUPER_ADMIN").doesNotContain("ROLE_USER");
+        assertThat(java.util.Arrays.stream(GiftCardController.class.getDeclaredMethods())
+                .noneMatch(method -> method.getName().equals("purchaseGiftCard"))).isTrue();
     }
 
 }

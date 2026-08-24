@@ -2,7 +2,7 @@ package com.ecommerce.commerce_service.service;
 
 import com.ecommerce.commerce_service.dto.giftCard.GiftCardDto;
 import com.ecommerce.commerce_service.dto.giftCard.GiftCardMapper;
-import com.ecommerce.commerce_service.dto.giftCard.PurchaseGiftCardRequest;
+import com.ecommerce.commerce_service.dto.giftCard.IssueGiftCardRequest;
 import com.ecommerce.commerce_service.model.GiftCard;
 import com.ecommerce.commerce_service.model.GiftCardStatus;
 import com.ecommerce.commerce_service.repository.GiftCardRepository;
@@ -25,7 +25,7 @@ public class GiftCardService {
     private final GiftCardRepository giftCardRepository;
     private final GiftCardMapper giftCardMapper;
 
-    public GiftCardDto purchaseGiftCard(PurchaseGiftCardRequest request, UUID purchasedBy) {
+    public GiftCardDto issueGiftCard(IssueGiftCardRequest request, UUID issuedBy) {
         String code = generateGiftCardCode();
         GiftCard giftCard = GiftCard.builder()
                 .code(code)
@@ -33,7 +33,7 @@ public class GiftCardService {
                 .initialBalance(request.getAmount())
                 .expiryDate(request.getExpiryDate())
                 .status(GiftCardStatus.ACTIVE)
-                .purchasedBy(purchasedBy)
+                .purchasedBy(issuedBy)
                 .recipientEmail(request.getRecipientEmail())
                 .build();
         GiftCard saved = giftCardRepository.save(giftCard);
@@ -123,8 +123,7 @@ public class GiftCardService {
     }
 
     public List<GiftCardDto> getGiftCardsByUser(UUID userId) {
-        return giftCardRepository.findAll().stream()
-                .filter(g -> g.getPurchasedBy() != null && g.getPurchasedBy().equals(userId))
+        return giftCardRepository.findByPurchasedByOrderByCreatedDateDesc(userId).stream()
                 .map(giftCardMapper::giftCardToGiftCardDto)
                 .collect(Collectors.toList());
     }

@@ -12,10 +12,11 @@ than an eight-hex-character prefix.
 Standalone browser redemption endpoints were removed: credit mutation must be
 bound to an authoritative order transaction, not an arbitrary amount supplied by
 a client. The service methods remain internal building blocks for that checkout
-integration. Gift-card purchase remains a demo issuance flow until live provider
-capture is connected; it must not be presented as production stored value.
+integration. The unpaid customer gift-card purchase flow has now been removed. Administrative
+issuance is role-restricted, reason-required, and audited; customer purchases stay
+disabled until live provider capture and webhook reconciliation are connected.
 
 
 ## Follow-up
 
-Order-bound loyalty and gift-card redemption, pricing order, locking, and failed-payment restoration are implemented in [28-order-bound-credit-redemption.md](28-order-bound-credit-redemption.md). The provider-backed gift-card issuance limitation remains.
+Order-bound loyalty and gift-card redemption, pricing order, locking, and failed-payment restoration are implemented in [28-order-bound-credit-redemption.md](28-order-bound-credit-redemption.md). The customer issuance limitation is now enforced as described in [29-gift-card-issuance-boundary.md](29-gift-card-issuance-boundary.md).
