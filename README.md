@@ -92,6 +92,7 @@ See `.env.example`. Never commit real `.env` values.
 | `JWT_SECRET` | user-service (token signing) |
 | `CORS_ALLOWED_ORIGIN` | API gateway (exact production storefront origin) |
 | `APP_FRONTEND_URL` | user/product services (password reset and alert links) |
+| `INTERNAL_SERVICE_SECRET` | commerce/product services (stock-call authentication) |
 | `EMAIL_USERNAME`, `EMAIL_PASSWORD`, `EMAIL_FROM` | user-service (SMTP) |
 | `STRIPE_SECRET_KEY`, `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` | commerce-service (payments) |
 

@@ -35,6 +35,9 @@ app:
   # Used in customer-facing links (e.g. price-drop alert emails)
   frontend-url: ${APP_FRONTEND_URL:http://localhost:3000}
 
+internal-service:
+  secret: ${INTERNAL_SERVICE_SECRET:cartly-internal-dev-only}
+
 management:
   endpoints:
     web:

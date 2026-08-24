@@ -41,6 +41,9 @@ payment:
 product-service:
   url: ${PRODUCT_SERVICE_URL:http://localhost:8080}
 
+internal-service:
+  secret: ${INTERNAL_SERVICE_SECRET:cartly-internal-dev-only}
+
 resilience4j:
   circuitbreaker:
     instances:

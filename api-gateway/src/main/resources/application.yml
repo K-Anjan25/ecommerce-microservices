@@ -23,11 +23,6 @@ spring:
               - DELETE
               - OPTIONS
       routes:
-        - id: inventory-service
-          uri: ${PRODUCT_SERVICE_URI:http://localhost:8080}
-          predicates:
-            - Path=/v1/inventories/**
-
         - id: order-service
           uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
           predicates:
