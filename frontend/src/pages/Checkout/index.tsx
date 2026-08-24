@@ -248,9 +248,8 @@ function Checkout() {
     onSuccess: (order) => {
       const payment = {
         orderId: order.id,
-        amount: order.totalAmount ?? total,
-        currency: "INR",
         provider: paymentProvider,
+        checkoutToken: order.checkoutToken,
       } as PaymentRequest;
 
       paymentMutation.mutate(payment);

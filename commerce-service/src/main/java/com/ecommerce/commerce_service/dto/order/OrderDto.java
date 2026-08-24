@@ -34,4 +34,6 @@ public class OrderDto {
     private String customerEmail;
     private Boolean giftWrap;
     private BigDecimal giftWrapFee;
+    /** Returned only by order creation; never persisted in plaintext. */
+    private String checkoutToken;
 }

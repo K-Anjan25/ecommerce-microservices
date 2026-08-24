@@ -71,6 +71,9 @@ class OrderServiceTest {
     @Mock
     private TaxRuleService taxRuleService;
 
+    @Mock
+    private CheckoutTokenService checkoutTokenService;
+
     private OrderService orderService;
 
     private UUID productId;
@@ -82,7 +85,7 @@ class OrderServiceTest {
     void setUp() {
         orderService = new OrderService(orderRepository, orderMapper, commerceInventoryService,
                 couponService, orderStatusHistoryRepository, rabbitMQMessageProducer, orderItemRepository, loyaltyPointService,
-                shippingRateService, taxRuleService);
+                shippingRateService, taxRuleService, checkoutTokenService);
 
         productId = UUID.randomUUID();
         orderId = UUID.randomUUID();

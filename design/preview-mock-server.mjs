@@ -272,6 +272,37 @@ createServer((req, res) => {
       })),
     });
 
+  if (p === "/v1/orders" && req.method === "POST") {
+    let raw = "";
+    req.on("data", (chunk) => { raw += chunk; });
+    req.on("end", () => {
+      try {
+        const request = JSON.parse(raw);
+        const totalAmount = (request.items ?? []).reduce((sum, item) => {
+          const product = PRODUCTS.find((candidate) => candidate.id === item.productId);
+          return sum + (product?.unitPrice ?? 0) * item.quantity;
+        }, 0);
+        json(res, {
+          id: `ord-preview-${Date.now()}`,
+          ...request,
+          totalAmount,
+          orderStatus: "PENDING",
+          createdDate: new Date().toISOString(),
+          checkoutToken: "preview-checkout-token",
+        }, 201);
+      } catch { json(res, { message: "Invalid order" }, 400); }
+    });
+    return;
+  }
+  if (p === "/v1/payments" && req.method === "POST") {
+    let raw = "";
+    req.on("data", (chunk) => { raw += chunk; });
+    req.on("end", () => {
+      const request = JSON.parse(raw || "{}");
+      json(res, { ...request, amount: 0, currency: "INR", status: request.provider === "CASH" ? "PENDING" : "SUCCESS", transactionId: "preview-payment" }, 201);
+    });
+    return;
+  }
   if (p === "/v1/orders/my") return json(res, ORDERS);
   if (p === "/v1/orders")
     return json(res, { data: ORDERS, totalSize: ORDERS.length, totalPage: 1 });

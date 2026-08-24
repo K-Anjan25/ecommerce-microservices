@@ -17,6 +17,7 @@ export interface Order {
   shippingMethod?: ShippingMethod;
   giftWrap?: boolean;
   giftWrapFee?: number;
+  checkoutToken?: string;
 }
 
 export interface CreateOrderRequest {

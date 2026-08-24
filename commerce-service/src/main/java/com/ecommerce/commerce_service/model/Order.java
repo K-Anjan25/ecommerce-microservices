@@ -50,4 +50,8 @@ public class Order extends AdvanceBaseModal {
 
     @Column(precision = 19, scale = 2)
     private BigDecimal giftWrapFee;
+
+    /** SHA-256 capability used only to authorize guest payment initiation. */
+    @Column(length = 64)
+    private String checkoutTokenHash;
 }

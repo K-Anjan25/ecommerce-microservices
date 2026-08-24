@@ -5,6 +5,7 @@ import com.ecommerce.commerce_service.dto.payment.PaymentResponse;
 import com.ecommerce.commerce_service.dto.payment.PaymentStatusEvent;
 import com.ecommerce.commerce_service.exception.DuplicatePaymentException;
 import com.ecommerce.commerce_service.model.Order;
+import com.ecommerce.commerce_service.model.OrderStatus;
 import com.ecommerce.commerce_service.model.Payment;
 import com.ecommerce.commerce_service.model.PaymentProvider;
 import com.ecommerce.commerce_service.model.PaymentStatus;
@@ -44,6 +45,7 @@ public class PaymentService {
     private final RabbitMQMessageProducer rabbitMQMessageProducer;
     private final List<PaymentProviderClient> providerClients;
     private final InvoiceService invoiceService;
+    private final CheckoutTokenService checkoutTokenService;
 
     @Value("${rabbitmq.exchanges.internal}")
     private String exchange;
@@ -65,6 +67,22 @@ public class PaymentService {
             throw new DuplicatePaymentException("Payment already processed for order " + request.getOrderId());
         });
 
+        Order order = orderRepository.findById(request.getOrderId())
+                .orElseThrow(() -> new IllegalArgumentException("Order not found: " + request.getOrderId()));
+        if (order.getOrderStatus() != OrderStatus.PENDING) {
+            throw new IllegalArgumentException("Order is not awaiting payment");
+        }
+        if (order.getCustomerId() != null) {
+            if (userId == null || !order.getCustomerId().equals(userId)) {
+                throw new SecurityException("Payment does not belong to this customer");
+            }
+        } else if (!checkoutTokenService.matches(request.getCheckoutToken(), order.getCheckoutTokenHash())) {
+            throw new SecurityException("Guest checkout token is invalid");
+        }
+
+        BigDecimal authoritativeAmount = order.getTotalAmount();
+        String authoritativeCurrency = "INR";
+
         Map<PaymentProvider, PaymentProviderClient> providers = providerClients.stream()
                 .collect(Collectors.toMap(PaymentProviderClient::provider, Function.identity()));
         PaymentProviderClient paymentProviderClient = providers.get(request.getProvider());
@@ -77,8 +95,8 @@ public class PaymentService {
         Payment payment = Payment.builder()
                 .orderId(request.getOrderId())
                 .userId(userId != null ? userId : GUEST_USER_ID)
-                .amount(request.getAmount())
-                .currency(request.getCurrency())
+                .amount(authoritativeAmount)
+                .currency(authoritativeCurrency)
                 .provider(request.getProvider())
                 .status(PaymentStatus.FAILED.name())
                 .createdAt(LocalDateTime.now())
@@ -199,9 +217,15 @@ public class PaymentService {
             return;
         }
         boolean success = PaymentStatus.SUCCESS.name().equalsIgnoreCase(payment.getStatus());
-        String subject = success ? "CARTLY - Payment successful" : "CARTLY - Payment failed";
+        boolean cashPending = PaymentStatus.PENDING.name().equalsIgnoreCase(payment.getStatus())
+                && payment.getProvider() == PaymentProvider.CASH;
+        String subject = success
+                ? "CARTLY - Payment successful"
+                : cashPending ? "CARTLY - Cash on delivery confirmed" : "CARTLY - Payment failed";
         String text = success
                 ? "Your payment for order " + payment.getOrderId() + " was successful.\nAmount: " + payment.getAmount() + " " + payment.getCurrency() + "\nTransaction id: " + payment.getTransactionId()
+                : cashPending
+                ? "Your order " + payment.getOrderId() + " is confirmed for cash on delivery.\nAmount due: " + payment.getAmount() + " " + payment.getCurrency()
                 : "Your payment for order " + payment.getOrderId() + " failed.\nReason: " + payment.getFailureReason();
         rabbitMQMessageProducer.publish(new EmailRequest(text, customerEmail, subject), notificationExchange, sendEmailRoutingKey);
     }

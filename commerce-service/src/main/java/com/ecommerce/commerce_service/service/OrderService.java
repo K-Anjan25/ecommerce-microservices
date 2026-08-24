@@ -61,6 +61,7 @@ public class OrderService {
     private final LoyaltyPointService loyaltyPointService;
     private final ShippingRateService shippingRateService;
     private final TaxRuleService taxRuleService;
+    private final CheckoutTokenService checkoutTokenService;
 
     @Value("${rabbitmq.exchanges.notification}")
     private String notificationExchange;
@@ -116,6 +117,12 @@ public class OrderService {
         order.setGiftWrap(createOrderRequest.getGiftWrap());
         order.setGiftWrapFee(giftWrapFee);
 
+        String checkoutToken = null;
+        if (order.getCustomerId() == null) {
+            checkoutToken = checkoutTokenService.issue();
+            order.setCheckoutTokenHash(checkoutTokenService.hash(checkoutToken));
+        }
+
         Order savedOrder = orderRepository.save(order);
 
         recordStatus(savedOrder.getId(), OrderStatus.PENDING, "Order placed");
@@ -130,7 +137,9 @@ public class OrderService {
 
         sendOrderPlacedEmail(savedOrder);
 
-        return orderMapper.orderToOrderDto(savedOrder);
+        OrderDto response = orderMapper.orderToOrderDto(savedOrder);
+        response.setCheckoutToken(checkoutToken);
+        return response;
     }
 
     private BigDecimal calculateShipping(BigDecimal subtotal, ShippingMethod method, String pincode) {
