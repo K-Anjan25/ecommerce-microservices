@@ -1,6 +1,8 @@
 package com.ecommerce.commerce_service.service;
 
 import com.ecommerce.commerce_service.client.CommerceInventoryService;
+import com.ecommerce.commerce_service.client.ProductCatalogClient;
+import com.ecommerce.commerce_service.dto.catalog.ProductSummaryDto;
 import com.ecommerce.commerce_service.dto.inventory.DeductStockRequest;
 import com.ecommerce.commerce_service.dto.inventory.InventoryCheckResponse;
 import com.ecommerce.commerce_service.dto.order.CreateOrderRequest;
@@ -74,6 +76,9 @@ class OrderServiceTest {
     @Mock
     private CheckoutTokenService checkoutTokenService;
 
+    @Mock
+    private ProductCatalogClient productCatalogClient;
+
     private OrderService orderService;
 
     private UUID productId;
@@ -85,7 +90,7 @@ class OrderServiceTest {
     void setUp() {
         orderService = new OrderService(orderRepository, orderMapper, commerceInventoryService,
                 couponService, orderStatusHistoryRepository, rabbitMQMessageProducer, orderItemRepository, loyaltyPointService,
-                shippingRateService, taxRuleService, checkoutTokenService);
+                shippingRateService, taxRuleService, checkoutTokenService, productCatalogClient);
 
         productId = UUID.randomUUID();
         orderId = UUID.randomUUID();
@@ -93,7 +98,7 @@ class OrderServiceTest {
         OrderItem item = OrderItem.builder()
                 .productId(productId)
                 .quantity(2)
-                .price(BigDecimal.TEN)
+                .price(new BigDecimal("0.01"))
                 .build();
 
         OrderAddress address = OrderAddress.builder()
@@ -121,6 +126,8 @@ class OrderServiceTest {
         CreateOrderRequest request = new CreateOrderRequest();
 
         when(orderMapper.orderRequestToOrder(request)).thenReturn(testOrder);
+        when(productCatalogClient.findByIds(productId.toString())).thenReturn(List.of(
+                new ProductSummaryDto(productId, "Test product", BigDecimal.TEN, null, false, List.of())));
         when(commerceInventoryService.isInStock(anyList()))
                 .thenReturn(InventoryCheckResponse.builder().isInStock(true).build());
         when(orderRepository.save(testOrder)).thenReturn(testOrder);
@@ -129,6 +136,7 @@ class OrderServiceTest {
         OrderDto result = orderService.createOrder(request);
 
         assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.PENDING);
+        assertThat(testOrder.getItems().get(0).getPrice()).isEqualByComparingTo("10.00");
 
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<DeductStockRequest>> deductCaptor = ArgumentCaptor.forClass(List.class);
@@ -143,6 +151,8 @@ class OrderServiceTest {
         CreateOrderRequest request = new CreateOrderRequest();
 
         when(orderMapper.orderRequestToOrder(request)).thenReturn(testOrder);
+        when(productCatalogClient.findByIds(productId.toString())).thenReturn(List.of(
+                new ProductSummaryDto(productId, "Test product", BigDecimal.TEN, null, false, List.of())));
         when(commerceInventoryService.isInStock(anyList()))
                 .thenReturn(InventoryCheckResponse.builder()
                         .isInStock(false)

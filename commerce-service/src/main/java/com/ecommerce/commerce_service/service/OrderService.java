@@ -1,6 +1,8 @@
 package com.ecommerce.commerce_service.service;
 
 import com.ecommerce.commerce_service.client.CommerceInventoryService;
+import com.ecommerce.commerce_service.client.ProductCatalogClient;
+import com.ecommerce.commerce_service.dto.catalog.ProductSummaryDto;
 import com.ecommerce.commerce_service.dto.Pagination;
 import com.ecommerce.commerce_service.dto.inventory.DeductStockRequest;
 import com.ecommerce.commerce_service.dto.inventory.InventoryCheckRequest;
@@ -62,6 +64,7 @@ public class OrderService {
     private final ShippingRateService shippingRateService;
     private final TaxRuleService taxRuleService;
     private final CheckoutTokenService checkoutTokenService;
+    private final ProductCatalogClient productCatalogClient;
 
     @Value("${rabbitmq.exchanges.notification}")
     private String notificationExchange;
@@ -74,6 +77,7 @@ public class OrderService {
         Order order = orderMapper.orderRequestToOrder(createOrderRequest);
         order.getAddress().setOrder(order);
         order.getItems().forEach(item -> item.setOrder(order));
+        applyAuthoritativePrices(order);
 
         List<InventoryCheckRequest> inventoryCheckRequests = order.getItems().stream()
                 .map(item -> new InventoryCheckRequest(item.getProductId(), item.getQuantity(), item.getVariantId()))
@@ -140,6 +144,34 @@ public class OrderService {
         OrderDto response = orderMapper.orderToOrderDto(savedOrder);
         response.setCheckoutToken(checkoutToken);
         return response;
+    }
+
+    private void applyAuthoritativePrices(Order order) {
+        String ids = order.getItems().stream().map(item -> item.getProductId().toString())
+                .distinct().collect(Collectors.joining(","));
+        Map<UUID, ProductSummaryDto> catalog = productCatalogClient.findByIds(ids).stream()
+                .collect(Collectors.toMap(ProductSummaryDto::getId, item -> item));
+
+        order.getItems().forEach(item -> {
+            ProductSummaryDto product = catalog.get(item.getProductId());
+            if (product == null) throw new ProductNotInStockException("Product is unavailable: " + item.getProductId());
+            BigDecimal price;
+            if (Boolean.TRUE.equals(product.getFlashSaleActive()) && product.getFlashPrice() != null
+                    && product.getFlashPrice().compareTo(BigDecimal.ZERO) > 0) {
+                price = product.getFlashPrice();
+            } else if (item.getVariantId() != null) {
+                price = (product.getVariants() == null ? List.<ProductSummaryDto.VariantSummaryDto>of() : product.getVariants())
+                        .stream().filter(variant -> item.getVariantId().equals(variant.getId()))
+                        .map(ProductSummaryDto.VariantSummaryDto::getPrice).findFirst()
+                        .orElseThrow(() -> new ProductNotInStockException("Variant is unavailable: " + item.getVariantId()));
+            } else {
+                price = product.getUnitPrice();
+            }
+            if (price == null || price.compareTo(BigDecimal.ZERO) <= 0) {
+                throw new IllegalArgumentException("Catalog price is invalid for product " + item.getProductId());
+            }
+            item.setPrice(price);
+        });
     }
 
     private BigDecimal calculateShipping(BigDecimal subtotal, ShippingMethod method, String pincode) {
