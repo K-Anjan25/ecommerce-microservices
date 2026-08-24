@@ -50,6 +50,7 @@ public class PaymentService {
     private final CheckoutTokenService checkoutTokenService;
     private final LoyaltyPointService loyaltyPointService;
     private final OrderService orderService;
+    private final PaymentOutboxService paymentOutboxService;
 
     @Value("${rabbitmq.exchanges.internal}")
     private String exchange;
@@ -153,8 +154,8 @@ public class PaymentService {
                 .amount(savedPayment.getAmount())
                 .currency(savedPayment.getCurrency())
                 .build();
+        paymentOutboxService.enqueue(statusEvent);
         scheduleAfterCommit(() -> {
-            safePublishStatus(statusEvent);
             try {
                 sendPaymentEmail(savedPayment);
             } catch (RuntimeException notificationFailure) {
@@ -221,8 +222,8 @@ public class PaymentService {
         PaymentStatusEvent event = PaymentStatusEvent.builder()
                 .orderId(order.getId()).status(targetStatus).provider(provider.name())
                 .transactionId(transactionId).amount(payment.getAmount()).currency(payment.getCurrency()).build();
+        paymentOutboxService.enqueue(event);
         scheduleAfterCommit(() -> {
-            safePublishStatus(event);
             try {
                 sendPaymentEmail(saved);
             } catch (RuntimeException notificationFailure) {
@@ -279,7 +280,7 @@ public class PaymentService {
                         .amount(cumulativeRefund)
                         .currency(payment.getCurrency())
                         .build();
-                scheduleAfterCommit(() -> safePublishStatus(refundEvent));
+                paymentOutboxService.enqueue(refundEvent);
             }
             paymentRepository.save(payment);
             scheduleAfterCommit(() -> {
@@ -291,16 +292,6 @@ public class PaymentService {
             });
         }
         return result;
-    }
-
-    private void safePublishStatus(PaymentStatusEvent event) {
-        try {
-            rabbitMQMessageProducer.publish(event, exchange, paymentStatusRoutingKey);
-            log.info("Payment status event published for order {}", event.getOrderId());
-        } catch (RuntimeException brokerFailure) {
-            log.error("Payment for order {} committed but status event could not be published",
-                    event.getOrderId(), brokerFailure);
-        }
     }
 
     private void scheduleAfterCommit(Runnable action) {

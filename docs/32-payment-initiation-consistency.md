@@ -24,3 +24,7 @@ The existing RabbitMQ payment-status event remains available for architecture de
 ## Remaining production boundary
 
 Provider webhook signature verification and reconciliation are still required for production. In particular, creating a provider-side payment order or intent is not equivalent to settlement unless the provider reports a captured/succeeded state.
+
+## Durable status delivery
+
+Payment-status events now commit through the PostgreSQL outbox described in [39-payment-event-outbox.md](39-payment-event-outbox.md). Email delivery remains a separate privacy-sensitive retry boundary.

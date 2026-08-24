@@ -27,6 +27,7 @@ class PaymentServiceTest {
         PaymentProviderClient cash = mock(PaymentProviderClient.class);
         InvoiceService invoices = mock(InvoiceService.class);
         CheckoutTokenService tokens = new CheckoutTokenService();
+        PaymentOutboxService outbox = mock(PaymentOutboxService.class);
         UUID orderId = UUID.randomUUID();
         UUID customerId = UUID.randomUUID();
         Order order = Order.builder().id(orderId).customerId(customerId).customerEmail("a@example.com")
@@ -36,7 +37,8 @@ class PaymentServiceTest {
         when(cash.provider()).thenReturn(PaymentProvider.CASH);
         when(cash.charge(any())).thenReturn(ProviderPaymentResult.builder().success(true).transactionId("cash-1").build());
         when(payments.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
-        PaymentService service = new PaymentService(payments, orders, producer, List.of(cash), invoices, tokens, mock(LoyaltyPointService.class), mock(OrderService.class));
+        PaymentService service = new PaymentService(payments, orders, producer, List.of(cash), invoices, tokens,
+                mock(LoyaltyPointService.class), mock(OrderService.class), outbox);
         PaymentRequest request = new PaymentRequest();
         request.setOrderId(orderId);
         request.setProvider(PaymentProvider.CASH);
@@ -45,6 +47,8 @@ class PaymentServiceTest {
 
         assertThat(response.getAmount()).isEqualByComparingTo("3499.50");
         assertThat(response.getCurrency()).isEqualTo("INR");
+        verify(outbox).enqueue(argThat(event -> event.getOrderId().equals(orderId)
+                && PaymentStatus.PENDING.name().equals(event.getStatus())));
     }
 
     @Test
@@ -57,7 +61,7 @@ class PaymentServiceTest {
         when(payments.findByOrderId(orderId)).thenReturn(Optional.empty());
         when(orders.findLockedById(orderId)).thenReturn(order);
         PaymentService service = new PaymentService(payments, orders, mock(RabbitMQMessageProducer.class),
-                List.of(), mock(InvoiceService.class), new CheckoutTokenService(), mock(LoyaltyPointService.class), mock(OrderService.class));
+                List.of(), mock(InvoiceService.class), new CheckoutTokenService(), mock(LoyaltyPointService.class), mock(OrderService.class), mock(PaymentOutboxService.class));
         PaymentRequest request = new PaymentRequest();
         request.setOrderId(orderId);
         request.setProvider(PaymentProvider.CASH);
@@ -78,7 +82,7 @@ class PaymentServiceTest {
         when(payments.findByOrderId(orderId)).thenReturn(Optional.of(Payment.builder().orderId(orderId).build()));
         PaymentService service = new PaymentService(payments, orders, mock(RabbitMQMessageProducer.class),
                 List.of(provider), mock(InvoiceService.class), new CheckoutTokenService(),
-                mock(LoyaltyPointService.class), mock(OrderService.class));
+                mock(LoyaltyPointService.class), mock(OrderService.class), mock(PaymentOutboxService.class));
         PaymentRequest request = new PaymentRequest();
         request.setOrderId(orderId);
         request.setProvider(PaymentProvider.RAZORPAY);
@@ -111,7 +115,7 @@ class PaymentServiceTest {
         when(orders.findLockedById(orderId)).thenReturn(order);
         when(payments.save(payment)).thenReturn(payment);
         PaymentService service = new PaymentService(payments, orders, mock(RabbitMQMessageProducer.class),
-                List.of(), mock(InvoiceService.class), new CheckoutTokenService(), loyalty, orderService);
+                List.of(), mock(InvoiceService.class), new CheckoutTokenService(), loyalty, orderService, mock(PaymentOutboxService.class));
 
         service.reconcileProviderPayment(PaymentProvider.STRIPE, reference, true, null,
                 new BigDecimal("120.00"), "inr");
@@ -143,7 +147,7 @@ class PaymentServiceTest {
         OrderService orderService = mock(OrderService.class);
         PaymentService service = new PaymentService(payments, orders, mock(RabbitMQMessageProducer.class),
                 List.of(), mock(InvoiceService.class), new CheckoutTokenService(),
-                mock(LoyaltyPointService.class), orderService);
+                mock(LoyaltyPointService.class), orderService, mock(PaymentOutboxService.class));
 
         assertThatThrownBy(() -> service.reconcileProviderPayment(PaymentProvider.STRIPE, reference,
                 true, null, new BigDecimal("1.20"), "INR"))
@@ -164,7 +168,7 @@ class PaymentServiceTest {
         when(payments.findLockedByOrderId(orderId)).thenReturn(Optional.of(payment));
         PaymentService service = new PaymentService(payments, mock(OrderRepository.class),
                 mock(RabbitMQMessageProducer.class), List.of(), mock(InvoiceService.class),
-                new CheckoutTokenService(), mock(LoyaltyPointService.class), mock(OrderService.class));
+                new CheckoutTokenService(), mock(LoyaltyPointService.class), mock(OrderService.class), mock(PaymentOutboxService.class));
 
         assertThatThrownBy(() -> service.refundOrderPayment(orderId, new BigDecimal("30.00")))
                 .isInstanceOf(IllegalArgumentException.class)
