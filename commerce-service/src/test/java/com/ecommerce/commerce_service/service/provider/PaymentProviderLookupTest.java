@@ -33,8 +33,8 @@ class PaymentProviderLookupTest {
         body.put("amount", 12500);
         body.put("amount_received", 12500);
         body.put("currency", "inr");
-        when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(Map.class)))
-                .thenReturn(new ResponseEntity<>(body, HttpStatus.OK));
+        doReturn(new ResponseEntity<Map>(body, HttpStatus.OK)).when(restTemplate)
+                .exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(Map.class));
 
         ProviderPaymentStatus result = client.lookup(payment);
 
@@ -58,8 +58,8 @@ class PaymentProviderLookupTest {
         body.put("status", "requires_action");
         body.put("amount", 5000);
         body.put("currency", "inr");
-        when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(Map.class)))
-                .thenReturn(new ResponseEntity<>(body, HttpStatus.OK));
+        doReturn(new ResponseEntity<Map>(body, HttpStatus.OK)).when(restTemplate)
+                .exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(Map.class));
 
         ProviderPaymentStatus result = client.lookup(payment);
 
@@ -86,8 +86,8 @@ class PaymentProviderLookupTest {
         body.put("status", "attempted");
         body.put("amount", 7999);
         body.put("currency", "INR");
-        when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(Map.class)))
-                .thenReturn(new ResponseEntity<>(body, HttpStatus.OK));
+        doReturn(new ResponseEntity<Map>(body, HttpStatus.OK)).when(restTemplate)
+                .exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(Map.class));
 
         ProviderPaymentStatus result = client.lookup(payment);
 
