@@ -5,6 +5,8 @@ import com.ecommerce.commerce_service.model.PaymentProvider;
 import com.ecommerce.commerce_service.model.PaymentReconciliationCase;
 import com.ecommerce.commerce_service.repository.PaymentReconciliationCaseRepository;
 import com.ecommerce.commerce_service.repository.PaymentRepository;
+import com.ecommerce.commerce_service.service.provider.PaymentProviderClient;
+import com.ecommerce.commerce_service.service.provider.ProviderPaymentStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -54,6 +56,30 @@ class PaymentReconciliationServiceTest {
 
         service.scanStalePendingPayments();
 
+        verify(cases, never()).save(any());
+    }
+
+    @Test
+    void providerSettledSnapshotUsesExistingLockedReconciliationFlow() {
+        PaymentRepository payments = mock(PaymentRepository.class);
+        PaymentReconciliationCaseRepository cases = mock(PaymentReconciliationCaseRepository.class);
+        PaymentProviderClient provider = mock(PaymentProviderClient.class);
+        PaymentService paymentService = mock(PaymentService.class);
+        PaymentReconciliationService service = new PaymentReconciliationService(
+                payments, cases, List.of(provider), paymentService);
+        Payment payment = payment(20L);
+        when(payments.findStalePendingOnline(anyString(), any(), any(), any(Pageable.class)))
+                .thenReturn(List.of(payment));
+        when(provider.provider()).thenReturn(PaymentProvider.RAZORPAY);
+        when(provider.lookup(payment)).thenReturn(ProviderPaymentStatus.builder()
+                .found(true).settled(true).transactionId(payment.getTransactionId())
+                .amount(payment.getAmount()).currency(payment.getCurrency())
+                .message("Razorpay order status: paid").build());
+
+        service.scanStalePendingPayments();
+
+        verify(paymentService).reconcileProviderPayment(PaymentProvider.RAZORPAY,
+                payment.getTransactionId(), true, null, payment.getAmount(), payment.getCurrency());
         verify(cases, never()).save(any());
     }
 
