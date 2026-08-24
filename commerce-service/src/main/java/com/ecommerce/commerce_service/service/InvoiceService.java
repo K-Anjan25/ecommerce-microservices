@@ -167,10 +167,18 @@ public class InvoiceService {
             addTotalsRow(table, "Gift wrap", order.getGiftWrapFee(), false);
         }
         if (order.getDiscountAmount() != null && order.getDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
-            addTotalsRow(table, "Discount", order.getDiscountAmount().negate(), false);
+            addTotalsRow(table, "Coupon discount", order.getDiscountAmount().negate(), false);
+        }
+        if (order.getLoyaltyDiscountAmount() != null && order.getLoyaltyDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
+            addTotalsRow(table, "Loyalty (" + order.getLoyaltyPointsRedeemed() + " points)",
+                    order.getLoyaltyDiscountAmount().negate(), false);
         }
         addTotalsRow(table, "Tax", nvl(order.getTaxAmount()), false);
-        addTotalsRow(table, "Total", nvl(order.getTotalAmount()), true);
+        if (order.getGiftCardAmount() != null && order.getGiftCardAmount().compareTo(BigDecimal.ZERO) > 0) {
+            addTotalsRow(table, "Gift card ending " + order.getGiftCardCodeLast4(),
+                    order.getGiftCardAmount().negate(), false);
+        }
+        addTotalsRow(table, "Amount due", nvl(order.getTotalAmount()), true);
         return table;
     }
 

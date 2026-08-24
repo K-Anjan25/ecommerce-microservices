@@ -343,6 +343,12 @@ function UserOrderDetail() {
                   </dd>
                 </div>
               )}
+              {!!order.loyaltyDiscountAmount && (
+                <div className="flex justify-between">
+                  <dt className="text-state-success">Loyalty ({order.loyaltyPointsRedeemed} points)</dt>
+                  <dd className="font-semibold text-state-success">−{formatPrice(order.loyaltyDiscountAmount)}</dd>
+                </div>
+              )}
               <div className="flex justify-between">
                 <dt className="text-ink-soft">Shipping</dt>
                 <dd className="font-semibold">
@@ -361,9 +367,15 @@ function UserOrderDetail() {
                   <dd className="font-semibold">{formatPrice(order.giftWrapFee)}</dd>
                 </div>
               )}
+              {!!order.giftCardAmount && (
+                <div className="flex justify-between">
+                  <dt className="text-state-success">Gift card ending {order.giftCardCodeLast4}</dt>
+                  <dd className="font-semibold text-state-success">−{formatPrice(order.giftCardAmount)}</dd>
+                </div>
+              )}
             </dl>
             <div className="mt-4 flex items-baseline justify-between border-t border-line pt-4">
-              <span className="font-medium">Total paid</span>
+              <span className="font-medium">Amount charged</span>
               <span className="font-display text-2xl">
                 {formatPrice(order.totalAmount)}
               </span>

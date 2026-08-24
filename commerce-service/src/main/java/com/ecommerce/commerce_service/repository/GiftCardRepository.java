@@ -14,6 +14,10 @@ public interface GiftCardRepository extends JpaRepository<GiftCard, UUID> {
     Optional<GiftCard> findByCode(String code);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT g FROM gift_cards g WHERE g.id = :id")
+    Optional<GiftCard> findLockedById(@Param("id") UUID id);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT g FROM gift_cards g WHERE g.code = :code")
     Optional<GiftCard> findLockedByCode(@Param("code") String code);
 }

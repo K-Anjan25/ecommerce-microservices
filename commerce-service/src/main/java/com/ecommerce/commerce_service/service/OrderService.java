@@ -23,9 +23,6 @@ import com.ecommerce.commerce_service.repository.OrderRepository;
 import com.ecommerce.commerce_service.repository.OrderStatusHistoryRepository;
 import com.ecommerce.commerce_service.repository.OrderItemRepository;
 import com.ecommerce.commerce_service.dto.shippingRate.ShippingCalculationRequest;
-import com.ecommerce.commerce_service.service.LoyaltyPointService;
-import com.ecommerce.commerce_service.service.ShippingRateService;
-import com.ecommerce.commerce_service.service.TaxRuleService;
 import com.ecommerce.event_bus.RabbitMQMessageProducer;
 import com.ecommerce.event_bus.dto.EmailRequest;
 import lombok.RequiredArgsConstructor;
@@ -67,6 +64,8 @@ public class OrderService {
     private final TaxRuleService taxRuleService;
     private final CheckoutTokenService checkoutTokenService;
     private final ProductCatalogClient productCatalogClient;
+    private final GiftCardService giftCardService;
+    private final LoyaltyPointService loyaltyPointService;
 
     @Value("${rabbitmq.exchanges.notification}")
     private String notificationExchange;
@@ -110,18 +109,41 @@ public class OrderService {
             discount = couponService.computeDiscount(couponService.findCoupon(createOrderRequest.getCouponCode()), subtotal);
         }
 
-        BigDecimal taxableAmount = subtotal.add(shipping).subtract(discount);
-        BigDecimal giftWrapFee = createOrderRequest.getGiftWrap() != null && createOrderRequest.getGiftWrap() ? new BigDecimal("50.00") : BigDecimal.ZERO;
-        taxableAmount = taxableAmount.add(giftWrapFee);
-        BigDecimal tax = calculateTax(taxableAmount, createOrderRequest.getState()).setScale(2, RoundingMode.HALF_UP);
-        BigDecimal total = taxableAmount.add(tax);
+        BigDecimal giftWrapFee = createOrderRequest.getGiftWrap() != null && createOrderRequest.getGiftWrap()
+                ? new BigDecimal("50.00") : BigDecimal.ZERO;
 
-        order.setTotalAmount(total);
+        BigDecimal loyaltyDiscount = BigDecimal.ZERO;
+        int requestedPoints = createOrderRequest.getLoyaltyPoints() == null ? 0 : createOrderRequest.getLoyaltyPoints();
+        if (requestedPoints > 0) {
+            BigDecimal eligibleMerchandise = subtotal.subtract(discount).max(BigDecimal.ZERO);
+            loyaltyDiscount = loyaltyPointService.redeemForOrder(order.getCustomerId(), requestedPoints,
+                    eligibleMerchandise, "Order redemption");
+        }
+
+        BigDecimal taxableAmount = subtotal.add(shipping).add(giftWrapFee)
+                .subtract(discount).subtract(loyaltyDiscount).max(BigDecimal.ZERO);
+        BigDecimal tax = calculateTax(taxableAmount, createOrderRequest.getState()).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal totalBeforeGiftCard = taxableAmount.add(tax).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal giftCardAmount = BigDecimal.ZERO;
+
+        if (createOrderRequest.getGiftCardCode() != null && !createOrderRequest.getGiftCardCode().isBlank()) {
+            GiftCardService.GiftCardApplication application = giftCardService.applyToOrder(
+                    createOrderRequest.getGiftCardCode(), totalBeforeGiftCard);
+            giftCardAmount = application.getAmount();
+            order.setGiftCardId(application.getGiftCardId());
+            order.setGiftCardCodeLast4(application.getCodeLast4());
+        }
+
+        order.setTotalAmount(totalBeforeGiftCard.subtract(giftCardAmount).max(BigDecimal.ZERO));
         order.setShippingAmount(shipping);
         order.setTaxAmount(tax);
         order.setDiscountAmount(discount);
         order.setGiftWrap(createOrderRequest.getGiftWrap());
         order.setGiftWrapFee(giftWrapFee);
+        order.setLoyaltyPointsRedeemed(requestedPoints);
+        order.setLoyaltyDiscountAmount(loyaltyDiscount);
+        order.setGiftCardAmount(giftCardAmount);
+        order.setCreditsRestored(false);
 
         String checkoutToken = null;
         if (order.getCustomerId() == null) {
@@ -143,9 +165,13 @@ public class OrderService {
             });
         }
 
+        if (order.getTotalAmount().compareTo(BigDecimal.ZERO) == 0) {
+            order.setOrderStatus(OrderStatus.PAID);
+        }
         Order savedOrder = orderRepository.save(order);
 
-        recordStatus(savedOrder.getId(), OrderStatus.PENDING, "Order placed");
+        recordStatus(savedOrder.getId(), savedOrder.getOrderStatus(),
+                savedOrder.getOrderStatus() == OrderStatus.PAID ? "Paid in full by gift card" : "Order placed");
 
         if (savedOrder.getCouponCode() != null && !savedOrder.getCouponCode().isBlank()) {
             couponService.markUsed(savedOrder.getCouponCode(), savedOrder.getCustomerId(), savedOrder.getId());
@@ -251,14 +277,17 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void applyPaymentStatus(UUID orderId, String paymentStatus) {
-        orderRepository.findById(orderId).ifPresent(order -> {
+        Order lockedOrder = orderRepository.findLockedById(orderId);
+        java.util.Optional.ofNullable(lockedOrder).ifPresent(order -> {
             if ("SUCCESS".equalsIgnoreCase(paymentStatus)) {
                 order.setOrderStatus(OrderStatus.PAID);
                 recordStatus(orderId, OrderStatus.PAID, "Payment successful");
             } else if ("FAILED".equalsIgnoreCase(paymentStatus)) {
                 order.setOrderStatus(OrderStatus.CANCELLED);
-                recordStatus(orderId, OrderStatus.CANCELLED, "Payment failed");
+                restoreReservedCredits(order);
+                recordStatus(orderId, OrderStatus.CANCELLED, "Payment failed; reserved credits restored");
             } else if ("PENDING".equalsIgnoreCase(paymentStatus)) {
                 recordStatus(orderId, OrderStatus.PENDING, "Cash on delivery selected");
             } else if ("REFUNDED".equalsIgnoreCase(paymentStatus)) {
@@ -268,6 +297,15 @@ public class OrderService {
             orderRepository.save(order);
             log.info("Order {} updated to {} after payment status {}", orderId, order.getOrderStatus(), paymentStatus);
         });
+    }
+
+    private void restoreReservedCredits(Order order) {
+        if (Boolean.TRUE.equals(order.getCreditsRestored())) return;
+        giftCardService.restoreOrderCredit(order.getGiftCardId(), order.getGiftCardAmount());
+        loyaltyPointService.restoreOrderPoints(order.getCustomerId(),
+                order.getLoyaltyPointsRedeemed() == null ? 0 : order.getLoyaltyPointsRedeemed(),
+                "Restored after failed order #" + order.getId());
+        order.setCreditsRestored(true);
     }
 
     private void recordStatus(UUID orderId, OrderStatus status, String note) {

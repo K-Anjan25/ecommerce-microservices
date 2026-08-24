@@ -5,6 +5,7 @@ import com.ecommerce.commerce_service.dto.orderItem.CreateOrderItemRequest;
 import com.ecommerce.commerce_service.model.ShippingMethod;
 import lombok.Getter;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -20,4 +21,7 @@ public class CreateOrderRequest {
     private Boolean giftWrap;
     private String pincode;
     private String state;
+    private String giftCardCode;
+    @Min(value = 0, message = "Loyalty points cannot be negative")
+    private Integer loyaltyPoints;
 }

@@ -39,6 +39,10 @@ public class OrderMapper {
                 .customerEmail(order.getCustomerEmail())
                 .giftWrap(order.getGiftWrap())
                 .giftWrapFee(order.getGiftWrapFee())
+                .loyaltyPointsRedeemed(order.getLoyaltyPointsRedeemed())
+                .loyaltyDiscountAmount(order.getLoyaltyDiscountAmount())
+                .giftCardCodeLast4(order.getGiftCardCodeLast4())
+                .giftCardAmount(order.getGiftCardAmount())
                 .build();
     }
 

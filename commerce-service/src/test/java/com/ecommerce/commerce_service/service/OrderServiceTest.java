@@ -32,7 +32,6 @@ import org.springframework.data.domain.PageRequest;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -76,6 +75,12 @@ class OrderServiceTest {
     @Mock
     private ProductCatalogClient productCatalogClient;
 
+    @Mock
+    private GiftCardService giftCardService;
+
+    @Mock
+    private LoyaltyPointService loyaltyPointService;
+
     private OrderService orderService;
 
     private UUID productId;
@@ -87,7 +92,8 @@ class OrderServiceTest {
     void setUp() {
         orderService = new OrderService(orderRepository, orderMapper, commerceInventoryService,
                 couponService, orderStatusHistoryRepository, rabbitMQMessageProducer, orderItemRepository,
-                shippingRateService, taxRuleService, checkoutTokenService, productCatalogClient);
+                shippingRateService, taxRuleService, checkoutTokenService, productCatalogClient,
+                giftCardService, loyaltyPointService);
 
         productId = UUID.randomUUID();
         orderId = UUID.randomUUID();
@@ -164,6 +170,56 @@ class OrderServiceTest {
     }
 
     @Test
+    void createOrder_appliesLoyaltyBeforeTaxAndGiftCardAfterTax() {
+        CreateOrderRequest request = mock(CreateOrderRequest.class);
+        when(request.getLoyaltyPoints()).thenReturn(100);
+        when(request.getGiftCardCode()).thenReturn("GC-1234");
+
+        when(orderMapper.orderRequestToOrder(request)).thenReturn(testOrder);
+        when(productCatalogClient.findByIds(productId.toString())).thenReturn(List.of(
+                new ProductSummaryDto(productId, "Test product", BigDecimal.TEN, null, false, List.of())));
+        when(commerceInventoryService.isInStock(anyList()))
+                .thenReturn(InventoryCheckResponse.builder().isInStock(true).build());
+        when(loyaltyPointService.redeemForOrder(eq(testOrder.getCustomerId()), eq(100),
+                eq(new BigDecimal("20")), anyString())).thenReturn(new BigDecimal("10.00"));
+        UUID giftCardId = UUID.randomUUID();
+        when(giftCardService.applyToOrder(eq("GC-1234"), eq(new BigDecimal("70.80"))))
+                .thenReturn(new GiftCardService.GiftCardApplication(giftCardId, "1234", new BigDecimal("20.00")));
+        when(orderRepository.save(testOrder)).thenReturn(testOrder);
+        when(orderMapper.orderToOrderDto(testOrder)).thenReturn(testOrderDto);
+
+        orderService.createOrder(request);
+
+        assertThat(testOrder.getLoyaltyDiscountAmount()).isEqualByComparingTo("10.00");
+        assertThat(testOrder.getTaxAmount()).isEqualByComparingTo("10.80");
+        assertThat(testOrder.getGiftCardAmount()).isEqualByComparingTo("20.00");
+        assertThat(testOrder.getTotalAmount()).isEqualByComparingTo("50.80");
+        assertThat(testOrder.getGiftCardId()).isEqualTo(giftCardId);
+        assertThat(testOrder.getGiftCardCodeLast4()).isEqualTo("1234");
+    }
+
+    @Test
+    void failedPayment_restoresReservedCreditsOnlyOnce() {
+        Order order = Order.builder()
+                .id(orderId)
+                .customerId(testOrder.getCustomerId())
+                .orderStatus(OrderStatus.PENDING)
+                .giftCardId(UUID.randomUUID())
+                .giftCardAmount(new BigDecimal("25.00"))
+                .loyaltyPointsRedeemed(100)
+                .creditsRestored(false)
+                .build();
+        when(orderRepository.findLockedById(orderId)).thenReturn(order);
+
+        orderService.applyPaymentStatus(orderId, "FAILED");
+        orderService.applyPaymentStatus(orderId, "FAILED");
+
+        verify(giftCardService, times(1)).restoreOrderCredit(order.getGiftCardId(), new BigDecimal("25.00"));
+        verify(loyaltyPointService, times(1)).restoreOrderPoints(eq(order.getCustomerId()), eq(100), anyString());
+        assertThat(order.getCreditsRestored()).isTrue();
+    }
+
+    @Test
     void getAllOrders_shouldReturnPagination() {
         PageRequest pageable = PageRequest.of(0, 10);
         Page<Order> page = new PageImpl<>(List.of(testOrder));
@@ -183,7 +239,7 @@ class OrderServiceTest {
                 .orderStatus(OrderStatus.PENDING)
                 .build();
 
-        when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+        when(orderRepository.findLockedById(orderId)).thenReturn(order);
 
         orderService.applyPaymentStatus(orderId, "SUCCESS");
 
@@ -196,7 +252,7 @@ class OrderServiceTest {
                 .orderStatus(OrderStatus.PENDING)
                 .build();
 
-        when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+        when(orderRepository.findLockedById(orderId)).thenReturn(order);
 
         orderService.applyPaymentStatus(orderId, "FAILED");
 

@@ -30,10 +30,10 @@ function LoyaltyPoints() {
   const progress = ((points % TIER) / TIER) * 100;
 
   const earned = (history ?? [])
-    .filter((h) => h.type === LoyaltyPointType.EARNED)
+    .filter((h) => h.type === LoyaltyPointType.EARNED || h.type === LoyaltyPointType.RESTORED)
     .reduce((a, h) => a + h.points, 0);
   const redeemed = (history ?? [])
-    .filter((h) => h.type !== LoyaltyPointType.EARNED)
+    .filter((h) => h.type === LoyaltyPointType.REDEEMED)
     .reduce((a, h) => a + Math.abs(h.points), 0);
 
   return (
@@ -123,7 +123,7 @@ function LoyaltyPoints() {
         ) : (
           <ul className="divide-y divide-line">
             {history.map((entry) => {
-              const isEarned = entry.type === LoyaltyPointType.EARNED;
+              const isEarned = entry.type === LoyaltyPointType.EARNED || entry.type === LoyaltyPointType.RESTORED;
               return (
                 <li key={entry.id} className="flex items-center gap-4 py-3.5">
                   <span

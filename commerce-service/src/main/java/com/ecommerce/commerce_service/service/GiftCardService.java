@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -65,6 +66,60 @@ public class GiftCardService {
         }
         GiftCard saved = giftCardRepository.save(giftCard);
         return giftCardMapper.giftCardToGiftCardDto(saved);
+    }
+
+    /**
+     * Applies up to the amount still due. The row lock makes a card a safe
+     * payment tender even when two checkouts submit the same code together.
+     */
+    @Transactional
+    public GiftCardApplication applyToOrder(String code, BigDecimal amountDue) {
+        if (code == null || code.isBlank() || amountDue == null || amountDue.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Gift card and a positive order balance are required");
+        }
+        String normalized = code.trim().toUpperCase(Locale.ROOT);
+        GiftCard giftCard = giftCardRepository.findLockedByCode(normalized)
+                .orElseThrow(() -> new IllegalArgumentException("Gift card not found"));
+        validateGiftCard(giftCard);
+        BigDecimal applied = giftCard.getBalance().min(amountDue).setScale(2, java.math.RoundingMode.HALF_UP);
+        giftCard.setBalance(giftCard.getBalance().subtract(applied));
+        if (giftCard.getBalance().compareTo(BigDecimal.ZERO) == 0) {
+            giftCard.setStatus(GiftCardStatus.REDEEMED);
+        }
+        giftCardRepository.save(giftCard);
+        String last4 = normalized.substring(Math.max(0, normalized.length() - 4));
+        return new GiftCardApplication(giftCard.getId(), last4, applied);
+    }
+
+    @Transactional
+    public void restoreOrderCredit(UUID giftCardId, BigDecimal amount) {
+        if (giftCardId == null || amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) return;
+        GiftCard giftCard = giftCardRepository.findLockedById(giftCardId)
+                .orElseThrow(() -> new IllegalStateException("Gift card for failed order no longer exists"));
+        BigDecimal restored = giftCard.getBalance().add(amount);
+        if (restored.compareTo(giftCard.getInitialBalance()) > 0) {
+            throw new IllegalStateException("Gift card restoration would exceed its issued balance");
+        }
+        giftCard.setBalance(restored);
+        if (!giftCard.getExpiryDate().isBefore(LocalDate.now())) {
+            giftCard.setStatus(GiftCardStatus.ACTIVE);
+        }
+        giftCardRepository.save(giftCard);
+    }
+
+    public static final class GiftCardApplication {
+        private final UUID giftCardId;
+        private final String codeLast4;
+        private final BigDecimal amount;
+
+        public GiftCardApplication(UUID giftCardId, String codeLast4, BigDecimal amount) {
+            this.giftCardId = giftCardId;
+            this.codeLast4 = codeLast4;
+            this.amount = amount;
+        }
+        public UUID getGiftCardId() { return giftCardId; }
+        public String getCodeLast4() { return codeLast4; }
+        public BigDecimal getAmount() { return amount; }
     }
 
     public List<GiftCardDto> getGiftCardsByUser(UUID userId) {

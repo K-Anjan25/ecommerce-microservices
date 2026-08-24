@@ -14,3 +14,8 @@ bound to an authoritative order transaction, not an arbitrary amount supplied by
 a client. The service methods remain internal building blocks for that checkout
 integration. Gift-card purchase remains a demo issuance flow until live provider
 capture is connected; it must not be presented as production stored value.
+
+
+## Follow-up
+
+Order-bound loyalty and gift-card redemption, pricing order, locking, and failed-payment restoration are implemented in [28-order-bound-credit-redemption.md](28-order-bound-credit-redemption.md). The provider-backed gift-card issuance limitation remains.

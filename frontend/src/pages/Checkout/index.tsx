@@ -20,6 +20,7 @@ import { PaymentApi } from "../../api/paymentApi";
 import { AddressApi } from "../../api/addressApi";
 import { ShippingApi } from "../../api/shippingApi";
 import { CouponApi } from "../../api/couponApi";
+import { LoyaltyPointApi } from "../../api/loyaltyPointApi";
 import CartLine from "../../components/CartLine";
 import CheckoutSteps from "../../components/CheckoutSteps";
 import EmptyState from "../../components/EmptyState";
@@ -133,11 +134,17 @@ function Checkout() {
   const [giftWrap, setGiftWrap] = useState(false);
   const [couponInput, setCouponInput] = useState("");
   const [coupon, setCoupon] = useState<{ code: string; discount: number } | null>(null);
+  const [giftCardCode, setGiftCardCode] = useState("");
+  const [loyaltyPoints, setLoyaltyPoints] = useState(0);
   const [reviewOpen, setReviewOpen] = useState(false);
   const subtotal = Number(calculateTotalPriceOfCartItems(items));
   const itemCount = calculateCountOfCartItems(items);
 
   const { data: defaultAddress } = useQuery("defaultAddress", AddressApi.getDefaultAddress, {
+    retry: false,
+  });
+  const { data: loyaltyBalance = 0 } = useQuery("checkoutLoyaltyBalance", LoyaltyPointApi.getBalance, {
+    enabled: isLoggedIn,
     retry: false,
   });
 
@@ -177,6 +184,8 @@ function Checkout() {
         pincode: values.pincode,
         state: values.state,
         couponCode: coupon?.code,
+        giftCardCode: giftCardCode.trim() || undefined,
+        loyaltyPoints: appliedLoyaltyPoints || undefined,
       } as CreateOrderRequest;
 
       createOrderMutation.mutate(order);
@@ -211,11 +220,16 @@ function Checkout() {
     : 50;
   const giftWrapFee = giftWrap ? 50 : 0;
   const discount = coupon?.discount ?? 0;
+  const maxLoyaltyPoints = Math.max(0, Math.floor((subtotal - discount) * 10));
+  const appliedLoyaltyPoints = Math.min(loyaltyPoints, loyaltyBalance, maxLoyaltyPoints);
+  const loyaltyDiscount = appliedLoyaltyPoints / 10;
   const taxRate = taxRule?.rate ?? 0.18;
   const taxLabel = taxRule ? `${taxRule.taxName} ${Math.round(taxRate * 100)}%` : "18% GST";
   // Mirrors the backend: tax applies to subtotal + shipping - discount + gift wrap.
-  const tax = Number(((subtotal + shippingCost - discount + giftWrapFee) * taxRate).toFixed(2));
-  const total = subtotal + shippingCost - discount + giftWrapFee + tax;
+  const tax = Number(
+    ((subtotal + shippingCost - discount - loyaltyDiscount + giftWrapFee) * taxRate).toFixed(2)
+  );
+  const total = subtotal + shippingCost - discount - loyaltyDiscount + giftWrapFee + tax;
 
   // A cart change invalidates the applied coupon (discount depends on subtotal).
   useEffect(() => {
@@ -246,6 +260,13 @@ function Checkout() {
 
   const createOrderMutation = useMutation(OrderApi.createOrder, {
     onSuccess: (order) => {
+      if (Number(order.totalAmount) === 0) {
+        showSuccess("Order paid in full with your gift card");
+        dispatch(clearAllItems());
+        sessionStorage.removeItem("checkout_form");
+        navigate("/");
+        return;
+      }
       const payment = {
         orderId: order.id,
         provider: paymentProvider,
@@ -342,6 +363,18 @@ function Checkout() {
         <div className="flex justify-between">
           <dt className="font-semibold text-state-success">Coupon {coupon.code}</dt>
           <dd className="font-semibold text-state-success">−{formatPrice(coupon.discount)}</dd>
+        </div>
+      )}
+      {appliedLoyaltyPoints > 0 && (
+        <div className="flex justify-between">
+          <dt className="font-semibold text-state-success">{appliedLoyaltyPoints} loyalty points</dt>
+          <dd className="font-semibold text-state-success">−{formatPrice(loyaltyDiscount)}</dd>
+        </div>
+      )}
+      {giftCardCode.trim() && (
+        <div className="flex justify-between gap-4">
+          <dt className="text-ink-soft">Gift card</dt>
+          <dd className="text-right text-xs text-ink-muted">Applied securely by the server</dd>
         </div>
       )}
       <div className="flex justify-between">
@@ -515,48 +548,56 @@ function Checkout() {
           >
             <div className="space-y-4">
               {isLoggedIn ? (
-                coupon ? (
-                  <div className="flex items-center justify-between gap-3 border border-state-success/30 bg-state-success-soft px-4 py-3">
-                    <span className="min-w-0">
-                      <span className="block text-sm font-bold text-state-success">
-                        {coupon.code} applied
+                <div className="space-y-4">
+                  {coupon ? (
+                    <div className="flex items-center justify-between gap-3 border border-state-success/30 bg-state-success-soft px-4 py-3">
+                      <span className="min-w-0">
+                        <span className="block text-sm font-bold text-state-success">{coupon.code} applied</span>
+                        <span className="text-xs text-state-success-on">You saved {formatPrice(coupon.discount)}</span>
                       </span>
-                      <span className="text-xs text-state-success-on">
-                        You saved {formatPrice(coupon.discount)}
-                      </span>
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setCoupon(null)}
-                      className="shrink-0 text-xs font-bold text-state-success-on underline-offset-2 hover:underline"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex items-start gap-2">
-                    <div className="flex-1">
-                      <TextInput
-                        name="couponCode"
-                        label="Coupon / gift card code"
-                        form={form}
-                        value={couponInput}
-                        onChange={(e: any) => setCouponInput(e.target.value)}
-                      />
+                      <button type="button" onClick={() => setCoupon(null)} className="shrink-0 text-xs font-bold text-state-success-on underline-offset-2 hover:underline">Remove</button>
                     </div>
-                    <LoadingButton
-                      variant="contained"
-                      onClick={applyCoupon}
-                      loading={couponMutation.isLoading}
-                      className="!h-10"
-                    >
-                      Apply
-                    </LoadingButton>
+                  ) : (
+                    <div className="flex items-start gap-2">
+                      <div className="flex-1">
+                        <TextInput name="couponCode" label="Coupon code" form={form} value={couponInput} onChange={(e: any) => setCouponInput(e.target.value)} />
+                      </div>
+                      <LoadingButton variant="contained" onClick={applyCoupon} loading={couponMutation.isLoading} className="!h-10">Apply</LoadingButton>
+                    </div>
+                  )}
+
+                  <TextInput
+                    name="giftCardCode"
+                    label="Gift card code"
+                    form={form}
+                    value={giftCardCode}
+                    onChange={(e: any) => setGiftCardCode(e.target.value.toUpperCase())}
+                  />
+                  <p className="-mt-2 text-xs text-ink-muted">The available balance is applied after tax. Any remainder stays on the card.</p>
+
+                  <div>
+                    <label htmlFor="loyaltyPoints" className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-ink-soft">
+                      Loyalty points · {loyaltyBalance} available
+                    </label>
+                    <input
+                      id="loyaltyPoints"
+                      type="number"
+                      min={0}
+                      max={Math.min(loyaltyBalance, maxLoyaltyPoints)}
+                      step={1}
+                      value={loyaltyPoints}
+                      onChange={(event) => {
+                        const value = Number.parseInt(event.target.value || "0", 10);
+                        setLoyaltyPoints(Math.max(0, Math.min(value, loyaltyBalance, maxLoyaltyPoints)));
+                      }}
+                      className="w-full border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none focus:border-brand"
+                    />
+                    <p className="mt-1.5 text-xs text-ink-muted">10 points = ₹1. Applied before tax, up to the merchandise total.</p>
                   </div>
-                )
+                </div>
               ) : (
                 <p className="border border-line bg-canvas px-4 py-3 text-xs text-ink-soft">
-                  Sign in to apply coupons, gift cards and loyalty points.
+                  Sign in to apply coupons and loyalty points. Gift cards can be entered after signing in.
                 </p>
               )}
 

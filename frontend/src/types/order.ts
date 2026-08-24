@@ -17,6 +17,10 @@ export interface Order {
   shippingMethod?: ShippingMethod;
   giftWrap?: boolean;
   giftWrapFee?: number;
+  loyaltyPointsRedeemed?: number;
+  loyaltyDiscountAmount?: number;
+  giftCardCodeLast4?: string;
+  giftCardAmount?: number;
   checkoutToken?: string;
 }
 
@@ -30,6 +34,8 @@ export interface CreateOrderRequest {
   pincode?: string;
   state?: string;
   couponCode?: string;
+  giftCardCode?: string;
+  loyaltyPoints?: number;
 }
 
 interface OrderAdress {
