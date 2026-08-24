@@ -161,6 +161,9 @@ public class GiftCardService {
         if (giftCard.getStatus() == GiftCardStatus.EXPIRED) {
             throw new RuntimeException("Gift card has expired");
         }
+        if (giftCard.getStatus() == GiftCardStatus.REFUNDED) {
+            throw new RuntimeException("Gift card has been refunded");
+        }
         if (giftCard.getExpiryDate().isBefore(LocalDate.now())) {
             giftCard.setStatus(GiftCardStatus.EXPIRED);
             giftCardRepository.save(giftCard);

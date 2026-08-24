@@ -1,8 +1,11 @@
 package com.ecommerce.commerce_service.controller;
 
 import com.ecommerce.commerce_service.dto.giftCard.CreateGiftCardPurchaseRequest;
+import com.ecommerce.commerce_service.audit.AuditLogService;
+import com.ecommerce.commerce_service.dto.giftCard.GiftCardPurchaseRefundResponse;
 import com.ecommerce.commerce_service.dto.giftCard.GiftCardPurchaseResponse;
 import com.ecommerce.commerce_service.dto.payment.PaymentResponse;
+import com.ecommerce.commerce_service.service.GiftCardPurchaseRefundService;
 import com.ecommerce.commerce_service.service.GiftCardPurchaseService;
 import com.ecommerce.commerce_service.service.PaymentService;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,8 @@ import java.util.UUID;
 public class GiftCardPurchaseController {
     private final GiftCardPurchaseService purchaseService;
     private final PaymentService paymentService;
+    private final GiftCardPurchaseRefundService refundService;
+    private final AuditLogService auditLogService;
 
     @PostMapping("/purchase")
     @PreAuthorize("hasAuthority('ROLE_USER')")
@@ -39,5 +44,16 @@ public class GiftCardPurchaseController {
                 .orderId(start.getOrderId())
                 .payment(payment)
                 .build(), HttpStatus.CREATED);
+    }
+
+    /** Refunds only unused settled value; administrators cannot refund a spent card. */
+    @PostMapping("/purchases/{purchaseId}/refund")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_SUPER_ADMIN')")
+    public ResponseEntity<GiftCardPurchaseRefundResponse> refund(@PathVariable UUID purchaseId) {
+        GiftCardPurchaseRefundResponse result = refundService.refund(purchaseId);
+        auditLogService.record("GIFT_CARD_PURCHASE_REFUNDED", "GIFT_CARD_PURCHASE",
+                purchaseId.toString(), result.getRefundedAmount() == null
+                        ? null : result.getRefundedAmount().toPlainString());
+        return ResponseEntity.ok(result);
     }
 }

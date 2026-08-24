@@ -17,6 +17,14 @@ public interface PaymentProviderClient {
      */
     ProviderPaymentResult refund(Payment payment, BigDecimal amount);
 
+    /**
+     * Refund with a caller-owned stable operation key. Providers that support
+     * idempotency should use it; the default preserves existing integrations.
+     */
+    default ProviderPaymentResult refund(Payment payment, BigDecimal amount, String idempotencyKey) {
+        return refund(payment, amount);
+    }
+
     /** Cancel an initiated but unsettled provider operation before releasing reservations. */
     ProviderPaymentResult cancel(Payment payment);
 

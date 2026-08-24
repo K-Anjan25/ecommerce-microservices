@@ -248,6 +248,11 @@ public class PaymentService {
      */
     @Transactional
     public ProviderPaymentResult refundOrderPayment(UUID orderId, BigDecimal amount) {
+        return refundOrderPayment(orderId, amount, null);
+    }
+
+    @Transactional
+    public ProviderPaymentResult refundOrderPayment(UUID orderId, BigDecimal amount, String idempotencyKey) {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Refund amount must be positive");
         }
@@ -268,7 +273,7 @@ public class PaymentService {
             throw new IllegalArgumentException("Unsupported payment provider: " + payment.getProvider());
         }
 
-        ProviderPaymentResult result = client.refund(payment, amount);
+        ProviderPaymentResult result = client.refund(payment, amount, idempotencyKey);
         log.info("Refund for order {} via {}: success={}, message={}",
                 orderId, payment.getProvider(), result.isSuccess(), result.getMessage());
 

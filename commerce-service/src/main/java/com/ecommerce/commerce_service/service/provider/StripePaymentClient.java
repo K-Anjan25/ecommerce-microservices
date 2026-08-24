@@ -86,6 +86,11 @@ public class StripePaymentClient implements PaymentProviderClient {
 
     @Override
     public ProviderPaymentResult refund(Payment payment, java.math.BigDecimal amount) {
+        return refund(payment, amount, "cartly-refund-" + payment.getOrderId() + "-" + amount.toPlainString());
+    }
+
+    @Override
+    public ProviderPaymentResult refund(Payment payment, java.math.BigDecimal amount, String idempotencyKey) {
         String secretKey = paymentProviderProperties.getStripe().getSecretKey();
         if (secretKey == null || secretKey.isBlank()) {
             return ProviderPaymentResult.builder()
@@ -106,6 +111,9 @@ public class StripePaymentClient implements PaymentProviderClient {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             headers.set(HttpHeaders.AUTHORIZATION, basicAuth(secretKey));
+            if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+                headers.set("Idempotency-Key", idempotencyKey);
+            }
 
             MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
             body.add("payment_intent", transactionId);

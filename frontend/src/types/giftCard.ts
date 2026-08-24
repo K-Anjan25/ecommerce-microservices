@@ -2,6 +2,7 @@ export enum GiftCardStatus {
   ACTIVE = "ACTIVE",
   REDEEMED = "REDEEMED",
   EXPIRED = "EXPIRED",
+  REFUNDED = "REFUNDED",
 }
 
 export interface GiftCard {

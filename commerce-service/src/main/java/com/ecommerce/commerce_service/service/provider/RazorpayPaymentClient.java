@@ -76,6 +76,11 @@ public class RazorpayPaymentClient implements PaymentProviderClient {
 
     @Override
     public ProviderPaymentResult refund(Payment payment, java.math.BigDecimal amount) {
+        return refund(payment, amount, "cartly-refund-" + payment.getOrderId() + "-" + amount.toPlainString());
+    }
+
+    @Override
+    public ProviderPaymentResult refund(Payment payment, java.math.BigDecimal amount, String idempotencyKey) {
         String keyId = paymentProviderProperties.getRazorpay().getKeyId();
         String keySecret = paymentProviderProperties.getRazorpay().getKeySecret();
         if (isBlank(keyId) || isBlank(keySecret)) {
@@ -97,6 +102,9 @@ public class RazorpayPaymentClient implements PaymentProviderClient {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set(HttpHeaders.AUTHORIZATION, basicAuth(keyId, keySecret));
+            if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+                headers.set("X-Razorpay-Idempotency-Key", idempotencyKey);
+            }
 
             Map<String, Object> body = new HashMap<>();
             body.put("amount", amount.movePointRight(2).intValue()); // paise

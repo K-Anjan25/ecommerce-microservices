@@ -58,7 +58,12 @@ public class GiftCardPurchaseIntent {
     private GiftCardPurchaseStatus status;
 
     private UUID giftCardId;
+    @Column(precision = 19, scale = 2)
+    private BigDecimal refundedAmount;
+    @Column(length = 255)
+    private String refundTransactionId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime issuedAt;
+    private LocalDateTime refundedAt;
 }

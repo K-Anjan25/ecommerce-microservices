@@ -15,6 +15,10 @@ import java.util.UUID;
 
 public interface GiftCardPurchaseIntentRepository extends JpaRepository<GiftCardPurchaseIntent, UUID> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT i FROM gift_card_purchase_intents i WHERE i.id = :id")
+    Optional<GiftCardPurchaseIntent> findLockedById(@Param("id") UUID id);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT i FROM gift_card_purchase_intents i WHERE i.orderId = :orderId")
     Optional<GiftCardPurchaseIntent> findLockedByOrderId(@Param("orderId") UUID orderId);
 
