@@ -43,6 +43,9 @@ payment:
 storefront:
   public-url: ${STOREFRONT_PUBLIC_URL:http://localhost:3000}
 
+checkout:
+  capability-ttl: ${CHECKOUT_CAPABILITY_TTL:PT720H}
+
 product-service:
   url: ${PRODUCT_SERVICE_URL:http://localhost:8080}
 

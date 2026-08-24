@@ -6,6 +6,7 @@ import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -77,7 +78,9 @@ public class Order extends AdvanceBaseModal {
     private Boolean inventoryRestored;
     private Boolean creditsRestored;
 
-    /** SHA-256 capability used only to authorize guest payment initiation. */
+    /** SHA-256 guest capability; raw value is returned/emailed once and never persisted. */
     @Column(length = 64)
     private String checkoutTokenHash;
+
+    private LocalDateTime checkoutTokenExpiresAt;
 }

@@ -35,6 +35,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -264,20 +265,22 @@ class OrderServiceTest {
         String capability = "private-checkout-capability";
         testOrder.setCustomerId(null);
         testOrder.setCheckoutTokenHash("stored-hash");
+        testOrder.setCheckoutTokenExpiresAt(LocalDateTime.now().plusDays(1));
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(testOrder));
-        when(checkoutTokenService.matches(capability, "stored-hash")).thenReturn(true);
+        when(checkoutTokenService.matches(eq(capability), eq("stored-hash"), any(LocalDateTime.class))).thenReturn(true);
         when(orderMapper.orderToOrderDto(testOrder)).thenReturn(testOrderDto);
 
         assertThat(orderService.getGuestOrder(orderId, capability)).isSameAs(testOrderDto);
-        verify(checkoutTokenService).matches(capability, "stored-hash");
+        verify(checkoutTokenService).matches(eq(capability), eq("stored-hash"), any(LocalDateTime.class));
     }
 
     @Test
     void guestOrderRejectsInvalidCapability() {
         testOrder.setCustomerId(null);
         testOrder.setCheckoutTokenHash("stored-hash");
+        testOrder.setCheckoutTokenExpiresAt(LocalDateTime.now().plusDays(1));
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(testOrder));
-        when(checkoutTokenService.matches("wrong", "stored-hash")).thenReturn(false);
+        when(checkoutTokenService.matches(eq("wrong"), eq("stored-hash"), any(LocalDateTime.class))).thenReturn(false);
 
         assertThatThrownBy(() -> orderService.getGuestOrder(orderId, "wrong"))
                 .isInstanceOf(SecurityException.class);

@@ -41,6 +41,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -79,6 +80,9 @@ public class OrderService {
 
     @Value("${storefront.public-url:http://localhost:3000}")
     private String storefrontPublicUrl;
+
+    @Value("${checkout.capability-ttl:PT720H}")
+    private Duration checkoutCapabilityTtl = Duration.ofDays(30);
 
     @Transactional
     public OrderDto createOrder(CreateOrderRequest createOrderRequest){
@@ -158,6 +162,7 @@ public class OrderService {
         if (order.getCustomerId() == null) {
             checkoutToken = checkoutTokenService.issue();
             order.setCheckoutTokenHash(checkoutTokenService.hash(checkoutToken));
+            order.setCheckoutTokenExpiresAt(LocalDateTime.now().plus(checkoutCapabilityTtl));
         }
 
         // Deduct only after all pricing/tax/coupon validation succeeds. If the
@@ -282,7 +287,8 @@ public class OrderService {
     public OrderDto getGuestOrder(UUID orderId, String checkoutToken) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found: " + orderId));
-        if (order.getCustomerId() != null || !checkoutTokenService.matches(checkoutToken, order.getCheckoutTokenHash())) {
+        if (order.getCustomerId() != null || !checkoutTokenService.matches(checkoutToken, order.getCheckoutTokenHash(),
+                        order.getCheckoutTokenExpiresAt())) {
             throw new SecurityException("Guest order capability is invalid");
         }
         return orderMapper.orderToOrderDto(order);
@@ -319,7 +325,8 @@ public class OrderService {
             if (authenticatedCustomerId == null || !order.getCustomerId().equals(authenticatedCustomerId)) {
                 throw new SecurityException("Order does not belong to this customer");
             }
-        } else if (!checkoutTokenService.matches(guestCapability, order.getCheckoutTokenHash())) {
+        } else if (!checkoutTokenService.matches(guestCapability, order.getCheckoutTokenHash(),
+                order.getCheckoutTokenExpiresAt())) {
             throw new SecurityException("Guest order capability is invalid");
         }
         if (order.getOrderStatus() != OrderStatus.PENDING) {
@@ -468,7 +475,8 @@ public class OrderService {
             sb.append("\n\nTrack this guest order securely: ")
                     .append(base).append("/guest-order/").append(order.getId())
                     .append("#").append(guestTrackingToken)
-                    .append("\nThis private link grants access to order details. Do not share it.");
+                    .append("\nThis private link grants access to order details until ")
+                    .append(order.getCheckoutTokenExpiresAt()).append(". Do not share it.");
         }
         return sb.toString();
     }

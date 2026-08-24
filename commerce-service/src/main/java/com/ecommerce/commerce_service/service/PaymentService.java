@@ -84,7 +84,8 @@ public class PaymentService {
             if (userId == null || !order.getCustomerId().equals(userId)) {
                 throw new SecurityException("Payment does not belong to this customer");
             }
-        } else if (!checkoutTokenService.matches(request.getCheckoutToken(), order.getCheckoutTokenHash())) {
+        } else if (!checkoutTokenService.matches(request.getCheckoutToken(), order.getCheckoutTokenHash(),
+                order.getCheckoutTokenExpiresAt())) {
             throw new SecurityException("Guest checkout token is invalid");
         }
 

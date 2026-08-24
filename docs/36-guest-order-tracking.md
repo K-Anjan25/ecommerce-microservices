@@ -4,12 +4,13 @@ Guest checkout now includes a private tracking path without creating an account 
 
 ## Capability design
 
-- Guest order creation already issues 256 random bits and stores only its SHA-256 hash.
+- Guest order creation issues 256 random bits, stores only its SHA-256 hash, and records a configurable expiry (`CHECKOUT_CAPABILITY_TTL`, 30 days by default).
 - The same capability can authorize `GET /v1/orders/{orderId}/guest` through the `X-Checkout-Token` header.
 - Capabilities are never accepted in query strings.
 - The order confirmation email uses `/guest-order/{orderId}#capability`. URL fragments are not sent to HTTP servers, gateways, access logs, or referrer headers.
 - The React page reads the fragment once into component memory and immediately removes it from browser history with `replaceState`.
 - The token is not written to local storage or session storage.
+- Expired capabilities cannot authorize tracking, payment initiation or cancellation.
 - Signed-in orders cannot be opened through the guest capability endpoint.
 - Invalid capabilities receive no order DTO and the public route is rate-limited.
 

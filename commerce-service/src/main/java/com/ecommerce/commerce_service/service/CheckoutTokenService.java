@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.Base64;
 
 @Component
@@ -27,6 +28,10 @@ public class CheckoutTokenService {
         } catch (NoSuchAlgorithmException impossible) {
             throw new IllegalStateException("SHA-256 is unavailable", impossible);
         }
+    }
+
+    public boolean matches(String raw, String expectedHash, LocalDateTime expiresAt) {
+        return expiresAt != null && expiresAt.isAfter(LocalDateTime.now()) && matches(raw, expectedHash);
     }
 
     public boolean matches(String raw, String expectedHash) {

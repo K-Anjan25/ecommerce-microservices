@@ -77,7 +77,7 @@ Archived palette sheets are historical exploration only and are labelled accordi
 
 ## Checkout completion UX
 
-The enclosed checkout now ends on a dedicated confirmation screen for gift-card-funded, COD, provider-pending and provider-settled outcomes. Guest capability material is never placed in the URL or browser storage; see [35-checkout-confirmation.md](35-checkout-confirmation.md).
+The enclosed checkout now ends on a dedicated confirmation screen for gift-card-funded, COD, provider-pending and provider-settled outcomes. Guest capability material is never placed in a query string or browser storage; fragment-delivered capabilities are hashed at rest and expire after a configurable TTL. See [35-checkout-confirmation.md](35-checkout-confirmation.md) and [36-guest-order-tracking.md](36-guest-order-tracking.md).
 
 ## Pending cancellation
 
