@@ -67,7 +67,8 @@ public class UserController {
     }
 
     @PostMapping("/validateToken")
-    public ResponseEntity<UserDto> validateToken(@RequestParam String token) {
+    public ResponseEntity<UserDto> validateToken(@RequestHeader(AUTHORIZATION) String authorizationHeader) {
+        String token = authorizationHeader.substring(TOKEN_PREFIX.length());
         return ResponseEntity.ok(userService.validateToken(token));
     }
 

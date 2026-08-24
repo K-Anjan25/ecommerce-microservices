@@ -24,6 +24,12 @@ Invalid or missing tokens previously wrote a 403 response and then continued the
 filter chain. The filter now returns immediately, so protected controllers can
 never run after failed JWT verification.
 
+## Immediate account and role enforcement
+
+Gateway validation now resolves the current user record on every authenticated request instead of trusting role/active claims for the full two-day access-token lifetime. Disabling or locking an account takes effect immediately, and Manager promotions/removals use current database authorities without waiting for token expiry. Identity headers sent downstream are overwritten by the gateway, never appended to client-supplied values.
+
+Bearer tokens are sent to user-service validation only in the Authorization header; they no longer appear in validation query strings or access logs.
+
 ## Reset privacy
 
 Password reset now returns the same generic response whether or not an account

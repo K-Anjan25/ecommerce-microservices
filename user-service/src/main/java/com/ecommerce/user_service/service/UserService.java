@@ -14,6 +14,9 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.bouncycastle.openssl.PasswordException;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -98,32 +101,32 @@ public class UserService implements UserDetailsService {
     }
 
     public UserDto validateToken(String token) {
-        DecodedJWT decodedJWT =  jwtTokenProvider.decodeToken(token);
+        DecodedJWT decodedJWT = jwtTokenProvider.decodeToken(token);
         String userId = decodedJWT.getClaim("userId").asString();
-        String username = decodedJWT.getClaim("firstName").asString()
-                + " "
-                + decodedJWT.getClaim("lastName").asString();
-        List<GrantedAuthority> authorities = jwtTokenProvider.getAuthorities(decodedJWT);
-
-        return new UserDto(userId,authorities,username);
+        User user = userRepository.findById(UUID.fromString(userId))
+                .orElseThrow(() -> new UserNotFoundException(NO_USER_FOUND_BY_EMAIL + userId));
+        if (!user.isActive()) throw new DisabledException("Account is disabled");
+        if (!user.isNotLocked()) throw new LockedException("Account is locked");
+        List<GrantedAuthority> authorities = Arrays.stream(user.getAuthorities())
+                .map(SimpleGrantedAuthority::new)
+                .collect(java.util.stream.Collectors.toList());
+        return new UserDto(userId, authorities, user.getFirstName() + " " + user.getLastName());
     }
 
     public MeDto getMe(String token) {
-        DecodedJWT decodedJWT =  jwtTokenProvider.decodeToken(token);
-        List<String> roles = decodedJWT.getClaim(AUTHORITIES).asList(String.class);
+        DecodedJWT decodedJWT = jwtTokenProvider.decodeToken(token);
         String userId = decodedJWT.getClaim("userId").asString();
-        String firstName = decodedJWT.getClaim("firstName").asString();
-        String lastName = decodedJWT.getClaim("lastName").asString();
-        String email = decodedJWT.getClaim("email").asString();
-        String profileImageURL = decodedJWT.getClaim("profileImageURL").asString();
-
+        User user = userRepository.findById(UUID.fromString(userId))
+                .orElseThrow(() -> new UserNotFoundException(NO_USER_FOUND_BY_EMAIL + userId));
+        if (!user.isActive()) throw new DisabledException("Account is disabled");
+        if (!user.isNotLocked()) throw new LockedException("Account is locked");
         return MeDto.builder()
-                .firstName(firstName)
-                .lastName(lastName)
-                .email(email)
-                .userId(userId)
-                .profileImageURL(profileImageURL)
-                .roles(roles)
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .userId(user.getId().toString())
+                .profileImageURL(user.getProfileImageUrl())
+                .roles(Arrays.asList(user.getAuthorities()))
                 .build();
     }
 
