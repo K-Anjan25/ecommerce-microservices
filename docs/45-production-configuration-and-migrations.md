@@ -33,7 +33,7 @@ The script prints configuration names and validation failures only; it never pri
 
 ## Migration rollout still required
 
-This gate is intentionally a production safety switch, not a migration engine. Before setting `JPA_DDL_AUTO=validate`, create and test a versioned Flyway or Liquibase baseline for each database (`userdb`, `productdb`, and `commercedb`) from a production schema snapshot. The rollout should be:
+The repository now includes optional Flyway support and a hardening-delta migration for each bounded context. Flyway remains disabled by default because the current databases were historically created by Hibernate. Before setting `JPA_DDL_AUTO=validate`, create and test a versioned Flyway baseline for each database (`userdb`, `productdb`, and `commercedb`) from a production schema snapshot, then enable `FLYWAY_ENABLED=true` and apply the included delta migrations. The rollout should be:
 
 1. Back up the database and record the restore point.
 2. Apply migrations in an isolated/staging database.
@@ -42,4 +42,4 @@ This gate is intentionally a production safety switch, not a migration engine. B
 5. Roll out the remaining services.
 6. Keep the previous application version and tested rollback migration available.
 
-Do not enable `validate` against an un-migrated existing database, and do not run `update` against production as a substitute for reviewed migrations.
+The included `V1__*` scripts are a hardening delta, not a complete fresh-database schema. Do not enable `validate` against an un-migrated existing database or an empty database, and do not run `update` against production as a substitute for reviewed migrations.
