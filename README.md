@@ -163,5 +163,6 @@ Per-container caps (`docker-compose.yml`): postgres 384m, rabbitmq 128m, gateway
 - `docs/48-seo-crawler-policy.md` — crawler policy for public and private routes
 - `docs/49-late-provider-capture-safety.md` — late-capture refund and order-state policy
 - `docs/50-production-smoke-checks.md` — safe post-deployment read-only smoke checks
+- `docs/51-final-release-certification.md` — combined release gate and staging certification runbook
 - `design/README.md` — design tokens, wireframes and the Figma handoff
 - [`cartly-wp-theme`](https://github.com/K-Anjan25/cartly-wp-theme) — the design system as a WordPress/WooCommerce theme (separate repo)
