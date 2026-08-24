@@ -2,12 +2,15 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: product-service
   datasource:
     driver-class-name: org.postgresql.Driver
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/product}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
     password: ${SPRING_DATASOURCE_PASSWORD:root}
-
+  rabbitmq:
+    addresses: ${SPRING_RABBITMQ_ADDRESSES:localhost:5672}
   jpa:
     hibernate:
       ddl-auto: ${JPA_DDL_AUTO:update}
@@ -21,12 +24,6 @@ spring:
     baseline-on-migrate: ${FLYWAY_BASELINE_ON_MIGRATE:false}
     baseline-version: ${FLYWAY_BASELINE_VERSION:0}
     locations: classpath:db/migration
-
-rabbitmq:
-    addresses: ${SPRING_RABBITMQ_ADDRESSES:localhost:5672}
-
-  application:
-    name: product-service
 
 rabbitmq:
   exchanges:
