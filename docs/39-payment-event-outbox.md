@@ -23,6 +23,6 @@ A crash after RabbitMQ acceptance but before database deletion can deliver a dup
 
 Stale online payments are now surfaced separately through the durable reconciliation queue described in [40-payment-reconciliation-queue.md](40-payment-reconciliation-queue.md). The payment outbox remains responsible only for status-event delivery; it does not decide whether an unsettled provider operation should be released or refunded.
 
-## Remaining email boundary
+## Email delivery boundary
 
-Transactional emails and invoice attachments still use guarded post-commit publication. Their failure cannot roll back commerce state, but durable encrypted email outbox/retry remains future work because guest tracking capabilities and personal data must not be stored as plaintext outbox payloads.
+Commerce still uses guarded post-commit publication for transactional email requests, while user-service now encrypts and durably retries SMTP failures. See [41-email-retry-outbox.md](41-email-retry-outbox.md). Guest capabilities and personal data are never written as plaintext retry payloads.
