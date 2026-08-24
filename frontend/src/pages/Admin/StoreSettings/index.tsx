@@ -11,15 +11,24 @@ import { showError } from "../../../utils/showError";
 import { showSuccess } from "../../../utils/showSuccess";
 
 const fields: { key: keyof StoreSettings; label: string; helper?: string; multiline?: boolean }[] = [
-  { key: "announcementText", label: "Announcement", helper: "Keep this useful and under 160 characters." },
-  { key: "announcementLinkText", label: "Announcement link label" },
+  { key: "announcementText", label: "Announcement · English", helper: "Keep this useful and under 160 characters." },
+  { key: "announcementTextHi", label: "Announcement · Hindi", helper: "Optional Hindi fallback for the Hindi storefront." },
+  { key: "announcementLinkText", label: "Announcement link · English" },
+  { key: "announcementLinkTextHi", label: "Announcement link · Hindi" },
   { key: "announcementLinkUrl", label: "Announcement link URL", helper: "Use a local path such as /flash-sales or a full URL." },
-  { key: "heroEyebrow", label: "Hero eyebrow" },
-  { key: "heroTitle", label: "Hero title" },
-  { key: "heroEmphasis", label: "Hero emphasized line" },
-  { key: "heroDescription", label: "Hero description", multiline: true },
-  { key: "primaryCtaLabel", label: "Primary action label" },
-  { key: "secondaryCtaLabel", label: "Secondary action label" },
+  { key: "heroEyebrow", label: "Hero eyebrow · English" },
+  { key: "heroEyebrowHi", label: "Hero eyebrow · Hindi" },
+  { key: "heroTitle", label: "Hero title · English" },
+  { key: "heroTitleHi", label: "Hero title · Hindi" },
+  { key: "heroEmphasis", label: "Hero emphasized line · English" },
+  { key: "heroEmphasisHi", label: "Hero emphasized line · Hindi" },
+  { key: "heroDescription", label: "Hero description · English", multiline: true },
+  { key: "heroDescriptionHi", label: "Hero description · Hindi", multiline: true },
+  { key: "primaryCtaLabel", label: "Primary action · English" },
+  { key: "primaryCtaLabelHi", label: "Primary action · Hindi" },
+  { key: "secondaryCtaLabel", label: "Secondary action · English" },
+  { key: "secondaryCtaLabelHi", label: "Secondary action · Hindi" },
+
 ];
 
 export default function StoreSettingsPage() {

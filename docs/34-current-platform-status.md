@@ -56,7 +56,7 @@ These are not hidden TODOs; they are the remaining production boundaries:
 3. **Customer gift-card purchasing.** Payment-backed pending issuance, abandoned-intent cleanup, recipient delivery and unused-balance refund handling are implemented; cards activate only after verified capture. Live-provider certification and late-capture decisions remain.
 4. **Production database migrations.** A `JPA_DDL_AUTO=validate` production gate and configuration checker are now available; versioned Flyway/Liquibase migrations, rollout and rollback exercises still remain.
 5. **High-assurance SEO rendering.** Metadata exists, but the React SPA is not SSR/pre-rendered.
-6. **Localized merchant CMS content.** Core UI is en/hi; merchant-authored storefront fields remain single-language.
+6. **Localized merchant CMS content.** English/Hindi merchant fields and fallback selection are implemented; SSR/pre-rendered localized HTML remains separate work.
 7. **Scale and disaster testing.** The 2 GB topology is respected, but sustained load, chaos, restore-time and provider reconciliation drills require a deployment environment.
 8. **WooCommerce runtime certification.** The separate sellable theme must be tested in a real supported WordPress/WooCommerce matrix.
 9. **Real catalog photography/content.** Editorial images are branded placeholders; merchant inventory controls actual product-card/PDP media.

@@ -23,16 +23,26 @@ public class StoreSettings {
 
     private boolean announcementEnabled;
     private String announcementText;
+    private String announcementTextHi;
     private String announcementLinkText;
+    private String announcementLinkTextHi;
     private String announcementLinkUrl;
     private String heroEyebrow;
+    private String heroEyebrowHi;
     private String heroTitle;
+    private String heroTitleHi;
     private String heroEmphasis;
+    private String heroEmphasisHi;
 
     @javax.persistence.Column(columnDefinition = "TEXT")
     private String heroDescription;
 
+    @javax.persistence.Column(columnDefinition = "TEXT")
+    private String heroDescriptionHi;
+
     private String primaryCtaLabel;
+    private String primaryCtaLabelHi;
     private String secondaryCtaLabel;
+    private String secondaryCtaLabelHi;
     private BigDecimal freeShippingThreshold;
 }
