@@ -101,8 +101,9 @@ See `.env.example`. Never commit real `.env` values.
 
 React 18 + TypeScript, Redux, Material UI, Tailwind CSS — **Cartly editorial commerce system**.
 
-- **Proxy**: `/api` → `http://localhost:8889` (API Gateway)
+- **Proxy**: relative requests go through the API Gateway (`http://localhost:8889` in local development)
 - **Auth**: JWT with auto-refresh (Bearer prefix handled in the refresh interceptor)
+- **Provider checkout**: copy `frontend/.env.example` to `frontend/.env` and set the public `VITE_RAZORPAY_KEY_ID`; provider secrets stay server-side
 - **Admin**: `/admin/*` (requires `ROLE_ADMIN` / `ROLE_SUPER_ADMIN`)
 - **Design kit**: wireframes, tokens and the Figma handoff live in [`design/`](design/);
   the engineering record is [`docs/08-frontend-redesign.md`](docs/08-frontend-redesign.md).

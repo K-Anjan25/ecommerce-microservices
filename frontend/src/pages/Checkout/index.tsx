@@ -30,7 +30,7 @@ import createOrderForm from "../../forms/orderForm";
 import { AppState } from "../../store";
 import { clearAllItems } from "../../store/actions/cartAction";
 import { CreateOrderRequest, Order, ShippingMethod } from "../../types/order";
-import { PaymentRequest, PaymentProvider } from "../../types/payment";
+import { PaymentRequest, PaymentProvider, PaymentResponse } from "../../types/payment";
 import { SavedAddress } from "../../types/address";
 import {
   calculateCountOfCartItems,
@@ -43,6 +43,59 @@ import statesAndDistrict from "../../formdata.json";
 import { useI18n } from "../../features/i18n";
 
 const FORM_ID = "checkout-form";
+const RAZORPAY_SCRIPT_URL = "https://checkout.razorpay.com/v1/checkout.js";
+
+type RazorpayCheckout = {
+  open: () => void;
+  on: (event: string, handler: (...args: unknown[]) => void) => void;
+};
+
+type RazorpayOptions = {
+  key: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  order_id: string;
+  handler: (response: unknown) => void;
+  modal?: { ondismiss?: () => void };
+  theme?: { color: string };
+};
+
+declare global {
+  interface Window {
+    Razorpay?: new (options: RazorpayOptions) => RazorpayCheckout;
+  }
+}
+
+let razorpayScriptPromise: Promise<void> | null = null;
+
+const loadRazorpay = () => {
+  if (window.Razorpay) return Promise.resolve();
+  if (razorpayScriptPromise) return razorpayScriptPromise;
+
+  razorpayScriptPromise = new Promise<void>((resolve, reject) => {
+    const existing = document.getElementById("razorpay-checkout-script") as HTMLScriptElement | null;
+    if (existing) {
+      existing.addEventListener("load", () => resolve(), { once: true });
+      existing.addEventListener("error", () => reject(new Error("Razorpay could not be loaded")), { once: true });
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.id = "razorpay-checkout-script";
+    script.src = RAZORPAY_SCRIPT_URL;
+    script.async = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error("Razorpay could not be loaded"));
+    document.head.appendChild(script);
+  }).catch((error) => {
+    razorpayScriptPromise = null;
+    throw error;
+  });
+
+  return razorpayScriptPromise;
+};
 
 /** Section wrapper — numbered, so the single-scroll flow stays legible. */
 function Section({
@@ -259,6 +312,65 @@ function Checkout() {
     couponMutation.mutate();
   };
 
+  const goToConfirmation = (payment: PaymentResponse, order: Order | null) => {
+    dispatch(clearAllItems());
+    sessionStorage.removeItem("checkout_form");
+    navigate("/order-confirmation", {
+      replace: true,
+      state: {
+        orderId: order?.id ?? payment.orderId,
+        orderStatus: payment.status === "SUCCESS" ? "PAID" : order?.orderStatus ?? "PENDING",
+        paymentStatus: payment.status,
+        provider: payment.provider,
+        amount: Number(payment.amount),
+        transactionId: payment.transactionId,
+        signedIn: isLoggedIn,
+      },
+    });
+  };
+
+  const openRazorpayCheckout = async (payment: PaymentResponse, order: Order | null) => {
+    const keyId = (import.meta.env.VITE_RAZORPAY_KEY_ID as string | undefined)?.trim();
+    if (!keyId || !payment.transactionId) {
+      showError("Razorpay checkout is not configured; your order remains pending for provider review");
+      goToConfirmation(payment, order);
+      return;
+    }
+
+    try {
+      await loadRazorpay();
+      if (!window.Razorpay) throw new Error("Razorpay checkout is unavailable");
+      const checkout = new window.Razorpay({
+        key: keyId,
+        amount: Math.round(Number(payment.amount) * 100),
+        currency: payment.currency,
+        name: "Cartly",
+        description: `Order ${payment.orderId}`,
+        order_id: payment.transactionId,
+        // This browser callback is deliberately not treated as settlement.
+        // The signed provider webhook remains the source of truth.
+        handler: () => {
+          showSuccess("Payment submitted — waiting for signed provider confirmation");
+          goToConfirmation(payment, order);
+        },
+        modal: {
+          ondismiss: () => {
+            showError("Payment window closed; your order remains pending until provider confirmation");
+            goToConfirmation(payment, order);
+          },
+        },
+        theme: { color: "#A4472D" },
+      });
+      checkout.on("payment.failed", () => {
+        showError("Razorpay did not complete this payment; close the window to review the pending order");
+      });
+      checkout.open();
+    } catch {
+      showError("Razorpay checkout could not be opened; your order remains pending for provider review");
+      goToConfirmation(payment, order);
+    }
+  };
+
   const createOrderMutation = useMutation(OrderApi.createOrder, {
     onSuccess: (order) => {
       createdOrderRef.current = order;
@@ -301,28 +413,19 @@ function Checkout() {
 
       const isCod = payment.provider === "CASH";
       const awaitingProvider = payment.status === "PENDING" && !isCod;
+      const order = createdOrderRef.current;
+
+      if (payment.provider === "RAZORPAY" && awaitingProvider) {
+        void openRazorpayCheckout(payment, order);
+        return;
+      }
+
       showSuccess(
         isCod
           ? "Order placed successfully — pay on delivery"
-          : awaitingProvider
-          ? "Payment initiated — your order remains pending until the provider confirms settlement"
           : "Payment completed and order has been created successfully"
       );
-      const order = createdOrderRef.current;
-      dispatch(clearAllItems());
-      sessionStorage.removeItem("checkout_form");
-      navigate("/order-confirmation", {
-        replace: true,
-        state: {
-          orderId: order?.id ?? payment.orderId,
-          orderStatus: payment.status === "SUCCESS" ? "PAID" : order?.orderStatus ?? "PENDING",
-          paymentStatus: payment.status,
-          provider: payment.provider,
-          amount: Number(payment.amount),
-          transactionId: payment.transactionId,
-          signedIn: isLoggedIn,
-        },
-      });
+      goToConfirmation(payment, order);
     },
     onError: (e: any) => {
       showError(e.response?.data?.message ?? "Payment could not be completed");
