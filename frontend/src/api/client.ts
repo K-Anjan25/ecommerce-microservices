@@ -1,13 +1,14 @@
+import { setToken } from "../utils/token";
+
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || "";
 
-type Primitive = string | number | boolean | null | undefined;
 type RequestConfig = {
   params?: object;
   headers?: Record<string, string>;
   responseType?: "blob";
 };
 type ApiResponse<T> = { data: T; status: number; headers: Headers };
-type TokenPair = { accessToken: string; refreshToken: string };
+export type TokenPair = { accessToken: string; refreshToken: string };
 
 export class HttpError<T = any> extends Error {
   response?: { status: number; data: T; headers: Headers };
@@ -88,10 +89,17 @@ const rawRequest = async <T>(
   }
 };
 
+/**
+ * Refresh the access token once for the whole tab. Keeping this in the shared
+ * client is important: the app bootstrap and normal API calls must not race
+ * each other and invalidate/overwrite one another's session.
+ */
 const refreshTokens = () => {
   if (refreshRequest) return refreshRequest;
+
   const token = localStorage.getItem("refresh-token");
   if (!token) return Promise.reject(new HttpError("Refresh token is missing"));
+
   refreshRequest = rawRequest<TokenPair>(
     "GET",
     "/user/token/refresh",
@@ -99,10 +107,25 @@ const refreshTokens = () => {
     { headers: { "refresh-token": `Bearer ${token}` } },
     null
   )
-    .then((response) => response.data)
-    .finally(() => { refreshRequest = null; });
+    .then((response) => {
+      const tokens = response.data;
+      if (!tokens?.accessToken || !tokens?.refreshToken) {
+        throw new HttpError("The refresh response did not contain a token pair");
+      }
+      // Persist before resolving so every request started by the next render
+      // observes the new access token.
+      setToken(tokens);
+      return tokens;
+    })
+    .finally(() => {
+      refreshRequest = null;
+    });
+
   return refreshRequest;
 };
+
+/** Used by auth bootstrap when /user/me returns the user-service's 403. */
+export const refreshAuthTokens = () => refreshTokens();
 
 const request = async <T>(method: string, path: string, body?: unknown, config: RequestConfig = {}) => {
   const token = localStorage.getItem("access-token");
@@ -111,16 +134,19 @@ const request = async <T>(method: string, path: string, body?: unknown, config: 
   } catch (error) {
     const authEntry = path.includes("/user/login") || path.includes("/user/token/refresh");
     if (!(error instanceof HttpError) || error.response?.status !== 401 || authEntry) throw error;
+
+    // Only a failed refresh invalidates the local session. If the retry itself
+    // is rejected (for example because the user lacks a role), do not erase a
+    // valid refresh token and do not bounce the user to the login screen.
+    let tokens: TokenPair;
     try {
-      const tokens = await refreshTokens();
-      localStorage.setItem("access-token", tokens.accessToken);
-      localStorage.setItem("refresh-token", tokens.refreshToken);
-      return await rawRequest<T>(method, path, body, config, tokens.accessToken);
+      tokens = await refreshTokens();
     } catch (refreshError) {
       clearSession();
       if (window.location.pathname !== "/login") window.location.assign("/login");
       throw refreshError;
     }
+    return await rawRequest<T>(method, path, body, config, tokens.accessToken);
   }
 };
 
