@@ -32,11 +32,11 @@ class PaymentServiceTest {
         Order order = Order.builder().id(orderId).customerId(customerId).customerEmail("a@example.com")
                 .orderStatus(OrderStatus.PENDING).totalAmount(new BigDecimal("3499.50")).build();
         when(payments.findByOrderId(orderId)).thenReturn(Optional.empty());
-        when(orders.findById(orderId)).thenReturn(Optional.of(order));
+        when(orders.findLockedById(orderId)).thenReturn(order);
         when(cash.provider()).thenReturn(PaymentProvider.CASH);
         when(cash.charge(any())).thenReturn(ProviderPaymentResult.builder().success(true).transactionId("cash-1").build());
         when(payments.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
-        PaymentService service = new PaymentService(payments, orders, producer, List.of(cash), invoices, tokens, mock(LoyaltyPointService.class));
+        PaymentService service = new PaymentService(payments, orders, producer, List.of(cash), invoices, tokens, mock(LoyaltyPointService.class), mock(OrderService.class));
         PaymentRequest request = new PaymentRequest();
         request.setOrderId(orderId);
         request.setProvider(PaymentProvider.CASH);
@@ -45,6 +45,9 @@ class PaymentServiceTest {
 
         assertThat(response.getAmount()).isEqualByComparingTo("3499.50");
         assertThat(response.getCurrency()).isEqualTo("INR");
+        InOrder serialized = inOrder(orders, payments);
+        serialized.verify(orders).findLockedById(orderId);
+        serialized.verify(payments).findByOrderId(orderId);
     }
 
     @Test
@@ -55,9 +58,9 @@ class PaymentServiceTest {
         Order order = Order.builder().id(orderId).customerId(UUID.randomUUID())
                 .orderStatus(OrderStatus.PENDING).totalAmount(BigDecimal.TEN).build();
         when(payments.findByOrderId(orderId)).thenReturn(Optional.empty());
-        when(orders.findById(orderId)).thenReturn(Optional.of(order));
+        when(orders.findLockedById(orderId)).thenReturn(order);
         PaymentService service = new PaymentService(payments, orders, mock(RabbitMQMessageProducer.class),
-                List.of(), mock(InvoiceService.class), new CheckoutTokenService(), mock(LoyaltyPointService.class));
+                List.of(), mock(InvoiceService.class), new CheckoutTokenService(), mock(LoyaltyPointService.class), mock(OrderService.class));
         PaymentRequest request = new PaymentRequest();
         request.setOrderId(orderId);
         request.setProvider(PaymentProvider.CASH);
@@ -65,6 +68,33 @@ class PaymentServiceTest {
         assertThatThrownBy(() -> service.processPayment(request, UUID.randomUUID()))
                 .isInstanceOf(SecurityException.class);
     }
+    @Test
+    void brokerFailureCannotRollbackCompletedPaymentResponse() {
+        PaymentRepository payments = mock(PaymentRepository.class);
+        OrderRepository orders = mock(OrderRepository.class);
+        RabbitMQMessageProducer producer = mock(RabbitMQMessageProducer.class);
+        PaymentProviderClient cash = mock(PaymentProviderClient.class);
+        UUID orderId = UUID.randomUUID();
+        UUID customerId = UUID.randomUUID();
+        Order order = Order.builder().id(orderId).customerId(customerId)
+                .orderStatus(OrderStatus.PENDING).totalAmount(BigDecimal.TEN).build();
+        when(orders.findLockedById(orderId)).thenReturn(order);
+        when(payments.findByOrderId(orderId)).thenReturn(Optional.empty());
+        when(cash.provider()).thenReturn(PaymentProvider.CASH);
+        when(cash.charge(any())).thenReturn(ProviderPaymentResult.builder().success(true).build());
+        when(payments.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        doThrow(new RuntimeException("broker unavailable")).when(producer).publish(any(), anyString(), anyString());
+        PaymentService service = new PaymentService(payments, orders, producer, List.of(cash),
+                mock(InvoiceService.class), new CheckoutTokenService(), mock(LoyaltyPointService.class),
+                mock(OrderService.class));
+        PaymentRequest request = new PaymentRequest();
+        request.setOrderId(orderId);
+        request.setProvider(PaymentProvider.CASH);
+
+        assertThat(service.processPayment(request, customerId).getStatus()).isEqualTo(PaymentStatus.PENDING.name());
+        verify(payments).save(any());
+    }
+
     @Test
     void rejectsRefundBeyondCapturedProviderAmount() {
         PaymentRepository payments = mock(PaymentRepository.class);
@@ -75,7 +105,7 @@ class PaymentServiceTest {
         when(payments.findLockedByOrderId(orderId)).thenReturn(Optional.of(payment));
         PaymentService service = new PaymentService(payments, mock(OrderRepository.class),
                 mock(RabbitMQMessageProducer.class), List.of(), mock(InvoiceService.class),
-                new CheckoutTokenService(), mock(LoyaltyPointService.class));
+                new CheckoutTokenService(), mock(LoyaltyPointService.class), mock(OrderService.class));
 
         assertThatThrownBy(() -> service.refundOrderPayment(orderId, new BigDecimal("30.00")))
                 .isInstanceOf(IllegalArgumentException.class)

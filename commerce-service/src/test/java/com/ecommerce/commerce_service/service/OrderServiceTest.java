@@ -237,6 +237,21 @@ class OrderServiceTest {
     }
 
     @Test
+    void lateFailedEventCannotCancelPaidOrder() {
+        Order order = Order.builder().id(orderId).orderStatus(OrderStatus.PAID)
+                .items(List.of(OrderItem.builder().productId(productId).quantity(1).build()))
+                .build();
+        when(orderRepository.findLockedById(orderId)).thenReturn(order);
+
+        orderService.applyPaymentStatus(orderId, "FAILED");
+
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.PAID);
+        verify(commerceInventoryService, never()).restoreStock(anyString(), any());
+        verify(giftCardService, never()).restoreOrderCredit(any(), any());
+        verify(orderRepository, never()).save(order);
+    }
+
+    @Test
     void getAllOrders_shouldReturnPagination() {
         PageRequest pageable = PageRequest.of(0, 10);
         Page<Order> page = new PageImpl<>(List.of(testOrder));

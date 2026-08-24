@@ -285,19 +285,38 @@ public class OrderService {
         Order lockedOrder = orderRepository.findLockedById(orderId);
         java.util.Optional.ofNullable(lockedOrder).ifPresent(order -> {
             if ("SUCCESS".equalsIgnoreCase(paymentStatus)) {
+                if (order.getOrderStatus() == OrderStatus.PAID) return;
+                if (order.getOrderStatus() != OrderStatus.PENDING) {
+                    log.warn("Ignoring late SUCCESS for order {} in state {}", orderId, order.getOrderStatus());
+                    return;
+                }
                 order.setOrderStatus(OrderStatus.PAID);
-                recordStatus(orderId, OrderStatus.PAID, "Payment successful");
+                recordStatusOnce(orderId, OrderStatus.PAID, "Payment successful");
             } else if ("FAILED".equalsIgnoreCase(paymentStatus)) {
+                if (order.getOrderStatus() == OrderStatus.CANCELLED
+                        && Boolean.TRUE.equals(order.getCreditsRestored())
+                        && Boolean.TRUE.equals(order.getInventoryRestored())) return;
+                if (order.getOrderStatus() != OrderStatus.PENDING
+                        && order.getOrderStatus() != OrderStatus.CANCELLED) {
+                    log.warn("Ignoring late FAILED for order {} in state {}", orderId, order.getOrderStatus());
+                    return;
+                }
                 order.setOrderStatus(OrderStatus.CANCELLED);
                 restoreReservedCredits(order);
                 restoreOrderInventory(order);
-                recordStatus(orderId, OrderStatus.CANCELLED,
+                recordStatusOnce(orderId, OrderStatus.CANCELLED,
                         "Payment failed; reserved credits and inventory restored");
             } else if ("PENDING".equalsIgnoreCase(paymentStatus)) {
-                recordStatus(orderId, OrderStatus.PENDING, "Cash on delivery selected");
+                if (order.getOrderStatus() != OrderStatus.PENDING) return;
+                recordStatusOnce(orderId, OrderStatus.PENDING, "Cash on delivery selected");
             } else if ("REFUNDED".equalsIgnoreCase(paymentStatus)) {
+                if (order.getOrderStatus() == OrderStatus.REFUNDED) return;
+                if (order.getOrderStatus() != OrderStatus.PAID) {
+                    log.warn("Ignoring late REFUNDED for order {} in state {}", orderId, order.getOrderStatus());
+                    return;
+                }
                 order.setOrderStatus(OrderStatus.REFUNDED);
-                recordStatus(orderId, OrderStatus.REFUNDED, "Refund processed");
+                recordStatusOnce(orderId, OrderStatus.REFUNDED, "Refund processed");
             }
             orderRepository.save(order);
             log.info("Order {} updated to {} after payment status {}", orderId, order.getOrderStatus(), paymentStatus);
@@ -326,6 +345,12 @@ public class OrderService {
                 order.getLoyaltyPointsRedeemed() == null ? 0 : order.getLoyaltyPointsRedeemed(),
                 "Restored after failed order #" + order.getId());
         order.setCreditsRestored(true);
+    }
+
+    private void recordStatusOnce(UUID orderId, OrderStatus status, String note) {
+        if (!orderStatusHistoryRepository.existsByOrderIdAndStatusAndNote(orderId, status, note)) {
+            recordStatus(orderId, status, note);
+        }
     }
 
     private void recordStatus(UUID orderId, OrderStatus status, String note) {

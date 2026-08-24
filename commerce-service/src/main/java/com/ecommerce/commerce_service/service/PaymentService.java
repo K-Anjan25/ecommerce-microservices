@@ -20,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -47,6 +49,7 @@ public class PaymentService {
     private final InvoiceService invoiceService;
     private final CheckoutTokenService checkoutTokenService;
     private final LoyaltyPointService loyaltyPointService;
+    private final OrderService orderService;
 
     @Value("${rabbitmq.exchanges.internal}")
     private String exchange;
@@ -64,12 +67,16 @@ public class PaymentService {
     public PaymentResponse processPayment(PaymentRequest request, UUID userId) {
         log.info("Processing payment for order {} by user {}", request.getOrderId(), userId);
 
+        // Serialize payment initiation on the order before checking the unique
+        // payment row. Two concurrent requests can no longer both reach the
+        // provider while the payment table is still empty.
+        Order order = orderRepository.findLockedById(request.getOrderId());
+        if (order == null) {
+            throw new IllegalArgumentException("Order not found: " + request.getOrderId());
+        }
         paymentRepository.findByOrderId(request.getOrderId()).ifPresent(existing -> {
             throw new DuplicatePaymentException("Payment already processed for order " + request.getOrderId());
         });
-
-        Order order = orderRepository.findById(request.getOrderId())
-                .orElseThrow(() -> new IllegalArgumentException("Order not found: " + request.getOrderId()));
         if (order.getOrderStatus() != OrderStatus.PENDING) {
             throw new IllegalArgumentException("Order is not awaiting payment");
         }
@@ -131,28 +138,30 @@ public class PaymentService {
             }
         }
 
-        rabbitMQMessageProducer.publish(
-                PaymentStatusEvent.builder()
-                        .orderId(savedPayment.getOrderId())
-                        .status(savedPayment.getStatus())
-                        .provider(savedPayment.getProvider().name())
-                        .transactionId(savedPayment.getTransactionId())
-                        .amount(savedPayment.getAmount())
-                        .currency(savedPayment.getCurrency())
-                        .build(),
-                exchange,
-                paymentStatusRoutingKey
-        );
+        // The order and its compensation state are committed in the same local
+        // transaction as the payment. RabbitMQ is notification/event transport,
+        // not the source of truth for this in-process commerce boundary.
+        orderService.applyPaymentStatus(savedPayment.getOrderId(), savedPayment.getStatus());
 
-        sendPaymentEmail(savedPayment);
-
-        // PDF invoice: emailed on successful (non-COD) payment; failures are
-        // logged inside and never roll back the payment.
-        if (PaymentStatus.SUCCESS.name().equals(savedPayment.getStatus())) {
-            orderRepository.findById(savedPayment.getOrderId()).ifPresent(invoiceService::emailInvoice);
-        }
-
-        log.info("Payment status event published for order {}", savedPayment.getOrderId());
+        PaymentStatusEvent statusEvent = PaymentStatusEvent.builder()
+                .orderId(savedPayment.getOrderId())
+                .status(savedPayment.getStatus())
+                .provider(savedPayment.getProvider().name())
+                .transactionId(savedPayment.getTransactionId())
+                .amount(savedPayment.getAmount())
+                .currency(savedPayment.getCurrency())
+                .build();
+        scheduleAfterCommit(() -> {
+            safePublishStatus(statusEvent);
+            try {
+                sendPaymentEmail(savedPayment);
+            } catch (RuntimeException notificationFailure) {
+                log.error("Payment {} committed but email could not be queued", savedPayment.getId(), notificationFailure);
+            }
+            if (PaymentStatus.SUCCESS.name().equals(savedPayment.getStatus())) {
+                invoiceService.emailInvoice(order);
+            }
+        });
 
         return PaymentResponse.builder()
                 .orderId(savedPayment.getOrderId())
@@ -204,22 +213,49 @@ public class PaymentService {
             boolean fullyRefunded = cumulativeRefund.compareTo(payment.getAmount()) == 0;
             if (fullyRefunded) {
                 payment.setStatus(PaymentStatus.REFUNDED.name());
-                rabbitMQMessageProducer.publish(
-                        PaymentStatusEvent.builder()
-                                .orderId(orderId)
-                                .status(PaymentStatus.REFUNDED.name())
-                                .provider(payment.getProvider().name())
-                                .transactionId(result.getTransactionId())
-                                .amount(cumulativeRefund)
-                                .currency(payment.getCurrency())
-                                .build(),
-                        exchange,
-                        paymentStatusRoutingKey);
+                PaymentStatusEvent refundEvent = PaymentStatusEvent.builder()
+                        .orderId(orderId)
+                        .status(PaymentStatus.REFUNDED.name())
+                        .provider(payment.getProvider().name())
+                        .transactionId(result.getTransactionId())
+                        .amount(cumulativeRefund)
+                        .currency(payment.getCurrency())
+                        .build();
+                scheduleAfterCommit(() -> safePublishStatus(refundEvent));
             }
             paymentRepository.save(payment);
-            sendRefundEmail(payment, amount, result);
+            scheduleAfterCommit(() -> {
+                try {
+                    sendRefundEmail(payment, amount, result);
+                } catch (RuntimeException notificationFailure) {
+                    log.error("Refund for order {} committed but email could not be queued", orderId, notificationFailure);
+                }
+            });
         }
         return result;
+    }
+
+    private void safePublishStatus(PaymentStatusEvent event) {
+        try {
+            rabbitMQMessageProducer.publish(event, exchange, paymentStatusRoutingKey);
+            log.info("Payment status event published for order {}", event.getOrderId());
+        } catch (RuntimeException brokerFailure) {
+            log.error("Payment for order {} committed but status event could not be published",
+                    event.getOrderId(), brokerFailure);
+        }
+    }
+
+    private void scheduleAfterCommit(Runnable action) {
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            action.run();
+            return;
+        }
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                action.run();
+            }
+        });
     }
 
     private void sendRefundEmail(Payment payment, BigDecimal amount, ProviderPaymentResult result) {

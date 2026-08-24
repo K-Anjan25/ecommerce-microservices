@@ -46,6 +46,7 @@ public class StripePaymentClient implements PaymentProviderClient {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             headers.set(HttpHeaders.AUTHORIZATION, basicAuth(secretKey));
+            headers.set("Idempotency-Key", "cartly-order-" + payment.getOrderId());
 
             MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
             body.add("amount", payment.getAmount().movePointRight(2).toPlainString());

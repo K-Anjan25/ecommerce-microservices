@@ -46,6 +46,7 @@ public class RazorpayPaymentClient implements PaymentProviderClient {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set(HttpHeaders.AUTHORIZATION, basicAuth(keyId, keySecret));
+            headers.set("X-Razorpay-Idempotency-Key", "cartly-order-" + payment.getOrderId());
 
             Map<String, Object> body = new HashMap<>();
             body.put("amount", payment.getAmount().movePointRight(2).intValue());
