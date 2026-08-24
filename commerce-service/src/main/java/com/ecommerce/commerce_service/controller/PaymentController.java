@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -32,6 +35,18 @@ public class PaymentController {
         return new ResponseEntity<>(paymentService.processPayment(request, customerUuid), HttpStatus.CREATED);
     }
 
+
+    /** Customer-scoped status polling for a pending browser payment. */
+    @GetMapping("/order/{orderId}")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN')")
+    public ResponseEntity<PaymentResponse> getPaymentForOrder(@PathVariable UUID orderId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UUID customerId = UUID.fromString(String.valueOf(authentication.getPrincipal()));
+        boolean staff = authentication.getAuthorities().stream()
+                .map(authority -> authority.getAuthority())
+                .anyMatch(role -> role.equals("ROLE_ADMIN") || role.equals("ROLE_SUPER_ADMIN"));
+        return ResponseEntity.ok(paymentService.getPaymentForOrder(orderId, customerId, staff));
+    }
 
     @PostMapping("/webhooks/stripe")
     public ResponseEntity<Void> stripeWebhook(@RequestBody String payload,

@@ -10,6 +10,7 @@ Successful checkout no longer drops customers back on the storefront without an 
 - Initiated but unsettled online payments show a pending state and explicitly state that Cartly is waiting for a signed provider callback.
 - Signed-in customers can open the persisted order detail.
 - Guests receive a copyable order reference and a reminder to retain it.
+- Signed-in pending online payments poll the customer-scoped payment status endpoint and update when a verified provider webhook has settled or failed the payment. The browser never promotes its own provider callback to a paid state.
 
 ## Capability handling
 

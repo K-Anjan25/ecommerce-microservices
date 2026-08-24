@@ -181,6 +181,28 @@ public class PaymentService {
                 .build();
     }
 
+    /** Returns a customer/staff-scoped payment snapshot without provider secrets. */
+    @Transactional(readOnly = true)
+    public PaymentResponse getPaymentForOrder(UUID orderId, UUID customerId, boolean staff) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found: " + orderId));
+        if (!staff && (customerId == null || order.getCustomerId() == null
+                || !order.getCustomerId().equals(customerId))) {
+            throw new SecurityException("Payment does not belong to this customer");
+        }
+        Payment payment = paymentRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("No payment found for order " + orderId));
+        return PaymentResponse.builder()
+                .orderId(payment.getOrderId())
+                .amount(payment.getAmount())
+                .currency(payment.getCurrency())
+                .provider(payment.getProvider() == null ? null : payment.getProvider().name())
+                .status(payment.getStatus())
+                .transactionId(payment.getTransactionId())
+                .message(payment.getFailureReason())
+                .build();
+    }
+
     /** Applies a signature-verified asynchronous provider result exactly once. */
     @Transactional
     public void reconcileProviderPayment(PaymentProvider provider, String transactionId,

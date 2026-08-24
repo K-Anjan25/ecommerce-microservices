@@ -3,7 +3,9 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import HourglassTopOutlinedIcon from "@mui/icons-material/HourglassTopOutlined";
 import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useQuery } from "react-query";
 
+import { PaymentApi } from "../../api/paymentApi";
 import CheckoutSteps from "../../components/CheckoutSteps";
 import EmptyState from "../../components/EmptyState";
 import { formatPrice } from "../../utils/cart";
@@ -23,6 +25,15 @@ function OrderConfirmation() {
   const navigate = useNavigate();
   const location = useLocation();
   const confirmation = location.state as ConfirmationState | null;
+  const canPollPayment = Boolean(confirmation?.signedIn
+    && confirmation.paymentStatus === "PENDING"
+    && confirmation.provider !== "CASH"
+    && confirmation.orderId);
+  const { data: observedPayment, isFetching: checkingPayment } = useQuery(
+    ["order-confirmation-payment", confirmation?.orderId],
+    () => PaymentApi.getPaymentForOrder(confirmation?.orderId ?? ""),
+    { enabled: canPollPayment, refetchInterval: 5000, retry: false }
+  );
 
   if (!confirmation?.orderId) {
     return (
@@ -38,18 +49,25 @@ function OrderConfirmation() {
   }
 
   const isCod = confirmation.provider === "CASH";
-  const isPendingProvider = confirmation.paymentStatus === "PENDING" && !isCod;
-  const paid = confirmation.orderStatus === "PAID" || confirmation.paymentStatus === "SUCCESS";
+  const effectivePaymentStatus = observedPayment?.status ?? confirmation.paymentStatus;
+  const effectiveOrderStatus = observedPayment?.status === "SUCCESS" ? "PAID" : confirmation.orderStatus;
+  const isPendingProvider = effectivePaymentStatus === "PENDING" && !isCod;
+  const providerFailed = effectivePaymentStatus === "FAILED" && !isCod;
+  const paid = effectiveOrderStatus === "PAID" || effectivePaymentStatus === "SUCCESS";
   const Icon = paid ? CheckCircleOutlineIcon : isPendingProvider ? HourglassTopOutlinedIcon : PaymentsOutlinedIcon;
   const title = paid
     ? "Your order is confirmed."
     : isPendingProvider
     ? "Payment confirmation is pending."
+    : providerFailed
+    ? "Payment was not confirmed."
     : "Your order has been placed.";
   const copy = paid
     ? "Payment has been confirmed and your order is ready for fulfilment."
     : isPendingProvider
     ? "The provider accepted the payment initiation, but Cartly will not mark this order paid until a signed settlement confirmation arrives."
+    : providerFailed
+    ? "The provider reported a failed payment. Cartly will close the pending order and release its reservations after the verified failure transition."
     : "Cash is due when your delivery arrives. We have reserved your items and recorded the order.";
 
   return (
@@ -93,7 +111,14 @@ function OrderConfirmation() {
               {formatPrice(confirmation.amount)}
             </dd>
             <p className="mt-1 text-xs text-ink-muted">
-              {paid ? "Confirmed" : isCod ? "Due on delivery" : "Awaiting signed provider settlement"}
+              {paid
+                ? "Confirmed"
+                : isCod
+                ? "Due on delivery"
+                : providerFailed
+                ? "Provider reported failure"
+                : "Awaiting signed provider settlement"}
+              {checkingPayment && isPendingProvider ? " · checking status" : ""}
             </p>
           </div>
         </dl>

@@ -8,6 +8,12 @@ const initiatePayment = async (
   return data;
 };
 
+const getPaymentForOrder = async (orderId: string) => {
+  const { data } = await api.get<PaymentResponse>(`/v1/payments/order/${orderId}`);
+  return data;
+};
+
 export const PaymentApi = {
   initiatePayment,
+  getPaymentForOrder,
 };
