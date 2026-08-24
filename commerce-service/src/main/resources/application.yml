@@ -13,7 +13,7 @@ spring:
     port: ${SPRING_RABBITMQ_PORT:5672}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${JPA_DDL_AUTO:update}
     show-sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect

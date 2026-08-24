@@ -156,5 +156,7 @@ Per-container caps (`docker-compose.yml`): postgres 384m, rabbitmq 128m, gateway
 - `docs/41-email-retry-outbox.md` — encrypted transactional email retry boundary
 - `docs/42-razorpay-browser-handoff.md` — Razorpay browser checkout handoff
 - `docs/43-stripe-payment-element.md` — Stripe Payment Element handoff
+- `docs/44-gift-card-purchase-refunds.md` — unused-value refund policy and operations
+- `docs/45-production-configuration-and-migrations.md` — production configuration gate and migration rollout
 - `design/README.md` — design tokens, wireframes and the Figma handoff
 - [`cartly-wp-theme`](https://github.com/K-Anjan25/cartly-wp-theme) — the design system as a WordPress/WooCommerce theme (separate repo)
