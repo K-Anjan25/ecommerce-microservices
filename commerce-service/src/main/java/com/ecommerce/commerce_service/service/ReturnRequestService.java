@@ -14,9 +14,11 @@ import com.ecommerce.commerce_service.service.provider.ProviderPaymentResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -30,8 +32,34 @@ public class ReturnRequestService {
     private final CommerceInventoryService commerceInventoryService;
     private final PaymentService paymentService;
 
-    public ReturnRequestDto createReturnRequest(CreateReturnRequest createReturnRequest) {
-        ReturnRequest returnRequest = returnRequestMapper.returnRequestDtoToReturnRequest(createReturnRequest);
+    @Transactional
+    public ReturnRequestDto createReturnRequest(CreateReturnRequest request, UUID authenticatedCustomerId) {
+        Order order = orderRepository.findLockedById(request.getOrderId());
+        if (order == null) throw new IllegalArgumentException("Order not found");
+        if (order.getCustomerId() == null || !order.getCustomerId().equals(authenticatedCustomerId)) {
+            throw new SecurityException("Return does not belong to this customer");
+        }
+
+        String requestedVariant = request.getVariantId();
+        var orderedItem = order.getItems().stream()
+                .filter(item -> item.getProductId().equals(request.getProductId()))
+                .filter(item -> Objects.equals(
+                        item.getVariantId() == null ? null : item.getVariantId().toString(), requestedVariant))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Product or variant is not part of this order"));
+
+        int alreadyRequested = returnRequestRepository.findByOrderId(order.getId()).stream()
+                .filter(existing -> existing.getStatus() != ReturnStatus.REJECTED)
+                .filter(existing -> existing.getProductId().equals(request.getProductId()))
+                .filter(existing -> Objects.equals(existing.getVariantId(), requestedVariant))
+                .mapToInt(ReturnRequest::getQuantity)
+                .sum();
+        if (request.getQuantity() > orderedItem.getQuantity() - alreadyRequested) {
+            throw new IllegalArgumentException("Return quantity exceeds the remaining eligible quantity");
+        }
+
+        ReturnRequest returnRequest = returnRequestMapper.returnRequestDtoToReturnRequest(request);
+        returnRequest.setCustomerId(authenticatedCustomerId);
         ReturnRequest saved = returnRequestRepository.save(returnRequest);
         return returnRequestMapper.returnRequestToReturnRequestDto(saved);
     }
@@ -68,36 +96,36 @@ public class ReturnRequestService {
         return 2;
     }
 
+    @Transactional
     public ReturnRequestDto approveReturnRequest(UUID returnRequestId) {
-        ReturnRequest returnRequest = returnRequestRepository.findById(returnRequestId)
-                .orElseThrow(() -> new RuntimeException("Return request not found"));
+        ReturnRequest returnRequest = lockedReturn(returnRequestId);
+        if (returnRequest.getStatus() != ReturnStatus.REQUESTED) {
+            throw new IllegalArgumentException("Only requested returns can be approved");
+        }
+        UUID variantUuid = returnRequest.getVariantId() != null ? UUID.fromString(returnRequest.getVariantId()) : null;
+        commerceInventoryService.restoreStock(List.of(
+                new DeductStockRequest(returnRequest.getProductId(), returnRequest.getQuantity(), variantUuid)
+        ));
         returnRequest.setStatus(ReturnStatus.APPROVED);
         ReturnRequest saved = returnRequestRepository.save(returnRequest);
-
-        try {
-            UUID variantUuid = returnRequest.getVariantId() != null ? UUID.fromString(returnRequest.getVariantId()) : null;
-            commerceInventoryService.restoreStock(List.of(
-                    new DeductStockRequest(returnRequest.getProductId(), returnRequest.getQuantity(), variantUuid)
-            ));
-        } catch (Exception e) {
-            log.error("Failed to restore stock for return request {}", returnRequestId, e);
-        }
-
         return returnRequestMapper.returnRequestToReturnRequestDto(saved);
     }
 
+    @Transactional
     public ReturnRequestDto rejectReturnRequest(UUID returnRequestId, String reason) {
-        ReturnRequest returnRequest = returnRequestRepository.findById(returnRequestId)
-                .orElseThrow(() -> new RuntimeException("Return request not found"));
+        ReturnRequest returnRequest = lockedReturn(returnRequestId);
+        if (returnRequest.getStatus() != ReturnStatus.REQUESTED) {
+            throw new IllegalArgumentException("Only requested returns can be rejected");
+        }
         returnRequest.setStatus(ReturnStatus.REJECTED);
         returnRequest.setRejectionReason(reason);
         ReturnRequest saved = returnRequestRepository.save(returnRequest);
         return returnRequestMapper.returnRequestToReturnRequestDto(saved);
     }
 
+    @Transactional
     public ReturnRequestDto refundReturnRequest(UUID returnRequestId) {
-        ReturnRequest returnRequest = returnRequestRepository.findById(returnRequestId)
-                .orElseThrow(() -> new RuntimeException("Return request not found"));
+        ReturnRequest returnRequest = lockedReturn(returnRequestId);
 
         if (returnRequest.getStatus() != ReturnStatus.APPROVED) {
             throw new RuntimeException("Return request must be APPROVED before refunding (current: "
@@ -109,6 +137,9 @@ public class ReturnRequestService {
 
         BigDecimal unitPrice = order.getItems().stream()
                 .filter(item -> item.getProductId().equals(returnRequest.getProductId()))
+                .filter(item -> Objects.equals(
+                        item.getVariantId() == null ? null : item.getVariantId().toString(),
+                        returnRequest.getVariantId()))
                 .findFirst()
                 .map(item -> item.getPrice() == null ? BigDecimal.ZERO : item.getPrice())
                 .orElse(BigDecimal.ZERO);
@@ -127,5 +158,11 @@ public class ReturnRequestService {
         returnRequest.setRefundTransactionId(result.getTransactionId());
         ReturnRequest saved = returnRequestRepository.save(returnRequest);
         return returnRequestMapper.returnRequestToReturnRequestDto(saved);
+    }
+
+    private ReturnRequest lockedReturn(UUID id) {
+        ReturnRequest request = returnRequestRepository.findLockedById(id);
+        if (request == null) throw new IllegalArgumentException("Return request not found");
+        return request;
     }
 }

@@ -28,7 +28,8 @@ public class ReturnRequestController {
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<ReturnRequestDto> createReturnRequest(@Valid @RequestBody CreateReturnRequest createReturnRequest){
-        return new ResponseEntity<>(returnRequestService.createReturnRequest(createReturnRequest), HttpStatus.CREATED);
+        UUID customerId = UUID.fromString(currentPrincipal());
+        return new ResponseEntity<>(returnRequestService.createReturnRequest(createReturnRequest, customerId), HttpStatus.CREATED);
     }
 
     @GetMapping("/order/{orderId}")

@@ -22,7 +22,6 @@ export interface ReturnRequest {
 
 export interface CreateReturnRequest {
   orderId: string;
-  customerId: string;
   productId: string;
   variantId?: string;
   quantity: number;

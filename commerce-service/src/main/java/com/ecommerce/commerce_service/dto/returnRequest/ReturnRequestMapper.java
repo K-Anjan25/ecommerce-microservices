@@ -30,7 +30,6 @@ public class ReturnRequestMapper {
     public ReturnRequest returnRequestDtoToReturnRequest(CreateReturnRequest createReturnRequest) {
         return ReturnRequest.builder()
                 .orderId(createReturnRequest.getOrderId())
-                .customerId(createReturnRequest.getCustomerId())
                 .productId(createReturnRequest.getProductId())
                 .variantId(createReturnRequest.getVariantId())
                 .quantity(createReturnRequest.getQuantity())

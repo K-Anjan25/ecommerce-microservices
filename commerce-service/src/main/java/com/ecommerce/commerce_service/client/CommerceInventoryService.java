@@ -44,5 +44,6 @@ public class CommerceInventoryService {
 
     private void restoreStockFallback(List<DeductStockRequest> restoreStockRequests, Throwable throwable) {
         log.error("Stock restoration failed: {}", throwable.getMessage());
+        throw new IllegalStateException("Inventory restoration is unavailable", throwable);
     }
 }

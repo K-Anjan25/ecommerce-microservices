@@ -103,7 +103,6 @@ function UserOrderDetail() {
     }
     createMutation.mutate({
       orderId: order!.id,
-      customerId: order!.customerId,
       productId: form.productId,
       quantity: form.quantity,
       reason: form.reason || undefined,
