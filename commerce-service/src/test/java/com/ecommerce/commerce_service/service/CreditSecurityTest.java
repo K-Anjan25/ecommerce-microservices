@@ -4,11 +4,18 @@ import com.ecommerce.commerce_service.dto.giftCard.GiftCardMapper;
 import com.ecommerce.commerce_service.dto.loyaltyPoint.LoyaltyPointMapper;
 import com.ecommerce.commerce_service.repository.GiftCardRepository;
 import com.ecommerce.commerce_service.repository.LoyaltyPointRepository;
+import com.ecommerce.commerce_service.model.GiftCard;
+import com.ecommerce.commerce_service.model.GiftCardStatus;
+import com.ecommerce.commerce_service.model.LoyaltyPoint;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
@@ -31,6 +38,38 @@ class CreditSecurityTest {
         assertThatThrownBy(() -> service.redeemPoints(UUID.randomUUID(), -100, "invalid"))
                 .isInstanceOf(IllegalArgumentException.class);
         verifyNoInteractions(repository);
+    }
+
+    @Test
+    void giftCardApplicationIsPartialAndPreservesRemainder() {
+        GiftCardRepository repository = mock(GiftCardRepository.class);
+        GiftCard card = GiftCard.builder()
+                .id(UUID.randomUUID()).code("GC-ABCD")
+                .balance(new BigDecimal("100.00")).initialBalance(new BigDecimal("100.00"))
+                .expiryDate(LocalDate.now().plusDays(1)).status(GiftCardStatus.ACTIVE).build();
+        when(repository.findLockedByCode("GC-ABCD")).thenReturn(Optional.of(card));
+        GiftCardService service = new GiftCardService(repository, mock(GiftCardMapper.class));
+
+        GiftCardService.GiftCardApplication applied = service.applyToOrder("GC-ABCD", new BigDecimal("35.50"));
+
+        assertThat(applied.getAmount()).isEqualByComparingTo("35.50");
+        assertThat(card.getBalance()).isEqualByComparingTo("64.50");
+        verify(repository).save(card);
+    }
+
+    @Test
+    void loyaltyChecksFreshAggregateAfterTakingCustomerLock() {
+        LoyaltyPointRepository repository = mock(LoyaltyPointRepository.class);
+        when(repository.findLockedByCustomerId(any())).thenReturn(List.of(LoyaltyPoint.builder().points(60).build()));
+        when(repository.sumPointsByCustomerId(any())).thenReturn(40);
+        LoyaltyPointService service = new LoyaltyPointService(repository, mock(LoyaltyPointMapper.class));
+
+        assertThatThrownBy(() -> service.redeemPoints(UUID.randomUUID(), 50, "order"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Insufficient");
+        verify(repository).findLockedByCustomerId(any());
+        verify(repository).sumPointsByCustomerId(any());
+        verify(repository, never()).save(any());
     }
 
 }
