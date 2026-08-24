@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const origin = (process.env.VITE_PUBLIC_STOREFRONT_URL || "http://localhost:3000")
@@ -63,7 +63,18 @@ const outputDir = resolve("dist");
 await mkdir(outputDir, { recursive: true });
 await writeFile(resolve(outputDir, "sitemap.xml"), sitemap, "utf8");
 await writeFile(resolve(outputDir, "robots.txt"), robots, "utf8");
-console.log(`Generated sitemap for ${urls.length} public route(s) at ${origin}`);
+
+// Static hosts can serve these public route entry points without an SPA
+// fallback. The React client replaces the content after it boots; crawlers
+// still receive the safe public storefront shell immediately.
+const indexHtml = await readFile(resolve(outputDir, "index.html"), "utf8");
+for (const route of ["products", "flash-sales"]) {
+  const routeDir = resolve(outputDir, route);
+  await mkdir(routeDir, { recursive: true });
+  await writeFile(resolve(routeDir, "index.html"), indexHtml, "utf8");
+}
+
+console.log(`Generated sitemap for ${urls.length} public route(s) and static public entry points at ${origin}`);
 
 function escapeXml(value) {
   return value.replace(/[<>&'\"]/g, (character) => ({
