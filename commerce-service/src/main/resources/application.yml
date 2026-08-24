@@ -40,6 +40,9 @@ payment:
       key-secret: ${RAZORPAY_KEY_SECRET:}
       webhook-secret: ${RAZORPAY_WEBHOOK_SECRET:}
 
+storefront:
+  public-url: ${STOREFRONT_PUBLIC_URL:http://localhost:3000}
+
 product-service:
   url: ${PRODUCT_SERVICE_URL:http://localhost:8080}
 

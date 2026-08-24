@@ -32,6 +32,7 @@ import org.springframework.data.domain.PageRequest;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -249,6 +250,31 @@ class OrderServiceTest {
         verify(commerceInventoryService, never()).restoreStock(anyString(), any());
         verify(giftCardService, never()).restoreOrderCredit(any(), any());
         verify(orderRepository, never()).save(order);
+    }
+
+    @Test
+    void guestOrderRequiresMatchingCapability() {
+        String capability = "private-checkout-capability";
+        testOrder.setCustomerId(null);
+        testOrder.setCheckoutTokenHash("stored-hash");
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(testOrder));
+        when(checkoutTokenService.matches(capability, "stored-hash")).thenReturn(true);
+        when(orderMapper.orderToOrderDto(testOrder)).thenReturn(testOrderDto);
+
+        assertThat(orderService.getGuestOrder(orderId, capability)).isSameAs(testOrderDto);
+        verify(checkoutTokenService).matches(capability, "stored-hash");
+    }
+
+    @Test
+    void guestOrderRejectsInvalidCapability() {
+        testOrder.setCustomerId(null);
+        testOrder.setCheckoutTokenHash("stored-hash");
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(testOrder));
+        when(checkoutTokenService.matches("wrong", "stored-hash")).thenReturn(false);
+
+        assertThatThrownBy(() -> orderService.getGuestOrder(orderId, "wrong"))
+                .isInstanceOf(SecurityException.class);
+        verify(orderMapper, never()).orderToOrderDto(testOrder);
     }
 
     @Test

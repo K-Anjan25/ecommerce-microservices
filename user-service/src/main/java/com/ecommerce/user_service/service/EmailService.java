@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.Properties;
 
 import static com.ecommerce.user_service.constant.EmailConstant.*;
-import static javax.mail.Message.RecipientType.CC;
 import static javax.mail.Message.RecipientType.TO;
 
 @Service
@@ -47,7 +46,6 @@ public class EmailService {
         Message message = new MimeMessage(getEmailSession());
         message.setFrom(new InternetAddress(emailConfig.getFromEmail()));
         message.setRecipients(TO, InternetAddress.parse(emailRequest.getEmail(), false));
-        message.setRecipients(CC, InternetAddress.parse(CC_EMAIL, false));
         message.setSubject(emailRequest.getSubject());
         message.setSentDate(new Date());
         if (emailRequest.hasAttachment()) {

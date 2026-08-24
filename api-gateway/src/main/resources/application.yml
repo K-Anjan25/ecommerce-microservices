@@ -34,6 +34,13 @@ spring:
               - DELETE
               - OPTIONS
       routes:
+        # Guest tracking capability is supplied in X-Checkout-Token.
+        - id: guest-order-tracking
+          uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
+          predicates:
+            - Path=/v1/orders/*/guest
+            - Method=GET
+
         - id: order-service
           uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
           predicates:

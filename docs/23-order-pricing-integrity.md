@@ -17,3 +17,7 @@ payment totals, browser manipulation cannot lower a line, subtotal, tax, or
 captured amount.
 
 Historical orders retain their price snapshots when catalog prices later change.
+
+## Guest tracking
+
+Post-checkout guest access uses a fragment-delivered, header-presented capability as documented in [36-guest-order-tracking.md](36-guest-order-tracking.md).

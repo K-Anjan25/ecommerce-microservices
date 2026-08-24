@@ -116,7 +116,7 @@ function OrderConfirmation() {
         </div>
         {!confirmation.signedIn && (
           <p className="mt-5 border-l-2 border-accent pl-4 text-xs leading-relaxed text-ink-muted">
-            Save the order reference above. Guest confirmation details are not written to the URL or browser storage.
+            Save the order reference above. A private tracking link has been sent to the checkout email; its capability is never placed in a query string or browser storage.
           </p>
         )}
       </section>

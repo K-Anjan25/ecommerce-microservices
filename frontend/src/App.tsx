@@ -37,6 +37,7 @@ function App() {
   const Cart = React.lazy(() => import("./pages/Cart"));
   const Checkout = React.lazy(() => import("./pages/Checkout"));
   const OrderConfirmation = React.lazy(() => import("./pages/OrderConfirmation"));
+  const GuestOrder = React.lazy(() => import("./pages/GuestOrder"));
   const AdminProducts = React.lazy(() => import("./pages/Admin/Products"));
   const AdminOrders = React.lazy(() => import("./pages/Admin/Orders"));
   const AdminCategories = React.lazy(() => import("./pages/Admin/Categories"));
@@ -93,6 +94,7 @@ function App() {
             <Route path="cart" element={<Cart />} />
             <Route path="checkout" element={<Checkout />} />
             <Route path="order-confirmation" element={<OrderConfirmation />} />
+            <Route path="guest-order/:orderId" element={<GuestOrder />} />
           </Route>
             <Route
               element={

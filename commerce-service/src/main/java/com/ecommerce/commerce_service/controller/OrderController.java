@@ -57,6 +57,14 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrdersByCustomer(UUID.fromString(userId)));
     }
 
+
+    /** Guest tracking uses a high-entropy capability in a header, never a query string. */
+    @GetMapping("/{orderId}/guest")
+    public ResponseEntity<OrderDto> getGuestOrder(@PathVariable UUID orderId,
+            @RequestHeader(value = "X-Checkout-Token", required = false) String checkoutToken) {
+        return ResponseEntity.ok(orderService.getGuestOrder(orderId, checkoutToken));
+    }
+
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderDto> getById(@PathVariable UUID orderId){
         OrderDto order = orderService.getOrderById(orderId);

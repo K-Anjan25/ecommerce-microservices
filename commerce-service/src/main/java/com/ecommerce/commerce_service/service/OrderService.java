@@ -73,6 +73,9 @@ public class OrderService {
     @Value("${rabbitmq.routing-keys.send-email}")
     private String sendEmailRoutingKey;
 
+    @Value("${storefront.public-url:http://localhost:3000}")
+    private String storefrontPublicUrl;
+
     @Transactional
     public OrderDto createOrder(CreateOrderRequest createOrderRequest){
 
@@ -180,10 +183,21 @@ public class OrderService {
             couponService.markUsed(savedOrder.getCouponCode(), savedOrder.getCustomerId(), savedOrder.getId());
         }
 
-        try {
-            sendOrderPlacedEmail(savedOrder);
-        } catch (RuntimeException notificationFailure) {
-            log.error("Order {} committed but confirmation email could not be queued", savedOrder.getId(), notificationFailure);
+        final String guestTrackingToken = checkoutToken;
+        Runnable confirmation = () -> {
+            try {
+                sendOrderPlacedEmail(savedOrder, guestTrackingToken);
+            } catch (RuntimeException notificationFailure) {
+                log.error("Order {} committed but confirmation email could not be queued", savedOrder.getId(), notificationFailure);
+            }
+        };
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() { confirmation.run(); }
+            });
+        } else {
+            confirmation.run();
         }
 
         OrderDto response = orderMapper.orderToOrderDto(savedOrder);
@@ -259,6 +273,15 @@ public class OrderService {
         return orderRepository.findById(orderId)
                 .map(orderMapper::orderToOrderDto)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found: " + orderId));
+    }
+
+    public OrderDto getGuestOrder(UUID orderId, String checkoutToken) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Order not found: " + orderId));
+        if (order.getCustomerId() != null || !checkoutTokenService.matches(checkoutToken, order.getCheckoutTokenHash())) {
+            throw new SecurityException("Guest order capability is invalid");
+        }
+        return orderMapper.orderToOrderDto(order);
     }
 
     /** Customer-scoped order history (the userId header is injected by the gateway). */
@@ -369,20 +392,20 @@ public class OrderService {
                 .build());
     }
 
-    private void sendOrderPlacedEmail(Order order) {
+    private void sendOrderPlacedEmail(Order order, String guestTrackingToken) {
         if (order.getCustomerEmail() == null || order.getCustomerEmail().isBlank()) {
             return;
         }
         rabbitMQMessageProducer.publish(
                 new EmailRequest(
-                        buildOrderPlacedText(order),
+                        buildOrderPlacedText(order, guestTrackingToken),
                         order.getCustomerEmail(),
                         "CARTLY - Order placed #" + order.getId()),
                 notificationExchange,
                 sendEmailRoutingKey);
     }
 
-    private String buildOrderPlacedText(Order order) {
+    private String buildOrderPlacedText(Order order, String guestTrackingToken) {
         StringBuilder sb = new StringBuilder("Thank you for your order!\n\nOrder id: ")
                 .append(order.getId())
                 .append("\n");
@@ -394,6 +417,13 @@ public class OrderService {
         sb.append("\nSubtotal: ").append(order.getTotalAmount());
         if (order.getDiscountAmount() != null && order.getDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
             sb.append("\nDiscount: ").append(order.getDiscountAmount());
+        }
+        if (guestTrackingToken != null && !guestTrackingToken.isBlank()) {
+            String base = storefrontPublicUrl == null ? "" : storefrontPublicUrl.replaceAll("/+$", "");
+            sb.append("\n\nTrack this guest order securely: ")
+                    .append(base).append("/guest-order/").append(order.getId())
+                    .append("#").append(guestTrackingToken)
+                    .append("\nThis private link grants access to order details. Do not share it.");
         }
         return sb.toString();
     }

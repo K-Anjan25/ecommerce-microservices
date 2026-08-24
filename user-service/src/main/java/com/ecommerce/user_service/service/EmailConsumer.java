@@ -14,7 +14,8 @@ public class EmailConsumer {
 
     @RabbitListener(queues = "${rabbitmq.queues.send-email}")
     public void sendEmailConsumer(EmailRequest emailRequest) {
-        log.info("Consumed {} from send-email queue", emailRequest);
+        log.info("Consumed email request (attachment={}) from send-email queue",
+                emailRequest != null && emailRequest.hasAttachment());
         emailService.sendEmail(emailRequest);
     }
 }
