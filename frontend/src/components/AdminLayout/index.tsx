@@ -12,6 +12,7 @@ import CardGiftcardOutlinedIcon from "@mui/icons-material/CardGiftcardOutlined";
 import AssignmentReturnIcon from "@mui/icons-material/AssignmentReturn";
 import WebOutlinedIcon from "@mui/icons-material/WebOutlined";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
+import MarkEmailUnreadOutlinedIcon from "@mui/icons-material/MarkEmailUnreadOutlined";
 import SyncProblemOutlinedIcon from "@mui/icons-material/SyncProblemOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
@@ -31,6 +32,7 @@ const NAV = [
   { path: "/admin/storefront", label: "Storefront", icon: WebOutlinedIcon, exact: false },
   { path: "/admin/audit-log", label: "Audit log", icon: HistoryOutlinedIcon, exact: false },
   { path: "/admin/payment-reconciliation", label: "Payment review", icon: SyncProblemOutlinedIcon, exact: false },
+  { path: "/admin/email-retries", label: "Email delivery", icon: MarkEmailUnreadOutlinedIcon, exact: false },
   { path: "/admin/users", label: "Customers", icon: PeopleOutlineIcon, exact: false },
 ] as const;
 

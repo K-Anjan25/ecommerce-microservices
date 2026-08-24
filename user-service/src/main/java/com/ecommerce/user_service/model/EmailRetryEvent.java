@@ -8,6 +8,8 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Index;
@@ -41,6 +43,12 @@ public class EmailRetryEvent {
 
     @Column(nullable = false)
     private Integer attempts;
+
+    // Nullable for rows created before the lifecycle status was introduced;
+    // repository queries treat null as PENDING during the transition.
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10)
+    private EmailRetryStatus status;
 
     @Column(name = "next_attempt_at", nullable = false)
     private LocalDateTime nextAttemptAt;

@@ -45,6 +45,7 @@ The roadmap feature build is no longer the main activity. Current work is **Phas
 - PWA offline shell avoids caching authenticated/API responses.
 - Critical cross-service mutations now use locks, compensation and/or idempotency keys.
 - SMTP failures now use an encrypted PostgreSQL retry outbox; email contents and sensitive links are not stored as plaintext.
+- Email retry and resolved payment-reconciliation records have bounded retention and admin-safe metadata views.
 
 ## Explicitly not complete
 

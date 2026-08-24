@@ -1,7 +1,9 @@
 package com.ecommerce.user_service.service;
 
 import com.ecommerce.event_bus.dto.EmailRequest;
+import com.ecommerce.user_service.dto.EmailRetryAdminDto;
 import com.ecommerce.user_service.model.EmailRetryEvent;
+import com.ecommerce.user_service.model.EmailRetryStatus;
 import com.ecommerce.user_service.repository.EmailRetryEventRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,6 +20,7 @@ import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
@@ -47,13 +50,19 @@ public class EmailRetryOutboxService {
     @Value("${email.outbox.batch-size:50}")
     private int batchSize = 50;
 
+    @Value("${email.outbox.max-attempts:20}")
+    private int maxAttempts = 20;
+
+    @Value("${email.outbox.dead-retention:P30D}")
+    private Duration deadRetention = Duration.ofDays(30);
+
     /** The outbox is intentionally slower than RabbitMQ consumption to avoid SMTP pressure. */
     @Scheduled(fixedDelayString = "${email.outbox.publish-delay-ms:30000}")
     @Transactional
     public void deliverDueEmails() {
         int safeBatchSize = Math.max(1, Math.min(batchSize, 200));
-        List<EmailRetryEvent> due = repository.findByNextAttemptAtLessThanEqualOrderByCreatedAtAsc(
-                LocalDateTime.now(), PageRequest.of(0, safeBatchSize));
+        List<EmailRetryEvent> due = repository.findDue(
+                EmailRetryStatus.PENDING, LocalDateTime.now(), PageRequest.of(0, safeBatchSize));
         for (EmailRetryEvent event : due) {
             try {
                 emailService.sendEmail(decrypt(event));
@@ -70,6 +79,23 @@ public class EmailRetryOutboxService {
      * Encrypts the complete email envelope before writing it to PostgreSQL.
      * The raw request remains only in the failed listener invocation.
      */
+    @Scheduled(fixedDelayString = "${email.outbox.retention-scan-delay-ms:21600000}")
+    @Transactional
+    public void purgeDeadEmails() {
+        LocalDateTime cutoff = LocalDateTime.now().minus(deadRetention);
+        int deleted = repository.deleteDeadBefore(EmailRetryStatus.DEAD, cutoff);
+        if (deleted > 0) {
+            log.info("Purged {} dead email retry event(s) older than {}", deleted, deadRetention);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List<EmailRetryAdminDto> findByStatus(EmailRetryStatus status) {
+        return repository.findByStatusOrderByCreatedAtAsc(status).stream()
+                .map(EmailRetryAdminDto::from)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
     @Transactional
     public void enqueue(EmailRequest request) {
         if (request == null) {
@@ -84,6 +110,7 @@ public class EmailRetryOutboxService {
                     .encryptedPayload(Base64.getEncoder().encodeToString(encrypt(json, iv)))
                     .initializationVector(Base64.getEncoder().encodeToString(iv))
                     .attempts(0)
+                    .status(EmailRetryStatus.PENDING)
                     .nextAttemptAt(now)
                     .createdAt(now)
                     .build());
@@ -146,10 +173,20 @@ public class EmailRetryOutboxService {
 
     private void reschedule(EmailRetryEvent event) {
         int attempts = event.getAttempts() == null ? 1 : event.getAttempts() + 1;
-        long delaySeconds = Math.min(3600L, 1L << Math.min(attempts, 11));
+        int configuredMaxAttempts = Math.max(1, Math.min(maxAttempts, 1000));
+        LocalDateTime now = LocalDateTime.now();
         event.setAttempts(attempts);
-        event.setLastAttemptAt(LocalDateTime.now());
-        event.setNextAttemptAt(LocalDateTime.now().plusSeconds(delaySeconds));
+        event.setLastAttemptAt(now);
+        if (attempts >= configuredMaxAttempts) {
+            event.setStatus(EmailRetryStatus.DEAD);
+            event.setNextAttemptAt(now.plus(deadRetention));
+            repository.save(event);
+            log.error("Email retry event {} reached its maximum attempts and needs manual review", event.getId());
+            return;
+        }
+        long delaySeconds = Math.min(3600L, 1L << Math.min(attempts, 11));
+        event.setStatus(EmailRetryStatus.PENDING);
+        event.setNextAttemptAt(now.plusSeconds(delaySeconds));
         repository.save(event);
     }
 }

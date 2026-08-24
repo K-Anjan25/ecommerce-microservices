@@ -45,6 +45,9 @@ email:
     encryption-key: ${EMAIL_OUTBOX_ENCRYPTION_KEY:}
     publish-delay-ms: ${EMAIL_OUTBOX_PUBLISH_DELAY_MS:30000}
     batch-size: ${EMAIL_OUTBOX_BATCH_SIZE:50}
+    max-attempts: ${EMAIL_OUTBOX_MAX_ATTEMPTS:20}
+    dead-retention: ${EMAIL_OUTBOX_DEAD_RETENTION:P30D}
+    retention-scan-delay-ms: ${EMAIL_OUTBOX_RETENTION_SCAN_DELAY_MS:21600000}
 
 management:
   endpoints:

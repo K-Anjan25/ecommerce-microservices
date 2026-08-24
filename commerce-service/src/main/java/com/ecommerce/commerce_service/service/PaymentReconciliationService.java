@@ -59,6 +59,9 @@ public class PaymentReconciliationService {
     @Value("${payment.reconciliation.batch-size:100}")
     private int batchSize = 100;
 
+    @Value("${payment.reconciliation.resolved-retention:P90D}")
+    private Duration resolvedRetention = Duration.ofDays(90);
+
     @Scheduled(fixedDelayString = "${payment.reconciliation.scan-delay-ms:60000}")
     public void scanStalePendingPayments() {
         // Do not hold a database transaction while making provider HTTP calls.
@@ -74,6 +77,16 @@ public class PaymentReconciliationService {
         }
         if (!stalePayments.isEmpty()) {
             log.warn("Payment reconciliation scan inspected {} stale pending online payment(s)", stalePayments.size());
+        }
+    }
+
+    @Scheduled(fixedDelayString = "${payment.reconciliation.retention-scan-delay-ms:21600000}")
+    @Transactional
+    public void purgeResolvedCases() {
+        LocalDateTime cutoff = LocalDateTime.now().minus(resolvedRetention);
+        int deleted = caseRepository.deleteResolvedBefore(PaymentReconciliationCase.RESOLVED, cutoff);
+        if (deleted > 0) {
+            log.info("Purged {} resolved payment reconciliation case(s) older than {}", deleted, resolvedRetention);
         }
     }
 

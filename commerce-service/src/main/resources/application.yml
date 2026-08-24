@@ -35,6 +35,8 @@ payment:
     pending-ttl: ${PAYMENT_RECONCILIATION_PENDING_TTL:PT30M}
     scan-delay-ms: ${PAYMENT_RECONCILIATION_SCAN_DELAY_MS:60000}
     batch-size: ${PAYMENT_RECONCILIATION_BATCH_SIZE:100}
+    resolved-retention: ${PAYMENT_RECONCILIATION_RESOLVED_RETENTION:P90D}
+    retention-scan-delay-ms: ${PAYMENT_RECONCILIATION_RETENTION_SCAN_DELAY_MS:21600000}
   providers:
     stripe:
       secret-key: ${STRIPE_SECRET_KEY:}

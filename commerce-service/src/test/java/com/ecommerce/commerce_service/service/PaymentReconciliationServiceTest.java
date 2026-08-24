@@ -84,6 +84,19 @@ class PaymentReconciliationServiceTest {
     }
 
     @Test
+    void purgesOnlyResolvedCasesPastRetentionWindow() {
+        PaymentRepository payments = mock(PaymentRepository.class);
+        PaymentReconciliationCaseRepository cases = mock(PaymentReconciliationCaseRepository.class);
+        PaymentReconciliationService service = service(payments, cases);
+        when(cases.deleteResolvedBefore(eq(PaymentReconciliationCase.RESOLVED), any(LocalDateTime.class)))
+                .thenReturn(2);
+
+        service.purgeResolvedCases();
+
+        verify(cases).deleteResolvedBefore(eq(PaymentReconciliationCase.RESOLVED), any(LocalDateTime.class));
+    }
+
+    @Test
     void verifiedProviderTransitionResolvesOpenCase() {
         PaymentRepository payments = mock(PaymentRepository.class);
         PaymentReconciliationCaseRepository cases = mock(PaymentReconciliationCaseRepository.class);

@@ -2,6 +2,7 @@ package com.ecommerce.user_service.service;
 
 import com.ecommerce.event_bus.dto.EmailRequest;
 import com.ecommerce.user_service.model.EmailRetryEvent;
+import com.ecommerce.user_service.model.EmailRetryStatus;
 import com.ecommerce.user_service.repository.EmailRetryEventRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -50,7 +51,7 @@ class EmailRetryOutboxServiceTest {
         verify(repository).save(captured.capture());
         EmailRetryEvent event = captured.getValue();
         reset(repository);
-        when(repository.findByNextAttemptAtLessThanEqualOrderByCreatedAtAsc(any(LocalDateTime.class), any(Pageable.class))).thenReturn(List.of(event));
+        when(repository.findDue(eq(EmailRetryStatus.PENDING), any(LocalDateTime.class), any(Pageable.class))).thenReturn(List.of(event));
 
         service.deliverDueEmails();
 
@@ -72,7 +73,7 @@ class EmailRetryOutboxServiceTest {
         verify(repository).save(captured.capture());
         EmailRetryEvent event = captured.getValue();
         reset(repository);
-        when(repository.findByNextAttemptAtLessThanEqualOrderByCreatedAtAsc(any(LocalDateTime.class), any(Pageable.class))).thenReturn(List.of(event));
+        when(repository.findDue(eq(EmailRetryStatus.PENDING), any(LocalDateTime.class), any(Pageable.class))).thenReturn(List.of(event));
         doThrow(new RuntimeException("smtp unavailable")).when(emailService).sendEmail(any());
         LocalDateTime before = LocalDateTime.now();
 
@@ -83,6 +84,40 @@ class EmailRetryOutboxServiceTest {
         assertThat(event.getAttempts()).isEqualTo(1);
         assertThat(event.getLastAttemptAt()).isNotNull();
         assertThat(event.getNextAttemptAt()).isAfter(before);
+    }
+
+    @Test
+    void maxAttemptsMovesRetryToDeadForManualReview() {
+        EmailRetryEventRepository repository = mock(EmailRetryEventRepository.class);
+        EmailService emailService = mock(EmailService.class);
+        EmailRetryOutboxService service = service(repository, emailService);
+        service.enqueue(new EmailRequest("Order confirmed", "customer@example.com", "Cartly order"));
+        var captured = org.mockito.ArgumentCaptor.forClass(EmailRetryEvent.class);
+        verify(repository).save(captured.capture());
+        EmailRetryEvent event = captured.getValue();
+        event.setAttempts(19);
+        reset(repository);
+        when(repository.findDue(eq(EmailRetryStatus.PENDING), any(LocalDateTime.class), any(Pageable.class)))
+                .thenReturn(List.of(event));
+        doThrow(new RuntimeException("smtp unavailable")).when(emailService).sendEmail(any());
+
+        service.deliverDueEmails();
+
+        assertThat(event.getAttempts()).isEqualTo(20);
+        assertThat(event.getStatus()).isEqualTo(EmailRetryStatus.DEAD);
+        verify(repository).save(event);
+        verify(repository, never()).delete(event);
+    }
+
+    @Test
+    void purgesOnlyDeadRetryMetadataAfterRetentionWindow() {
+        EmailRetryEventRepository repository = mock(EmailRetryEventRepository.class);
+        EmailRetryOutboxService service = service(repository, mock(EmailService.class));
+        when(repository.deleteDeadBefore(eq(EmailRetryStatus.DEAD), any(LocalDateTime.class))).thenReturn(3);
+
+        service.purgeDeadEmails();
+
+        verify(repository).deleteDeadBefore(eq(EmailRetryStatus.DEAD), any(LocalDateTime.class));
     }
 
     @Test
