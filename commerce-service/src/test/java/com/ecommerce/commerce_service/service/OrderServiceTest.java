@@ -170,6 +170,24 @@ class OrderServiceTest {
     }
 
     @Test
+    void failedPaymentRestoresReservedCreditsExactlyOnce() {
+        UUID customerId = UUID.randomUUID();
+        UUID cardId = UUID.randomUUID();
+        Order order = Order.builder().id(orderId).customerId(customerId)
+                .orderStatus(OrderStatus.PENDING).giftCardId(cardId)
+                .giftCardAmount(new BigDecimal("25.00")).loyaltyPointsRedeemed(100)
+                .creditsRestored(false).build();
+        when(orderRepository.findLockedById(orderId)).thenReturn(order);
+
+        orderService.applyPaymentStatus(orderId, "FAILED");
+        orderService.applyPaymentStatus(orderId, "FAILED");
+
+        verify(giftCardService, times(1)).restoreOrderCredit(cardId, new BigDecimal("25.00"));
+        verify(loyaltyPointService, times(1)).restoreOrderPoints(eq(customerId), eq(100), anyString());
+        assertThat(order.getCreditsRestored()).isTrue();
+    }
+
+    @Test
     void getAllOrders_shouldReturnPagination() {
         PageRequest pageable = PageRequest.of(0, 10);
         Page<Order> page = new PageImpl<>(List.of(testOrder));
