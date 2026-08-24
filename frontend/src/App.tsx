@@ -46,6 +46,7 @@ function App() {
   const AdminReturns = React.lazy(() => import("./pages/Admin/Returns"));
   const AdminStoreSettings = React.lazy(() => import("./pages/Admin/StoreSettings"));
   const AdminAuditLog = React.lazy(() => import("./pages/Admin/AuditLog"));
+  const AdminPaymentReconciliation = React.lazy(() => import("./pages/Admin/PaymentReconciliation"));
   const AddEditProducts = React.lazy(
     () => import("./pages/Admin/Products/AddEditProduct")
   );
@@ -123,6 +124,7 @@ function App() {
                   <Route path="coupons" element={<AdminCoupons />} />
                   <Route path="storefront" element={<AdminStoreSettings />} />
                   <Route path="audit-log" element={<AdminAuditLog />} />
+                  <Route path="payment-reconciliation" element={<AdminPaymentReconciliation />} />
                   <Route
                     path="addEditProduct/:productId?"
                     element={<AddEditProducts />}

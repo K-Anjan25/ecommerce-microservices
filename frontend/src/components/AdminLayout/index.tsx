@@ -11,6 +11,7 @@ import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import AssignmentReturnIcon from "@mui/icons-material/AssignmentReturn";
 import WebOutlinedIcon from "@mui/icons-material/WebOutlined";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
+import SyncProblemOutlinedIcon from "@mui/icons-material/SyncProblemOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { Drawer } from "@mui/material";
@@ -27,6 +28,7 @@ const NAV = [
   { path: "/admin/returns", label: "Returns", icon: AssignmentReturnIcon, exact: false },
   { path: "/admin/storefront", label: "Storefront", icon: WebOutlinedIcon, exact: false },
   { path: "/admin/audit-log", label: "Audit log", icon: HistoryOutlinedIcon, exact: false },
+  { path: "/admin/payment-reconciliation", label: "Payment review", icon: SyncProblemOutlinedIcon, exact: false },
   { path: "/admin/users", label: "Customers", icon: PeopleOutlineIcon, exact: false },
 ] as const;
 
