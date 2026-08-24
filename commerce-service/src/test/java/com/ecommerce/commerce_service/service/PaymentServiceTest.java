@@ -66,6 +66,30 @@ class PaymentServiceTest {
                 .isInstanceOf(SecurityException.class);
     }
     @Test
+    void duplicatePaymentIsRejectedAfterOrderLockWithoutCallingProvider() {
+        PaymentRepository payments = mock(PaymentRepository.class);
+        OrderRepository orders = mock(OrderRepository.class);
+        PaymentProviderClient provider = mock(PaymentProviderClient.class);
+        UUID orderId = UUID.randomUUID();
+        UUID customerId = UUID.randomUUID();
+        Order order = Order.builder().id(orderId).customerId(customerId)
+                .orderStatus(OrderStatus.PENDING).totalAmount(BigDecimal.TEN).build();
+        when(orders.findLockedById(orderId)).thenReturn(order);
+        when(payments.findByOrderId(orderId)).thenReturn(Optional.of(Payment.builder().orderId(orderId).build()));
+        PaymentService service = new PaymentService(payments, orders, mock(RabbitMQMessageProducer.class),
+                List.of(provider), mock(InvoiceService.class), new CheckoutTokenService(),
+                mock(LoyaltyPointService.class), mock(OrderService.class));
+        PaymentRequest request = new PaymentRequest();
+        request.setOrderId(orderId);
+        request.setProvider(PaymentProvider.RAZORPAY);
+
+        assertThatThrownBy(() -> service.processPayment(request, customerId))
+                .isInstanceOf(com.ecommerce.commerce_service.exception.DuplicatePaymentException.class);
+        verify(orders).findLockedById(orderId);
+        verifyNoInteractions(provider);
+    }
+
+    @Test
     void rejectsRefundBeyondCapturedProviderAmount() {
         PaymentRepository payments = mock(PaymentRepository.class);
         UUID orderId = UUID.randomUUID();
