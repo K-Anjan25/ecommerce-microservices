@@ -131,7 +131,7 @@ cd frontend && npm start              # http://localhost:3000
 ```bash
 mvn test                                   # all modules (unit tests, no infra needed)
 mvn -pl product-service test               # per service
-cd frontend && npm run build               # frontend type-check + build
+cd frontend && npm run build               # frontend type-check, build, sitemap + robots generation
 ```
 
 ## Resource Budget

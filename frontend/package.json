@@ -33,7 +33,8 @@
     "start": "vite",
     "check:contrast": "node ../tools/check-color-contrast.mjs",
     "audit:security": "npm audit --audit-level=high",
-    "build": "npm run check:contrast && tsc --noEmit && vite build",
+    "build": "npm run check:contrast && tsc --noEmit && vite build && npm run generate:seo-assets",
+    "generate:seo-assets": "node scripts/generate-seo-assets.mjs",
     "preview": "vite preview"
   },
   "browserslist": {
