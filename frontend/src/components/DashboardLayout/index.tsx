@@ -40,7 +40,7 @@ function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const isShop = location.pathname === "/";
-  const isCheckout = location.pathname === "/checkout";
+  const isCheckout = location.pathname === "/checkout" || location.pathname === "/order-confirmation";
   const { t } = useI18n();
 
   return (

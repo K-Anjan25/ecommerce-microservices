@@ -36,6 +36,7 @@ function App() {
   const ResetPassword = React.lazy(() => import("./pages/Login/ResetPassword"));
   const Cart = React.lazy(() => import("./pages/Cart"));
   const Checkout = React.lazy(() => import("./pages/Checkout"));
+  const OrderConfirmation = React.lazy(() => import("./pages/OrderConfirmation"));
   const AdminProducts = React.lazy(() => import("./pages/Admin/Products"));
   const AdminOrders = React.lazy(() => import("./pages/Admin/Orders"));
   const AdminCategories = React.lazy(() => import("./pages/Admin/Categories"));
@@ -91,6 +92,7 @@ function App() {
             </Route>
             <Route path="cart" element={<Cart />} />
             <Route path="checkout" element={<Checkout />} />
+            <Route path="order-confirmation" element={<OrderConfirmation />} />
           </Route>
             <Route
               element={

@@ -74,3 +74,7 @@ The seven files in `design/wireframes/` were regenerated on 24 August 2026 from 
 - current mobile storefront, product and checkout behavior.
 
 Archived palette sheets are historical exploration only and are labelled accordingly.
+
+## Checkout completion UX
+
+The enclosed checkout now ends on a dedicated confirmation screen for gift-card-funded, COD, provider-pending and provider-settled outcomes. Guest capability material is never placed in the URL or browser storage; see [35-checkout-confirmation.md](35-checkout-confirmation.md).

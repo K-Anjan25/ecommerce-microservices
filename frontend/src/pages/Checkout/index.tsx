@@ -1,7 +1,7 @@
 import { Box, Checkbox, Divider, FormControlLabel } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useFormik } from "formik";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -29,7 +29,7 @@ import TextInput from "../../components/TextInput";
 import createOrderForm from "../../forms/orderForm";
 import { AppState } from "../../store";
 import { clearAllItems } from "../../store/actions/cartAction";
-import { CreateOrderRequest, ShippingMethod } from "../../types/order";
+import { CreateOrderRequest, Order, ShippingMethod } from "../../types/order";
 import { PaymentRequest, PaymentProvider } from "../../types/payment";
 import { SavedAddress } from "../../types/address";
 import {
@@ -137,6 +137,7 @@ function Checkout() {
   const [giftCardCode, setGiftCardCode] = useState("");
   const [loyaltyPoints, setLoyaltyPoints] = useState(0);
   const [reviewOpen, setReviewOpen] = useState(false);
+  const createdOrderRef = useRef<Order | null>(null);
   const subtotal = Number(calculateTotalPriceOfCartItems(items));
   const itemCount = calculateCountOfCartItems(items);
 
@@ -260,11 +261,22 @@ function Checkout() {
 
   const createOrderMutation = useMutation(OrderApi.createOrder, {
     onSuccess: (order) => {
+      createdOrderRef.current = order;
       if (Number(order.totalAmount) === 0) {
         showSuccess("Order paid in full with your gift card");
         dispatch(clearAllItems());
         sessionStorage.removeItem("checkout_form");
-        navigate("/");
+        navigate("/order-confirmation", {
+          replace: true,
+          state: {
+            orderId: order.id,
+            orderStatus: order.orderStatus,
+            paymentStatus: "SUCCESS",
+            provider: "GIFT_CARD",
+            amount: 0,
+            signedIn: isLoggedIn,
+          },
+        });
         return;
       }
       const payment = {
@@ -296,9 +308,21 @@ function Checkout() {
           ? "Payment initiated — your order remains pending until the provider confirms settlement"
           : "Payment completed and order has been created successfully"
       );
+      const order = createdOrderRef.current;
       dispatch(clearAllItems());
       sessionStorage.removeItem("checkout_form");
-      navigate("/");
+      navigate("/order-confirmation", {
+        replace: true,
+        state: {
+          orderId: order?.id ?? payment.orderId,
+          orderStatus: payment.status === "SUCCESS" ? "PAID" : order?.orderStatus ?? "PENDING",
+          paymentStatus: payment.status,
+          provider: payment.provider,
+          amount: Number(payment.amount),
+          transactionId: payment.transactionId,
+          signedIn: isLoggedIn,
+        },
+      });
     },
     onError: (e: any) => {
       showError(e.response?.data?.message ?? "Payment could not be completed");
