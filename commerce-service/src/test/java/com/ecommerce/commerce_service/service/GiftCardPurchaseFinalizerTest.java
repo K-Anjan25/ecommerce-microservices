@@ -28,7 +28,7 @@ class GiftCardPurchaseFinalizerTest {
     void issuesCardOnlyOnceAfterSuccessfulPayment() {
         GiftCardPurchaseIntentRepository intents = mock(GiftCardPurchaseIntentRepository.class);
         GiftCardService cards = mock(GiftCardService.class);
-        GiftCardPurchaseFinalizer finalizer = new GiftCardPurchaseFinalizer(intents, cards, mock(PaymentRepository.class), mock(OrderRepository.class), mock(OrderStatusHistoryRepository.class));
+        GiftCardPurchaseFinalizer finalizer = new GiftCardPurchaseFinalizer(intents, cards, mock(PaymentRepository.class), mock(OrderRepository.class), mock(OrderStatusHistoryRepository.class), mock(com.ecommerce.event_bus.RabbitMQMessageProducer.class));
         UUID orderId = UUID.randomUUID();
         UUID customerId = UUID.randomUUID();
         GiftCardPurchaseIntent intent = intent(orderId, customerId);
@@ -49,10 +49,37 @@ class GiftCardPurchaseFinalizerTest {
     }
 
     @Test
+    void settledPurchaseQueuesRecipientEmailWithoutChangingCardTrustBoundary() {
+        GiftCardPurchaseIntentRepository intents = mock(GiftCardPurchaseIntentRepository.class);
+        GiftCardService cards = mock(GiftCardService.class);
+        com.ecommerce.event_bus.RabbitMQMessageProducer producer = mock(com.ecommerce.event_bus.RabbitMQMessageProducer.class);
+        GiftCardPurchaseFinalizer finalizer = new GiftCardPurchaseFinalizer(
+                intents, cards, mock(PaymentRepository.class), mock(OrderRepository.class),
+                mock(OrderStatusHistoryRepository.class), producer);
+        ReflectionTestUtils.setField(finalizer, "notificationExchange", "notification.exchange");
+        ReflectionTestUtils.setField(finalizer, "sendEmailRoutingKey", "send.email.routing-key");
+        UUID orderId = UUID.randomUUID();
+        GiftCardPurchaseIntent intent = intent(orderId, UUID.randomUUID());
+        UUID cardId = UUID.randomUUID();
+        when(intents.findLockedByOrderId(orderId)).thenReturn(Optional.of(intent));
+        when(cards.issuePurchasedGiftCard(any(), any(), any(), any()))
+                .thenReturn(GiftCardDto.builder().id(cardId).code("GC-SAFE-CODE")
+                        .initialBalance(new BigDecimal("1000.00"))
+                        .expiryDate(intent.getExpiryDate()).build());
+
+        finalizer.applyPaymentStatus(orderId, "SUCCESS");
+
+        verify(producer).publish(argThat(payload -> payload instanceof com.ecommerce.event_bus.dto.EmailRequest
+                        && ((com.ecommerce.event_bus.dto.EmailRequest) payload).getEmail().equals(intent.getRecipientEmail())
+                        && ((com.ecommerce.event_bus.dto.EmailRequest) payload).getText().contains("GC-SAFE-CODE")),
+                eq("notification.exchange"), eq("send.email.routing-key"));
+    }
+
+    @Test
     void failedPaymentMarksIntentWithoutCreatingCard() {
         GiftCardPurchaseIntentRepository intents = mock(GiftCardPurchaseIntentRepository.class);
         GiftCardService cards = mock(GiftCardService.class);
-        GiftCardPurchaseFinalizer finalizer = new GiftCardPurchaseFinalizer(intents, cards, mock(PaymentRepository.class), mock(OrderRepository.class), mock(OrderStatusHistoryRepository.class));
+        GiftCardPurchaseFinalizer finalizer = new GiftCardPurchaseFinalizer(intents, cards, mock(PaymentRepository.class), mock(OrderRepository.class), mock(OrderStatusHistoryRepository.class), mock(com.ecommerce.event_bus.RabbitMQMessageProducer.class));
         UUID orderId = UUID.randomUUID();
         GiftCardPurchaseIntent intent = intent(orderId, UUID.randomUUID());
         when(intents.findLockedByOrderId(orderId)).thenReturn(Optional.of(intent));
@@ -140,7 +167,9 @@ class GiftCardPurchaseFinalizerTest {
                                               PaymentRepository payments,
                                               OrderRepository orders,
                                               OrderStatusHistoryRepository history) {
-        GiftCardPurchaseFinalizer finalizer = new GiftCardPurchaseFinalizer(intents, cards, payments, orders, history);
+        GiftCardPurchaseFinalizer finalizer = new GiftCardPurchaseFinalizer(
+                intents, cards, payments, orders, history,
+                mock(com.ecommerce.event_bus.RabbitMQMessageProducer.class));
         ReflectionTestUtils.setField(finalizer, "pendingTtl", Duration.ofMinutes(30));
         ReflectionTestUtils.setField(finalizer, "batchSize", 100);
         return finalizer;

@@ -22,7 +22,7 @@ A browser callback, redirect status or client-reported success never mints store
 
 ## Purchase lifecycle cleanup
 
-A scheduled lifecycle worker marks a purchase `FAILED` immediately when its linked payment is already failed. If no payment row was ever created, it cancels the virtual order and marks the intent failed after the configured pending TTL. A still-`PENDING` provider payment is never expired locally because the provider may still capture it; it remains with the reconciliation worker and operations queue.
+A scheduled lifecycle worker marks a purchase `FAILED` immediately when its linked payment is already failed. If no payment row was ever created, it cancels the virtual order and marks the intent failed after the configured pending TTL. A still-`PENDING` provider payment is never expired locally because the provider may still capture it; it remains with the reconciliation worker and operations queue. When a recipient email is supplied, settlement queues the card code through the notification exchange; SMTP failures use the encrypted user-service retry outbox.
 
 ## Remaining production boundary
 

@@ -11,6 +11,8 @@ import com.ecommerce.commerce_service.repository.GiftCardPurchaseIntentRepositor
 import com.ecommerce.commerce_service.repository.OrderRepository;
 import com.ecommerce.commerce_service.repository.OrderStatusHistoryRepository;
 import com.ecommerce.commerce_service.repository.PaymentRepository;
+import com.ecommerce.event_bus.RabbitMQMessageProducer;
+import com.ecommerce.event_bus.dto.EmailRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +20,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -34,6 +38,13 @@ public class GiftCardPurchaseFinalizer {
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
     private final OrderStatusHistoryRepository orderStatusHistoryRepository;
+    private final RabbitMQMessageProducer messageProducer;
+
+    @Value("${rabbitmq.exchanges.notification}")
+    private String notificationExchange;
+
+    @Value("${rabbitmq.routing-keys.send-email}")
+    private String sendEmailRoutingKey;
 
     @Value("${gift-card.purchase.pending-ttl:PT30M}")
     private Duration pendingTtl = Duration.ofMinutes(30);
@@ -64,11 +75,46 @@ public class GiftCardPurchaseFinalizer {
             intent.setIssuedAt(LocalDateTime.now());
             intent.setUpdatedAt(LocalDateTime.now());
             intentRepository.save(intent);
+            scheduleRecipientEmail(card, intent);
             log.info("Issued gift card {} for settled purchase {}", card.getId(), intent.getId());
         } else if ("FAILED".equalsIgnoreCase(paymentStatus)
                 && intent.getStatus() == GiftCardPurchaseStatus.PENDING_PAYMENT) {
             markFailed(intent, "Linked payment failed");
         }
+    }
+
+    private void scheduleRecipientEmail(GiftCardDto card, GiftCardPurchaseIntent intent) {
+        if (intent.getRecipientEmail() == null || intent.getRecipientEmail().isBlank()) {
+            return;
+        }
+        Runnable send = () -> {
+            try {
+                String text = "You have received a Cartly gift card.\\n\\n"
+                        + "Amount: " + card.getInitialBalance() + " INR\\n"
+                        + "Code: " + card.getCode() + "\\n"
+                        + "Expiry date: " + card.getExpiryDate() + "\\n\\n"
+                        + "Keep this code private and redeem it during Cartly checkout.";
+                messageProducer.publish(
+                        new EmailRequest(text, intent.getRecipientEmail(), "Your Cartly gift card"),
+                        notificationExchange,
+                        sendEmailRoutingKey);
+            } catch (RuntimeException deliveryFailure) {
+                // The card remains available to its purchaser; the durable
+                // notification path can retry SMTP failures in user-service.
+                log.error("Gift-card recipient email could not be queued for purchase {}",
+                        intent.getId(), deliveryFailure);
+            }
+        };
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            send.run();
+            return;
+        }
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                send.run();
+            }
+        });
     }
 
     /**
