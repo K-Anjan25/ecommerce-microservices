@@ -103,7 +103,7 @@ React 18 + TypeScript, Redux, Material UI, Tailwind CSS — **Cartly editorial c
 
 - **Proxy**: relative requests go through the API Gateway (`http://localhost:8889` in local development)
 - **Auth**: JWT with auto-refresh (Bearer prefix handled in the refresh interceptor)
-- **Provider checkout**: copy `frontend/.env.example` to `frontend/.env` and set the public `VITE_RAZORPAY_KEY_ID`; provider secrets stay server-side
+- **Provider checkout**: copy `frontend/.env.example` to `frontend/.env` and set public `VITE_RAZORPAY_KEY_ID` and/or `VITE_STRIPE_PUBLISHABLE_KEY`; provider secrets stay server-side
 - **Admin**: `/admin/*` (requires `ROLE_ADMIN` / `ROLE_SUPER_ADMIN`)
 - **Design kit**: wireframes, tokens and the Figma handoff live in [`design/`](design/);
   the engineering record is [`docs/08-frontend-redesign.md`](docs/08-frontend-redesign.md).
@@ -151,5 +151,10 @@ Per-container caps (`docker-compose.yml`): postgres 384m, rabbitmq 128m, gateway
 - `docs/09-frontend-strategy.md` — React platform + standalone WooCommerce theme decision
 - `docs/10-brand-and-storefront-benchmark.md` — brand scorecard and storefront benchmark
 - `docs/11-woocommerce-pattern-research-and-frontend-architecture.md` — Cartly 3.0 WooCommerce pattern research, token corrections and feature architecture
+- `docs/34-current-platform-status.md` — current roadmap and production-boundary status
+- `docs/40-payment-reconciliation-queue.md` — stale provider payment queue and reconciliation rules
+- `docs/41-email-retry-outbox.md` — encrypted transactional email retry boundary
+- `docs/42-razorpay-browser-handoff.md` — Razorpay browser checkout handoff
+- `docs/43-stripe-payment-element.md` — Stripe Payment Element handoff
 - `design/README.md` — design tokens, wireframes and the Figma handoff
 - [`cartly-wp-theme`](https://github.com/K-Anjan25/cartly-wp-theme) — the design system as a WordPress/WooCommerce theme (separate repo)

@@ -25,4 +25,4 @@ Only the public key ID belongs in frontend configuration. `RAZORPAY_KEY_SECRET` 
 
 ## Boundary
 
-This increment covers the Razorpay browser handoff only. It does not implement Stripe.js, 3DS/redirect return orchestration, or provider-specific late-capture/expiry decisions. The signed webhook and authenticated reconciliation paths continue to protect the server-side payment boundary.
+This document covers the Razorpay browser handoff. Stripe Payment Element is documented separately in [43-stripe-payment-element.md](43-stripe-payment-element.md). Provider-specific late-capture/expiry decisions remain a production boundary. The signed webhook and authenticated reconciliation paths continue to protect the server-side payment boundary.

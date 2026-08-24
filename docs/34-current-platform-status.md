@@ -50,7 +50,7 @@ The roadmap feature build is no longer the main activity. Current work is **Phas
 
 These are not hidden TODOs; they are the remaining production boundaries:
 
-1. **Interactive payment-provider handoff.** Razorpay browser Checkout now hands off provider orders while keeping webhook settlement authoritative. Stripe.js, 3DS/redirect return handling and live-provider certification remain.
+1. **Interactive payment-provider handoff.** Razorpay browser Checkout and Stripe Payment Element now hand off provider operations while keeping webhook settlement authoritative. Live-provider certification and production return-path testing remain.
 2. **Provider reconciliation execution.** Stale online payments now use authenticated Stripe/Razorpay status lookups where possible and create a durable operations queue for ambiguity. Provider-specific expiry, late-capture handling, alerting and the production operations runbook remain.
 3. **Customer gift-card purchasing.** Disabled until a payment-backed issuance intent can activate value only after verified capture. Admin issuance is restricted, reason-required and audited.
 4. **Production database migrations.** Development still relies on Hibernate `ddl-auto`; production needs versioned migrations, rollout and rollback exercises.

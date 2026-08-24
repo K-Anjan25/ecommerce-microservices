@@ -174,6 +174,7 @@ public class PaymentService {
                 .provider(savedPayment.getProvider().name())
                 .status(savedPayment.getStatus())
                 .transactionId(savedPayment.getTransactionId())
+                .clientSecret(result.getClientSecret())
                 .message(result.getMessage())
                 .build();
     }

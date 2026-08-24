@@ -36,6 +36,8 @@ function App() {
   const ResetPassword = React.lazy(() => import("./pages/Login/ResetPassword"));
   const Cart = React.lazy(() => import("./pages/Cart"));
   const Checkout = React.lazy(() => import("./pages/Checkout"));
+  const StripePayment = React.lazy(() => import("./pages/StripePayment"));
+  const StripePaymentReturn = React.lazy(() => import("./pages/StripePaymentReturn"));
   const OrderConfirmation = React.lazy(() => import("./pages/OrderConfirmation"));
   const GuestOrder = React.lazy(() => import("./pages/GuestOrder"));
   const AdminProducts = React.lazy(() => import("./pages/Admin/Products"));
@@ -94,6 +96,8 @@ function App() {
             </Route>
             <Route path="cart" element={<Cart />} />
             <Route path="checkout" element={<Checkout />} />
+            <Route path="stripe-payment" element={<StripePayment />} />
+            <Route path="stripe-payment-return" element={<StripePaymentReturn />} />
             <Route path="order-confirmation" element={<OrderConfirmation />} />
             <Route path="guest-order/:orderId" element={<GuestOrder />} />
           </Route>

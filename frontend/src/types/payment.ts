@@ -14,6 +14,8 @@ export interface PaymentResponse {
   provider: PaymentProvider;
   status: PaymentStatus;
   transactionId?: string;
+  /** Stripe.js client secret only; never a server-side provider secret. */
+  clientSecret?: string;
   message?: string;
 }
 

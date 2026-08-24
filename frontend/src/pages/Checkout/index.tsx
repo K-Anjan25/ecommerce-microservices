@@ -415,6 +415,32 @@ function Checkout() {
       const awaitingProvider = payment.status === "PENDING" && !isCod;
       const order = createdOrderRef.current;
 
+      if (payment.provider === "STRIPE" && awaitingProvider) {
+        if (!payment.clientSecret) {
+          showError("Stripe did not return a browser payment session; your order remains pending for provider review");
+          goToConfirmation(payment, order);
+        } else {
+          dispatch(clearAllItems());
+          sessionStorage.removeItem("checkout_form");
+          sessionStorage.setItem("stripe-payment-context", JSON.stringify({
+            orderId: order?.id ?? payment.orderId,
+            amount: Number(payment.amount),
+            currency: payment.currency,
+            transactionId: payment.transactionId,
+            signedIn: isLoggedIn,
+          }));
+          navigate("/stripe-payment", {
+            replace: true,
+            state: {
+              orderId: order?.id ?? payment.orderId,
+              payment,
+              signedIn: isLoggedIn,
+            },
+          });
+        }
+        return;
+      }
+
       if (payment.provider === "RAZORPAY" && awaitingProvider) {
         void openRazorpayCheckout(payment, order);
         return;
@@ -648,6 +674,8 @@ function Checkout() {
             subtitle={
               paymentProvider === "CASH"
                 ? "Pay in cash when your order is delivered"
+                : paymentProvider === "STRIPE"
+                ? "Complete card or wallet verification in a secure Stripe form"
                 : "Razorpay will open to complete your payment"
             }
             icon={CreditCardIcon}
@@ -656,8 +684,15 @@ function Checkout() {
               <OptionCard
                 active={paymentProvider === "RAZORPAY"}
                 onClick={() => setPaymentProvider("RAZORPAY")}
-                title="Card / UPI"
-                copy="Razorpay · requires configured keys"
+                title="UPI / netbanking"
+                copy="Razorpay · provider checkout"
+                icon={CreditCardIcon}
+              />
+              <OptionCard
+                active={paymentProvider === "STRIPE"}
+                onClick={() => setPaymentProvider("STRIPE")}
+                title="Card / wallets"
+                copy="Stripe · secure Payment Element"
                 icon={CreditCardIcon}
               />
               <OptionCard

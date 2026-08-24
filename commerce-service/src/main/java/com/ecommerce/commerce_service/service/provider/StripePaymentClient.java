@@ -52,14 +52,18 @@ public class StripePaymentClient implements PaymentProviderClient {
             MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
             body.add("amount", payment.getAmount().movePointRight(2).toPlainString());
             body.add("currency", payment.getCurrency().toLowerCase());
-            body.add("confirm", "true");
-            body.add("payment_method", "pm_card_visa");
+            // The browser confirms this intent with Stripe.js. Keeping
+            // confirm=false avoids the old hard-coded test payment method and
+            // supports cards, wallets and provider-required challenges.
+            body.add("automatic_payment_methods[enabled]", "true");
+            body.add("description", "Cartly order " + payment.getOrderId());
 
             HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
             ResponseEntity<Map> response = restTemplate.postForEntity(STRIPE_PAYMENT_INTENT_URL, requestEntity, Map.class);
             Map<String, Object> responseBody = response.getBody();
-            String paymentIntentId = responseBody != null ? String.valueOf(responseBody.get("id")) : null;
-            String intentStatus = responseBody != null ? String.valueOf(responseBody.get("status")) : null;
+            String paymentIntentId = responseBody != null ? text(responseBody.get("id")) : null;
+            String intentStatus = responseBody != null ? text(responseBody.get("status")) : null;
+            String clientSecret = responseBody != null ? text(responseBody.get("client_secret")) : null;
             boolean initiated = response.getStatusCode().is2xxSuccessful() && paymentIntentId != null;
             boolean settled = initiated && "succeeded".equalsIgnoreCase(intentStatus);
 
@@ -67,6 +71,7 @@ public class StripePaymentClient implements PaymentProviderClient {
                     .success(initiated)
                     .settled(settled)
                     .transactionId(paymentIntentId)
+                    .clientSecret(clientSecret)
                     .message(settled ? "Stripe payment succeeded" : initiated
                             ? "Stripe payment requires provider confirmation" : "Stripe charge failed")
                     .build();
