@@ -55,6 +55,10 @@ public class UserPrincipal implements UserDetails {
         return user.getProfileImageUrl();
     }
 
+    public int getTokenVersion() {
+        return user.getTokenVersion();
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;

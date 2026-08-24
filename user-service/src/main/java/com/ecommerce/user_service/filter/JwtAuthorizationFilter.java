@@ -1,6 +1,8 @@
 package com.ecommerce.user_service.filter;
 
 import com.ecommerce.user_service.exception.TokenNotValidException;
+import com.ecommerce.user_service.model.User;
+import com.ecommerce.user_service.repository.UserRepository;
 import com.ecommerce.user_service.util.JWTTokenProvider;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -39,6 +41,7 @@ import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final JWTTokenProvider jwtTokenProvider;
+    private final UserRepository userRepository;
     @Value("${jwt.secret}")
     private String secret;
     @Override
@@ -82,14 +85,21 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     Algorithm algorithm = HMAC512(secret);
                     JWTVerifier verifier = JWT.require(algorithm).withIssuer(Company_LLC).build();
                     verifier.verify(decodedJWT);
-                    String email = decodedJWT.getSubject();
+                    String userId = decodedJWT.getClaim("userId").asString();
+                    User user = userRepository.findById(java.util.UUID.fromString(userId))
+                            .orElseThrow(() -> new TokenNotValidException("Session user no longer exists"));
+                    Integer tokenVersion = decodedJWT.getClaim("tokenVersion").asInt();
+                    if (tokenVersion == null || tokenVersion != user.getTokenVersion()
+                            || !user.isActive() || !user.isNotLocked()) {
+                        throw new TokenNotValidException("Session has been revoked");
+                    }
 
                     if (SecurityContextHolder.getContext().getAuthentication() == null) {
-                        List<GrantedAuthority> authorities = jwtTokenProvider.getAuthorities(decodedJWT);
-                        Authentication authentication = jwtTokenProvider.getAuthentication(email, authorities, request);
+                        List<GrantedAuthority> authorities = Arrays.stream(user.getAuthorities())
+                                .map(org.springframework.security.core.authority.SimpleGrantedAuthority::new)
+                                .collect(Collectors.toList());
+                        Authentication authentication = jwtTokenProvider.getAuthentication(user.getEmail(), authorities, request);
                         SecurityContextHolder.getContext().setAuthentication(authentication);
-                    } else {
-                        SecurityContextHolder.clearContext();
                     }
             }
         }catch (Exception exception){

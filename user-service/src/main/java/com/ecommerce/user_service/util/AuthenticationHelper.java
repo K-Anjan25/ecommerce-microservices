@@ -57,6 +57,11 @@ public class AuthenticationHelper {
                 DecodedJWT decodedJWT = verifier.verify(refresh_token);
                 String userId = decodedJWT.getSubject();
                 User user = userService.getUserById(UUID.fromString(userId));
+                Integer tokenVersion = decodedJWT.getClaim("tokenVersion").asInt();
+                if (tokenVersion == null || tokenVersion != user.getTokenVersion()
+                        || !user.isActive() || !user.isNotLocked()) {
+                    throw new TokenNotValidException("Refresh session has been revoked");
+                }
                 UserPrincipal userPrincipal = new UserPrincipal(user);
                 String accessToken = jwtTokenProvider.generateAccessToken(userPrincipal);
                 return new RefreshTokenResponse(accessToken,refresh_token);

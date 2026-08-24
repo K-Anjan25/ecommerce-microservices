@@ -34,7 +34,6 @@ import java.util.*;
 
 import org.springframework.security.core.GrantedAuthority;
 import static com.ecommerce.user_service.constant.FileConstant.*;
-import static com.ecommerce.user_service.constant.SecurityConstant.AUTHORITIES;
 import static com.ecommerce.user_service.constant.UserConstant.*;
 import static com.ecommerce.user_service.enumeration.Role.ROLE_USER;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -105,6 +104,7 @@ public class UserService implements UserDetailsService {
         String userId = decodedJWT.getClaim("userId").asString();
         User user = userRepository.findById(UUID.fromString(userId))
                 .orElseThrow(() -> new UserNotFoundException(NO_USER_FOUND_BY_EMAIL + userId));
+        assertCurrentTokenVersion(decodedJWT, user);
         if (!user.isActive()) throw new DisabledException("Account is disabled");
         if (!user.isNotLocked()) throw new LockedException("Account is locked");
         List<GrantedAuthority> authorities = Arrays.stream(user.getAuthorities())
@@ -118,6 +118,7 @@ public class UserService implements UserDetailsService {
         String userId = decodedJWT.getClaim("userId").asString();
         User user = userRepository.findById(UUID.fromString(userId))
                 .orElseThrow(() -> new UserNotFoundException(NO_USER_FOUND_BY_EMAIL + userId));
+        assertCurrentTokenVersion(decodedJWT, user);
         if (!user.isActive()) throw new DisabledException("Account is disabled");
         if (!user.isNotLocked()) throw new LockedException("Account is locked");
         return MeDto.builder()
@@ -147,6 +148,7 @@ public class UserService implements UserDetailsService {
 
         if(passwordEncoder.matches(newUser.getCurrentPassword(), currentUser.getPassword())){
             currentUser.setPassword(encodePassword(newUser.getNewPassword()));
+            currentUser.setTokenVersion(currentUser.getTokenVersion() + 1);
         }else{
             throw new PasswordNotMatchException("The current password not correct!");
         }
@@ -228,6 +230,13 @@ public class UserService implements UserDetailsService {
         return passwordEncoder.encode(password);
     }
 
+    private void assertCurrentTokenVersion(DecodedJWT token, User user) {
+        Integer version = token.getClaim("tokenVersion").asInt();
+        if (version == null || version != user.getTokenVersion()) {
+            throw new TokenNotValidException("Session has been revoked");
+        }
+    }
+
     private Role getRoleEnumName(String role) {
         return Role.valueOf(role.toUpperCase());
     }
@@ -253,6 +262,7 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(NO_USER_FOUND_BY_EMAIL + userId));
         user.setActive(active);
+        if (!active) user.setTokenVersion(user.getTokenVersion() + 1);
         return userRepository.save(user);
     }
 

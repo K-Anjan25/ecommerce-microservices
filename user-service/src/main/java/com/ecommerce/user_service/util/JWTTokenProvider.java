@@ -52,6 +52,7 @@ public class JWTTokenProvider {
                 .withClaim("lastName",userPrincipal.getLastName())
                 .withClaim("email",userPrincipal.getEmail())
                 .withClaim("profileImageURL",userPrincipal.getProfileImageUrl())
+                .withClaim("tokenVersion", userPrincipal.getTokenVersion())
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(HMAC512(secret.getBytes()));
     }
@@ -62,6 +63,7 @@ public class JWTTokenProvider {
                 .withAudience(Company_ADMINISTRATION)
                 .withIssuedAt(new Date())
                 .withSubject(userPrincipal.getUserId().toString())
+                .withClaim("tokenVersion", userPrincipal.getTokenVersion())
                 .withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXP))
                 .sign(HMAC256(secret.getBytes()));
     }

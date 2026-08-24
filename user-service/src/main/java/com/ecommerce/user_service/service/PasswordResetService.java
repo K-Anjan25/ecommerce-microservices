@@ -69,6 +69,7 @@ public class PasswordResetService {
         User user = userRepository.findById(token.getUserId())
                 .orElseThrow(() -> new TokenNotValidException("This reset link is invalid or expired"));
         user.setPassword(passwordEncoder.encode(newPassword));
+        user.setTokenVersion(user.getTokenVersion() + 1);
         userRepository.save(user);
         token.setUsedAt(LocalDateTime.now());
         tokenRepository.save(token);

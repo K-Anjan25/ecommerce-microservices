@@ -30,6 +30,15 @@ Gateway validation now resolves the current user record on every authenticated r
 
 Bearer tokens are sent to user-service validation only in the Authorization header; they no longer appear in validation query strings or access logs.
 
+## Session revocation
+
+Access and refresh tokens carry a per-user `tokenVersion`. Password change,
+password reset, and account disable increment the stored version. Gateway
+validation, direct user-service JWT filtering, `/user/me`, and refresh-token
+rotation all compare the signed claim with current database state. Stolen or old
+tokens therefore stop working immediately after a security-sensitive change;
+re-enabling an account does not resurrect its previous sessions.
+
 ## Reset privacy
 
 Password reset now returns the same generic response whether or not an account

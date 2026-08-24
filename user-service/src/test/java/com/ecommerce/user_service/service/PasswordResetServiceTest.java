@@ -58,6 +58,7 @@ class PasswordResetServiceTest {
         service.confirm(rawToken, "new-password");
 
         assertThat(user.getPassword()).isEqualTo("encoded-password");
+        assertThat(user.getTokenVersion()).isEqualTo(1);
         assertThat(stored.getUsedAt()).isNotNull();
         verify(userRepository).save(user);
     }
