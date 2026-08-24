@@ -15,5 +15,7 @@ public class PaymentResponse {
     private String provider;
     private String status;
     private String transactionId;
+    /** Browser-only provider token; never contains a server-side API secret. */
+    private String clientSecret;
     private String message;
 }

@@ -120,18 +120,18 @@ function Home() {
         subtitle="Revenue, orders and catalog at a glance."
       />
 
-      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid border-y border-line sm:grid-cols-2 xl:grid-cols-4">
         {kpis.map((kpi) => (
           <Box
             key={kpi.label}
             onClick={kpi.path ? () => navigate(kpi.path as string) : undefined}
-            className={`panel p-6 ${kpi.path ? "cursor-pointer transition hover:shadow-lift" : ""}`}
+            className={`border-b border-line p-5 sm:border-r xl:border-b-0 xl:last:border-r-0 ${kpi.path ? "cursor-pointer transition hover:bg-sunken" : ""}`}
           >
-            <Box className={`mb-4 flex h-11 w-11 items-center justify-center rounded-xl ${kpi.tint}`}>
+            <Box className="mb-4 text-brand">
               {kpi.icon}
             </Box>
             <Typography className="text-sm text-ink-soft">{kpi.label}</Typography>
-            <Typography variant="h4" className="mt-1 font-bold text-ink">
+            <Typography className="mt-1 !font-display !text-3xl !text-ink">
               {kpi.value}
             </Typography>
             <Typography variant="caption" className="text-ink-soft">
@@ -142,8 +142,8 @@ function Home() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-        <Box className="panel p-6">
-          <Typography variant="h6" className="mb-4 font-bold text-ink">
+        <Box className="border-t border-ink py-6">
+          <Typography className="mb-4 !font-display !text-2xl !text-ink">
             Revenue · last 7 days
           </Typography>
           <div className="h-64">
@@ -175,8 +175,8 @@ function Home() {
           </div>
         </Box>
 
-        <Box className="panel p-6">
-          <Typography variant="h6" className="mb-4 font-bold text-ink">
+        <Box className="border-t border-ink py-6">
+          <Typography className="mb-4 !font-display !text-2xl !text-ink">
             Orders by status
           </Typography>
           <div className="flex flex-wrap gap-2">
@@ -195,7 +195,7 @@ function Home() {
           </div>
           <Divider className="my-4" />
           <Box
-            className="flex cursor-pointer items-center justify-between rounded-xl p-3 transition hover:bg-brand-tint"
+            className="flex cursor-pointer items-center justify-between p-3 transition hover:bg-brand-tint"
             onClick={() => navigate("/admin/orders")}
           >
             <Box className="flex items-center gap-2">
@@ -205,7 +205,7 @@ function Home() {
             <Chip size="small" label={`${stats?.totalOrders ?? 0} total`} className="!bg-brand-soft !text-brand" />
           </Box>
           <Box
-            className="mt-2 flex cursor-pointer items-center justify-between rounded-xl p-3 transition hover:bg-brand-tint"
+            className="mt-2 flex cursor-pointer items-center justify-between p-3 transition hover:bg-brand-tint"
             onClick={() => navigate("/admin/categories")}
           >
             <Box className="flex items-center gap-2">
@@ -217,8 +217,8 @@ function Home() {
         </Box>
       </div>
 
-      <Box className="panel p-6">
-        <Typography variant="h6" className="mb-4 font-bold text-ink">
+      <Box className="border-t border-ink py-6">
+        <Typography className="mb-4 !font-display !text-2xl !text-ink">
           Top products by revenue
         </Typography>
         {(stats?.topProducts ?? []).length === 0 ? (
@@ -230,7 +230,7 @@ function Home() {
             {(stats?.topProducts ?? []).map((top, index) => (
               <Box
                 key={top.productId}
-                className="flex items-center justify-between gap-4 rounded-xl border border-ink/10 px-4 py-3"
+                className="flex items-center justify-between gap-4 border-b border-line py-3"
               >
                 <Box className="flex min-w-0 items-center gap-3">
                   <Typography className="w-6 font-bold text-brand">
@@ -253,7 +253,7 @@ function Home() {
       </Box>
 
       {lowStock.length > 0 && (
-        <Box className="panel border-state-warning/30 bg-state-warning-soft/60 p-6">
+        <Box className="border-y border-state-warning/40 bg-state-warning-soft/40 py-6">
           <Box className="mb-3 flex items-center gap-2">
             <WarningAmberIcon className="text-state-warning-on" />
             <Typography variant="h6" className="font-semibold text-state-warning-on">

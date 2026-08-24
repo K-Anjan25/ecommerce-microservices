@@ -34,6 +34,7 @@ import {
 import { formatPrice } from "../../../utils/cart";
 import { addToCompare, isInCompare } from "../../../utils/compare";
 import useCountdown from "../../../hooks/useCountdown";
+import { useI18n } from "../../../features/i18n";
 
 type CardProps = {
   product: ProductAdmin | undefined;
@@ -51,6 +52,7 @@ const ProductCard = ({ product }: CardProps) => {
   const { productId } = useParams();
   const queryClient = useQueryClient();
   const dispatch = useDispatch<any>();
+  const { t } = useI18n();
   const cartItems = useSelector((state: AppState) => state.cart);
 
   const [selectedVariantId, setSelectedVariantId] = useState<string>("");
@@ -102,11 +104,7 @@ const ProductCard = ({ product }: CardProps) => {
     { enabled: Boolean(productId), retry: false }
   );
 
-  const { data: boughtTogether } = useQuery(
-    ["products:bought-together", productId],
-    () => ProductApi.getBoughtTogether(productId ?? ""),
-    { enabled: Boolean(productId), retry: false }
-  );
+
 
   const createMutation = useMutation(CommentApi.saveComment, {
     onSuccess: () => {
@@ -184,8 +182,8 @@ const ProductCard = ({ product }: CardProps) => {
 
   return (
     <div className="space-y-10">
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] xl:gap-8">
-        {/* ══ gallery + buy box ══════════════════════════════════════ */}
+      <div>
+        {/* ══ editorial gallery + purchasing column ══════════════════ */}
         <div className="grid gap-6 md:grid-cols-[5.5rem_minmax(0,1fr)] lg:grid-cols-[5rem_minmax(0,1fr)] xl:grid-cols-[5.5rem_minmax(0,1fr)]">
           {/* thumbnail rail */}
           {images.length > 1 && (
@@ -208,12 +206,12 @@ const ProductCard = ({ product }: CardProps) => {
           )}
 
           <div
-            className={`order-1 space-y-6 md:order-2 ${
+            className={`order-1 grid items-start gap-8 md:order-2 lg:grid-cols-[minmax(0,1.12fr)_minmax(22rem,0.88fr)] xl:gap-12 ${
               images.length > 1 ? "" : "md:col-span-2"
             }`}
           >
             {/* main image */}
-            <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-line bg-sunken">
+            <div className="relative aspect-[4/5] overflow-hidden bg-sunken">
               {images.length > 0 ? (
                 <img
                   src={images[currentImageIndex]}
@@ -232,7 +230,7 @@ const ProductCard = ({ product }: CardProps) => {
                 </span>
               )}
               {isFlashSaleActive && (
-                <span className="badge-sale absolute right-4 top-4 !bg-brand !px-3 !py-1.5 !text-xs">
+                <span className="badge-sale absolute right-4 top-4 !bg-action !px-3 !py-1.5 !text-xs">
                   <BoltOutlinedIcon sx={{ fontSize: 13 }} /> Flash sale
                 </span>
               )}
@@ -260,12 +258,12 @@ const ProductCard = ({ product }: CardProps) => {
             </div>
 
             {/* ── buy box ─────────────────────────────────────────── */}
-            <div className="space-y-5">
-              <div>
+            <div className="space-y-6 lg:sticky lg:top-24">
+              <div className="border-b border-line pb-5">
                 <p className="eyebrow">
                   {product?.brand || product?.category?.name || "Cartly"}
                 </p>
-                <h1 className="mt-1.5 font-heading text-2xl font-extrabold leading-tight tracking-tight text-ink sm:text-3xl">
+                <h1 className="mt-2 font-display text-4xl font-normal leading-[1.02] tracking-[-0.025em] text-ink sm:text-5xl">
                   {product?.name}
                 </h1>
                 {!!product?.ratingCount && (
@@ -283,7 +281,7 @@ const ProductCard = ({ product }: CardProps) => {
               <div>
                 <div className="flex flex-wrap items-baseline gap-3">
                   <span
-                    className={`font-heading text-3xl font-extrabold tracking-tight sm:text-4xl ${
+                    className={`font-display text-3xl font-normal tracking-tight sm:text-4xl ${
                       isFlashSaleActive ? "text-state-danger" : "text-ink"
                     }`}
                   >
@@ -365,7 +363,7 @@ const ProductCard = ({ product }: CardProps) => {
                   className="primary-button !h-12 min-w-[11rem] flex-1 sm:flex-none"
                 >
                   <AddShoppingCartIcon sx={{ fontSize: 18 }} />
-                  {quantity ? "Add one more" : "Add to cart"}
+                  {quantity ? t("product.addMore") : t("product.add")}
                 </button>
                 <Tooltip title="Compare">
                   <button
@@ -385,7 +383,7 @@ const ProductCard = ({ product }: CardProps) => {
               {productId && <PriceWatch productId={productId} />}
 
               {/* delivery / trust panel */}
-              <div className="panel divide-y divide-line">
+              <div className="divide-y divide-line border-y border-line">
                 {[
                   {
                     icon: LocalShippingOutlinedIcon,
@@ -409,7 +407,7 @@ const ProductCard = ({ product }: CardProps) => {
                   },
                 ].map(({ icon: Icon, title, copy }) => (
                   <div key={title} className="flex items-start gap-3 p-4">
-                    <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand">
+                    <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center text-brand">
                       <Icon sx={{ fontSize: 17 }} />
                     </span>
                     <div className="min-w-0">
@@ -423,86 +421,16 @@ const ProductCard = ({ product }: CardProps) => {
           </div>
         </div>
 
-        {/* ══ sticky rail ═══════════════════════════════════════════ */}
-        <aside className="space-y-4 lg:sticky lg:top-24 lg:h-fit">
-          <div className="panel-raised p-5">
-            <p className="eyebrow">Your selection</p>
-            <p className="mt-2 line-clamp-2 font-heading text-base font-bold text-ink">
-              {product?.name}
-            </p>
-            {selectedVariant && (
-              <span className="chip mt-2 !px-2.5 !py-0.5 !text-[0.6875rem]">
-                {selectedVariant.name}
-              </span>
-            )}
-            <dl className="mt-4 space-y-2 text-sm">
-              <div className="flex justify-between">
-                <dt className="text-ink-soft">Unit price</dt>
-                <dd className="font-semibold">{formatPrice(effectivePrice)}</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-ink-soft">In cart</dt>
-                <dd className="font-semibold">{quantity}</dd>
-              </div>
-              <div className="flex justify-between border-t border-line pt-2">
-                <dt className="font-bold">Line total</dt>
-                <dd className="price-text">{formatPrice(effectivePrice * quantity)}</dd>
-              </div>
-            </dl>
-            <button
-              onClick={handleAdd}
-              disabled={displayStock <= 0}
-              className="primary-button mt-4 w-full"
-            >
-              {quantity ? "Add one more" : "Add to cart"}
-            </button>
-            <p className="mt-3 text-xs text-ink-muted">
-              Earn <span className="font-bold text-brand">
-                {Math.floor(effectivePrice / 100)} loyalty points
-              </span>{" "}
-              on this item. Coupons and gift cards apply at checkout.
-            </p>
-          </div>
-
-          {boughtTogether && boughtTogether.length > 0 && (
-            <div className="panel p-5">
-              <p className="eyebrow mb-3">Frequently bought together</p>
-              <ul className="space-y-3">
-                {boughtTogether.slice(0, 3).map((item) => (
-                  <li key={item.id} className="flex items-center gap-3">
-                    <span className="h-12 w-12 shrink-0 overflow-hidden rounded-sm border border-line bg-sunken">
-                      {(item.images?.[0] || item.imageUrl) && (
-                        <img
-                          src={item.images?.[0] || item.imageUrl}
-                          alt=""
-                          className="h-full w-full object-cover"
-                        />
-                      )}
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-sm font-semibold text-ink">
-                        {item.name}
-                      </span>
-                      <span className="text-xs text-ink-muted">
-                        {formatPrice(item.unitPrice)}
-                      </span>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </aside>
       </div>
 
       {/* ══ tabs ════════════════════════════════════════════════════ */}
-      <section className="panel overflow-hidden">
-        <div className="no-scrollbar flex gap-2 overflow-x-auto border-b border-line p-3">
+      <section className="border-y border-line">
+        <div className="no-scrollbar flex gap-7 overflow-x-auto border-b border-line">
           {TABS.map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`chip !py-2 ${tab === t ? "chip-ink" : ""}`}
+              className={`shrink-0 border-b-2 px-0 py-4 text-xs font-semibold uppercase tracking-[0.08em] transition ${tab === t ? "border-brand text-brand" : "border-transparent text-ink-muted hover:text-ink"}`}
             >
               {t}
               {t === "Reviews" && comments?.length ? ` · ${comments.length}` : ""}
@@ -510,7 +438,7 @@ const ProductCard = ({ product }: CardProps) => {
           ))}
         </div>
 
-        <div className="p-5 sm:p-7">
+        <div className="py-7 sm:py-9">
           {tab === "Description" && (
             <p className="max-w-3xl whitespace-pre-line text-sm leading-relaxed text-ink-soft">
               {product?.description || "No description has been added for this product yet."}

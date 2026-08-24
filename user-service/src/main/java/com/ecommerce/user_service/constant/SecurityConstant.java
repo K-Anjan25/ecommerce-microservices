@@ -10,7 +10,8 @@ public class SecurityConstant {
     public static final String AUTHORITIES = "authorities";
     public static final String ACCESS_DENIED_MESSAGE = "You do not have permission to access this page";
     public static final String OPTIONS_HTTP_METHOD = "OPTIONS";
-    public static final String[] PUBLIC_URLS = {"/user/login", "/user/register", "/user/image/**", "/user/resetpassword/**"
-            ,"/user/token/refresh", "/actuator/health", "/actuator/health/**", "/actuator/info"};
-    public static final String[] PUBLIC_URLS_WITH_ONLY_MAIN = {"/user/image", "/user/resetpassword"};
+    public static final String[] PUBLIC_URLS = {"/user/login", "/user/register",
+            "/user/password-reset/request", "/user/password-reset/confirm", "/user/image/**",
+            "/user/token/refresh", "/actuator/health", "/actuator/health/**", "/actuator/info"};
+    public static final String[] PUBLIC_URLS_WITH_ONLY_MAIN = {"/user/image"};
 }

@@ -1,4 +1,4 @@
-import { api } from "./axios";
+import { api } from "./client";
 
 const saveFile = async (file: FormData): Promise<string> => {
   const { data } = await api.post<string>(

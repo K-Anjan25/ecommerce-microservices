@@ -19,6 +19,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        action: { DEFAULT: v("--c-action"), hover: v("--c-action-hover") },
         brand: {
           DEFAULT: v("--c-brand"),
           dark: v("--c-brand-dark"),
@@ -84,7 +85,7 @@ module.exports = {
         card: "var(--shadow-card)",
         lift: "var(--shadow-lift)",
         pop: "var(--shadow-pop)",
-        brand: "0 10px 24px rgba(91,61,245,0.28)",
+        brand: "0 10px 24px rgba(164,71,45,0.24)",
       },
       maxWidth: {
         container: "80rem",

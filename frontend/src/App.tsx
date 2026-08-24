@@ -33,14 +33,24 @@ function App() {
     return <Loader />;
   }
 
+  const ResetPassword = React.lazy(() => import("./pages/Login/ResetPassword"));
   const Cart = React.lazy(() => import("./pages/Cart"));
   const Checkout = React.lazy(() => import("./pages/Checkout"));
+  const StripePayment = React.lazy(() => import("./pages/StripePayment"));
+  const StripePaymentReturn = React.lazy(() => import("./pages/StripePaymentReturn"));
+  const OrderConfirmation = React.lazy(() => import("./pages/OrderConfirmation"));
+  const GuestOrder = React.lazy(() => import("./pages/GuestOrder"));
   const AdminProducts = React.lazy(() => import("./pages/Admin/Products"));
   const AdminOrders = React.lazy(() => import("./pages/Admin/Orders"));
   const AdminCategories = React.lazy(() => import("./pages/Admin/Categories"));
   const AdminUsers = React.lazy(() => import("./pages/Admin/Users"));
   const AdminCoupons = React.lazy(() => import("./pages/Admin/Coupons"));
+  const AdminGiftCardPurchases = React.lazy(() => import("./pages/Admin/GiftCardPurchases"));
   const AdminReturns = React.lazy(() => import("./pages/Admin/Returns"));
+  const AdminStoreSettings = React.lazy(() => import("./pages/Admin/StoreSettings"));
+  const AdminAuditLog = React.lazy(() => import("./pages/Admin/AuditLog"));
+  const AdminPaymentReconciliation = React.lazy(() => import("./pages/Admin/PaymentReconciliation"));
+  const AdminEmailRetries = React.lazy(() => import("./pages/Admin/EmailRetries"));
   const AddEditProducts = React.lazy(
     () => import("./pages/Admin/Products/AddEditProduct")
   );
@@ -67,36 +77,13 @@ function App() {
             <Route path="products/:productId" element={<Product />} />
             <Route path="login" element={<Login />} />
             <Route path="forgetPassword" element={<ForgetPassword />} />
+            <Route path="reset-password" element={<ResetPassword />} />
             <Route path="register" element={<Register />} />
-            <Route
-              element={
-                <RequireAuth
-                  allowedRoles={["ROLE_ADMIN", "ROLE_SUPER_ADMIN"]}
-                  roles={data.roles}
-                />
-              }
-            >
-              <Route path="admin" element={<AdminLayout />}>
-                <Route index element={<Home />} />
-                <Route path="products" element={<AdminProducts />} />
-                <Route path="orders" element={<AdminOrders />} />
-                <Route path="orderDetail/:orderId" element={<OrderDetail />} />
-                <Route path="categories" element={<AdminCategories />} />
-                <Route path="users" element={<AdminUsers />} />
-                <Route path="coupons" element={<AdminCoupons />} />
-                <Route path="returns" element={<AdminReturns />} />
-                <Route
-                  path="addEditProduct/:productId?"
-                  element={<AddEditProducts />}
-                />
-              </Route>
-            </Route>
             <Route
               element={
                 <RequireAuth allowedRoles={["ROLE_USER"]} roles={data.roles} />
               }
             >
-              <Route path="cart" element={<Cart />} />
               <Route path="orders" element={<Orders />} />
               <Route path="orderDetail/:orderId" element={<UserOrderDetail />} />
               <Route path="addresses" element={<Addresses />} />
@@ -109,8 +96,50 @@ function App() {
               <Route path="profile/:id" element={<Profile />} />
               <Route path="account" element={<Account />} />
             </Route>
+            <Route path="cart" element={<Cart />} />
             <Route path="checkout" element={<Checkout />} />
+            <Route path="stripe-payment" element={<StripePayment />} />
+            <Route path="stripe-payment-return" element={<StripePaymentReturn />} />
+            <Route path="order-confirmation" element={<OrderConfirmation />} />
+            <Route path="guest-order/:orderId" element={<GuestOrder />} />
           </Route>
+            <Route
+              element={
+                <RequireAuth
+                  allowedRoles={["ROLE_MANAGER", "ROLE_ADMIN", "ROLE_SUPER_ADMIN"]}
+                  roles={data.roles}
+                />
+              }
+            >
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<Home />} />
+                <Route path="orders" element={<AdminOrders />} />
+                <Route path="orderDetail/:orderId" element={<OrderDetail />} />
+                <Route path="returns" element={<AdminReturns />} />
+                <Route
+                  element={
+                    <RequireAuth
+                      allowedRoles={["ROLE_ADMIN", "ROLE_SUPER_ADMIN"]}
+                      roles={data.roles}
+                    />
+                  }
+                >
+                  <Route path="products" element={<AdminProducts />} />
+                  <Route path="categories" element={<AdminCategories />} />
+                  <Route path="users" element={<AdminUsers />} />
+                  <Route path="coupons" element={<AdminCoupons />} />
+                  <Route path="gift-card-purchases" element={<AdminGiftCardPurchases />} />
+                  <Route path="storefront" element={<AdminStoreSettings />} />
+                  <Route path="audit-log" element={<AdminAuditLog />} />
+                  <Route path="payment-reconciliation" element={<AdminPaymentReconciliation />} />
+                  <Route path="email-retries" element={<AdminEmailRetries />} />
+                  <Route
+                    path="addEditProduct/:productId?"
+                    element={<AddEditProducts />}
+                  />
+                </Route>
+              </Route>
+            </Route>
           <Route path="*" element={<NotFound />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
         </Routes>

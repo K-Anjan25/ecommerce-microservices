@@ -1,0 +1,241 @@
+package com.ecommerce.commerce_service.service;
+
+import com.ecommerce.commerce_service.dto.payment.PaymentRequest;
+import com.ecommerce.commerce_service.model.*;
+import com.ecommerce.commerce_service.repository.OrderRepository;
+import com.ecommerce.commerce_service.repository.PaymentRepository;
+import com.ecommerce.commerce_service.service.provider.PaymentProviderClient;
+import com.ecommerce.commerce_service.service.provider.ProviderPaymentResult;
+import com.ecommerce.event_bus.RabbitMQMessageProducer;
+import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+class PaymentServiceTest {
+    @Test
+    void derivesAmountFromOwnedOrder() {
+        PaymentRepository payments = mock(PaymentRepository.class);
+        OrderRepository orders = mock(OrderRepository.class);
+        RabbitMQMessageProducer producer = mock(RabbitMQMessageProducer.class);
+        PaymentProviderClient cash = mock(PaymentProviderClient.class);
+        InvoiceService invoices = mock(InvoiceService.class);
+        CheckoutTokenService tokens = new CheckoutTokenService();
+        PaymentOutboxService outbox = mock(PaymentOutboxService.class);
+        UUID orderId = UUID.randomUUID();
+        UUID customerId = UUID.randomUUID();
+        Order order = Order.builder().id(orderId).customerId(customerId).customerEmail("a@example.com")
+                .orderStatus(OrderStatus.PENDING).totalAmount(new BigDecimal("3499.50")).build();
+        when(payments.findByOrderId(orderId)).thenReturn(Optional.empty());
+        when(orders.findLockedById(orderId)).thenReturn(order);
+        when(cash.provider()).thenReturn(PaymentProvider.CASH);
+        when(cash.charge(any())).thenReturn(ProviderPaymentResult.builder().success(true).transactionId("cash-1").build());
+        when(payments.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        PaymentService service = new PaymentService(payments, orders, producer, List.of(cash), invoices, tokens,
+                mock(LoyaltyPointService.class), mock(OrderService.class), outbox,
+                mock(PaymentReconciliationService.class),
+                mock(GiftCardPurchaseFinalizer.class));
+        PaymentRequest request = new PaymentRequest();
+        request.setOrderId(orderId);
+        request.setProvider(PaymentProvider.CASH);
+
+        var response = service.processPayment(request, customerId);
+
+        assertThat(response.getAmount()).isEqualByComparingTo("3499.50");
+        assertThat(response.getCurrency()).isEqualTo("INR");
+        verify(outbox).enqueue(argThat(event -> event.getOrderId().equals(orderId)
+                && PaymentStatus.PENDING.name().equals(event.getStatus())));
+    }
+
+    @Test
+    void rejectsPaymentForAnotherCustomersOrder() {
+        PaymentRepository payments = mock(PaymentRepository.class);
+        OrderRepository orders = mock(OrderRepository.class);
+        UUID orderId = UUID.randomUUID();
+        Order order = Order.builder().id(orderId).customerId(UUID.randomUUID())
+                .orderStatus(OrderStatus.PENDING).totalAmount(BigDecimal.TEN).build();
+        when(payments.findByOrderId(orderId)).thenReturn(Optional.empty());
+        when(orders.findLockedById(orderId)).thenReturn(order);
+        PaymentService service = new PaymentService(payments, orders, mock(RabbitMQMessageProducer.class),
+                List.of(), mock(InvoiceService.class), new CheckoutTokenService(), mock(LoyaltyPointService.class), mock(OrderService.class), mock(PaymentOutboxService.class),
+                mock(PaymentReconciliationService.class),
+                mock(GiftCardPurchaseFinalizer.class));
+        PaymentRequest request = new PaymentRequest();
+        request.setOrderId(orderId);
+        request.setProvider(PaymentProvider.CASH);
+
+        assertThatThrownBy(() -> service.processPayment(request, UUID.randomUUID()))
+                .isInstanceOf(SecurityException.class);
+    }
+    @Test
+    void duplicatePaymentIsRejectedAfterOrderLockWithoutCallingProvider() {
+        PaymentRepository payments = mock(PaymentRepository.class);
+        OrderRepository orders = mock(OrderRepository.class);
+        PaymentProviderClient provider = mock(PaymentProviderClient.class);
+        UUID orderId = UUID.randomUUID();
+        UUID customerId = UUID.randomUUID();
+        Order order = Order.builder().id(orderId).customerId(customerId)
+                .orderStatus(OrderStatus.PENDING).totalAmount(BigDecimal.TEN).build();
+        when(orders.findLockedById(orderId)).thenReturn(order);
+        when(payments.findByOrderId(orderId)).thenReturn(Optional.of(Payment.builder().orderId(orderId).build()));
+        PaymentService service = new PaymentService(payments, orders, mock(RabbitMQMessageProducer.class),
+                List.of(provider), mock(InvoiceService.class), new CheckoutTokenService(),
+                mock(LoyaltyPointService.class), mock(OrderService.class), mock(PaymentOutboxService.class),
+                mock(PaymentReconciliationService.class),
+                mock(GiftCardPurchaseFinalizer.class));
+        PaymentRequest request = new PaymentRequest();
+        request.setOrderId(orderId);
+        request.setProvider(PaymentProvider.RAZORPAY);
+
+        assertThatThrownBy(() -> service.processPayment(request, customerId))
+                .isInstanceOf(com.ecommerce.commerce_service.exception.DuplicatePaymentException.class);
+        verify(orders).findLockedById(orderId);
+        verifyNoInteractions(provider);
+    }
+
+    @Test
+    void verifiedSettlementReconcilesPendingPaymentExactlyOnce() {
+        PaymentRepository payments = mock(PaymentRepository.class);
+        OrderRepository orders = mock(OrderRepository.class);
+        OrderService orderService = mock(OrderService.class);
+        LoyaltyPointService loyalty = mock(LoyaltyPointService.class);
+        UUID orderId = UUID.randomUUID();
+        UUID customerId = UUID.randomUUID();
+        String reference = "pi_pending_1";
+        Payment payment = Payment.builder().id(9L).orderId(orderId).userId(customerId)
+                .provider(PaymentProvider.STRIPE).transactionId(reference)
+                .amount(new BigDecimal("120.00")).currency("INR")
+                .status(PaymentStatus.PENDING.name()).build();
+        Order order = Order.builder().id(orderId).customerId(customerId)
+                .orderStatus(OrderStatus.PENDING).totalAmount(new BigDecimal("120.00")).build();
+        when(payments.findByProviderAndTransactionId(PaymentProvider.STRIPE, reference))
+                .thenReturn(Optional.of(payment));
+        when(payments.findLockedByProviderAndTransactionId(PaymentProvider.STRIPE, reference))
+                .thenReturn(Optional.of(payment));
+        when(orders.findLockedById(orderId)).thenReturn(order);
+        when(payments.save(payment)).thenReturn(payment);
+        PaymentService service = new PaymentService(payments, orders, mock(RabbitMQMessageProducer.class),
+                List.of(), mock(InvoiceService.class), new CheckoutTokenService(), loyalty, orderService, mock(PaymentOutboxService.class),
+                mock(PaymentReconciliationService.class),
+                mock(GiftCardPurchaseFinalizer.class));
+
+        service.reconcileProviderPayment(PaymentProvider.STRIPE, reference, true, null,
+                new BigDecimal("120.00"), "inr");
+        service.reconcileProviderPayment(PaymentProvider.STRIPE, reference, true, null,
+                new BigDecimal("120.00"), "inr");
+
+        assertThat(payment.getStatus()).isEqualTo(PaymentStatus.SUCCESS.name());
+        verify(payments, times(1)).save(payment);
+        verify(orderService, times(1)).applyPaymentStatus(orderId, PaymentStatus.SUCCESS.name(), "STRIPE");
+        verify(loyalty, times(1)).earnPoints(customerId, new BigDecimal("120.00"), "Paid order #" + orderId);
+    }
+
+    @Test
+    void lateProviderCaptureIsRefundedWithoutReopeningCancelledOrder() {
+        PaymentRepository payments = mock(PaymentRepository.class);
+        OrderRepository orders = mock(OrderRepository.class);
+        PaymentProviderClient provider = mock(PaymentProviderClient.class);
+        OrderService orderService = mock(OrderService.class);
+        PaymentReconciliationService reconciliation = mock(PaymentReconciliationService.class);
+        GiftCardPurchaseFinalizer finalizer = mock(GiftCardPurchaseFinalizer.class);
+        UUID orderId = UUID.randomUUID();
+        String reference = "pi_late_capture";
+        Payment payment = Payment.builder().id(11L).orderId(orderId)
+                .provider(PaymentProvider.STRIPE).transactionId(reference)
+                .amount(new BigDecimal("120.00")).currency("INR")
+                .status(PaymentStatus.PENDING.name()).build();
+        Order order = Order.builder().id(orderId).orderStatus(OrderStatus.CANCELLED).build();
+        when(payments.findByProviderAndTransactionId(PaymentProvider.STRIPE, reference))
+                .thenReturn(Optional.of(payment));
+        when(payments.findLockedByProviderAndTransactionId(PaymentProvider.STRIPE, reference))
+                .thenReturn(Optional.of(payment));
+        when(payments.findLockedByOrderId(orderId)).thenReturn(Optional.of(payment));
+        when(orders.findLockedById(orderId)).thenReturn(order);
+        when(provider.provider()).thenReturn(PaymentProvider.STRIPE);
+        when(provider.refund(eq(payment), eq(payment.getAmount()), eq("late-capture-refund-" + orderId)))
+                .thenReturn(ProviderPaymentResult.builder().success(true).transactionId("re_late").build());
+        when(payments.save(payment)).thenReturn(payment);
+        PaymentService service = paymentService(payments, orders, List.of(provider), orderService,
+                reconciliation, finalizer);
+
+        service.reconcileProviderPayment(PaymentProvider.STRIPE, reference, true, null,
+                new BigDecimal("120.00"), "INR");
+
+        assertThat(payment.getStatus()).isEqualTo(PaymentStatus.REFUNDED.name());
+        assertThat(payment.getRefundedAmount()).isEqualByComparingTo("120.00");
+        verify(orderService, never()).applyPaymentStatus(any(), anyString(), anyString());
+        verify(provider).refund(eq(payment), eq(payment.getAmount()), eq("late-capture-refund-" + orderId));
+        verify(finalizer).applyPaymentStatus(orderId, PaymentStatus.REFUNDED.name());
+        verify(reconciliation).resolveForPayment(11L, "Late provider capture automatically refunded");
+    }
+
+    @Test
+    void verifiedWebhookCannotSettleAChangedAmount() {
+        PaymentRepository payments = mock(PaymentRepository.class);
+        OrderRepository orders = mock(OrderRepository.class);
+        UUID orderId = UUID.randomUUID();
+        String reference = "pi_amount_mismatch";
+        Payment payment = Payment.builder().id(10L).orderId(orderId)
+                .provider(PaymentProvider.STRIPE).transactionId(reference)
+                .amount(new BigDecimal("120.00")).currency("INR")
+                .status(PaymentStatus.PENDING.name()).build();
+        when(payments.findByProviderAndTransactionId(PaymentProvider.STRIPE, reference))
+                .thenReturn(Optional.of(payment));
+        when(payments.findLockedByProviderAndTransactionId(PaymentProvider.STRIPE, reference))
+                .thenReturn(Optional.of(payment));
+        when(orders.findLockedById(orderId)).thenReturn(Order.builder().id(orderId)
+                .orderStatus(OrderStatus.PENDING).build());
+        OrderService orderService = mock(OrderService.class);
+        PaymentService service = new PaymentService(payments, orders, mock(RabbitMQMessageProducer.class),
+                List.of(), mock(InvoiceService.class), new CheckoutTokenService(),
+                mock(LoyaltyPointService.class), orderService, mock(PaymentOutboxService.class),
+                mock(PaymentReconciliationService.class),
+                mock(GiftCardPurchaseFinalizer.class));
+
+        assertThatThrownBy(() -> service.reconcileProviderPayment(PaymentProvider.STRIPE, reference,
+                true, null, new BigDecimal("1.20"), "INR"))
+                .isInstanceOf(SecurityException.class)
+                .hasMessageContaining("amount");
+        assertThat(payment.getStatus()).isEqualTo(PaymentStatus.PENDING.name());
+        verify(payments, never()).save(any());
+        verifyNoInteractions(orderService);
+    }
+
+    @Test
+    void rejectsRefundBeyondCapturedProviderAmount() {
+        PaymentRepository payments = mock(PaymentRepository.class);
+        UUID orderId = UUID.randomUUID();
+        Payment payment = Payment.builder().orderId(orderId).amount(new BigDecimal("100.00"))
+                .refundedAmount(new BigDecimal("80.00")).provider(PaymentProvider.RAZORPAY)
+                .status(PaymentStatus.SUCCESS.name()).build();
+        when(payments.findLockedByOrderId(orderId)).thenReturn(Optional.of(payment));
+        PaymentService service = new PaymentService(payments, mock(OrderRepository.class),
+                mock(RabbitMQMessageProducer.class), List.of(), mock(InvoiceService.class),
+                new CheckoutTokenService(), mock(LoyaltyPointService.class), mock(OrderService.class), mock(PaymentOutboxService.class),
+                mock(PaymentReconciliationService.class),
+                mock(GiftCardPurchaseFinalizer.class));
+
+        assertThatThrownBy(() -> service.refundOrderPayment(orderId, new BigDecimal("30.00")))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("exceeds");
+        verify(payments, never()).save(any());
+    }
+
+    private PaymentService paymentService(PaymentRepository payments,
+                                          OrderRepository orders,
+                                          List<PaymentProviderClient> providers,
+                                          OrderService orderService,
+                                          PaymentReconciliationService reconciliation,
+                                          GiftCardPurchaseFinalizer finalizer) {
+        return new PaymentService(payments, orders, mock(RabbitMQMessageProducer.class), providers,
+                mock(InvoiceService.class), new CheckoutTokenService(), mock(LoyaltyPointService.class),
+                orderService, mock(PaymentOutboxService.class), reconciliation, finalizer);
+    }
+
+}

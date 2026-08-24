@@ -8,6 +8,7 @@ import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 
 import { AppState } from "../../store";
 import { calculateCountOfCartItems } from "../../utils/cart";
+import { useI18n } from "../../features/i18n";
 
 /**
  * Mobile bottom tab bar — replaces the hamburger for the five core jobs.
@@ -19,31 +20,32 @@ function MobileTabBar() {
   const carts = useSelector((state: AppState) => state.cart);
   const { data: user } = useSelector((state: AppState) => state.user);
   const cartCount = calculateCountOfCartItems(carts);
+  const { t } = useI18n();
 
   const TABS = [
-    { label: "Shop", icon: StorefrontOutlinedIcon, to: "/", match: (p: string) => p === "/" },
+    { label: t("nav.shop"), icon: StorefrontOutlinedIcon, to: "/", match: (p: string) => p === "/" },
     {
-      label: "Search",
+      label: t("mobile.search"),
       icon: SearchIcon,
       to: "/",
       state: { focusSearch: true },
       match: () => false,
     },
     {
-      label: "Cart",
+      label: t("mobile.cart"),
       icon: ShoppingBagOutlinedIcon,
       to: "/cart",
       badge: cartCount,
       match: (p: string) => p.startsWith("/cart"),
     },
     {
-      label: "Orders",
+      label: t("nav.orders"),
       icon: ReceiptLongOutlinedIcon,
       to: user.isLogedIn ? "/orders" : "/login",
       match: (p: string) => p.startsWith("/order"),
     },
     {
-      label: "You",
+      label: t("mobile.you"),
       icon: PersonOutlineIcon,
       to: user.isLogedIn ? "/account" : "/login",
       match: (p: string) => p.startsWith("/account") || p.startsWith("/profile") || p.startsWith("/login"),
@@ -71,7 +73,7 @@ function MobileTabBar() {
                 <span className="relative">
                   <Icon sx={{ fontSize: 21 }} />
                   {!!tab.badge && (
-                    <span className="absolute -right-2.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand px-1 text-[0.5625rem] font-bold text-oncontrast">
+                    <span className="absolute -right-2.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-action px-1 text-[0.5625rem] font-bold text-oncontrast">
                       {tab.badge > 99 ? "99+" : tab.badge}
                     </span>
                   )}

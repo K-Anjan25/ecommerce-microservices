@@ -3,10 +3,12 @@ package com.ecommerce.user_service.controller;
 import static com.ecommerce.user_service.constant.FileConstant.*;
 import static com.ecommerce.user_service.constant.RequestConstant.*;
 
+import com.ecommerce.user_service.audit.AuditLogService;
 import com.ecommerce.user_service.dto.*;
 import com.ecommerce.user_service.exception.HttpResponse;
 import com.ecommerce.user_service.model.User;
 import com.ecommerce.user_service.model.UserPrincipal;
+import com.ecommerce.user_service.service.PasswordResetService;
 import com.ecommerce.user_service.service.UserService;
 import com.ecommerce.user_service.util.AuthenticationHelper;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
@@ -39,6 +42,8 @@ import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 public class UserController {
     private final UserService userService;
     private final AuthenticationHelper authenticationHelper;
+    private final AuditLogService auditLogService;
+    private final PasswordResetService passwordResetService;
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterUserRequest user)  {
         userService.register(user);
@@ -62,7 +67,8 @@ public class UserController {
     }
 
     @PostMapping("/validateToken")
-    public ResponseEntity<UserDto> validateToken(@RequestParam String token) {
+    public ResponseEntity<UserDto> validateToken(@RequestHeader(AUTHORIZATION) String authorizationHeader) {
+        String token = authorizationHeader.substring(TOKEN_PREFIX.length());
         return ResponseEntity.ok(userService.validateToken(token));
     }
 
@@ -73,6 +79,7 @@ public class UserController {
     }
 
     @GetMapping("/getById/{userId}")
+    @PreAuthorize("hasAnyAuthority('ROLE_MANAGER','ROLE_ADMIN','ROLE_SUPER_ADMIN')")
     public ResponseEntity<UserCredential> getUserById(@PathVariable UUID userId) {
         return ResponseEntity.ok(userService.getUserCredentialsById(userId));
     }
@@ -87,6 +94,7 @@ public class UserController {
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_SUPER_ADMIN')")
     public ResponseEntity<HttpResponse> disableUser(@PathVariable UUID userId) {
         userService.setUserActive(userId, false);
+        auditLogService.record("USER_DISABLED", "USER", userId.toString(), null);
         return new ResponseEntity<>(new HttpResponse(OK.value(), OK, OK.getReasonPhrase().toUpperCase(),
                 DISABLE_USER_RES), OK);
     }
@@ -95,19 +103,32 @@ public class UserController {
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_SUPER_ADMIN')")
     public ResponseEntity<HttpResponse> enableUser(@PathVariable UUID userId) {
         userService.setUserActive(userId, true);
+        auditLogService.record("USER_ENABLED", "USER", userId.toString(), null);
         return new ResponseEntity<>(new HttpResponse(OK.value(), OK, OK.getReasonPhrase().toUpperCase(),
                 ENABLE_USER_RES), OK);
     }
 
     @PostMapping("/add")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_SUPER_ADMIN')")
     public ResponseEntity<String> addUser(@RequestBody AddUserRequest user)  {
         userService.addNewUser(user);
         return ResponseEntity.ok(ADD_USER_RES);
     }
 
+    @PutMapping("/role/{userId}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_SUPER_ADMIN')")
+    public ResponseEntity<AdminUserDto> updateStaffRole(@PathVariable UUID userId,
+                                                         @RequestParam String role) {
+        AdminUserDto updated = userService.setStaffRole(userId, role);
+        auditLogService.record("USER_ROLE_UPDATED", "USER", userId.toString(), role);
+        return ResponseEntity.ok(updated);
+    }
+
     @PutMapping("/update")
-    public ResponseEntity<LoginResponse> updateUser(@RequestBody UpdateUserRequest user)  {
-        User currentUser = userService.updateUser(user);
+    public ResponseEntity<LoginResponse> updateUser(@Valid @RequestBody UpdateUserRequest user,
+                                                     @RequestHeader(AUTHORIZATION) String authorizationHeader)  {
+        String token = authorizationHeader.substring(TOKEN_PREFIX.length());
+        User currentUser = userService.updateUser(user, token);
         UserPrincipal userPrincipal = new UserPrincipal(currentUser);
         LoginResponse loginResponse = authenticationHelper.getLoginResponse(userPrincipal);
         return ResponseEntity.ok(loginResponse);
@@ -124,18 +145,27 @@ public class UserController {
     }
 
     @GetMapping("/find/{email}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_SUPER_ADMIN')")
     public ResponseEntity<User> getUser(@PathVariable String email) {
         return ResponseEntity.ok(userService.findUserByEmail(email));
     }
 
-    @GetMapping("/resetpassword/{email}")
-    public ResponseEntity<HttpResponse> resetPassword(@PathVariable String email) {
-        userService.resetPassword(email);
+    @PostMapping("/password-reset/request")
+    public ResponseEntity<HttpResponse> requestPasswordReset(@Valid @RequestBody PasswordResetRequest request) {
+        passwordResetService.request(request.getEmail());
         return new ResponseEntity<>(new HttpResponse(OK.value(), OK, OK.getReasonPhrase().toUpperCase(),
-                RESET_PASSWORD_RES + email), OK);
+                "If an account exists, password reset instructions have been sent."), OK);
+    }
+
+    @PostMapping("/password-reset/confirm")
+    public ResponseEntity<HttpResponse> confirmPasswordReset(@Valid @RequestBody PasswordResetConfirmRequest request) {
+        passwordResetService.confirm(request.getToken(), request.getNewPassword());
+        return new ResponseEntity<>(new HttpResponse(OK.value(), OK, OK.getReasonPhrase().toUpperCase(),
+                "Password updated. You can now sign in."), OK);
     }
 
     @DeleteMapping("/delete/{email}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_SUPER_ADMIN')")
     public ResponseEntity<HttpResponse> deleteUser(@PathVariable String email){
         userService.deleteUser(email);
         return new ResponseEntity<>(new HttpResponse(OK.value(), OK, OK.getReasonPhrase().toUpperCase(),
@@ -143,6 +173,7 @@ public class UserController {
     }
 
     @PostMapping("/updateProfileImage")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_SUPER_ADMIN')")
     public ResponseEntity<User> updateProfileImage(@RequestParam String email,
                                                    @RequestParam MultipartFile profileImage) {
         return ResponseEntity.ok(userService.updateProfileImage(email,profileImage));

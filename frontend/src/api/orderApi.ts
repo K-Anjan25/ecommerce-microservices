@@ -1,12 +1,31 @@
 import { CreateOrderRequest, DashboardStats, Order } from "../types/order";
 import { Pagination } from "../types/pagination";
-import { api } from "./axios";
+import { api } from "./client";
 
 // API Methods - Requires authenticated user (ROLE_USER or ROLE_ADMIN)
 const getOrders = async (pageNo: number = 0, pageSize: number = 10) => {
   const { data } = await api.get<Pagination<Order[]>>("/v1/orders", {
     params: { pageNo, pageSize },
   });
+  return data;
+};
+
+const getGuestOrder = async (orderId: string, checkoutToken: string) => {
+  const { data } = await api.get<Order>(`/v1/orders/${orderId}/guest`, {
+    headers: { "X-Checkout-Token": checkoutToken },
+  });
+  return data;
+};
+
+const cancelGuestOrder = async (orderId: string, checkoutToken: string) => {
+  const { data } = await api.post<Order>(`/v1/orders/${orderId}/guest/cancel`, undefined, {
+    headers: { "X-Checkout-Token": checkoutToken },
+  });
+  return data;
+};
+
+const cancelMyOrder = async (orderId: string) => {
+  const { data } = await api.post<Order>(`/v1/orders/${orderId}/cancel`);
   return data;
 };
 
@@ -44,6 +63,9 @@ export const OrderApi = {
   getOrders,
   getMyOrders,
   getOrderById,
+  getGuestOrder,
+  cancelGuestOrder,
+  cancelMyOrder,
   createOrder,
   getInvoice,
   getDashboardStats,

@@ -23,13 +23,13 @@ public class CommerceInventoryService {
     }
 
     @CircuitBreaker(name = "inventoryService", fallbackMethod = "deductStockFallback")
-    public void deductStock(List<DeductStockRequest> deductStockRequests) {
-        inventoryServiceClient.deductStock(deductStockRequests);
+    public void deductStock(String operationId, List<DeductStockRequest> deductStockRequests) {
+        inventoryServiceClient.deductStock(operationId, deductStockRequests);
     }
 
     @CircuitBreaker(name = "inventoryService", fallbackMethod = "restoreStockFallback")
-    public void restoreStock(List<DeductStockRequest> restoreStockRequests) {
-        inventoryServiceClient.restoreStock(restoreStockRequests);
+    public void restoreStock(String operationId, List<DeductStockRequest> restoreStockRequests) {
+        inventoryServiceClient.restoreStock(operationId, restoreStockRequests);
     }
 
     private InventoryCheckResponse isInStockFallback(List<InventoryCheckRequest> inventoryCheckRequests, Throwable throwable) {
@@ -37,11 +37,13 @@ public class CommerceInventoryService {
         return InventoryCheckResponse.builder().isInStock(false).isNotInStockProductIds(List.of()).build();
     }
 
-    private void deductStockFallback(List<DeductStockRequest> deductStockRequests, Throwable throwable) {
+    private void deductStockFallback(String operationId, List<DeductStockRequest> deductStockRequests, Throwable throwable) {
         log.error("Stock deduction failed: {}", throwable.getMessage());
+        throw new IllegalStateException("Inventory deduction is unavailable", throwable);
     }
 
-    private void restoreStockFallback(List<DeductStockRequest> restoreStockRequests, Throwable throwable) {
+    private void restoreStockFallback(String operationId, List<DeductStockRequest> restoreStockRequests, Throwable throwable) {
         log.error("Stock restoration failed: {}", throwable.getMessage());
+        throw new IllegalStateException("Inventory restoration is unavailable", throwable);
     }
 }

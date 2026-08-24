@@ -6,6 +6,7 @@ import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,6 +19,11 @@ import java.util.UUID;
 public class Order extends AdvanceBaseModal {
 
     private UUID customerId;
+
+    /** Distinguishes virtual stored-value purchases from merchandise orders. */
+    @Column(length = 32)
+    private String orderType;
+
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
@@ -50,4 +56,36 @@ public class Order extends AdvanceBaseModal {
 
     @Column(precision = 19, scale = 2)
     private BigDecimal giftWrapFee;
+
+    /** Coupon and loyalty are pre-tax discounts; gift cards are payment tender after tax. */
+    private Integer loyaltyPointsRedeemed;
+
+    @Column(precision = 19, scale = 2)
+    private BigDecimal loyaltyDiscountAmount;
+
+    private UUID giftCardId;
+
+    @Column(length = 4)
+    private String giftCardCodeLast4;
+
+    @Column(precision = 19, scale = 2)
+    private BigDecimal giftCardAmount;
+
+    @Column(precision = 19, scale = 2)
+    private BigDecimal giftCardRefundedAmount;
+
+    @Column(precision = 19, scale = 2)
+    private BigDecimal providerRefundedAmount;
+
+    @Column(length = 64)
+    private String inventoryOperationId;
+
+    private Boolean inventoryRestored;
+    private Boolean creditsRestored;
+
+    /** SHA-256 guest capability; raw value is returned/emailed once and never persisted. */
+    @Column(length = 64)
+    private String checkoutTokenHash;
+
+    private LocalDateTime checkoutTokenExpiresAt;
 }

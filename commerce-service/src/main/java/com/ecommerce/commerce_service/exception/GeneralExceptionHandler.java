@@ -18,6 +18,7 @@ import java.util.Map;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 
 @RestControllerAdvice
@@ -43,6 +44,16 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> generalExceptionHandler(Exception exception) {
         return new ResponseEntity<>(exception.getMessage(), INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(SecurityException.class)
+    public ResponseEntity<?> securityExceptionHandler(SecurityException exception) {
+        return createHttpResponse(FORBIDDEN, exception.getMessage());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<?> illegalArgumentExceptionHandler(IllegalArgumentException exception) {
+        return createHttpResponse(BAD_REQUEST, exception.getMessage());
     }
 
     @ExceptionHandler(ProductNotInStockException.class)

@@ -33,4 +33,12 @@ public class CashPaymentClient implements PaymentProviderClient {
                 .message("Cash on delivery refund recorded; to be settled offline")
                 .build();
     }
+
+    @Override
+    public ProviderPaymentResult cancel(Payment payment) {
+        return ProviderPaymentResult.builder().success(true)
+                .transactionId(payment.getTransactionId())
+                .message("Cash on delivery cancelled before collection").build();
+    }
+
 }

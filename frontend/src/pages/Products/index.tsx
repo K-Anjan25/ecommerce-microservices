@@ -1,18 +1,15 @@
-import React, { useEffect, useState, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import { useInfiniteQuery, useQuery } from "react-query";
 import { useInView } from "react-intersection-observer";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Drawer, Checkbox, FormControlLabel, TextField, Rating } from "@mui/material";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
-import SearchIcon from "@mui/icons-material/Search";
-import TuneIcon from "@mui/icons-material/Tune";
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import ReplayOutlinedIcon from "@mui/icons-material/ReplayOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import BoltOutlinedIcon from "@mui/icons-material/BoltOutlined";
-import debounce from "lodash.debounce";
 
 import { ProductApi } from "../../api/productApi";
 import { CategoryApi } from "../../api/categoryApi";
@@ -21,6 +18,9 @@ import { Category } from "../../types/category";
 import Card from "../../components/Card";
 import ProductViewPlaceholder from "../../components/ProductViewPlaceholder";
 import EmptyState from "../../components/EmptyState";
+import { useStoreSettings } from "../../features/storefront";
+import { useI18n } from "../../features/i18n";
+import usePageMetadata from "../../hooks/usePageMetadata";
 
 const SORTS = [
   { value: "DATE_DESC", label: "Newest" },
@@ -28,6 +28,15 @@ const SORTS = [
   { value: "PRICE_ASC", label: "Price: low → high" },
   { value: "PRICE_DESC", label: "Price: high → low" },
 ];
+
+const CATEGORY_IMAGES: Record<string, string> = {
+  electronics: "/images/editorial/category-electronics.jpg",
+  home: "/images/editorial/category-home.jpg",
+  fashion: "/images/editorial/category-fashion.jpg",
+  beauty: "/images/editorial/category-beauty.jpg",
+  sports: "/images/editorial/category-sports.jpg",
+  grocery: "/images/editorial/category-grocery.jpg",
+};
 
 const TRUST = [
   { icon: LocalShippingOutlinedIcon, title: "Free shipping", copy: "On orders over ₹999" },
@@ -39,11 +48,10 @@ const TRUST = [
 function Products() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useI18n();
   const { ref, inView } = useInView();
-  const searchInputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  const [searchValue, setSearchValue] = useState("");
   const [sortBy, setSortBy] = useState("DATE_DESC");
   const [filter, setFilter] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
@@ -54,7 +62,6 @@ function Products() {
   const [maxPrice, setMaxPrice] = useState<string>("");
   const [minRating, setMinRating] = useState<string>("");
 
-  const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   const { data, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } =
@@ -89,13 +96,12 @@ function Products() {
     if (inView) fetchNextPage();
   }, [inView, fetchNextPage]);
 
-  /* Navbar hand-offs: global search, category rail, mobile "Search" tab. */
+  /* Shell hand-offs: global search, category selection and mobile “Search” tab. */
   useEffect(() => {
     const state = location.state as
       | { search?: string; category?: string; focusSearch?: boolean }
       | null;
     if (typeof state?.search === "string" && state.search.trim()) {
-      setSearchValue(state.search);
       setSearchTerm(state.search);
       resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -103,10 +109,7 @@ function Products() {
       setFilter(state.category);
       resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-    if (state?.focusSearch) {
-      searchInputRef.current?.focus();
-      searchInputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
+    // Mobile search is handled by the shell drawer; this page only consumes submitted terms.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.key]);
 
@@ -114,22 +117,24 @@ function Products() {
     CategoryApi.getCategories().then(setCategories).catch(() => setCategories([]));
   }, []);
 
-  const delayedSearchTerm = useMemo(
-    () => debounce((q: string) => setSearchTerm(q), 500),
-    []
+  const { settings: storeSettings } = useStoreSettings();
+  const homeMetadata = useMemo(
+    () => ({
+      title: "Cartly — Curated for everyday",
+      description: storeSettings.heroDescription,
+      canonicalPath: "/",
+      image: "/images/editorial/hero.jpg",
+      jsonLd: {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        name: "Cartly",
+        url: window.location.origin,
+        description: storeSettings.heroDescription,
+      },
+    }),
+    [storeSettings.heroDescription]
   );
-
-  const handleChangeSearchValue = (value: string) => {
-    setSearchValue(value);
-    delayedSearchTerm(value);
-    if (!value) {
-      setSearchSuggestions([]);
-      return;
-    }
-    ProductApi.suggestProducts(value)
-      .then(setSearchSuggestions)
-      .catch(() => setSearchSuggestions([]));
-  };
+  usePageMetadata(homeMetadata);
 
   const { data: bestsellers } = useQuery("bestsellers", ProductApi.getBestsellers, {
     enabled:
@@ -161,7 +166,6 @@ function Products() {
       label: `“${searchTerm}”`,
       clear: () => {
         setSearchTerm("");
-        setSearchValue("");
       },
     },
   ].filter(Boolean) as { key: string; label: string; clear: () => void }[];
@@ -175,7 +179,6 @@ function Products() {
     setMinRating("");
     setFilter("");
     setSearchTerm("");
-    setSearchValue("");
   };
 
   const toggleBrand = (brand: string) =>
@@ -186,6 +189,19 @@ function Products() {
   /* ── facet panel (shared by sidebar + mobile drawer) ────────────────── */
   const FacetPanel = (
     <div className="space-y-7">
+      <section>
+        <p className="eyebrow mb-3">Sort</p>
+        <select
+          value={sortBy}
+          onChange={(event) => setSortBy(event.target.value)}
+          aria-label="Sort products"
+          className="input-control cursor-pointer"
+        >
+          {SORTS.map((option) => (
+            <option key={option.value} value={option.value}>{option.label}</option>
+          ))}
+        </select>
+      </section>
       <section>
         <p className="eyebrow mb-3">Category</p>
         <div className="flex flex-wrap gap-2">
@@ -305,82 +321,73 @@ function Products() {
     <div className="pb-4">
       {/* ═══ HERO ═════════════════════════════════════════════════════ */}
       <section className="page-shell">
-        <div className="grid gap-4 lg:grid-cols-[1.25fr_1fr]">
-          <div className="grain relative overflow-hidden rounded-xl2 bg-contrast px-7 py-10 text-oncontrast sm:px-12 sm:py-16">
-            <p className="eyebrow !text-accent">New season · 2026</p>
-            <h1 className="mt-4 font-heading text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
-              Everything you
+        <div className="grid overflow-hidden border border-line bg-paper lg:grid-cols-[1.08fr_0.92fr]">
+          <div className="relative order-2 flex flex-col justify-center px-7 py-12 sm:px-12 sm:py-16 lg:min-h-[34rem]">
+            <p className="eyebrow !text-brand">{storeSettings.heroEyebrow}</p>
+            <h1 className="mt-5 font-display text-5xl font-normal leading-[0.98] tracking-[-0.03em] text-ink sm:text-6xl lg:text-7xl">
+              {storeSettings.heroTitle}
               <br />
-              <span className="font-display font-normal italic text-accent">
-                need, one cart.
+              <span className="font-display font-normal italic text-brand">
+                {storeSettings.heroEmphasis}
               </span>
             </h1>
-            <p className="mt-5 max-w-md text-sm leading-relaxed text-ink-muted sm:text-base">
-              A catalog you can actually search, a checkout that doesn&apos;t fight you, and
-              rewards that stack. Browse {products.length ? `${products.length}+` : "the"} products below.
+            <p className="mt-7 max-w-md text-sm leading-relaxed text-ink-soft sm:text-base">
+              {storeSettings.heroDescription} Browse {products.length ? `${products.length}+` : "the"} products below.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <button
                 onClick={() => resultsRef.current?.scrollIntoView({ behavior: "smooth" })}
-                className="accent-button"
+                className="primary-button"
               >
-                Shop the catalog <ArrowForwardIcon sx={{ fontSize: 17 }} />
+                {storeSettings.primaryCtaLabel} <ArrowForwardIcon sx={{ fontSize: 17 }} />
               </button>
               <button
                 onClick={() => navigate("/flash-sales")}
-                className="inline-flex items-center justify-center gap-2 rounded-sm border border-white/25 px-4 py-2.5 text-sm font-semibold text-oncontrast transition hover:bg-white/10"
+                className="inline-flex items-center justify-center gap-2 border-b border-ink px-1 py-2.5 text-sm font-semibold text-ink transition hover:text-brand"
               >
-                View flash sales
+                {storeSettings.secondaryCtaLabel}
               </button>
             </div>
-            <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-ink-muted">
+            <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-line pt-5 text-xs text-ink-muted">
               <span>★ 4.8 average rating</span>
               <span>12,400+ orders shipped</span>
               <span>Free returns for 7 days</span>
             </div>
           </div>
 
-          {/* featured slot — bestseller cover, falls back to a quiet panel */}
-          <div className="relative hidden overflow-hidden rounded-xl2 border border-line bg-paper lg:block">
-            {bestsellers?.[0]?.imageUrl || bestsellers?.[0]?.images?.[0] ? (
-              <button
-                onClick={() => navigate(`products/${bestsellers[0].id}`)}
-                className="group block h-full w-full text-left"
-              >
-                <img
-                  src={bestsellers[0].images?.[0] || bestsellers[0].imageUrl}
-                  alt={bestsellers[0].name}
-                  className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-contrast/90 to-transparent p-6 pt-16 text-oncontrast">
-                  <span className="badge-sale !bg-accent !text-ink">Bestseller</span>
-                  <p className="mt-2 font-heading text-xl font-bold">{bestsellers[0].name}</p>
-                </div>
-              </button>
-            ) : (
-              <div className="flex h-full flex-col justify-center gap-4 p-10">
-                <p className="eyebrow">Featured</p>
-                <p className="font-heading text-2xl font-bold leading-snug text-ink">
-                  Fresh stock lands every week.
-                </p>
-                <p className="text-sm text-ink-soft">
-                  Filter by brand, price or rating — the facets update as you go.
-                </p>
-              </div>
-            )}
+          {/* Art-directed campaign image — intentionally separate from catalog data. */}
+          <div className="relative order-1 min-h-[24rem] overflow-hidden bg-sunken lg:min-h-[34rem]">
+            <img
+              src="/images/editorial/hero.jpg"
+              alt="A warm home interior with considered everyday objects"
+              width={1024}
+              height={1152}
+              fetchPriority="high"
+              className="h-full w-full object-cover object-center"
+            />
+            <div className="absolute bottom-0 left-0 bg-paper/95 px-5 py-4 backdrop-blur-sm">
+              <p className="text-[0.625rem] font-semibold uppercase tracking-[0.18em] text-ink-muted">
+                The Cartly edit · Vol. 01
+              </p>
+              <p className="mt-1 font-display text-xl text-ink">Beautiful things for everyday life</p>
+            </div>
           </div>
         </div>
 
         {/* trust strip */}
-        <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 border-x border-b border-line bg-paper lg:grid-cols-4">
           {TRUST.map(({ icon: Icon, title, copy }) => (
-            <div key={title} className="panel flex items-center gap-3 px-4 py-3.5">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand">
+            <div key={title} className="flex items-center gap-3 border-r border-line px-4 py-4 last:border-r-0">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center text-brand">
                 <Icon sx={{ fontSize: 18 }} />
               </span>
               <div className="min-w-0">
                 <p className="truncate text-sm font-bold text-ink">{title}</p>
-                <p className="truncate text-xs text-ink-muted">{copy}</p>
+                <p className="truncate text-xs text-ink-muted">
+                  {title === "Free shipping"
+                    ? `On orders over ₹${storeSettings.freeShippingThreshold.toLocaleString("en-IN")}`
+                    : copy}
+                </p>
               </div>
             </div>
           ))}
@@ -405,6 +412,11 @@ function Products() {
           <div className="no-scrollbar -mx-4 flex gap-3 overflow-x-auto px-4 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 lg:grid-cols-6">
             {categories.slice(0, 6).map((c) => {
               const active = filter === c.name;
+              const categoryProduct = products.find((product) => product.categoryName === c.name);
+              const categoryImage =
+                CATEGORY_IMAGES[c.name.toLowerCase()] ||
+                categoryProduct?.images?.[0] ||
+                categoryProduct?.imageUrl;
               return (
                 <button
                   key={c.id}
@@ -412,21 +424,25 @@ function Products() {
                     setFilter(c.name);
                     resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
                   }}
-                  className={`group w-36 shrink-0 overflow-hidden rounded-lg border p-5 text-left transition sm:w-auto ${
-                    active
-                      ? "border-brand bg-brand-soft"
-                      : "border-line bg-paper hover:-translate-y-1 hover:border-ink-faint hover:shadow-lift"
+                  className={`group w-36 shrink-0 text-center transition sm:w-auto ${
+                    active ? "text-brand" : "text-ink hover:text-brand"
                   }`}
                 >
-                  <span
-                    className={`flex h-10 w-10 items-center justify-center rounded-full font-heading text-base font-extrabold ${
-                      active ? "bg-brand text-oncontrast" : "bg-sunken text-ink"
-                    }`}
-                  >
-                    {c.name.charAt(0).toUpperCase()}
+                  <span className={`mx-auto flex aspect-square w-full items-center justify-center overflow-hidden rounded-full border ${active ? "border-brand" : "border-line"}`}>
+                    {categoryImage ? (
+                      <img
+                        src={categoryImage}
+                        alt=""
+                        width={1024}
+                        height={1024}
+                        loading="lazy"
+                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                      />
+                    ) : (
+                      <span className="font-display text-3xl">{c.name.charAt(0).toUpperCase()}</span>
+                    )}
                   </span>
-                  <p className="mt-4 truncate text-sm font-bold text-ink">{c.name}</p>
-                  <p className="mt-0.5 text-xs text-ink-muted">Explore →</p>
+                  <p className="mt-3 truncate text-xs font-semibold uppercase tracking-[0.08em]">{c.name}</p>
                 </button>
               );
             })}
@@ -448,94 +464,39 @@ function Products() {
       )}
 
       {/* ═══ RESULTS ══════════════════════════════════════════════════ */}
-      <section ref={resultsRef} className="page-shell mt-12 scroll-mt-[7.5rem]">
-        <div className="mb-5">
-          <p className="eyebrow">Catalog</p>
-          <h2 className="section-title mt-1">
-            {filter ? filter : searchTerm ? `Results for “${searchTerm}”` : "All products"}
-          </h2>
-        </div>
-
-        {/* sticky toolbar */}
-        <div className="sticky top-[7rem] z-30 mb-6 rounded-lg border border-line bg-paper/95 p-3 backdrop-blur-md">
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="relative min-w-[12rem] flex-1">
-              <SearchIcon
-                className="pointer-events-none absolute left-3 top-2.5 text-ink-muted"
-                sx={{ fontSize: 18 }}
-              />
-              <input
-                ref={searchInputRef}
-                type="search"
-                value={searchValue}
-                onChange={(e) => handleChangeSearchValue(e.target.value)}
-                placeholder="Search this catalog…"
-                aria-label="Search catalog"
-                className="input-control !h-10 pl-10"
-              />
-              {searchSuggestions.length > 0 && (
-                <ul className="absolute z-40 mt-1 w-full overflow-hidden rounded-sm border border-line bg-paper shadow-pop">
-                  {searchSuggestions.map((s) => (
-                    <li key={s}>
-                      <button
-                        className="block w-full px-4 py-2 text-left text-sm hover:bg-brand-tint"
-                        onClick={() => {
-                          setSearchValue(s);
-                          setSearchTerm(s);
-                          setSearchSuggestions([]);
-                        }}
-                      >
-                        {s}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            <button onClick={() => setFiltersOpen(true)} className="secondary-button !py-2 lg:hidden">
-              <TuneIcon sx={{ fontSize: 17 }} />
-              Filters{activeFilters.length ? ` · ${activeFilters.length}` : ""}
-            </button>
-
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              aria-label="Sort products"
-              className="input-control !h-10 !w-auto min-w-[10rem] cursor-pointer pr-8 font-semibold"
-            >
-              {SORTS.map((s) => (
-                <option key={s.value} value={s.value}>
-                  Sort: {s.label}
-                </option>
-              ))}
-            </select>
+      <section ref={resultsRef} className="page-shell mt-16 scroll-mt-24">
+        <div className="mb-8 flex items-end justify-between gap-4 border-b border-line pb-5">
+          <div>
+            <p className="eyebrow">The collection</p>
+            <h2 className="section-title mt-1">
+              {filter ? filter : searchTerm ? `Results for “${searchTerm}”` : "All products"}
+            </h2>
+            <p className="mt-2 text-xs text-ink-muted">
+              {products.length} item{products.length === 1 ? "" : "s"}{hasNextPage ? " and more" : ""}
+            </p>
           </div>
-
-          {activeFilters.length > 0 && (
-            <div className="mt-2.5 flex flex-wrap items-center gap-2 border-t border-line pt-2.5">
-              <span className="text-xs font-semibold text-ink-muted">
-                {products.length} result{products.length === 1 ? "" : "s"}
-              </span>
-              {activeFilters.map((f) => (
-                <button key={f.key} onClick={f.clear} className="chip chip-active">
-                  {f.label}
-                  <CloseIcon sx={{ fontSize: 13 }} />
-                </button>
-              ))}
-              <button
-                onClick={clearAll}
-                className="text-xs font-semibold text-ink-soft underline-offset-2 hover:underline"
-              >
-                Clear all
-              </button>
-            </div>
-          )}
+          <button
+            onClick={() => setFiltersOpen(true)}
+            className="border-b border-ink pb-1 text-xs font-semibold uppercase tracking-[0.1em] text-ink lg:hidden"
+          >
+            {t("common.refine")}{activeFilters.length ? ` (${activeFilters.length})` : ""}
+          </button>
         </div>
+
+        {activeFilters.length > 0 && (
+          <div className="mb-6 flex flex-wrap items-center gap-2">
+            {activeFilters.map((item) => (
+              <button key={item.key} onClick={item.clear} className="chip chip-active">
+                {item.label} <CloseIcon sx={{ fontSize: 13 }} />
+              </button>
+            ))}
+            <button onClick={clearAll} className="text-xs text-ink-muted underline">{t("common.clear")}</button>
+          </div>
+        )}
 
         <div className="grid gap-6 lg:grid-cols-[16rem_1fr]">
           <aside className="hidden lg:block">
-            <div className="panel sticky top-[13.5rem] max-h-[calc(100vh-16rem)] overflow-y-auto p-5">
+            <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto border-t border-line py-5 pr-5">
               <div className="mb-5 flex items-center justify-between">
                 <h3 className="font-heading text-base font-bold">Filters</h3>
                 {hasActiveSearch && (

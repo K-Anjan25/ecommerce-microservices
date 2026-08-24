@@ -113,29 +113,25 @@ function Addresses() {
           />
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid border-t border-ink md:grid-cols-2">
           {list.map((addr: SavedAddress) => (
             <article
               key={addr.id}
-              className={`panel relative p-5 ${addr.defaultAddress ? "!border-brand" : ""}`}
+              className={`relative border-b border-line py-6 md:odd:pr-8 md:even:border-l md:even:pl-8 ${addr.defaultAddress ? "border-l-2 !border-l-brand pl-4" : ""}`}
             >
               <div className="flex items-start gap-3">
                 <span
-                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
-                    addr.defaultAddress
-                      ? "bg-brand text-oncontrast"
-                      : "bg-sunken text-ink-soft"
-                  }`}
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center ${addr.defaultAddress ? "text-brand" : "text-ink-muted"}`}
                 >
                   <HomeOutlinedIcon sx={{ fontSize: 18 }} />
                 </span>
                 <div className="min-w-0 flex-1">
                   {addr.defaultAddress && (
-                    <span className="mb-1.5 inline-flex rounded-full bg-brand-soft px-2.5 py-0.5 text-[0.625rem] font-bold uppercase tracking-wide text-brand">
+                    <span className="mb-1.5 inline-flex text-[0.625rem] font-bold uppercase tracking-[0.12em] text-brand">
                       Default
                     </span>
                   )}
-                  <p className="font-heading text-sm font-bold leading-snug text-ink">
+                  <p className="font-display text-xl leading-snug text-ink">
                     {addr.addressDetail}
                   </p>
                   <p className="mt-1 text-sm text-ink-soft">
@@ -158,7 +154,7 @@ function Addresses() {
       )}
 
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="xs" fullWidth>
-        <DialogTitle className="!font-heading !font-bold">Add a new address</DialogTitle>
+        <DialogTitle className="!font-display !text-2xl !font-normal">Add a new address</DialogTitle>
         <DialogContent dividers>
           <div className="space-y-4 py-1">
             <div>

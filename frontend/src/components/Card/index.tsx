@@ -20,6 +20,7 @@ import { Product, ProductAdmin } from "../../types/product";
 import { formatPrice } from "../../utils/cart";
 import { addToCompare, isInCompare } from "../../utils/compare";
 import { showSuccess } from "../../utils/showSuccess";
+import { useI18n } from "../../features/i18n";
 
 type CardProps = {
   product: Product | ProductAdmin;
@@ -39,6 +40,7 @@ type CardProps = {
 const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
   const dispatch = useDispatch<any>();
   const navigate = useNavigate();
+  const { t } = useI18n();
   const cartItems = useSelector((state: AppState) => state.cart);
   const quantity =
     cartItems.find(
@@ -88,10 +90,23 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
   return (
     <article
       onClick={onClick}
-      className="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-lg border border-line bg-paper transition duration-200 hover:-translate-y-1 hover:border-ink-faint hover:shadow-lift"
+      role={onClick ? "link" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      aria-label={onClick ? `View ${product.name}` : undefined}
+      onKeyDown={(event) => {
+        if (
+          onClick &&
+          event.target === event.currentTarget &&
+          (event.key === "Enter" || event.key === " ")
+        ) {
+          event.preventDefault();
+          onClick(event as unknown as React.MouseEvent);
+        }
+      }}
+      className="group relative flex h-full cursor-pointer flex-col overflow-hidden bg-transparent transition duration-300"
     >
       {/* ── cover ─────────────────────────────────────────────────────── */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-sunken">
+      <div className="relative aspect-[4/5] overflow-hidden bg-sunken">
         {cover ? (
           <img
             src={cover}
@@ -112,7 +127,7 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
             <span className="badge-sale !bg-contrast">{product.badge}</span>
           )}
           {product.flashSaleActive && (
-            <span className="badge-sale !bg-brand">Flash</span>
+            <span className="badge-sale !bg-action">Flash</span>
           )}
         </div>
 
@@ -124,7 +139,7 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
               aria-label="Add to compare"
               className={`flex h-8 w-8 items-center justify-center rounded-full border backdrop-blur transition ${
                 isInCompare(product.id)
-                  ? "border-brand bg-brand text-oncontrast"
+                  ? "border-brand bg-action text-oncontrast"
                   : "border-line bg-paper/90 text-ink-soft hover:border-ink hover:text-ink"
               }`}
             >
@@ -146,7 +161,7 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
       </div>
 
       {/* ── body ──────────────────────────────────────────────────────── */}
-      <div className="flex flex-1 flex-col gap-1 p-3.5 pb-14 sm:p-4 sm:pb-16">
+      <div className="flex flex-1 flex-col gap-1 px-0 pb-14 pt-3 sm:pb-16">
         <p className="text-eyebrow truncate font-bold uppercase text-ink-muted">
           {product.brand || categoryName || "Cartly"}
         </p>
@@ -182,7 +197,7 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
       {/* ── action bar — docked to the card foot ─────────────────────── */}
       <div
         onClick={stop}
-        className="absolute inset-x-0 bottom-0 p-2.5"
+        className="absolute inset-x-0 bottom-0 pt-2.5"
       >
         {quantity ? (
           <div className="flex h-10 items-center justify-between rounded-sm bg-contrast px-1.5 text-oncontrast">
@@ -193,7 +208,7 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
             >
               <RemoveIcon sx={{ fontSize: 16 }} />
             </button>
-            <span className="text-sm font-bold">{quantity} in cart</span>
+            <span className="text-sm font-bold">{quantity} {t("product.inCart")}</span>
             <button
               onClick={handleAdd}
               aria-label="Increase quantity"
@@ -207,15 +222,15 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
             onClick={onClick}
             className="flex h-10 w-full items-center justify-center rounded-sm border border-line bg-paper text-xs font-bold uppercase tracking-wide text-ink-soft"
           >
-            View product
+            {t("product.view")}
           </button>
         ) : (
           <button
             onClick={handleAdd}
-            className="flex h-10 w-full items-center justify-center gap-2 rounded-sm bg-contrast text-xs font-bold text-oncontrast transition hover:bg-brand sm:text-sm"
+            className="flex h-10 w-full items-center justify-center gap-2 rounded-sm bg-contrast text-xs font-bold text-oncontrast transition hover:bg-action sm:text-sm"
           >
             <AddShoppingCartIcon sx={{ fontSize: 16 }} />
-            Add to cart
+            {t("product.add")}
           </button>
         )}
       </div>

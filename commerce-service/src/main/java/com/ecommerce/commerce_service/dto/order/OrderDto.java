@@ -34,4 +34,10 @@ public class OrderDto {
     private String customerEmail;
     private Boolean giftWrap;
     private BigDecimal giftWrapFee;
+    private Integer loyaltyPointsRedeemed;
+    private BigDecimal loyaltyDiscountAmount;
+    private String giftCardCodeLast4;
+    private BigDecimal giftCardAmount;
+    /** Returned only by order creation; never persisted in plaintext. */
+    private String checkoutToken;
 }

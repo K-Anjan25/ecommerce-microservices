@@ -279,8 +279,13 @@ public class ProductService {
                 .build();
     }
 
-    public List<String> searchSuggestions(String term) {
-        return productRepository.suggestByName(term == null ? "" : term.trim());
+    @Transactional(readOnly = true)
+    public List<ProductSearchSuggestion> searchSuggestions(String term) {
+        String normalized = term == null ? "" : term.trim();
+        if (normalized.length() < 2) {
+            return List.of();
+        }
+        return productRepository.suggestProducts(normalized, PageRequest.of(0, 6));
     }
 
     public List<String> searchBrands() {

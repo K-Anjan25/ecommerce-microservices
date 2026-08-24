@@ -3,16 +3,29 @@ server:
   error:
     include-message: always
 
+file:
+  storage:
+    path: ${FILE_STORAGE_PATH:${user.home}/ecommerce-product-images}
+
 spring:
   application:
     name: api-gateway
+  codec:
+    max-in-memory-size: 6MB
+  webflux:
+    multipart:
+      max-in-memory-size: 1MB
+      max-disk-usage-per-part: 5MB
+      max-parts: 4
   cloud:
     gateway:
       globalcors:
         add-to-simple-url-handler-mapping: true
         corsConfigurations:
           '[/**]':
-            allowedOrigins: "*"
+            allowedOriginPatterns:
+              - ${CORS_ALLOWED_ORIGIN:http://localhost:*}
+              - https://*.e2b.app
             allowedHeaders: "*"
             allowedMethods:
               - GET
@@ -21,10 +34,18 @@ spring:
               - DELETE
               - OPTIONS
       routes:
-        - id: inventory-service
-          uri: ${PRODUCT_SERVICE_URI:http://localhost:8080}
+        # Guest tracking capability is supplied in X-Checkout-Token.
+        - id: guest-order-tracking
+          uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
           predicates:
-            - Path=/v1/inventories/**
+            - Path=/v1/orders/*/guest
+            - Method=GET
+
+        - id: guest-order-cancel
+          uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
+          predicates:
+            - Path=/v1/orders/*/guest/cancel
+            - Method=POST
 
         - id: order-service
           uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
@@ -49,6 +70,13 @@ spring:
             - Path=/v1/carts/**
           filters:
             - AuthFilter
+
+        # Provider callbacks authenticate with provider HMAC signatures, not customer JWTs.
+        - id: payment-webhooks
+          uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
+          predicates:
+            - Path=/v1/payments/webhooks/**
+            - Method=POST
 
         - id: payment-service
           uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
@@ -87,7 +115,7 @@ spring:
         - id: product-write
           uri: ${PRODUCT_SERVICE_URI:http://localhost:8080}
           predicates:
-            - Path=/v1/products/**,/v1/categories/**,/v1/comments/**
+            - Path=/v1/products/**,/v1/categories/**,/v1/comments/**,/v1/store-settings
             - Method=POST,PUT,DELETE
           filters:
             - AuthFilter
@@ -95,8 +123,29 @@ spring:
         - id: product-read
           uri: ${PRODUCT_SERVICE_URI:http://localhost:8080}
           predicates:
-            - Path=/v1/products/**,/v1/categories/**,/v1/comments/**
+            - Path=/v1/products/**,/v1/categories/**,/v1/comments/**,/v1/store-settings
             - Method=GET
+
+        - id: product-audit
+          uri: ${PRODUCT_SERVICE_URI:http://localhost:8080}
+          predicates:
+            - Path=/v1/product-audit/**
+          filters:
+            - AuthFilter
+
+        - id: commerce-audit
+          uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
+          predicates:
+            - Path=/v1/commerce-audit/**
+          filters:
+            - AuthFilter
+
+        - id: gift-card-service
+          uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
+          predicates:
+            - Path=/v1/gift-cards/**
+          filters:
+            - AuthFilter
 
         - id: shipping-service
           uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}

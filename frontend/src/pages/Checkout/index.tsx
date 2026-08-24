@@ -1,7 +1,7 @@
 import { Box, Checkbox, Divider, FormControlLabel } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useFormik } from "formik";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -20,6 +20,7 @@ import { PaymentApi } from "../../api/paymentApi";
 import { AddressApi } from "../../api/addressApi";
 import { ShippingApi } from "../../api/shippingApi";
 import { CouponApi } from "../../api/couponApi";
+import { LoyaltyPointApi } from "../../api/loyaltyPointApi";
 import CartLine from "../../components/CartLine";
 import CheckoutSteps from "../../components/CheckoutSteps";
 import EmptyState from "../../components/EmptyState";
@@ -28,8 +29,8 @@ import TextInput from "../../components/TextInput";
 import createOrderForm from "../../forms/orderForm";
 import { AppState } from "../../store";
 import { clearAllItems } from "../../store/actions/cartAction";
-import { CreateOrderRequest, ShippingMethod } from "../../types/order";
-import { PaymentRequest, PaymentProvider } from "../../types/payment";
+import { CreateOrderRequest, Order, ShippingMethod } from "../../types/order";
+import { PaymentRequest, PaymentProvider, PaymentResponse } from "../../types/payment";
 import { SavedAddress } from "../../types/address";
 import {
   calculateCountOfCartItems,
@@ -39,8 +40,62 @@ import {
 import { showError } from "../../utils/showError";
 import { showSuccess } from "../../utils/showSuccess";
 import statesAndDistrict from "../../formdata.json";
+import { useI18n } from "../../features/i18n";
 
 const FORM_ID = "checkout-form";
+const RAZORPAY_SCRIPT_URL = "https://checkout.razorpay.com/v1/checkout.js";
+
+type RazorpayCheckout = {
+  open: () => void;
+  on: (event: string, handler: (...args: unknown[]) => void) => void;
+};
+
+type RazorpayOptions = {
+  key: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  order_id: string;
+  handler: (response: unknown) => void;
+  modal?: { ondismiss?: () => void };
+  theme?: { color: string };
+};
+
+declare global {
+  interface Window {
+    Razorpay?: new (options: RazorpayOptions) => RazorpayCheckout;
+  }
+}
+
+let razorpayScriptPromise: Promise<void> | null = null;
+
+const loadRazorpay = () => {
+  if (window.Razorpay) return Promise.resolve();
+  if (razorpayScriptPromise) return razorpayScriptPromise;
+
+  razorpayScriptPromise = new Promise<void>((resolve, reject) => {
+    const existing = document.getElementById("razorpay-checkout-script") as HTMLScriptElement | null;
+    if (existing) {
+      existing.addEventListener("load", () => resolve(), { once: true });
+      existing.addEventListener("error", () => reject(new Error("Razorpay could not be loaded")), { once: true });
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.id = "razorpay-checkout-script";
+    script.src = RAZORPAY_SCRIPT_URL;
+    script.async = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error("Razorpay could not be loaded"));
+    document.head.appendChild(script);
+  }).catch((error) => {
+    razorpayScriptPromise = null;
+    throw error;
+  });
+
+  return razorpayScriptPromise;
+};
 
 /** Section wrapper — numbered, so the single-scroll flow stays legible. */
 function Section({
@@ -57,13 +112,13 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="panel p-5 sm:p-6">
+    <section className="border-t border-line py-7 sm:py-8">
       <div className="mb-5 flex items-start gap-3">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-contrast text-xs font-bold text-oncontrast">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center border border-ink font-display text-base text-ink">
           {step}
         </span>
         <div className="min-w-0">
-          <h2 className="flex items-center gap-2 font-heading text-base font-bold text-ink">
+          <h2 className="flex items-center gap-2 font-display text-2xl font-normal text-ink">
             <Icon sx={{ fontSize: 17 }} className="text-ink-muted" />
             {title}
           </h2>
@@ -96,15 +151,15 @@ function OptionCard({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`flex flex-1 items-start gap-3 rounded-sm border p-4 text-left transition ${
+      className={`flex flex-1 items-start gap-3 border p-4 text-left transition ${
         active
-          ? "border-brand bg-brand-tint ring-1 ring-brand"
+          ? "border-brand bg-brand-tint"
           : "border-line bg-paper hover:border-ink-faint"
       }`}
     >
       <span
-        className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
-          active ? "bg-brand text-oncontrast" : "bg-sunken text-ink-soft"
+        className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center ${
+          active ? "bg-action text-oncontrast" : "bg-sunken text-ink-soft"
         }`}
       >
         <Icon sx={{ fontSize: 17 }} />
@@ -123,6 +178,7 @@ function OptionCard({
 function Checkout() {
   const navigate = useNavigate();
   const dispatch = useDispatch<any>();
+  const { t } = useI18n();
   const items = useSelector((state: AppState) => state.cart);
   const isLoggedIn = useSelector((state: AppState) => state.user.data.isLogedIn);
   const [districts, setDistricts] = useState<{ name: string; id: string }[]>([]);
@@ -131,11 +187,18 @@ function Checkout() {
   const [giftWrap, setGiftWrap] = useState(false);
   const [couponInput, setCouponInput] = useState("");
   const [coupon, setCoupon] = useState<{ code: string; discount: number } | null>(null);
+  const [giftCardCode, setGiftCardCode] = useState("");
+  const [loyaltyPoints, setLoyaltyPoints] = useState(0);
   const [reviewOpen, setReviewOpen] = useState(false);
+  const createdOrderRef = useRef<Order | null>(null);
   const subtotal = Number(calculateTotalPriceOfCartItems(items));
   const itemCount = calculateCountOfCartItems(items);
 
   const { data: defaultAddress } = useQuery("defaultAddress", AddressApi.getDefaultAddress, {
+    retry: false,
+  });
+  const { data: loyaltyBalance = 0 } = useQuery("checkoutLoyaltyBalance", LoyaltyPointApi.getBalance, {
+    enabled: isLoggedIn,
     retry: false,
   });
 
@@ -175,6 +238,8 @@ function Checkout() {
         pincode: values.pincode,
         state: values.state,
         couponCode: coupon?.code,
+        giftCardCode: giftCardCode.trim() || undefined,
+        loyaltyPoints: appliedLoyaltyPoints || undefined,
       } as CreateOrderRequest;
 
       createOrderMutation.mutate(order);
@@ -209,11 +274,16 @@ function Checkout() {
     : 50;
   const giftWrapFee = giftWrap ? 50 : 0;
   const discount = coupon?.discount ?? 0;
+  const maxLoyaltyPoints = Math.max(0, Math.floor((subtotal - discount) * 10));
+  const appliedLoyaltyPoints = Math.min(loyaltyPoints, loyaltyBalance, maxLoyaltyPoints);
+  const loyaltyDiscount = appliedLoyaltyPoints / 10;
   const taxRate = taxRule?.rate ?? 0.18;
   const taxLabel = taxRule ? `${taxRule.taxName} ${Math.round(taxRate * 100)}%` : "18% GST";
   // Mirrors the backend: tax applies to subtotal + shipping - discount + gift wrap.
-  const tax = Number(((subtotal + shippingCost - discount + giftWrapFee) * taxRate).toFixed(2));
-  const total = subtotal + shippingCost - discount + giftWrapFee + tax;
+  const tax = Number(
+    ((subtotal + shippingCost - discount - loyaltyDiscount + giftWrapFee) * taxRate).toFixed(2)
+  );
+  const total = subtotal + shippingCost - discount - loyaltyDiscount + giftWrapFee + tax;
 
   // A cart change invalidates the applied coupon (discount depends on subtotal).
   useEffect(() => {
@@ -242,13 +312,89 @@ function Checkout() {
     couponMutation.mutate();
   };
 
+  const goToConfirmation = (payment: PaymentResponse, order: Order | null) => {
+    dispatch(clearAllItems());
+    sessionStorage.removeItem("checkout_form");
+    navigate("/order-confirmation", {
+      replace: true,
+      state: {
+        orderId: order?.id ?? payment.orderId,
+        orderStatus: payment.status === "SUCCESS" ? "PAID" : order?.orderStatus ?? "PENDING",
+        paymentStatus: payment.status,
+        provider: payment.provider,
+        amount: Number(payment.amount),
+        transactionId: payment.transactionId,
+        signedIn: isLoggedIn,
+      },
+    });
+  };
+
+  const openRazorpayCheckout = async (payment: PaymentResponse, order: Order | null) => {
+    const keyId = (import.meta.env.VITE_RAZORPAY_KEY_ID as string | undefined)?.trim();
+    if (!keyId || !payment.transactionId) {
+      showError("Razorpay checkout is not configured; your order remains pending for provider review");
+      goToConfirmation(payment, order);
+      return;
+    }
+
+    try {
+      await loadRazorpay();
+      if (!window.Razorpay) throw new Error("Razorpay checkout is unavailable");
+      const checkout = new window.Razorpay({
+        key: keyId,
+        amount: Math.round(Number(payment.amount) * 100),
+        currency: payment.currency,
+        name: "Cartly",
+        description: `Order ${payment.orderId}`,
+        order_id: payment.transactionId,
+        // This browser callback is deliberately not treated as settlement.
+        // The signed provider webhook remains the source of truth.
+        handler: () => {
+          showSuccess("Payment submitted — waiting for signed provider confirmation");
+          goToConfirmation(payment, order);
+        },
+        modal: {
+          ondismiss: () => {
+            showError("Payment window closed; your order remains pending until provider confirmation");
+            goToConfirmation(payment, order);
+          },
+        },
+        theme: { color: "#A4472D" },
+      });
+      checkout.on("payment.failed", () => {
+        showError("Razorpay did not complete this payment; close the window to review the pending order");
+      });
+      checkout.open();
+    } catch {
+      showError("Razorpay checkout could not be opened; your order remains pending for provider review");
+      goToConfirmation(payment, order);
+    }
+  };
+
   const createOrderMutation = useMutation(OrderApi.createOrder, {
     onSuccess: (order) => {
+      createdOrderRef.current = order;
+      if (Number(order.totalAmount) === 0) {
+        showSuccess("Order paid in full with your gift card");
+        dispatch(clearAllItems());
+        sessionStorage.removeItem("checkout_form");
+        navigate("/order-confirmation", {
+          replace: true,
+          state: {
+            orderId: order.id,
+            orderStatus: order.orderStatus,
+            paymentStatus: "SUCCESS",
+            provider: "GIFT_CARD",
+            amount: 0,
+            signedIn: isLoggedIn,
+          },
+        });
+        return;
+      }
       const payment = {
         orderId: order.id,
-        amount: order.totalAmount ?? total,
-        currency: "INR",
         provider: paymentProvider,
+        checkoutToken: order.checkoutToken,
       } as PaymentRequest;
 
       paymentMutation.mutate(payment);
@@ -265,15 +411,47 @@ function Checkout() {
         return;
       }
 
-      const isCod = payment.provider === "CASH" || payment.status === "PENDING";
+      const isCod = payment.provider === "CASH";
+      const awaitingProvider = payment.status === "PENDING" && !isCod;
+      const order = createdOrderRef.current;
+
+      if (payment.provider === "STRIPE" && awaitingProvider) {
+        if (!payment.clientSecret) {
+          showError("Stripe did not return a browser payment session; your order remains pending for provider review");
+          goToConfirmation(payment, order);
+        } else {
+          dispatch(clearAllItems());
+          sessionStorage.removeItem("checkout_form");
+          sessionStorage.setItem("stripe-payment-context", JSON.stringify({
+            orderId: order?.id ?? payment.orderId,
+            amount: Number(payment.amount),
+            currency: payment.currency,
+            transactionId: payment.transactionId,
+            signedIn: isLoggedIn,
+          }));
+          navigate("/stripe-payment", {
+            replace: true,
+            state: {
+              orderId: order?.id ?? payment.orderId,
+              payment,
+              signedIn: isLoggedIn,
+            },
+          });
+        }
+        return;
+      }
+
+      if (payment.provider === "RAZORPAY" && awaitingProvider) {
+        void openRazorpayCheckout(payment, order);
+        return;
+      }
+
       showSuccess(
         isCod
           ? "Order placed successfully — pay on delivery"
           : "Payment completed and order has been created successfully"
       );
-      dispatch(clearAllItems());
-      sessionStorage.removeItem("checkout_form");
-      navigate("/");
+      goToConfirmation(payment, order);
     },
     onError: (e: any) => {
       showError(e.response?.data?.message ?? "Payment could not be completed");
@@ -343,6 +521,18 @@ function Checkout() {
           <dd className="font-semibold text-state-success">−{formatPrice(coupon.discount)}</dd>
         </div>
       )}
+      {appliedLoyaltyPoints > 0 && (
+        <div className="flex justify-between">
+          <dt className="font-semibold text-state-success">{appliedLoyaltyPoints} loyalty points</dt>
+          <dd className="font-semibold text-state-success">−{formatPrice(loyaltyDiscount)}</dd>
+        </div>
+      )}
+      {giftCardCode.trim() && (
+        <div className="flex justify-between gap-4">
+          <dt className="text-ink-soft">Gift card</dt>
+          <dd className="text-right text-xs text-ink-muted">Applied securely by the server</dd>
+        </div>
+      )}
       <div className="flex justify-between">
         <dt className="text-ink-soft">
           Shipping
@@ -385,7 +575,7 @@ function Checkout() {
 
       <div className="mb-6">
         <p className="eyebrow">Step 2 of 3</p>
-        <h1 className="page-title mt-1">Checkout</h1>
+        <h1 className="mt-2 font-display text-5xl font-normal tracking-[-0.03em] text-ink">{t("checkout.title")}</h1>
         <p className="page-subtitle">
           {itemCount} item{itemCount === 1 ? "" : "s"} · everything below is confirmed before
           payment is taken.
@@ -415,7 +605,7 @@ function Checkout() {
                 <button
                   type="button"
                   onClick={() => applyAddress(defaultAddress)}
-                  className="flex w-full items-center justify-between gap-3 rounded-sm border border-line bg-canvas px-4 py-3 text-left transition hover:border-brand hover:bg-brand-tint"
+                  className="flex w-full items-center justify-between gap-3 border border-line bg-canvas px-4 py-3 text-left transition hover:border-brand hover:bg-brand-tint"
                 >
                   <span className="min-w-0">
                     <span className="block text-sm font-bold text-ink">Use saved address</span>
@@ -484,6 +674,8 @@ function Checkout() {
             subtitle={
               paymentProvider === "CASH"
                 ? "Pay in cash when your order is delivered"
+                : paymentProvider === "STRIPE"
+                ? "Complete card or wallet verification in a secure Stripe form"
                 : "Razorpay will open to complete your payment"
             }
             icon={CreditCardIcon}
@@ -492,8 +684,15 @@ function Checkout() {
               <OptionCard
                 active={paymentProvider === "RAZORPAY"}
                 onClick={() => setPaymentProvider("RAZORPAY")}
-                title="Card / UPI"
-                copy="Razorpay · requires configured keys"
+                title="UPI / netbanking"
+                copy="Razorpay · provider checkout"
+                icon={CreditCardIcon}
+              />
+              <OptionCard
+                active={paymentProvider === "STRIPE"}
+                onClick={() => setPaymentProvider("STRIPE")}
+                title="Card / wallets"
+                copy="Stripe · secure Payment Element"
                 icon={CreditCardIcon}
               />
               <OptionCard
@@ -514,48 +713,56 @@ function Checkout() {
           >
             <div className="space-y-4">
               {isLoggedIn ? (
-                coupon ? (
-                  <div className="flex items-center justify-between gap-3 rounded-sm border border-state-success/30 bg-state-success-soft px-4 py-3">
-                    <span className="min-w-0">
-                      <span className="block text-sm font-bold text-state-success">
-                        {coupon.code} applied
+                <div className="space-y-4">
+                  {coupon ? (
+                    <div className="flex items-center justify-between gap-3 border border-state-success/30 bg-state-success-soft px-4 py-3">
+                      <span className="min-w-0">
+                        <span className="block text-sm font-bold text-state-success">{coupon.code} applied</span>
+                        <span className="text-xs text-state-success-on">You saved {formatPrice(coupon.discount)}</span>
                       </span>
-                      <span className="text-xs text-state-success-on">
-                        You saved {formatPrice(coupon.discount)}
-                      </span>
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setCoupon(null)}
-                      className="shrink-0 text-xs font-bold text-state-success-on underline-offset-2 hover:underline"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex items-start gap-2">
-                    <div className="flex-1">
-                      <TextInput
-                        name="couponCode"
-                        label="Coupon / gift card code"
-                        form={form}
-                        value={couponInput}
-                        onChange={(e: any) => setCouponInput(e.target.value)}
-                      />
+                      <button type="button" onClick={() => setCoupon(null)} className="shrink-0 text-xs font-bold text-state-success-on underline-offset-2 hover:underline">Remove</button>
                     </div>
-                    <LoadingButton
-                      variant="contained"
-                      onClick={applyCoupon}
-                      loading={couponMutation.isLoading}
-                      className="!h-10"
-                    >
-                      Apply
-                    </LoadingButton>
+                  ) : (
+                    <div className="flex items-start gap-2">
+                      <div className="flex-1">
+                        <TextInput name="couponCode" label="Coupon code" form={form} value={couponInput} onChange={(e: any) => setCouponInput(e.target.value)} />
+                      </div>
+                      <LoadingButton variant="contained" onClick={applyCoupon} loading={couponMutation.isLoading} className="!h-10">Apply</LoadingButton>
+                    </div>
+                  )}
+
+                  <TextInput
+                    name="giftCardCode"
+                    label="Gift card code"
+                    form={form}
+                    value={giftCardCode}
+                    onChange={(e: any) => setGiftCardCode(e.target.value.toUpperCase())}
+                  />
+                  <p className="-mt-2 text-xs text-ink-muted">The available balance is applied after tax. Any remainder stays on the card.</p>
+
+                  <div>
+                    <label htmlFor="loyaltyPoints" className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-ink-soft">
+                      Loyalty points · {loyaltyBalance} available
+                    </label>
+                    <input
+                      id="loyaltyPoints"
+                      type="number"
+                      min={0}
+                      max={Math.min(loyaltyBalance, maxLoyaltyPoints)}
+                      step={1}
+                      value={loyaltyPoints}
+                      onChange={(event) => {
+                        const value = Number.parseInt(event.target.value || "0", 10);
+                        setLoyaltyPoints(Math.max(0, Math.min(value, loyaltyBalance, maxLoyaltyPoints)));
+                      }}
+                      className="w-full border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none focus:border-brand"
+                    />
+                    <p className="mt-1.5 text-xs text-ink-muted">10 points = ₹1. Applied before tax, up to the merchandise total.</p>
                   </div>
-                )
+                </div>
               ) : (
-                <p className="rounded-sm border border-line bg-canvas px-4 py-3 text-xs text-ink-soft">
-                  Sign in to apply coupons, gift cards and loyalty points.
+                <p className="border border-line bg-canvas px-4 py-3 text-xs text-ink-soft">
+                  Sign in to apply coupons and loyalty points. Gift cards can be entered after signing in.
                 </p>
               )}
 
@@ -574,19 +781,19 @@ function Checkout() {
           </Section>
 
           {/* review — collapsed by default; the cart is one click back */}
-          <section className="panel">
+          <section className="border-y border-line">
             <button
               type="button"
               onClick={() => setReviewOpen((o) => !o)}
               aria-expanded={reviewOpen}
-              className="flex w-full items-center justify-between gap-3 p-5 text-left sm:p-6"
+              className="flex w-full items-center justify-between gap-3 py-5 text-left"
             >
               <span className="flex items-center gap-3">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sunken text-xs font-bold text-ink">
+                <span className="flex h-8 w-8 items-center justify-center border border-line font-display text-sm text-ink">
                   {itemCount}
                 </span>
                 <span>
-                  <span className="block font-heading text-base font-bold text-ink">
+                  <span className="block font-display text-xl text-ink">
                     Review items
                   </span>
                   <span className="text-xs text-ink-muted">
@@ -599,7 +806,7 @@ function Checkout() {
               />
             </button>
             {reviewOpen && (
-              <div className="border-t border-line px-5 sm:px-6">
+              <div className="border-t border-line">
                 <ul className="divide-y divide-line">
                   {items.map((item) => (
                     <CartLine
@@ -625,13 +832,13 @@ function Checkout() {
 
         {/* ══ right: sticky summary ═══════════════════════════════════ */}
         <aside className="lg:sticky lg:top-24 lg:h-fit">
-          <div className="panel-raised p-5">
-            <h2 className="mb-4 font-heading text-base font-bold">Order summary</h2>
+          <div className="border-t border-ink py-5">
+            <h2 className="mb-5 font-display text-2xl font-normal">Order summary</h2>
             {summaryRows}
             <Divider className="!my-4" />
             <div className="flex items-baseline justify-between">
-              <span className="font-heading text-base font-bold">Total</span>
-              <span className="font-heading text-2xl font-extrabold">{formatPrice(total)}</span>
+              <span className="font-medium">{t("checkout.total")}</span>
+              <span className="font-display text-3xl">{formatPrice(total)}</span>
             </div>
             <LoadingButton
               form={FORM_ID}
@@ -663,11 +870,11 @@ function Checkout() {
       </div>
 
       {/* ══ mobile sticky pay bar ═════════════════════════════════════ */}
-      <div className="fixed inset-x-0 bottom-[3.875rem] z-40 border-t border-line bg-paper/95 p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-md lg:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper/95 p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-md lg:hidden">
         <div className="mx-auto flex max-w-container items-center gap-3">
           <div className="min-w-0">
-            <p className="text-[0.625rem] uppercase tracking-wide text-ink-muted">Total</p>
-            <p className="font-heading text-lg font-extrabold leading-none">
+            <p className="text-[0.625rem] uppercase tracking-wide text-ink-muted">{t("checkout.total")}</p>
+            <p className="font-display text-xl leading-none">
               {formatPrice(total)}
             </p>
           </div>
@@ -678,7 +885,7 @@ function Checkout() {
             loading={busy}
             className="!ml-auto !flex-1 !py-3"
           >
-            Pay now
+            {t("checkout.pay")}
           </LoadingButton>
         </div>
       </div>

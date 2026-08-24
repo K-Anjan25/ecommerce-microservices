@@ -32,10 +32,4 @@ public class LoyaltyPointController {
         return ResponseEntity.ok(loyaltyPointService.getPointsHistory(customerId));
     }
 
-    @PostMapping("/redeem")
-    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
-    public ResponseEntity<LoyaltyPointDto> redeemPoints(@RequestParam int points){
-        UUID customerId = UUID.fromString((String) org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        return ResponseEntity.ok(loyaltyPointService.redeemPoints(customerId, points, "Redeemed at checkout"));
-    }
 }

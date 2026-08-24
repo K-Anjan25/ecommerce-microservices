@@ -5,6 +5,7 @@ import com.ecommerce.commerce_service.dto.payment.PaymentResponse;
 import com.ecommerce.commerce_service.dto.payment.PaymentStatusEvent;
 import com.ecommerce.commerce_service.exception.DuplicatePaymentException;
 import com.ecommerce.commerce_service.model.Order;
+import com.ecommerce.commerce_service.model.OrderStatus;
 import com.ecommerce.commerce_service.model.Payment;
 import com.ecommerce.commerce_service.model.PaymentProvider;
 import com.ecommerce.commerce_service.model.PaymentStatus;
@@ -19,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -44,6 +47,12 @@ public class PaymentService {
     private final RabbitMQMessageProducer rabbitMQMessageProducer;
     private final List<PaymentProviderClient> providerClients;
     private final InvoiceService invoiceService;
+    private final CheckoutTokenService checkoutTokenService;
+    private final LoyaltyPointService loyaltyPointService;
+    private final OrderService orderService;
+    private final PaymentOutboxService paymentOutboxService;
+    private final PaymentReconciliationService paymentReconciliationService;
+    private final GiftCardPurchaseFinalizer giftCardPurchaseFinalizer;
 
     @Value("${rabbitmq.exchanges.internal}")
     private String exchange;
@@ -61,9 +70,30 @@ public class PaymentService {
     public PaymentResponse processPayment(PaymentRequest request, UUID userId) {
         log.info("Processing payment for order {} by user {}", request.getOrderId(), userId);
 
+        // Serialize payment initiation on the order before checking the unique
+        // payment row. Two concurrent requests can no longer both reach the
+        // provider while the payment table is still empty.
+        Order order = orderRepository.findLockedById(request.getOrderId());
+        if (order == null) {
+            throw new IllegalArgumentException("Order not found: " + request.getOrderId());
+        }
         paymentRepository.findByOrderId(request.getOrderId()).ifPresent(existing -> {
             throw new DuplicatePaymentException("Payment already processed for order " + request.getOrderId());
         });
+        if (order.getOrderStatus() != OrderStatus.PENDING) {
+            throw new IllegalArgumentException("Order is not awaiting payment");
+        }
+        if (order.getCustomerId() != null) {
+            if (userId == null || !order.getCustomerId().equals(userId)) {
+                throw new SecurityException("Payment does not belong to this customer");
+            }
+        } else if (!checkoutTokenService.matches(request.getCheckoutToken(), order.getCheckoutTokenHash(),
+                order.getCheckoutTokenExpiresAt())) {
+            throw new SecurityException("Guest checkout token is invalid");
+        }
+
+        BigDecimal authoritativeAmount = order.getTotalAmount();
+        String authoritativeCurrency = "INR";
 
         Map<PaymentProvider, PaymentProviderClient> providers = providerClients.stream()
                 .collect(Collectors.toMap(PaymentProviderClient::provider, Function.identity()));
@@ -77,8 +107,8 @@ public class PaymentService {
         Payment payment = Payment.builder()
                 .orderId(request.getOrderId())
                 .userId(userId != null ? userId : GUEST_USER_ID)
-                .amount(request.getAmount())
-                .currency(request.getCurrency())
+                .amount(authoritativeAmount)
+                .currency(authoritativeCurrency)
                 .provider(request.getProvider())
                 .status(PaymentStatus.FAILED.name())
                 .createdAt(LocalDateTime.now())
@@ -89,7 +119,7 @@ public class PaymentService {
 
         String resolvedStatus;
         if (result.isSuccess()) {
-            resolvedStatus = request.getProvider() == PaymentProvider.CASH
+            resolvedStatus = request.getProvider() == PaymentProvider.CASH || !result.isSettled()
                     ? PaymentStatus.PENDING.name()
                     : PaymentStatus.SUCCESS.name();
         } else {
@@ -103,28 +133,41 @@ public class PaymentService {
 
         log.info("Payment {} saved with status {}", savedPayment.getId(), savedPayment.getStatus());
 
-        rabbitMQMessageProducer.publish(
-                PaymentStatusEvent.builder()
-                        .orderId(savedPayment.getOrderId())
-                        .status(savedPayment.getStatus())
-                        .provider(savedPayment.getProvider().name())
-                        .transactionId(savedPayment.getTransactionId())
-                        .amount(savedPayment.getAmount())
-                        .currency(savedPayment.getCurrency())
-                        .build(),
-                exchange,
-                paymentStatusRoutingKey
-        );
-
-        sendPaymentEmail(savedPayment);
-
-        // PDF invoice: emailed on successful (non-COD) payment; failures are
-        // logged inside and never roll back the payment.
-        if (PaymentStatus.SUCCESS.name().equals(savedPayment.getStatus())) {
-            orderRepository.findById(savedPayment.getOrderId()).ifPresent(invoiceService::emailInvoice);
+        if (PaymentStatus.SUCCESS.name().equals(savedPayment.getStatus()) && order.getCustomerId() != null) {
+            try {
+                loyaltyPointService.earnPoints(order.getCustomerId(), order.getTotalAmount(), "Paid order #" + order.getId());
+            } catch (RuntimeException loyaltyFailure) {
+                // A rewards outage must never roll back an external provider charge.
+                log.error("Payment {} succeeded but loyalty points could not be credited", savedPayment.getId(), loyaltyFailure);
+            }
         }
 
-        log.info("Payment status event published for order {}", savedPayment.getOrderId());
+        // The order and its compensation state are committed in the same local
+        // transaction as the payment. RabbitMQ is notification/event transport,
+        // not the source of truth for this in-process commerce boundary.
+        orderService.applyPaymentStatus(savedPayment.getOrderId(), savedPayment.getStatus(),
+                savedPayment.getProvider().name());
+        giftCardPurchaseFinalizer.applyPaymentStatus(savedPayment.getOrderId(), savedPayment.getStatus());
+
+        PaymentStatusEvent statusEvent = PaymentStatusEvent.builder()
+                .orderId(savedPayment.getOrderId())
+                .status(savedPayment.getStatus())
+                .provider(savedPayment.getProvider().name())
+                .transactionId(savedPayment.getTransactionId())
+                .amount(savedPayment.getAmount())
+                .currency(savedPayment.getCurrency())
+                .build();
+        paymentOutboxService.enqueue(statusEvent);
+        scheduleAfterCommit(() -> {
+            try {
+                sendPaymentEmail(savedPayment);
+            } catch (RuntimeException notificationFailure) {
+                log.error("Payment {} committed but email could not be queued", savedPayment.getId(), notificationFailure);
+            }
+            if (PaymentStatus.SUCCESS.name().equals(savedPayment.getStatus())) {
+                invoiceService.emailInvoice(order);
+            }
+        });
 
         return PaymentResponse.builder()
                 .orderId(savedPayment.getOrderId())
@@ -133,8 +176,136 @@ public class PaymentService {
                 .provider(savedPayment.getProvider().name())
                 .status(savedPayment.getStatus())
                 .transactionId(savedPayment.getTransactionId())
+                .clientSecret(result.getClientSecret())
                 .message(result.getMessage())
                 .build();
+    }
+
+    /** Returns a customer/staff-scoped payment snapshot without provider secrets. */
+    @Transactional(readOnly = true)
+    public PaymentResponse getPaymentForOrder(UUID orderId, UUID customerId, boolean staff) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found: " + orderId));
+        if (!staff && (customerId == null || order.getCustomerId() == null
+                || !order.getCustomerId().equals(customerId))) {
+            throw new SecurityException("Payment does not belong to this customer");
+        }
+        Payment payment = paymentRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("No payment found for order " + orderId));
+        return PaymentResponse.builder()
+                .orderId(payment.getOrderId())
+                .amount(payment.getAmount())
+                .currency(payment.getCurrency())
+                .provider(payment.getProvider() == null ? null : payment.getProvider().name())
+                .status(payment.getStatus())
+                .transactionId(payment.getTransactionId())
+                .message(payment.getFailureReason())
+                .build();
+    }
+
+    /** Applies a signature-verified asynchronous provider result exactly once. */
+    @Transactional
+    public void reconcileProviderPayment(PaymentProvider provider, String transactionId,
+                                         boolean succeeded, String failureReason,
+                                         BigDecimal providerAmount, String providerCurrency) {
+        reconcileProviderPayment(provider, transactionId, succeeded, failureReason,
+                providerAmount, providerCurrency, null);
+    }
+
+    @Transactional
+    public void reconcileProviderPayment(PaymentProvider provider, String transactionId,
+                                         boolean succeeded, String failureReason,
+                                         BigDecimal providerAmount, String providerCurrency,
+                                         String providerPaymentId) {
+        Payment candidate = paymentRepository.findByProviderAndTransactionId(provider, transactionId)
+                .orElseThrow(() -> new IllegalArgumentException("Payment reference was not found"));
+        Order order = orderRepository.findLockedById(candidate.getOrderId());
+        if (order == null) throw new IllegalArgumentException("Order not found for payment reference");
+        Payment payment = paymentRepository.findLockedByProviderAndTransactionId(provider, transactionId)
+                .orElseThrow(() -> new IllegalArgumentException("Payment reference was not found"));
+        if (providerAmount == null || payment.getAmount() == null
+                || providerAmount.compareTo(payment.getAmount()) != 0) {
+            throw new SecurityException("Provider payment amount does not match the order");
+        }
+        if (providerCurrency == null || payment.getCurrency() == null
+                || !payment.getCurrency().equalsIgnoreCase(providerCurrency)) {
+            throw new SecurityException("Provider payment currency does not match the order");
+        }
+        String targetStatus = succeeded ? PaymentStatus.SUCCESS.name() : PaymentStatus.FAILED.name();
+        if (targetStatus.equals(payment.getStatus())) return;
+        if (!PaymentStatus.PENDING.name().equals(payment.getStatus())) {
+            log.warn("Ignoring {} webhook for payment {} already in state {}",
+                    targetStatus, payment.getId(), payment.getStatus());
+            return;
+        }
+
+        payment.setStatus(targetStatus);
+        payment.setFailureReason(succeeded ? null : failureReason);
+        if (providerPaymentId != null && !providerPaymentId.isBlank()) {
+            payment.setProviderPaymentId(providerPaymentId);
+        }
+        payment.setUpdatedAt(LocalDateTime.now());
+        Payment saved = paymentRepository.save(payment);
+
+        // A provider may capture after Cartly has already cancelled the local
+        // order. Never reopen the order or issue credits/value in that case;
+        // attempt an idempotent provider refund and expose any failure to ops.
+        if (succeeded && order.getOrderStatus() != OrderStatus.PENDING) {
+            handleLateProviderCapture(saved, order);
+            return;
+        }
+
+        paymentReconciliationService.resolveForPayment(saved.getId(),
+                "Verified " + targetStatus.toLowerCase() + " webhook received");
+        orderService.applyPaymentStatus(order.getId(), targetStatus, provider.name());
+        giftCardPurchaseFinalizer.applyPaymentStatus(order.getId(), targetStatus);
+
+        if (succeeded && order.getCustomerId() != null) {
+            try {
+                loyaltyPointService.earnPoints(order.getCustomerId(), order.getTotalAmount(),
+                        "Paid order #" + order.getId());
+            } catch (RuntimeException loyaltyFailure) {
+                log.error("Webhook settled payment {} but loyalty points could not be credited", saved.getId(), loyaltyFailure);
+            }
+        }
+
+        PaymentStatusEvent event = PaymentStatusEvent.builder()
+                .orderId(order.getId()).status(targetStatus).provider(provider.name())
+                .transactionId(transactionId).amount(payment.getAmount()).currency(payment.getCurrency()).build();
+        paymentOutboxService.enqueue(event);
+        scheduleAfterCommit(() -> {
+            try {
+                sendPaymentEmail(saved);
+            } catch (RuntimeException notificationFailure) {
+                log.error("Reconciled payment {} committed but email could not be queued", saved.getId(), notificationFailure);
+            }
+            if (succeeded) invoiceService.emailInvoice(order);
+        });
+    }
+
+    private void handleLateProviderCapture(Payment payment, Order order) {
+        ProviderPaymentResult refund;
+        try {
+            refund = refundOrderPayment(order.getId(), payment.getAmount(),
+                    "late-capture-refund-" + order.getId());
+        } catch (RuntimeException failure) {
+            paymentReconciliationService.flagPaymentForReview(payment,
+                    "Late provider capture on local order " + order.getOrderStatus()
+                            + "; automatic refund could not be attempted");
+            log.error("Late provider capture for order {} could not start automatic refund", order.getId(), failure);
+            return;
+        }
+        if (refund.isSuccess()) {
+            paymentReconciliationService.resolveForPayment(payment.getId(),
+                    "Late provider capture automatically refunded");
+            giftCardPurchaseFinalizer.applyPaymentStatus(order.getId(), PaymentStatus.REFUNDED.name());
+            log.warn("Late provider capture for cancelled order {} was automatically refunded", order.getId());
+            return;
+        }
+        String reason = "Late provider capture on local order " + order.getOrderStatus()
+                + "; automatic refund failed: " + refund.getMessage();
+        paymentReconciliationService.flagPaymentForReview(payment, reason);
+        log.error("Late provider capture for order {} needs operations review", order.getId());
     }
 
     /**
@@ -145,8 +316,23 @@ public class PaymentService {
      */
     @Transactional
     public ProviderPaymentResult refundOrderPayment(UUID orderId, BigDecimal amount) {
-        Payment payment = paymentRepository.findByOrderId(orderId)
+        return refundOrderPayment(orderId, amount, null);
+    }
+
+    @Transactional
+    public ProviderPaymentResult refundOrderPayment(UUID orderId, BigDecimal amount, String idempotencyKey) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Refund amount must be positive");
+        }
+        Payment payment = paymentRepository.findLockedByOrderId(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("No payment found for order " + orderId));
+        if (!PaymentStatus.SUCCESS.name().equals(payment.getStatus())) {
+            throw new IllegalArgumentException("Only a captured successful payment can be refunded");
+        }
+        BigDecimal alreadyRefunded = payment.getRefundedAmount() == null ? BigDecimal.ZERO : payment.getRefundedAmount();
+        if (alreadyRefunded.add(amount).compareTo(payment.getAmount()) > 0) {
+            throw new IllegalArgumentException("Refund exceeds the captured provider payment");
+        }
 
         Map<PaymentProvider, PaymentProviderClient> providers = providerClients.stream()
                 .collect(Collectors.toMap(PaymentProviderClient::provider, Function.identity()));
@@ -155,25 +341,50 @@ public class PaymentService {
             throw new IllegalArgumentException("Unsupported payment provider: " + payment.getProvider());
         }
 
-        ProviderPaymentResult result = client.refund(payment, amount);
+        ProviderPaymentResult result = client.refund(payment, amount, idempotencyKey);
         log.info("Refund for order {} via {}: success={}, message={}",
                 orderId, payment.getProvider(), result.isSuccess(), result.getMessage());
 
         if (result.isSuccess()) {
-            rabbitMQMessageProducer.publish(
-                    PaymentStatusEvent.builder()
-                            .orderId(orderId)
-                            .status(PaymentStatus.REFUNDED.name())
-                            .provider(payment.getProvider().name())
-                            .transactionId(result.getTransactionId())
-                            .amount(amount)
-                            .currency(payment.getCurrency())
-                            .build(),
-                    exchange,
-                    paymentStatusRoutingKey);
-            sendRefundEmail(payment, amount, result);
+            BigDecimal cumulativeRefund = alreadyRefunded.add(amount);
+            payment.setRefundedAmount(cumulativeRefund);
+            payment.setUpdatedAt(LocalDateTime.now());
+            boolean fullyRefunded = cumulativeRefund.compareTo(payment.getAmount()) == 0;
+            if (fullyRefunded) {
+                payment.setStatus(PaymentStatus.REFUNDED.name());
+                PaymentStatusEvent refundEvent = PaymentStatusEvent.builder()
+                        .orderId(orderId)
+                        .status(PaymentStatus.REFUNDED.name())
+                        .provider(payment.getProvider().name())
+                        .transactionId(result.getTransactionId())
+                        .amount(cumulativeRefund)
+                        .currency(payment.getCurrency())
+                        .build();
+                paymentOutboxService.enqueue(refundEvent);
+            }
+            paymentRepository.save(payment);
+            scheduleAfterCommit(() -> {
+                try {
+                    sendRefundEmail(payment, amount, result);
+                } catch (RuntimeException notificationFailure) {
+                    log.error("Refund for order {} committed but email could not be queued", orderId, notificationFailure);
+                }
+            });
         }
         return result;
+    }
+
+    private void scheduleAfterCommit(Runnable action) {
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            action.run();
+            return;
+        }
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                action.run();
+            }
+        });
     }
 
     private void sendRefundEmail(Payment payment, BigDecimal amount, ProviderPaymentResult result) {
@@ -199,9 +410,15 @@ public class PaymentService {
             return;
         }
         boolean success = PaymentStatus.SUCCESS.name().equalsIgnoreCase(payment.getStatus());
-        String subject = success ? "CARTLY - Payment successful" : "CARTLY - Payment failed";
+        boolean cashPending = PaymentStatus.PENDING.name().equalsIgnoreCase(payment.getStatus())
+                && payment.getProvider() == PaymentProvider.CASH;
+        String subject = success
+                ? "CARTLY - Payment successful"
+                : cashPending ? "CARTLY - Cash on delivery confirmed" : "CARTLY - Payment failed";
         String text = success
                 ? "Your payment for order " + payment.getOrderId() + " was successful.\nAmount: " + payment.getAmount() + " " + payment.getCurrency() + "\nTransaction id: " + payment.getTransactionId()
+                : cashPending
+                ? "Your order " + payment.getOrderId() + " is confirmed for cash on delivery.\nAmount due: " + payment.getAmount() + " " + payment.getCurrency()
                 : "Your payment for order " + payment.getOrderId() + " failed.\nReason: " + payment.getFailureReason();
         rabbitMQMessageProducer.publish(new EmailRequest(text, customerEmail, subject), notificationExchange, sendEmailRoutingKey);
     }

@@ -12,18 +12,26 @@ spring:
     name: user-service
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${JPA_DDL_AUTO:update}
     show-sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
     generate-ddl: true
+  flyway:
+    enabled: ${FLYWAY_ENABLED:false}
+    baseline-on-migrate: ${FLYWAY_BASELINE_ON_MIGRATE:false}
+    baseline-version: ${FLYWAY_BASELINE_VERSION:0}
+    locations: classpath:db/migration
   rabbitmq:
     host: ${SPRING_RABBITMQ_HOST:localhost}
     port: ${SPRING_RABBITMQ_PORT:5672}
 
 jwt:
   secret: ${JWT_SECRET:cartly-dev-secret-change-me-in-production}
+
+app:
+  frontend-url: ${APP_FRONTEND_URL:http://localhost:3000}
 
 rabbitmq:
   exchanges:
@@ -37,6 +45,15 @@ email:
   username: ${EMAIL_USERNAME:}
   password: ${EMAIL_PASSWORD:}
   from-email: ${EMAIL_FROM:}
+  outbox:
+    # Base64-encoded 32-byte AES key. Required to durably retry failed email.
+    encryption-key: ${EMAIL_OUTBOX_ENCRYPTION_KEY:}
+    publish-delay-ms: ${EMAIL_OUTBOX_PUBLISH_DELAY_MS:30000}
+    batch-size: ${EMAIL_OUTBOX_BATCH_SIZE:50}
+    max-attempts: ${EMAIL_OUTBOX_MAX_ATTEMPTS:20}
+    dead-retention: ${EMAIL_OUTBOX_DEAD_RETENTION:P30D}
+    retention-scan-delay-ms: ${EMAIL_OUTBOX_RETENTION_SCAN_DELAY_MS:21600000}
+    health-dead-threshold: ${EMAIL_OUTBOX_HEALTH_DEAD_THRESHOLD:10}
 
 management:
   endpoints:

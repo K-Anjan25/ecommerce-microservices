@@ -10,14 +10,19 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${JPA_DDL_AUTO:update}
     show-sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
     generate-ddl: true
+  flyway:
+    enabled: ${FLYWAY_ENABLED:false}
+    baseline-on-migrate: ${FLYWAY_BASELINE_ON_MIGRATE:false}
+    baseline-version: ${FLYWAY_BASELINE_VERSION:0}
+    locations: classpath:db/migration
 
-  rabbitmq:
+rabbitmq:
     addresses: ${SPRING_RABBITMQ_ADDRESSES:localhost:5672}
 
   application:
@@ -34,6 +39,9 @@ rabbitmq:
 app:
   # Used in customer-facing links (e.g. price-drop alert emails)
   frontend-url: ${APP_FRONTEND_URL:http://localhost:3000}
+
+internal-service:
+  secret: ${INTERNAL_SERVICE_SECRET:cartly-internal-dev-only}
 
 management:
   endpoints:

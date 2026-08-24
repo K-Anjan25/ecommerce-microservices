@@ -28,11 +28,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilterBefore(new JwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/v1/orders").permitAll()
-                .antMatchers(HttpMethod.POST, "/v1/orders").permitAll()
+                .antMatchers(HttpMethod.GET, "/v1/orders", "/v1/orders/*/guest").permitAll()
+                .antMatchers(HttpMethod.POST, "/v1/orders", "/v1/orders/*/guest/cancel").permitAll()
                 // Guest checkout: payment initiation without a token; the
                 // gateway only exposes this for headerless POSTs.
-                .antMatchers(HttpMethod.POST, "/v1/payments").permitAll()
+                .antMatchers(HttpMethod.POST, "/v1/payments", "/v1/payments/webhooks/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/v1/payments/test").permitAll()
                 .antMatchers(HttpMethod.GET, "/actuator/health", "/actuator/health/**", "/actuator/info").permitAll()
                 .anyRequest()

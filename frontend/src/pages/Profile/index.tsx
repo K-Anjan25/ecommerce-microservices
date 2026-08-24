@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Divider, Paper } from "@mui/material";
+import { Avatar, Box, Button, Divider } from "@mui/material";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "../../store";
@@ -65,21 +65,21 @@ function Profile() {
         title="Profile"
         subtitle="Update your personal information and profile picture."
       />
-      <Paper className="mx-auto max-w-xl p-6 sm:p-10">
+      <div className="mx-auto max-w-xl border-t border-ink py-7 sm:py-9">
         <form onSubmit={form.handleSubmit} className="space-y-6">
           <Box className="flex flex-col items-center gap-4">
             <Box className="relative">
               <Avatar
                 alt={(user.firstName ?? "") + (user.lastName ?? "")}
                 src={user.profileImageURL ?? ""}
-                className="!h-32 !w-32 !bg-brand-soft !text-4xl !font-bold !text-brand"
+                className="!h-28 !w-28 !bg-brand-soft !text-4xl !font-bold !text-brand"
               >
                 {(user.firstName?.at(0)?.toUpperCase() ?? "") +
                   (user.lastName?.at(0)?.toUpperCase() ?? "")}
               </Avatar>
               <Button
                 size="small"
-                className="absolute -bottom-2 left-1/2 !min-w-0 -translate-x-1/2 !rounded-full !bg-brand !p-2 !text-oncontrast hover:!bg-brand-main"
+                className="absolute -bottom-2 left-1/2 !min-w-0 -translate-x-1/2 !rounded-full !bg-action !p-2 !text-oncontrast hover:!bg-action-hover"
                 onClick={() => fileRef.current?.click()}
                 aria-label="Upload profile picture"
               >
@@ -111,7 +111,7 @@ function Profile() {
             Save changes
           </LoadingButton>
         </form>
-      </Paper>
+      </div>
     </div>
   );
 }

@@ -90,15 +90,20 @@ See `.env.example`. Never commit real `.env` values.
 |---|---|
 | `POSTGRES_USERNAME`, `POSTGRES_PASSWORD` | all services / postgres |
 | `JWT_SECRET` | user-service (token signing) |
+| `CORS_ALLOWED_ORIGIN` | API gateway (exact production storefront origin) |
+| `APP_FRONTEND_URL` | user/product services (password reset and alert links) |
+| `INTERNAL_SERVICE_SECRET` | commerce/product services (stock-call authentication) |
 | `EMAIL_USERNAME`, `EMAIL_PASSWORD`, `EMAIL_FROM` | user-service (SMTP) |
+| `EMAIL_OUTBOX_ENCRYPTION_KEY` | user-service (AES-256 encrypted email retry envelope) |
 | `STRIPE_SECRET_KEY`, `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` | commerce-service (payments) |
 
 ## Frontend
 
-React 18 + TypeScript, Redux, Material UI, Tailwind CSS — **Cartly 2.0 design system**.
+React 18 + TypeScript, Redux, Material UI, Tailwind CSS — **Cartly editorial commerce system**.
 
-- **Proxy**: `/api` → `http://localhost:8889` (API Gateway)
+- **Proxy**: relative requests go through the API Gateway (`http://localhost:8889` in local development)
 - **Auth**: JWT with auto-refresh (Bearer prefix handled in the refresh interceptor)
+- **Provider checkout**: copy `frontend/.env.example` to `frontend/.env` and set public `VITE_RAZORPAY_KEY_ID` and/or `VITE_STRIPE_PUBLISHABLE_KEY`; provider secrets stay server-side
 - **Admin**: `/admin/*` (requires `ROLE_ADMIN` / `ROLE_SUPER_ADMIN`)
 - **Design kit**: wireframes, tokens and the Figma handoff live in [`design/`](design/);
   the engineering record is [`docs/08-frontend-redesign.md`](docs/08-frontend-redesign.md).
@@ -126,7 +131,7 @@ cd frontend && npm start              # http://localhost:3000
 ```bash
 mvn test                                   # all modules (unit tests, no infra needed)
 mvn -pl product-service test               # per service
-cd frontend && npm run build               # frontend type-check + build
+cd frontend && npm run build               # frontend type-check, build, sitemap + robots generation
 ```
 
 ## Resource Budget
@@ -143,6 +148,21 @@ Per-container caps (`docker-compose.yml`): postgres 384m, rabbitmq 128m, gateway
 - `docs/06-roadmap.md` — phased roadmap (6 → 10) and guardrails
 - `docs/07-handoff-opencode.md` — running session log / handoff notes
 - `docs/08-frontend-redesign.md` — Cartly 2.0 frontend redesign
-- `docs/09-frontend-strategy.md` — **open decision:** React vs WordPress/WooCommerce
+- `docs/09-frontend-strategy.md` — React platform + standalone WooCommerce theme decision
+- `docs/10-brand-and-storefront-benchmark.md` — brand scorecard and storefront benchmark
+- `docs/11-woocommerce-pattern-research-and-frontend-architecture.md` — Cartly 3.0 WooCommerce pattern research, token corrections and feature architecture
+- `docs/34-current-platform-status.md` — current roadmap and production-boundary status
+- `docs/40-payment-reconciliation-queue.md` — stale provider payment queue and reconciliation rules
+- `docs/41-email-retry-outbox.md` — encrypted transactional email retry boundary
+- `docs/42-razorpay-browser-handoff.md` — Razorpay browser checkout handoff
+- `docs/43-stripe-payment-element.md` — Stripe Payment Element handoff
+- `docs/44-gift-card-purchase-refunds.md` — unused-value refund policy and operations
+- `docs/45-production-configuration-and-migrations.md` — production configuration gate and migration rollout
+- `docs/46-localized-storefront-content.md` — English/Hindi CMS content and fallback behavior
+- `docs/47-operations-health-signals.md` — queue pressure signals for production alerting
+- `docs/48-seo-crawler-policy.md` — crawler policy for public and private routes
+- `docs/49-late-provider-capture-safety.md` — late-capture refund and order-state policy
+- `docs/50-production-smoke-checks.md` — safe post-deployment read-only smoke checks
+- `docs/51-final-release-certification.md` — combined release gate and staging certification runbook
 - `design/README.md` — design tokens, wireframes and the Figma handoff
 - [`cartly-wp-theme`](https://github.com/K-Anjan25/cartly-wp-theme) — the design system as a WordPress/WooCommerce theme (separate repo)

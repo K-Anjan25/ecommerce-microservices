@@ -13,12 +13,17 @@ spring:
     port: ${SPRING_RABBITMQ_PORT:5672}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${JPA_DDL_AUTO:update}
     show-sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
     generate-ddl: true
+  flyway:
+    enabled: ${FLYWAY_ENABLED:false}
+    baseline-on-migrate: ${FLYWAY_BASELINE_ON_MIGRATE:false}
+    baseline-version: ${FLYWAY_BASELINE_VERSION:0}
+    locations: classpath:db/migration
 
 rabbitmq:
   exchanges:
@@ -31,15 +36,39 @@ rabbitmq:
     send-email: send.email.routing-key
 
 payment:
+  reconciliation:
+    pending-ttl: ${PAYMENT_RECONCILIATION_PENDING_TTL:PT30M}
+    scan-delay-ms: ${PAYMENT_RECONCILIATION_SCAN_DELAY_MS:60000}
+    batch-size: ${PAYMENT_RECONCILIATION_BATCH_SIZE:100}
+    resolved-retention: ${PAYMENT_RECONCILIATION_RESOLVED_RETENTION:P90D}
+    retention-scan-delay-ms: ${PAYMENT_RECONCILIATION_RETENTION_SCAN_DELAY_MS:21600000}
+    health-open-case-threshold: ${PAYMENT_RECONCILIATION_HEALTH_OPEN_CASE_THRESHOLD:100}
   providers:
     stripe:
       secret-key: ${STRIPE_SECRET_KEY:}
+      webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
     razorpay:
       key-id: ${RAZORPAY_KEY_ID:}
       key-secret: ${RAZORPAY_KEY_SECRET:}
+      webhook-secret: ${RAZORPAY_WEBHOOK_SECRET:}
+
+storefront:
+  public-url: ${STOREFRONT_PUBLIC_URL:http://localhost:3000}
+
+checkout:
+  capability-ttl: ${CHECKOUT_CAPABILITY_TTL:PT720H}
+
+gift-card:
+  purchase:
+    pending-ttl: ${GIFT_CARD_PURCHASE_PENDING_TTL:PT30M}
+    lifecycle-scan-delay-ms: ${GIFT_CARD_PURCHASE_LIFECYCLE_SCAN_DELAY_MS:60000}
+    lifecycle-batch-size: ${GIFT_CARD_PURCHASE_LIFECYCLE_BATCH_SIZE:100}
 
 product-service:
   url: ${PRODUCT_SERVICE_URL:http://localhost:8080}
+
+internal-service:
+  secret: ${INTERNAL_SERVICE_SECRET:cartly-internal-dev-only}
 
 resilience4j:
   circuitbreaker:

@@ -7,7 +7,7 @@ import registerForm from "../../forms/registerForm";
 import { showSuccess } from "../../utils/showSuccess";
 import { Link, useNavigate } from "react-router-dom";
 import { RegisterForm } from "../../types/user";
-import { api } from "../../api/axios";
+import { api } from "../../api/client";
 import { useState } from "react";
 import { showError } from "../../utils/showError";
 
@@ -37,7 +37,7 @@ function Register() {
   };
   return (
     <AuthLayout>
-      <Typography variant="h4" component="h1" className="font-bold">
+      <Typography variant="h4" component="h1" className="!font-display !text-4xl !font-normal !tracking-[-0.02em]">
         Create your account
       </Typography>
       <Typography className="mt-1 text-ink-soft">

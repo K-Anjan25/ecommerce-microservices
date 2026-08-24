@@ -1,139 +1,117 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1254" viewBox="0 0 1440 1254">
-<rect width="1440" height="1254" fill="#FFFFFF"/>
-<g id="frame-label" data-name="frame-label">
-<text x="32" y="32" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" fill="#0B0B0F" text-anchor="start">04 · Cart -&gt; checkout (desktop, single flow)</text>
-<text x="32" y="52" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" fill="#5A5F6E" text-anchor="start">3-step header · numbered sections (address / delivery / payment / credits / review) · sticky summary</text>
-<text x="1408" y="32" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#8A8F9E" text-anchor="end">1440 × 1180</text>
-<text x="1408" y="52" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#8A8F9E" text-anchor="end">Cartly 2.0 · wireframe</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1316" viewBox="0 0 1440 1316">
+<rect width="1440" height="1316" fill="#FBF9F4"/>
+<text x="28" y="31" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" fill="#221A16" text-anchor="start">04 · Cart → checkout (desktop)</text>
+<text x="28" y="53" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#6B5E56" text-anchor="start">Enclosed header · address · delivery · provider-confirmed payment · order-bound credits · summary</text>
+<text x="1412" y="31" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#74675F" text-anchor="end">1440 × 1240</text>
+<text x="1412" y="53" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#74675F" text-anchor="end">Cartly Editorial · implementation-aligned · 24 Aug 2026</text>
+<g transform="translate(0 76)"><rect width="1440" height="1240" fill="#F4F0E8" stroke="#DAD0C3"/><g id="checkout-header" data-name="checkout-header">
+<rect x="0" y="0" width="1440" height="72" rx="0" fill="#FBF9F4" stroke="#DAD0C3" stroke-width="1"/>
+<text x="120" y="43" font-family="Instrument Serif, Georgia, serif" font-size="27" font-weight="500" fill="#221A16" text-anchor="start">Cartly</text>
+<text x="1320" y="40" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#6B5E56" text-anchor="end">Secure checkout  ·  Need help?</text>
 </g>
-<g transform="translate(0 74)">
-<rect width="1440" height="1180" fill="#F6F5F2" stroke="#D3D0C8"/>
-<rect x="0" y="0" width="1440" height="116" rx="0" fill="#FFFFFF" stroke="#E5E3DD" stroke-width="1"/>
-<text x="80" y="66" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#8A8F9E" text-anchor="start">GLOBAL SHELL (see frame 01)</text>
-<g id="checkout-stepper" data-name="checkout-stepper">
-<circle cx="94" cy="162" r="14" fill="#5B3DF5" stroke="#5B3DF5"/>
-<text x="94" y="167" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">v</text>
-<text x="118" y="167" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#5B3DF5" text-anchor="start">Cart</text>
-<rect x="270" y="161" width="90" height="2" rx="1" fill="#5B3DF5" stroke="none" stroke-width="1"/>
-<circle cx="394" cy="162" r="14" fill="#0B0B0F" stroke="#0B0B0F"/>
-<text x="394" y="167" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">2</text>
-<text x="418" y="167" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" fill="#0B0B0F" text-anchor="start">Address &amp; payment</text>
-<rect x="570" y="161" width="90" height="2" rx="1" fill="#D3D0C8" stroke="none" stroke-width="1"/>
-<circle cx="694" cy="162" r="14" fill="#FFFFFF" stroke="#D3D0C8"/>
-<text x="694" y="167" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#8A8F9E" text-anchor="middle">3</text>
-<text x="718" y="167" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#8A8F9E" text-anchor="start">Confirmation</text>
-
+<text x="120" y="112" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#221A16" text-anchor="start" letter-spacing="0.12em">CART     DETAILS     CONFIRMATION</text>
+<text x="120" y="164" font-family="Instrument Serif, Georgia, serif" font-size="40" font-weight="500" fill="#221A16" text-anchor="start">Checkout</text>
+<g id="checkout-section-1" data-name="checkout-section-1">
+<line x1="120" y1="200" x2="890" y2="200" stroke="#221A16"/>
+<rect x="120" y="224" width="28" height="28" rx="2" fill="#FBF9F4" stroke="#221A16" stroke-width="1"/>
+<text x="134" y="243" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#221A16" text-anchor="middle">1</text>
+<text x="164" y="245" font-family="Instrument Serif, Georgia, serif" font-size="22" font-weight="500" fill="#221A16" text-anchor="start">Delivery address</text>
+<text x="164" y="265" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#6B5E56" text-anchor="start">Guest checkout supported; pincode required</text>
 </g>
-<text x="80" y="214" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#8A8F9E" text-anchor="start" letter-spacing="0.16em">STEP 2 OF 3</text>
-<text x="80" y="246" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="28" font-weight="700" fill="#0B0B0F" text-anchor="start">Checkout</text>
-<g id="s1-address" data-name="s1-address">
-<rect x="80" y="274" width="912" height="250" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<circle cx="120" cy="300" r="15" fill="#0B0B0F"/>
-<text x="120" y="305" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">1</text>
-<text x="146" y="298" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" fill="#0B0B0F" text-anchor="start">Delivery address</text>
-<text x="146" y="314" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#8A8F9E" text-anchor="start">Guest checkout - no account needed</text>
-<rect x="104" y="346" width="864" height="52" rx="10" fill="#F6F5F2" stroke="#D3D0C8" stroke-width="1"/>
-<text x="120" y="368" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#0B0B0F" text-anchor="start">Use saved address</text>
-<text x="120" y="384" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#5A5F6E" text-anchor="start">12 Rose Lane, Hyderabad, Telangana</text>
-<text x="952" y="376" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#5B3DF5" text-anchor="end">Apply</text>
-<rect x="104" y="410" width="426" height="40" rx="10" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="118" y="434" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" fill="#8A8F9E" text-anchor="start">State</text>
-<rect x="542" y="410" width="426" height="40" rx="10" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="556" y="434" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" fill="#8A8F9E" text-anchor="start">District</text>
-<rect x="104" y="460" width="864" height="40" rx="10" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="118" y="484" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" fill="#8A8F9E" text-anchor="start">Delivery pincode</text>
+<g id="input-State" data-name="input-State">
+<rect x="164" y="282" width="310" height="40" rx="2" fill="#FBF9F4" stroke="#DAD0C3" stroke-width="1"/>
+<text x="176" y="306" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#74675F" text-anchor="start">State</text>
 </g>
-<g id="s2-delivery" data-name="s2-delivery">
-<rect x="80" y="540" width="912" height="146" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<circle cx="120" cy="566" r="15" fill="#0B0B0F"/>
-<text x="120" y="571" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">2</text>
-<text x="146" y="564" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" fill="#0B0B0F" text-anchor="start">Delivery method</text>
-<text x="146" y="580" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#8A8F9E" text-anchor="start">Rate quoted for your pincode</text>
-<rect x="104" y="612" width="426" height="56" rx="10" fill="#EDE9FE" stroke="#5B3DF5" stroke-width="1"/>
-<circle cx="130" cy="640" r="13" fill="#5B3DF5"/>
-<text x="152" y="636" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#0B0B0F" text-anchor="start">Standard</text>
-<text x="152" y="652" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#5A5F6E" text-anchor="start">3-5 working days</text>
-<text x="516" y="640" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#0B0B0F" text-anchor="end">Free</text>
-<rect x="542" y="612" width="426" height="56" rx="10" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<circle cx="568" cy="640" r="13" fill="#EFEEE9"/>
-<text x="590" y="636" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#0B0B0F" text-anchor="start">Express</text>
-<text x="590" y="652" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#5A5F6E" text-anchor="start">1-2 working days</text>
-<text x="954" y="640" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#0B0B0F" text-anchor="end">Rs 100</text>
+<g id="input-District" data-name="input-District">
+<rect x="486" y="282" width="310" height="40" rx="2" fill="#FBF9F4" stroke="#DAD0C3" stroke-width="1"/>
+<text x="498" y="306" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#74675F" text-anchor="start">District</text>
 </g>
-<g id="s3-payment" data-name="s3-payment">
-<rect x="80" y="702" width="912" height="146" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<circle cx="120" cy="728" r="15" fill="#0B0B0F"/>
-<text x="120" y="733" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">3</text>
-<text x="146" y="726" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" fill="#0B0B0F" text-anchor="start">Payment</text>
-<text x="146" y="742" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#8A8F9E" text-anchor="start">Razorpay will open to complete your payment</text>
-<rect x="104" y="774" width="426" height="56" rx="10" fill="#EDE9FE" stroke="#5B3DF5" stroke-width="1"/>
-<circle cx="130" cy="802" r="13" fill="#5B3DF5"/>
-<text x="152" y="798" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#0B0B0F" text-anchor="start">Card / UPI</text>
-<text x="152" y="814" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#5A5F6E" text-anchor="start">Razorpay</text>
-<rect x="542" y="774" width="426" height="56" rx="10" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<circle cx="568" cy="802" r="13" fill="#EFEEE9"/>
-<text x="590" y="798" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#0B0B0F" text-anchor="start">Cash on delivery</text>
-<text x="590" y="814" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#5A5F6E" text-anchor="start">Pay the courier on arrival</text>
+<g id="input-Address" data-name="input-Address">
+<rect x="164" y="334" width="632" height="40" rx="2" fill="#FBF9F4" stroke="#DAD0C3" stroke-width="1"/>
+<text x="176" y="358" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#74675F" text-anchor="start">Address</text>
 </g>
-<g id="s4-credits" data-name="s4-credits">
-<rect x="80" y="864" width="912" height="150" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<circle cx="120" cy="890" r="15" fill="#0B0B0F"/>
-<text x="120" y="895" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">4</text>
-<text x="146" y="888" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" fill="#0B0B0F" text-anchor="start">Credits &amp; extras</text>
-<text x="146" y="904" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#8A8F9E" text-anchor="start">Coupons, gift cards, loyalty and gift wrap in one row</text>
-<rect x="104" y="936" width="752" height="42" rx="10" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="118" y="961" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" fill="#8A8F9E" text-anchor="start">Coupon / gift card code</text>
-<rect x="864" y="936" width="104" height="42" rx="10" fill="#5B3DF5" stroke="#5B3DF5" stroke-width="1"/>
-<text x="916" y="961" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">Apply</text>
-<rect x="104" y="990" width="14" height="14" rx="4" fill="#5B3DF5" stroke="#5B3DF5" stroke-width="1"/>
-<text x="126" y="1001" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#5A5F6E" text-anchor="start">Gift wrap this order (+Rs 50)</text>
+<g id="input-6-digit pincode" data-name="input-6-digit pincode">
+<rect x="164" y="386" width="220" height="40" rx="2" fill="#FBF9F4" stroke="#DAD0C3" stroke-width="1"/>
+<text x="176" y="410" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#74675F" text-anchor="start">6-digit pincode</text>
 </g>
-<g id="s5-review" data-name="s5-review">
-<rect x="80" y="1030" width="912" height="78" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<circle cx="120" cy="1069" r="15" fill="#EFEEE9"/>
-<text x="120" y="1074" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#0B0B0F" text-anchor="middle">3</text>
-<text x="146" y="1064" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" fill="#0B0B0F" text-anchor="start">Review items</text>
-<text x="146" y="1080" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#8A8F9E" text-anchor="start">Show what you're buying (collapsed by default)</text>
-<text x="960" y="1075" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" fill="#8A8F9E" text-anchor="end">v</text>
+<g id="checkout-section-2" data-name="checkout-section-2">
+<line x1="120" y1="466" x2="890" y2="466" stroke="#DAD0C3"/>
+<rect x="120" y="490" width="28" height="28" rx="2" fill="#FBF9F4" stroke="#221A16" stroke-width="1"/>
+<text x="134" y="509" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#221A16" text-anchor="middle">2</text>
+<text x="164" y="511" font-family="Instrument Serif, Georgia, serif" font-size="22" font-weight="500" fill="#221A16" text-anchor="start">Delivery method</text>
+<text x="164" y="531" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#6B5E56" text-anchor="start">Server rate for the selected pincode</text>
 </g>
-<g id="order-summary-sticky" data-name="order-summary-sticky">
-<rect x="1020" y="274" width="340" height="430" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1040" y="310" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" fill="#0B0B0F" text-anchor="start">Order summary</text>
-<text x="1040" y="350" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#5A5F6E" text-anchor="start">Subtotal (3 items)</text>
-<text x="1340" y="350" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#0B0B0F" text-anchor="end">Rs 7,497</text>
-<text x="1040" y="380" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#0E9F6E" text-anchor="start">Coupon SAVE10</text>
-<text x="1340" y="380" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#0E9F6E" text-anchor="end">-Rs 749</text>
-<text x="1040" y="410" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#5A5F6E" text-anchor="start">Shipping</text>
-<text x="1340" y="410" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#0E9F6E" text-anchor="end">FREE</text>
-<text x="1040" y="440" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#5A5F6E" text-anchor="start">Tax (GST 18%)</text>
-<text x="1340" y="440" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#0B0B0F" text-anchor="end">Rs 1,214</text>
-<text x="1040" y="470" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#5A5F6E" text-anchor="start">Gift wrap</text>
-<text x="1340" y="470" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#0B0B0F" text-anchor="end">Rs 49</text>
-<rect x="1040" y="518" width="300" height="1" rx="0" fill="#D3D0C8" stroke="none" stroke-width="1"/>
-<text x="1040" y="552" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#0B0B0F" text-anchor="start">Total</text>
-<text x="1340" y="554" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="22" font-weight="700" fill="#0B0B0F" text-anchor="end">Rs 7,891</text>
-<rect x="1040" y="574" width="300" height="50" rx="10" fill="#5B3DF5" stroke="#5B3DF5" stroke-width="1"/>
-<text x="1190" y="603" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">Pay Rs 7,891</text>
-<text x="1190" y="648" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#8A8F9E" text-anchor="middle">256-bit secure · PCI compliant</text>
-<rect x="1042" y="662" width="72" height="22" rx="11" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1078" y="677" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#5A5F6E" text-anchor="middle">Visa</text>
-<rect x="1120" y="662" width="72" height="22" rx="11" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1156" y="677" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#5A5F6E" text-anchor="middle">Mastercard</text>
-<rect x="1198" y="662" width="72" height="22" rx="11" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1234" y="677" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#5A5F6E" text-anchor="middle">UPI</text>
-<rect x="1276" y="662" width="72" height="22" rx="11" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1312" y="677" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#5A5F6E" text-anchor="middle">COD</text>
+<rect x="164" y="544" width="296" height="72" rx="2" fill="#F3E2D9" stroke="#A4472D" stroke-width="1"/>
+<text x="182" y="572" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#221A16" text-anchor="start">Standard  ·  3–5 days</text>
+<text x="182" y="596" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#6B5E56" text-anchor="start">Free over threshold</text>
+<rect x="472" y="544" width="296" height="72" rx="2" fill="#FBF9F4" stroke="#DAD0C3" stroke-width="1"/>
+<text x="490" y="572" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#221A16" text-anchor="start">Express  ·  1–2 days</text>
+<text x="490" y="596" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#6B5E56" text-anchor="start">₹100</text>
+<g id="checkout-section-3" data-name="checkout-section-3">
+<line x1="120" y1="648" x2="890" y2="648" stroke="#DAD0C3"/>
+<rect x="120" y="672" width="28" height="28" rx="2" fill="#FBF9F4" stroke="#221A16" stroke-width="1"/>
+<text x="134" y="691" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#221A16" text-anchor="middle">3</text>
+<text x="164" y="693" font-family="Instrument Serif, Georgia, serif" font-size="22" font-weight="500" fill="#221A16" text-anchor="start">Payment</text>
+<text x="164" y="713" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#6B5E56" text-anchor="start">Provider initiation is not settlement</text>
 </g>
-<g id="annotations" data-name="annotations">
-<circle cx="100" cy="130" r="9" fill="#B0455A"/>
-<text x="100" y="134" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">1</text>
-<text x="115" y="134" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#B0455A" text-anchor="start">Cart and checkout are one flow behind a shared 3-step progress header</text>
-<circle cx="1020" cy="254" r="9" fill="#B0455A"/>
-<text x="1020" y="258" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">2</text>
-<text x="1035" y="258" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#B0455A" text-anchor="start">Summary is sticky - total always visible, CTA never off-screen</text>
-<circle cx="100" cy="1130" r="9" fill="#B0455A"/>
-<text x="100" y="1134" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">3</text>
-<text x="115" y="1134" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#B0455A" text-anchor="start">Coupon / gift card / loyalty / gift wrap collapse into one credits section</text>
+<rect x="164" y="726" width="296" height="74" rx="2" fill="#F3E2D9" stroke="#A4472D" stroke-width="1"/>
+<text x="182" y="756" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#221A16" text-anchor="start">Card / UPI</text>
+<text x="182" y="778" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#6B5E56" text-anchor="start">Pending until signed provider confirmation</text>
+<rect x="472" y="726" width="296" height="74" rx="2" fill="#FBF9F4" stroke="#DAD0C3" stroke-width="1"/>
+<text x="490" y="756" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#221A16" text-anchor="start">Cash on delivery</text>
+<text x="490" y="778" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#6B5E56" text-anchor="start">Pay the courier on arrival</text>
+<g id="checkout-section-4" data-name="checkout-section-4">
+<line x1="120" y1="832" x2="890" y2="832" stroke="#DAD0C3"/>
+<rect x="120" y="856" width="28" height="28" rx="2" fill="#FBF9F4" stroke="#221A16" stroke-width="1"/>
+<text x="134" y="875" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#221A16" text-anchor="middle">4</text>
+<text x="164" y="877" font-family="Instrument Serif, Georgia, serif" font-size="22" font-weight="500" fill="#221A16" text-anchor="start">Credits &amp; extras</text>
+<text x="164" y="897" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#6B5E56" text-anchor="start">All amounts validated and applied by commerce</text>
 </g>
+<g id="input-Coupon code" data-name="input-Coupon code">
+<rect x="164" y="910" width="250" height="40" rx="2" fill="#FBF9F4" stroke="#DAD0C3" stroke-width="1"/>
+<text x="176" y="934" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#74675F" text-anchor="start">Coupon code</text>
 </g>
+<g id="input-Gift card code" data-name="input-Gift card code">
+<rect x="426" y="910" width="250" height="40" rx="2" fill="#FBF9F4" stroke="#DAD0C3" stroke-width="1"/>
+<text x="438" y="934" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#74675F" text-anchor="start">Gift card code</text>
+</g>
+<g id="input-Points" data-name="input-Points">
+<rect x="688" y="910" width="108" height="40" rx="2" fill="#FBF9F4" stroke="#DAD0C3" stroke-width="1"/>
+<text x="700" y="934" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#74675F" text-anchor="start">Points</text>
+</g>
+<text x="164" y="982" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#221A16" text-anchor="start">□ Gift wrap this order (+₹50)</text>
+<g id="order-summary" data-name="order-summary">
+<line x1="970" y1="200" x2="1320" y2="200" stroke="#221A16"/>
+<text x="970" y="238" font-family="Instrument Serif, Georgia, serif" font-size="27" font-weight="500" fill="#221A16" text-anchor="start">Order summary</text>
+<text x="970" y="282" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6B5E56" text-anchor="start">Subtotal (3 items)</text>
+<text x="1320" y="282" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#221A16" text-anchor="end">₹3,420</text>
+<text x="970" y="318" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#0E6F50" text-anchor="start">Coupon</text>
+<text x="1320" y="318" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#0E6F50" text-anchor="end">−₹200</text>
+<text x="970" y="354" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#0E6F50" text-anchor="start">100 loyalty points</text>
+<text x="1320" y="354" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#0E6F50" text-anchor="end">−₹10</text>
+<text x="970" y="390" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6B5E56" text-anchor="start">Shipping</text>
+<text x="1320" y="390" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#221A16" text-anchor="end">Free</text>
+<text x="970" y="426" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6B5E56" text-anchor="start">GST</text>
+<text x="1320" y="426" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#221A16" text-anchor="end">₹577.80</text>
+<line x1="970" y1="454" x2="1320" y2="454" stroke="#DAD0C3"/>
+<text x="970" y="492" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#221A16" text-anchor="start">Estimated total</text>
+<text x="1320" y="492" font-family="Instrument Serif, Georgia, serif" font-size="23" font-weight="500" fill="#221A16" text-anchor="end">₹3,787.80</text>
+<text x="970" y="530" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#74675F" text-anchor="start">Gift-card balance is applied securely</text>
+<text x="970" y="548" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#74675F" text-anchor="start">after tax; provider is charged only the remainder.</text>
+<g id="button-Place order" data-name="button-Place order">
+<rect x="970" y="582" width="350" height="46" rx="2" fill="#A4472D" stroke="#A4472D" stroke-width="1"/>
+<text x="1145" y="609" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#FBF9F4" text-anchor="middle">Place order</text>
+</g>
+<text x="1145" y="656" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#74675F" text-anchor="middle">Encrypted · authoritative server totals</text>
+</g>
+<g id="note-1" data-name="note-1">
+<circle cx="970" cy="178" r="9" fill="#A4472D"/>
+<text x="970" y="182" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="750" fill="#FBF9F4" text-anchor="middle">1</text>
+<text x="985" y="182" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#8E3823" text-anchor="start">Enclosed checkout removes storefront navigation and promotions</text>
+</g>
+<g id="note-2" data-name="note-2">
+<circle cx="164" cy="1048" r="9" fill="#A4472D"/>
+<text x="164" y="1052" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="750" fill="#FBF9F4" text-anchor="middle">2</text>
+<text x="179" y="1052" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#8E3823" text-anchor="start">Coupon → loyalty → tax → gift-card tender → provider remainder</text>
+</g></g>
 </svg>

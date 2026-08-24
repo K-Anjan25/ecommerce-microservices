@@ -1,4 +1,4 @@
-import { Paper, Typography } from "@mui/material";
+
 import LockResetOutlinedIcon from "@mui/icons-material/LockResetOutlined";
 import * as yup from "yup";
 import { useMutation } from "react-query";
@@ -60,16 +60,14 @@ function Account() {
         title="Account"
         subtitle="Keep your account secure with a strong password."
       />
-      <Paper className="mx-auto max-w-xl p-6 sm:p-10">
-        <div className="mb-6 flex items-start gap-3 rounded-xl bg-brand-tint p-4">
+      <div className="mx-auto max-w-xl border-t border-ink py-7 sm:py-9">
+        <div className="mb-8 flex items-start gap-3 border-b border-line pb-6">
           <LockResetOutlinedIcon className="mt-0.5 !text-brand" />
           <div>
-            <Typography className="font-semibold text-brand">
-              Change password
-            </Typography>
-            <Typography className="text-sm text-ink-soft">
+            <p className="font-display text-2xl text-ink">Change password</p>
+            <p className="mt-1 text-sm text-ink-soft">
               You will need to sign in again after changing your password.
-            </Typography>
+            </p>
           </div>
         </div>
 
@@ -103,7 +101,7 @@ function Account() {
             Update password
           </LoadingButton>
         </form>
-      </Paper>
+      </div>
     </div>
   );
 }

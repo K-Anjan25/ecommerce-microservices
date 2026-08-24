@@ -1,4 +1,6 @@
-# 7. Handoff — Phases 6-9 backend complete, frontend redesigned (Cartly 2.0)
+# 7. Historical implementation handoff (archived)
+
+> **Archive notice (2026-08-24):** This document records earlier Phase 6–9 implementation sessions and contains stale branch names, interim caveats and superseded design language. Do not use it as current status. Use [`06-roadmap.md`](06-roadmap.md), [`34-current-platform-status.md`](34-current-platform-status.md), and the numbered hardening documents 20–33.
 
 > Purpose: self-contained status + exact commands so the resting opencode agent (or any
 > teammate) can pick this up without re-deriving context. Generated 2026-08-21 after
@@ -481,8 +483,8 @@ All verified with `tsc + vite build`.
   WooCommerce (see 7.4.20). That is the top item in the theme repo.
 
 ### 7.4.22 Where the platform repo goes next
-- Roadmap Phase 9 leftovers: CMS/store settings, audit log, staff Manager role.
-- Then Phase 10: structured logs, rate limiting, backups, i18n, PWA.
+- **Phase 9 is complete.** CMS/store settings, scoped Manager role and cross-service audit log are done. The audit ledger merges the latest identity, catalog and commerce mutations in the admin studio.
+- Next is Phase 10: structured logs, rate limiting, backups, i18n, PWA.
 - `main` is still at the pre-redesign merge — **PR #2 carries this entire session** and needs
   merging before `main` reflects reality.
 

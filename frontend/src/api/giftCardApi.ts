@@ -1,29 +1,34 @@
-import { GiftCard, PurchaseGiftCardRequest } from "../types/giftCard";
-import { api } from "./axios";
+import { api } from "./client";
+import {
+  GiftCard,
+  GiftCardPurchaseAdmin,
+  GiftCardPurchaseRequest,
+  GiftCardPurchaseRefundResponse,
+  GiftCardPurchaseResponse,
+} from "../types/giftCard";
 
-const purchaseGiftCard = async (request: PurchaseGiftCardRequest) => {
-  const { data } = await api.post<GiftCard>("/v1/gift-cards/purchase", request);
-  return data;
-};
-
-const getGiftCardByCode = async (code: string) => {
-  const { data } = await api.get<GiftCard>(`/v1/gift-cards/${code}`);
-  return data;
-};
-
-const redeemGiftCard = async (code: string, amount: number) => {
-  const { data } = await api.post<GiftCard>(`/v1/gift-cards/${code}/redeem?amount=${amount}`);
-  return data;
-};
-
-const getUserGiftCards = async () => {
+const getMyGiftCards = async () => {
   const { data } = await api.get<GiftCard[]>("/v1/gift-cards");
   return data;
 };
 
-export const GiftCardApi = {
-  purchaseGiftCard,
-  getGiftCardByCode,
-  redeemGiftCard,
-  getUserGiftCards,
+const purchaseGiftCard = async (request: GiftCardPurchaseRequest) => {
+  const { data } = await api.post<GiftCardPurchaseResponse>("/v1/gift-cards/purchase", request);
+  return data;
 };
+
+const listPurchases = async (status: GiftCardPurchaseAdmin["status"]) => {
+  const { data } = await api.get<GiftCardPurchaseAdmin[]>("/v1/gift-cards/purchases", {
+    params: { status },
+  });
+  return data;
+};
+
+const refundPurchase = async (purchaseId: string) => {
+  const { data } = await api.post<GiftCardPurchaseRefundResponse>(
+    `/v1/gift-cards/purchases/${purchaseId}/refund`
+  );
+  return data;
+};
+
+export const GiftCardApi = { getMyGiftCards, purchaseGiftCard, listPurchases, refundPurchase };

@@ -24,6 +24,8 @@ public class ReturnRequestDto {
     private int quantity;
     private ReturnStatus status;
     private BigDecimal refundAmount;
+    private BigDecimal giftCardRefundAmount;
+    private BigDecimal providerRefundAmount;
     private String refundTransactionId;
     private String reason;
     private String rejectionReason;

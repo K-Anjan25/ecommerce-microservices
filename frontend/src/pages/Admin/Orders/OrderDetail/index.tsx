@@ -200,10 +200,16 @@ function OrderDetail() {
           boolean
         ][])
       : []),
+    ...(resolvedOrder.loyaltyDiscountAmount
+      ? ([[`Loyalty (${resolvedOrder.loyaltyPointsRedeemed} points)`, `−${formatPrice(resolvedOrder.loyaltyDiscountAmount)}`, true]] as [string, string, boolean][])
+      : []),
     ["Shipping", resolvedOrder.shippingAmount ? formatPrice(resolvedOrder.shippingAmount) : "Free"],
     ...(resolvedOrder.taxAmount ? ([["Tax", formatPrice(resolvedOrder.taxAmount)]] as [string, string][]) : []),
     ...(resolvedOrder.giftWrapFee
       ? ([["Gift wrap", formatPrice(resolvedOrder.giftWrapFee)]] as [string, string][])
+      : []),
+    ...(resolvedOrder.giftCardAmount
+      ? ([[`Gift card ending ${resolvedOrder.giftCardCodeLast4}`, `−${formatPrice(resolvedOrder.giftCardAmount)}`, true]] as [string, string, boolean][])
       : []),
   ];
 
@@ -333,6 +339,8 @@ function OrderDetail() {
                   {r.refundAmount != null && (
                     <p className="mt-1 text-xs text-state-success">
                       Refunded {formatPrice(r.refundAmount)}
+                      {r.giftCardRefundAmount ? ` · ${formatPrice(r.giftCardRefundAmount)} gift card` : ""}
+                      {r.providerRefundAmount ? ` · ${formatPrice(r.providerRefundAmount)} provider` : ""}
                       {r.refundTransactionId ? ` · ${r.refundTransactionId}` : ""}
                     </p>
                   )}

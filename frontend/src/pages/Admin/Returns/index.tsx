@@ -98,17 +98,13 @@ function AdminReturns() {
         subtitle="Approve requests, then trigger the provider refund."
       />
 
-      <Box className="flex flex-wrap gap-2">
+      <Box className="flex flex-wrap gap-6 border-b border-line">
         {FILTERS.map((f) => (
           <Chip
             key={f}
             label={f === "ALL" ? `All (${returns?.length ?? 0})` : `${f} (${counts[f] ?? 0})`}
             onClick={() => setFilter(f)}
-            className={
-              filter === f
-                ? "!bg-brand !font-semibold !text-oncontrast"
-                : "!bg-white !text-ink-soft hover:!bg-brand-tint"
-            }
+            className={`!rounded-none !border-b-2 !bg-transparent !px-0 !font-semibold ${filter === f ? "!border-brand !text-brand" : "!border-transparent !text-ink-muted"}`}
           />
         ))}
       </Box>
@@ -124,9 +120,9 @@ function AdminReturns() {
           />
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="border-t border-ink">
           {filtered.map((r: ReturnRequest) => (
-            <Box key={r.id} className="panel p-5">
+            <Box key={r.id} className="border-b border-line py-5">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
@@ -161,6 +157,8 @@ function AdminReturns() {
                   {r.status === ReturnStatus.REFUNDED && r.refundAmount != null && (
                     <Typography variant="body2" className="text-state-info">
                       Refunded {formatPrice(r.refundAmount)}
+                      {r.giftCardRefundAmount ? ` · ${formatPrice(r.giftCardRefundAmount)} to gift card` : ""}
+                      {r.providerRefundAmount ? ` · ${formatPrice(r.providerRefundAmount)} to provider` : ""}
                       {r.refundTransactionId ? ` · Ref ${r.refundTransactionId}` : ""}
                     </Typography>
                   )}

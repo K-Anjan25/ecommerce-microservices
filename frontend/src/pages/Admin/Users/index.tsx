@@ -37,6 +37,20 @@ function Users() {
     }
   );
 
+  const roleMutation = useMutation(
+    (user: Row) =>
+      UserApi.updateStaffRole(
+        user.id,
+        user.role === "ROLE_MANAGER" ? "ROLE_USER" : "ROLE_MANAGER"
+      ),
+    {
+      onSuccess: () => {
+        showSuccess("Staff role updated");
+        queryClient.invalidateQueries("admin-user:list");
+      },
+    }
+  );
+
   const columns: DataColumn<Row>[] = [
     {
       id: "name",
@@ -102,27 +116,41 @@ function Users() {
           getRowId={(u) => u.id}
           caption={`${users?.length ?? 0} account${users?.length === 1 ? "" : "s"}`}
           actions={(u) => (
-            <LoadingButton
-              size="small"
-              variant="outlined"
-              startIcon={
-                u.active ? (
-                  <BlockIcon sx={{ fontSize: 15 }} />
-                ) : (
-                  <CheckCircleOutlineIcon sx={{ fontSize: 15 }} />
-                )
-              }
-              loading={toggleMutation.isLoading}
-              disabled={toggleMutation.isLoading}
-              className={`!py-1 normal-case ${
-                u.active
-                  ? "!border-state-danger/30 !text-state-danger-on hover:!bg-state-danger-soft"
-                  : "!border-state-success/30 !text-state-success-on hover:!bg-state-success-soft"
-              }`}
-              onClick={() => toggleMutation.mutate({ id: u.id, active: u.active })}
-            >
-              {u.active ? "Disable" : "Enable"}
-            </LoadingButton>
+            <>
+              {(u.role === "ROLE_USER" || u.role === "ROLE_MANAGER") && (
+                <LoadingButton
+                  size="small"
+                  variant="outlined"
+                  loading={roleMutation.isLoading}
+                  disabled={roleMutation.isLoading}
+                  className="!py-1 normal-case"
+                  onClick={() => roleMutation.mutate(u)}
+                >
+                  {u.role === "ROLE_MANAGER" ? "Remove manager" : "Make manager"}
+                </LoadingButton>
+              )}
+              <LoadingButton
+                size="small"
+                variant="outlined"
+                startIcon={
+                  u.active ? (
+                    <BlockIcon sx={{ fontSize: 15 }} />
+                  ) : (
+                    <CheckCircleOutlineIcon sx={{ fontSize: 15 }} />
+                  )
+                }
+                loading={toggleMutation.isLoading}
+                disabled={toggleMutation.isLoading}
+                className={`!py-1 normal-case ${
+                  u.active
+                    ? "!border-state-danger/30 !text-state-danger-on hover:!bg-state-danger-soft"
+                    : "!border-state-success/30 !text-state-success-on hover:!bg-state-success-soft"
+                }`}
+                onClick={() => toggleMutation.mutate({ id: u.id, active: u.active })}
+              >
+                {u.active ? "Disable" : "Enable"}
+              </LoadingButton>
+            </>
           )}
         />
       )}

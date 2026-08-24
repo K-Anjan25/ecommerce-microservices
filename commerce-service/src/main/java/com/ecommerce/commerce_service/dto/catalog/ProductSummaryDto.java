@@ -1,19 +1,28 @@
 package com.ecommerce.commerce_service.dto.catalog;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
-/**
- * Minimal product projection (id + name) used for invoice line labels.
- * Extra fields in the product-service response are ignored on deserialization.
- */
+/** Catalog pricing projection used to create authoritative order snapshots. */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductSummaryDto {
     private UUID id;
     private String name;
+    private BigDecimal unitPrice;
+    private BigDecimal flashPrice;
+    private Boolean flashSaleActive;
+    private List<VariantSummaryDto> variants;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class VariantSummaryDto {
+        private UUID id;
+        private BigDecimal price;
+        private Integer quantityInStock;
+    }
 }

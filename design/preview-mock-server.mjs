@@ -1,5 +1,5 @@
 /**
- * Cartly 2.0 — design preview mock gateway (DEV ONLY).
+ * Cartly Editorial — design preview mock gateway (DEV ONLY).
  *
  * Serves just enough of the API-gateway surface (`:8889`) to review the new
  * frontend without booting Postgres/RabbitMQ/4 Spring Boot services. It is a
@@ -16,6 +16,20 @@ const CATEGORIES = [
 ].map((name, i) => ({ id: i + 1, name, slug: name.toLowerCase(), parentId: null, sortOrder: i }));
 
 const BRANDS = ["Acme", "Northwind", "Lumen", "Kite", "Orbit", "Cobalt"];
+
+let STORE_SETTINGS = {
+  announcementEnabled: true,
+  announcementText: "Free shipping over ₹999",
+  announcementLinkText: "Flash sale live",
+  announcementLinkUrl: "/flash-sales",
+  heroEyebrow: "The seasonal edit",
+  heroTitle: "Curated finds",
+  heroEmphasis: "for home & life.",
+  heroDescription: "Thoughtful objects, honest materials and everyday essentials selected to last.",
+  primaryCtaLabel: "Shop the collection",
+  secondaryCtaLabel: "Explore the edit",
+  freeShippingThreshold: 999,
+};
 
 const NAMES = [
   "Studio Pro Headphones", "Linen Throw Blanket", "Trail Runner 3", "Ceramic Pour-Over",
@@ -132,6 +146,27 @@ createServer((req, res) => {
 
   if (req.method === "OPTIONS") return json(res, {});
 
+  if (["/user/password-reset/request", "/user/password-reset/confirm"].includes(p) && req.method === "POST") {
+    return json(res, { message: "Mock password reset accepted" });
+  }
+
+  if (p === "/v1/store-settings" && req.method === "GET") return json(res, STORE_SETTINGS);
+  if (p === "/v1/store-settings" && req.method === "PUT") {
+    let raw = "";
+    req.on("data", (chunk) => { raw += chunk; });
+    req.on("end", () => {
+      try {
+        STORE_SETTINGS = { ...STORE_SETTINGS, ...JSON.parse(raw) };
+        json(res, STORE_SETTINGS);
+      } catch {
+        json(res, { message: "Invalid settings payload" }, 400);
+      }
+    });
+    return;
+  }
+
+  if (["/v1/product-audit", "/v1/commerce-audit", "/user/audit-logs"].includes(p)) return json(res, []);
+
   if (p === "/v1/categories") return json(res, CATEGORIES);
 
   if (p === "/v1/products") {
@@ -183,7 +218,16 @@ createServer((req, res) => {
     const t = (q.get("term") ?? "").toLowerCase();
     return json(
       res,
-      PRODUCTS.filter((x) => x.name.toLowerCase().includes(t)).slice(0, 8).map((x) => x.name)
+      PRODUCTS.filter(
+        (x) =>
+          x.name.toLowerCase().includes(t) ||
+          x.brand.toLowerCase().includes(t) ||
+          x.categoryName.toLowerCase().includes(t)
+      )
+        .slice(0, 6)
+        .map(({ id, name, brand, categoryName: category, unitPrice, imageUrl }) => ({
+          id, name, brand, category, unitPrice, imageUrl,
+        }))
     );
   }
 
@@ -228,6 +272,37 @@ createServer((req, res) => {
       })),
     });
 
+  if (p === "/v1/orders" && req.method === "POST") {
+    let raw = "";
+    req.on("data", (chunk) => { raw += chunk; });
+    req.on("end", () => {
+      try {
+        const request = JSON.parse(raw);
+        const totalAmount = (request.items ?? []).reduce((sum, item) => {
+          const product = PRODUCTS.find((candidate) => candidate.id === item.productId);
+          return sum + (product?.unitPrice ?? 0) * item.quantity;
+        }, 0);
+        json(res, {
+          id: `ord-preview-${Date.now()}`,
+          ...request,
+          totalAmount,
+          orderStatus: "PENDING",
+          createdDate: new Date().toISOString(),
+          checkoutToken: "preview-checkout-token",
+        }, 201);
+      } catch { json(res, { message: "Invalid order" }, 400); }
+    });
+    return;
+  }
+  if (p === "/v1/payments" && req.method === "POST") {
+    let raw = "";
+    req.on("data", (chunk) => { raw += chunk; });
+    req.on("end", () => {
+      const request = JSON.parse(raw || "{}");
+      json(res, { ...request, amount: 0, currency: "INR", status: request.provider === "CASH" ? "PENDING" : "SUCCESS", transactionId: "preview-payment" }, 201);
+    });
+    return;
+  }
   if (p === "/v1/orders/my") return json(res, ORDERS);
   if (p === "/v1/orders")
     return json(res, { data: ORDERS, totalSize: ORDERS.length, totalPage: 1 });

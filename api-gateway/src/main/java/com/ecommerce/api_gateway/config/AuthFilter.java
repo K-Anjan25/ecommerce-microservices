@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.stream.Collectors;
 
 @Component
@@ -37,20 +38,22 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
                 return exchange.getResponse().setComplete();
             }
 
-            String[] parts = authHeader.split(" ");
-            if (parts.length != 2 || !"Bearer".equals(parts[0])) {
+            String[] parts = authHeader.trim().split("\\s+", 2);
+            if (parts.length != 2 || !"Bearer".equals(parts[0]) || parts[1].isBlank()) {
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();
             }
 
             return webClientBuilder.build()
                     .post()
-                    .uri(userServiceUri + "/user/validateToken?token=" + parts[1])
+                    // Keep bearer credentials in headers; query strings are routinely logged.
+                    .uri(userServiceUri + "/user/validateToken")
                     .header(HttpHeaders.AUTHORIZATION, authHeader)
                     .retrieve()
                     .onStatus(HttpStatus::is4xxClientError, response -> response.bodyToMono(ErrorDto.class)
                             .flatMap(error -> Mono.error(new RuntimeException(error.getError_message()))))
                     .bodyToMono(UserDto.class)
+                    .timeout(Duration.ofSeconds(5))
                     .flatMap(userDto -> {
                         String authorities = userDto.getAuthorities().stream()
                                 .map(AuthorityDto::getAuthority)
@@ -58,15 +61,21 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
 
                         ServerHttpRequest request = exchange.getRequest()
                                 .mutate()
-                                .header("userId", userDto.getUserId())
-                                .header("authorities", authorities)
-                                .header("username", userDto.getUsername())
+                                .headers(headers -> {
+                                    // Never trust identity headers supplied by the public client.
+                                    headers.remove("userId");
+                                    headers.remove("authorities");
+                                    headers.remove("username");
+                                    headers.set("userId", userDto.getUserId());
+                                    headers.set("authorities", authorities);
+                                    headers.set("username", userDto.getUsername());
+                                })
                                 .build();
 
                         return chain.filter(exchange.mutate().request(request).build());
                     })
                     .onErrorResume(error -> {
-                        exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                         return exchange.getResponse().setComplete();
                     });
         };

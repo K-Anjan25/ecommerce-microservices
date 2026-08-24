@@ -2,6 +2,7 @@ export enum GiftCardStatus {
   ACTIVE = "ACTIVE",
   REDEEMED = "REDEEMED",
   EXPIRED = "EXPIRED",
+  REFUNDED = "REFUNDED",
 }
 
 export interface GiftCard {
@@ -14,8 +15,43 @@ export interface GiftCard {
   recipientEmail?: string;
 }
 
-export interface PurchaseGiftCardRequest {
+export type GiftCardPurchaseProvider = "STRIPE" | "RAZORPAY";
+
+export interface GiftCardPurchaseRequest {
   amount: number;
+  contactEmail: string;
   recipientEmail?: string;
   expiryDate: string;
+  provider: GiftCardPurchaseProvider;
+}
+
+export interface GiftCardPurchaseResponse {
+  purchaseId: string;
+  orderId: string;
+  payment: import("./payment").PaymentResponse;
+}
+
+export interface GiftCardPurchaseRefundResponse {
+  purchaseId: string;
+  orderId: string;
+  status: "REFUNDED";
+  refundedAmount?: number;
+  refundTransactionId?: string;
+  refundedAt?: string;
+}
+
+export interface GiftCardPurchaseAdmin {
+  purchaseId: string;
+  orderId: string;
+  customerId: string;
+  amount: number;
+  expiryDate: string;
+  recipientEmail?: string;
+  status: "PENDING_PAYMENT" | "FAILED" | "ISSUED" | "REFUNDED";
+  giftCardId?: string;
+  refundedAmount?: number;
+  refundTransactionId?: string;
+  createdAt?: string;
+  issuedAt?: string;
+  refundedAt?: string;
 }

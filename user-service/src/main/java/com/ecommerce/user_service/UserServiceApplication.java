@@ -3,6 +3,7 @@ package com.ecommerce.user_service;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.File;
@@ -15,6 +16,7 @@ import static com.ecommerce.user_service.constant.FileConstant.USER_FOLDER;
             "com.ecommerce.event_bus"
     }
 )
+@EnableScheduling
 public class UserServiceApplication {
 
 	public static void main(String[] args) {

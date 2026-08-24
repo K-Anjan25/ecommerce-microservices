@@ -21,7 +21,7 @@ export const PALETTES = [
   {
     slug: "00-ink-violet",
     name: "0 · Ink & Violet",
-    tag: "CURRENT — shipped in Cartly 2.0",
+    tag: "ARCHIVED — rejected direction",
     mood: "Modern, techy, confident. Lime does the shouting; violet does the acting.",
     brand: "#5B3DF5",
     brandHover: "#4A2ED6",
@@ -42,7 +42,7 @@ export const PALETTES = [
   {
     slug: "00d-ink-violet-dark",
     name: "0 · Ink & Violet — dark",
-    tag: "CURRENT — dark mode",
+    tag: "ARCHIVED — rejected dark variant",
     mood: "Same tokens, dark values. Brand lifts to #7C5CFF because #5B3DF5 goes muddy on near-black.",
     brand: "#7C5CFF",
     brandHover: "#9B84FF",
@@ -308,11 +308,11 @@ const SH2 = HEAD + (PH + GAP) * Math.ceil(PALETTES.length / COLS) + GAP;
 
 const sheet = [
   rect(0, 0, SW2, SH2, { fill: "#FFFFFF" }),
-  txt(GAP + 20, 34, "Cartly — palette + dark mode", { size: 22, weight: 700, fill: "#0B0B0F" }),
+  txt(GAP + 20, 34, "Cartly — archived palette exploration", { size: 22, weight: 700, fill: "#0B0B0F" }),
   txt(
     GAP + 20,
     54,
-    "Same storefront fragment per palette. Option 0 shipped (light + dark); options 1-5 were the alternatives — the owner kept 0.",
+    "Historical comparisons only. Every option on this sheet is archived; Editorial Warmth is canonical elsewhere.",
     { size: 12, weight: 400, fill: "#5A5F6E" }
   ),
   ...PALETTES.map((p, i) => {

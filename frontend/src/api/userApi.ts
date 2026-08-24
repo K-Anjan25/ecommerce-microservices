@@ -1,7 +1,7 @@
 import { AccountForm } from "../types/account";
 import { ProfileForm } from "../types/profile";
 import { Login, UserCredentials, AdminUser } from "../types/user";
-import { api } from "./axios";
+import { api } from "./client";
 
 const getUserById = async (customerId: string) => {
   const { data } = await api.get<UserCredentials>(
@@ -10,10 +10,13 @@ const getUserById = async (customerId: string) => {
   return data;
 };
 
-const resetPassword = async (gmail: string) => {
-  const { data } = await api.get<UserCredentials>(
-    `/user/resetpassword/${gmail}`
-  );
+const requestPasswordReset = async (email: string) => {
+  const { data } = await api.post(`/user/password-reset/request`, { email });
+  return data;
+};
+
+const confirmPasswordReset = async (token: string, newPassword: string) => {
+  const { data } = await api.post(`/user/password-reset/confirm`, { token, newPassword });
   return data;
 };
 
@@ -42,12 +45,21 @@ const enableUser = async (userId: string) => {
   return data;
 };
 
+const updateStaffRole = async (userId: string, role: "ROLE_USER" | "ROLE_MANAGER") => {
+  const { data } = await api.put<AdminUser>(`/user/role/${userId}`, undefined, {
+    params: { role },
+  });
+  return data;
+};
+
 export const UserApi = {
   getUserById,
-  resetPassword,
+  requestPasswordReset,
+  confirmPasswordReset,
   updateUser,
   updatePassword,
   getAllUsers,
   disableUser,
   enableUser,
+  updateStaffRole,
 };

@@ -1,7 +1,5 @@
 package com.ecommerce.user_service.service;
 
-import com.ecommerce.event_bus.RabbitMQMessageProducer;
-import com.ecommerce.event_bus.dto.EmailRequest;
 import com.ecommerce.user_service.dto.*;
 import com.ecommerce.user_service.enumeration.Role;
 import com.ecommerce.user_service.exception.*;
@@ -16,6 +14,9 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.bouncycastle.openssl.PasswordException;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -33,7 +34,6 @@ import java.util.*;
 
 import org.springframework.security.core.GrantedAuthority;
 import static com.ecommerce.user_service.constant.FileConstant.*;
-import static com.ecommerce.user_service.constant.SecurityConstant.AUTHORITIES;
 import static com.ecommerce.user_service.constant.UserConstant.*;
 import static com.ecommerce.user_service.enumeration.Role.ROLE_USER;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -48,7 +48,6 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final LoginAttemptService loginAttemptService;
-    private final RabbitMQMessageProducer rabbitMQMessageProducer;
     private final JWTTokenProvider jwtTokenProvider;
     @Override
     public UserDetails loadUserByUsername(String email) {
@@ -101,45 +100,44 @@ public class UserService implements UserDetailsService {
     }
 
     public UserDto validateToken(String token) {
-        DecodedJWT decodedJWT =  jwtTokenProvider.decodeToken(token);
+        DecodedJWT decodedJWT = jwtTokenProvider.decodeToken(token);
         String userId = decodedJWT.getClaim("userId").asString();
-        String username = decodedJWT.getClaim("firstName").asString()
-                + " "
-                + decodedJWT.getClaim("lastName").asString();
-        List<GrantedAuthority> authorities = jwtTokenProvider.getAuthorities(decodedJWT);
-
-        return new UserDto(userId,authorities,username);
+        User user = userRepository.findById(UUID.fromString(userId))
+                .orElseThrow(() -> new UserNotFoundException(NO_USER_FOUND_BY_EMAIL + userId));
+        assertCurrentTokenVersion(decodedJWT, user);
+        if (!user.isActive()) throw new DisabledException("Account is disabled");
+        if (!user.isNotLocked()) throw new LockedException("Account is locked");
+        List<GrantedAuthority> authorities = Arrays.stream(user.getAuthorities())
+                .map(SimpleGrantedAuthority::new)
+                .collect(java.util.stream.Collectors.toList());
+        return new UserDto(userId, authorities, user.getFirstName() + " " + user.getLastName());
     }
 
     public MeDto getMe(String token) {
-        DecodedJWT decodedJWT =  jwtTokenProvider.decodeToken(token);
-        List<String> roles = decodedJWT.getClaim(AUTHORITIES).asList(String.class);
+        DecodedJWT decodedJWT = jwtTokenProvider.decodeToken(token);
         String userId = decodedJWT.getClaim("userId").asString();
-        String firstName = decodedJWT.getClaim("firstName").asString();
-        String lastName = decodedJWT.getClaim("lastName").asString();
-        String email = decodedJWT.getClaim("email").asString();
-        String profileImageURL = decodedJWT.getClaim("profileImageURL").asString();
-
+        User user = userRepository.findById(UUID.fromString(userId))
+                .orElseThrow(() -> new UserNotFoundException(NO_USER_FOUND_BY_EMAIL + userId));
+        assertCurrentTokenVersion(decodedJWT, user);
+        if (!user.isActive()) throw new DisabledException("Account is disabled");
+        if (!user.isNotLocked()) throw new LockedException("Account is locked");
         return MeDto.builder()
-                .firstName(firstName)
-                .lastName(lastName)
-                .email(email)
-                .userId(userId)
-                .profileImageURL(profileImageURL)
-                .roles(roles)
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .userId(user.getId().toString())
+                .profileImageURL(user.getProfileImageUrl())
+                .roles(Arrays.asList(user.getAuthorities()))
                 .build();
     }
 
-    public User updateUser(UpdateUserRequest user){
-        User currentUser = findUserByEmail(user.getEmail());
+    public User updateUser(UpdateUserRequest user, String token){
+        DecodedJWT decodedJWT = jwtTokenProvider.decodeToken(token);
+        String email = decodedJWT.getClaim("email").asString();
+        User currentUser = findUserByEmail(email);
         currentUser.setFirstName(user.getFirstName());
         currentUser.setLastName(user.getLastName());
         currentUser.setProfileImageUrl(user.getProfileImageURL());
-        currentUser.setActive(user.isActive());
-        currentUser.setNotLocked(user.isNonLocked());
-        currentUser.setRole(getRoleEnumName(user.getRole()).name());
-        currentUser.setAuthorities(getRoleEnumName(user.getRole()).getAuthorities());
-        saveProfileImage(currentUser, user.getProfileImage());
         return userRepository.save(currentUser);
     }
 
@@ -150,6 +148,7 @@ public class UserService implements UserDetailsService {
 
         if(passwordEncoder.matches(newUser.getCurrentPassword(), currentUser.getPassword())){
             currentUser.setPassword(encodePassword(newUser.getNewPassword()));
+            currentUser.setTokenVersion(currentUser.getTokenVersion() + 1);
         }else{
             throw new PasswordNotMatchException("The current password not correct!");
         }
@@ -166,29 +165,6 @@ public class UserService implements UserDetailsService {
             throw new FileDeleteException(FILE_DELETE_ERROR);
         }
         userRepository.deleteById(user.getId());
-    }
-
-    public void resetPassword(String email){
-        User user = findUserByEmail(email);
-        if (user == null) {
-            throw new EmailNotFoundException(NO_USER_FOUND_BY_EMAIL + email);
-        }
-        String password = generatePassword();
-        user.setPassword(encodePassword(password));
-        userRepository.save(user);
-        log.info("New user password: " + password);
-        sendEmail(user, password);
-    }
-
-    private void sendEmail(User user, String password) {
-        String text = "Hello " + user.getFirstName() + ", \n \n Your new account password is: " + password + "\n \n The Support Team";
-        String subject = "Anjan kumar, AK - New Password";
-        EmailRequest emailRequest = new EmailRequest(text, user.getEmail(),subject);
-        rabbitMQMessageProducer.publish(
-                emailRequest,
-                "notification.exchange",
-                "send.email.routing-key"
-        );
     }
 
     public User updateProfileImage(String email,MultipartFile profileImage){
@@ -254,12 +230,15 @@ public class UserService implements UserDetailsService {
         return passwordEncoder.encode(password);
     }
 
-    private Role getRoleEnumName(String role) {
-        return Role.valueOf(role.toUpperCase());
+    private void assertCurrentTokenVersion(DecodedJWT token, User user) {
+        Integer version = token.getClaim("tokenVersion").asInt();
+        if (version == null || version != user.getTokenVersion()) {
+            throw new TokenNotValidException("Session has been revoked");
+        }
     }
 
-    private String generatePassword() {
-        return RandomStringUtils.randomAlphanumeric(10);
+    private Role getRoleEnumName(String role) {
+        return Role.valueOf(role.toUpperCase());
     }
 
     public User getUserById(UUID id){
@@ -283,7 +262,27 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(NO_USER_FOUND_BY_EMAIL + userId));
         user.setActive(active);
+        if (!active) user.setTokenVersion(user.getTokenVersion() + 1);
         return userRepository.save(user);
+    }
+
+    /** Admin-controlled staff boundary: customers may become managers, never admins. */
+    public AdminUserDto setStaffRole(UUID userId, String requestedRole) {
+        Role role = getRoleEnumName(requestedRole);
+        if (role != Role.ROLE_USER && role != Role.ROLE_MANAGER) {
+            throw new IllegalArgumentException("Staff role must be ROLE_USER or ROLE_MANAGER");
+        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(NO_USER_FOUND_BY_EMAIL + userId));
+        if (Role.ROLE_ADMIN.name().equals(user.getRole()) || Role.ROLE_SUPER_ADMIN.name().equals(user.getRole())) {
+            throw new IllegalArgumentException("Administrator roles cannot be changed here");
+        }
+        user.setRole(role.name());
+        user.setAuthorities(role.getAuthorities());
+        User saved = userRepository.save(user);
+        return new AdminUserDto(saved.getId(), saved.getFirstName(), saved.getLastName(),
+                saved.getEmail(), saved.getRole(), saved.isActive(), saved.isNotLocked(),
+                saved.getJoinDate(), saved.getLastLoginDate(), saved.getProfileImageUrl());
     }
 
     private String generateUniqueReferralCode() {

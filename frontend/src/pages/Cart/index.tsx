@@ -31,6 +31,7 @@ import {
 import { showSuccess } from "../../utils/showSuccess";
 import { showError } from "../../utils/showError";
 import statesAndDistrict from "../../formdata.json";
+import { useI18n } from "../../features/i18n";
 
 const FREE_SHIPPING_THRESHOLD = 999;
 
@@ -41,6 +42,7 @@ function Cart() {
   const [modalOpen, setModalOpen] = useState(searchParams.get("order") === "true");
   const [districts, setDistricts] = useState<{ name: string; id: string }[]>([]);
   const dispatch = useDispatch<any>();
+  const { t } = useI18n();
 
   const form = useFormik({
     ...createOrderForm(),
@@ -137,11 +139,11 @@ function Cart() {
         <div className="panel">
           <EmptyState
             icon={<ShoppingCartOutlinedIcon fontSize="large" />}
-            title="Your cart is empty"
+            title={t("cart.empty")}
             subtitle="Looks like you haven't added any products yet. Explore the shop and find something you like."
             action={
               <button className="primary-button" onClick={() => navigate("/")}>
-                Continue shopping
+                {t("cart.continue")}
               </button>
             }
           />
@@ -157,14 +159,14 @@ function Cart() {
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="eyebrow">Step 1 of 3</p>
-          <h1 className="page-title mt-1">Your cart</h1>
+          <h1 className="page-title mt-1">{t("cart.title")}</h1>
           <p className="page-subtitle">
             {itemCount} item{itemCount === 1 ? "" : "s"} · review quantities before checkout
           </p>
         </div>
         <button onClick={() => navigate("/")} className="secondary-button !py-2">
           <ArrowBackIcon sx={{ fontSize: 16 }} />
-          Continue shopping
+          {t("cart.continue")}
         </button>
       </div>
 
@@ -172,7 +174,7 @@ function Cart() {
         {/* ── line items ─────────────────────────────────────────── */}
         <div className="space-y-4">
           {/* free-shipping nudge */}
-          <div className="panel p-4">
+          <div className="border-y border-line py-4">
             <div className="flex items-center gap-2 text-sm">
               <LocalShippingOutlinedIcon sx={{ fontSize: 18 }} className="text-brand" />
               {freeShippingGap > 0 ? (
@@ -189,13 +191,13 @@ function Cart() {
             </div>
             <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-sunken">
               <div
-                className="h-full rounded-full bg-brand transition-all duration-500"
+                className="h-full rounded-full bg-action transition-all duration-500"
                 style={{ width: `${progress}%` }}
               />
             </div>
           </div>
 
-          <div className="panel px-4 sm:px-5">
+          <div className="border-y border-line">
             <ul className="divide-y divide-line">
               {items.map((item) => (
                 <CartLine key={`${item.product.id}-${item.variantId ?? "base"}`} item={item} />
@@ -215,8 +217,8 @@ function Cart() {
 
         {/* ── sticky summary ─────────────────────────────────────── */}
         <aside className="lg:sticky lg:top-24 lg:h-fit">
-          <div className="panel-raised p-5">
-            <h2 className="font-heading text-base font-bold">Order summary</h2>
+          <div className="border-t border-ink py-5">
+            <h2 className="font-display text-2xl font-normal">Order summary</h2>
 
             <dl className="mt-4 space-y-2.5 text-sm">
               <div className="flex justify-between">
@@ -236,12 +238,12 @@ function Cart() {
             </dl>
 
             <div className="mt-4 flex items-baseline justify-between border-t border-line pt-4">
-              <span className="font-heading text-base font-bold">Total so far</span>
-              <span className="font-heading text-xl font-extrabold">{formatPrice(subtotal)}</span>
+              <span className="font-medium">Total so far</span>
+              <span className="font-display text-2xl">{formatPrice(subtotal)}</span>
             </div>
 
             <button onClick={() => navigate("/checkout")} className="primary-button mt-5 w-full !py-3">
-              Checkout
+              {t("cart.checkout")}
             </button>
             <LoadingButton
               variant="text"

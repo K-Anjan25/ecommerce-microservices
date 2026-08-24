@@ -8,18 +8,18 @@
     "@mui/icons-material": "^5.11.0",
     "@mui/lab": "^5.0.0-alpha.118",
     "@mui/material": "^5.11.0",
+    "@stripe/react-stripe-js": "^6.8.2",
+    "@stripe/stripe-js": "^9.14.0",
     "@types/lodash.debounce": "^4.0.7",
     "@types/node": "^20.18.0",
-    "axios": "1.13.6",
     "formik": "^2.2.9",
     "lodash.debounce": "^4.0.8",
-    "moment": "^2.29.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-intersection-observer": "^9.4.1",
     "react-query": "^3.39.2",
     "react-redux": "^8.0.5",
-    "react-router-dom": "^6.5.0",
+    "react-router-dom": "^7.18.2",
     "react-toastify": "^9.1.1",
     "recharts": "^2.15.4",
     "redux": "^4.2.0",
@@ -31,7 +31,10 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "tsc --noEmit && vite build",
+    "check:contrast": "node ../tools/check-color-contrast.mjs",
+    "audit:security": "npm audit --audit-level=high",
+    "build": "npm run check:contrast && tsc --noEmit && vite build && npm run generate:seo-assets",
+    "generate:seo-assets": "node scripts/generate-seo-assets.mjs",
     "preview": "vite preview"
   },
   "browserslist": {
@@ -49,10 +52,10 @@
   "devDependencies": {
     "@types/react": "^18.3.28",
     "@types/react-dom": "^18.3.7",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^6.1.0",
     "autoprefixer": "^10.5.0",
     "postcss": "^8.5.10",
     "tailwindcss": "^3.4.4",
-    "vite": "^5.4.11"
+    "vite": "^8.2.2"
   }
 }

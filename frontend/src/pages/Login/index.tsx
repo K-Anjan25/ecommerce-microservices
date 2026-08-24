@@ -37,7 +37,7 @@ function Login() {
 
   return (
     <AuthLayout>
-      <Typography variant="h4" component="h1" className="font-bold">
+      <Typography variant="h4" component="h1" className="!font-display !text-4xl !font-normal !tracking-[-0.02em]">
         Welcome back
       </Typography>
       <Typography className="mt-1 text-ink-soft">

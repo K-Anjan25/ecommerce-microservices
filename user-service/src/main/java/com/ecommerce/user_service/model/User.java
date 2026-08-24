@@ -36,4 +36,6 @@ public class User {
     private boolean isNotLocked;
     private String referralCode;
     private String referredBy;
+    @Column(nullable = false, columnDefinition = "INTEGER DEFAULT 0")
+    private int tokenVersion;
 }

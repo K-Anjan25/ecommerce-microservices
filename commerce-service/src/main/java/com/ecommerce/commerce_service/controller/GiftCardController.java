@@ -1,7 +1,8 @@
 package com.ecommerce.commerce_service.controller;
 
 import com.ecommerce.commerce_service.dto.giftCard.GiftCardDto;
-import com.ecommerce.commerce_service.dto.giftCard.PurchaseGiftCardRequest;
+import com.ecommerce.commerce_service.audit.AuditLogService;
+import com.ecommerce.commerce_service.dto.giftCard.IssueGiftCardRequest;
 import com.ecommerce.commerce_service.service.GiftCardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,29 +21,29 @@ import java.util.UUID;
 @RequestMapping("/v1/gift-cards")
 public class GiftCardController {
     private final GiftCardService giftCardService;
+    private final AuditLogService auditLogService;
 
-    @PostMapping("/purchase")
-    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
-    public ResponseEntity<GiftCardDto> purchaseGiftCard(@Valid @RequestBody PurchaseGiftCardRequest purchaseGiftCardRequest){
-        UUID purchasedBy = UUID.fromString((String) org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        return new ResponseEntity<>(giftCardService.purchaseGiftCard(purchaseGiftCardRequest, purchasedBy), HttpStatus.CREATED);
-    }
-
-    @GetMapping("/{code}")
-    public ResponseEntity<GiftCardDto> getGiftCardByCode(@PathVariable String code){
-        return ResponseEntity.ok(giftCardService.getGiftCardByCode(code));
+    /**
+     * Administrative issuance only. Customer self-service issuance is disabled
+     * until a provider capture/webhook can prove the stored value was paid for.
+     */
+    @PostMapping("/issue")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_SUPER_ADMIN')")
+    public ResponseEntity<GiftCardDto> issueGiftCard(@Valid @RequestBody IssueGiftCardRequest request){
+        UUID issuedBy = UUID.fromString((String) org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal());
+        GiftCardDto issued = giftCardService.issueGiftCard(request, issuedBy);
+        auditLogService.record("GIFT_CARD_ISSUED", "GIFT_CARD", issued.getId().toString(),
+                "amount=" + issued.getInitialBalance() + ", expires=" + issued.getExpiryDate()
+                        + ", reason=" + request.getReason());
+        return new ResponseEntity<>(issued, HttpStatus.CREATED);
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN')")
     public ResponseEntity<List<GiftCardDto>> getUserGiftCards(){
         UUID userId = UUID.fromString((String) org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return ResponseEntity.ok(giftCardService.getGiftCardsByUser(userId));
     }
 
-    @PostMapping("/{code}/redeem")
-    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
-    public ResponseEntity<GiftCardDto> redeemGiftCard(@PathVariable String code, @RequestParam java.math.BigDecimal amount){
-        return ResponseEntity.ok(giftCardService.redeemGiftCard(code, amount));
-    }
 }

@@ -15,6 +15,8 @@ export interface ReturnRequest {
   quantity: number;
   status: ReturnStatus;
   refundAmount?: number;
+  giftCardRefundAmount?: number;
+  providerRefundAmount?: number;
   refundTransactionId?: string;
   reason?: string;
   rejectionReason?: string;
@@ -22,7 +24,6 @@ export interface ReturnRequest {
 
 export interface CreateReturnRequest {
   orderId: string;
-  customerId: string;
   productId: string;
   variantId?: string;
   quantity: number;

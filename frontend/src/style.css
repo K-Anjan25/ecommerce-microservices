@@ -17,6 +17,10 @@
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
+  html[lang="hi"] body {
+    font-family: "Noto Sans Devanagari", Inter, system-ui, sans-serif;
+  }
+
   h1, h2, h3, h4, h5, h6 {
     font-family: "Inter Tight", Inter, system-ui, sans-serif;
     letter-spacing: -0.02em;
@@ -103,7 +107,7 @@
   }
 
   .page-title {
-    @apply font-heading text-2xl font-bold tracking-tight text-ink sm:text-[2rem];
+    @apply font-display text-3xl font-normal tracking-tight text-ink sm:text-[2.35rem];
   }
 
   .page-subtitle {
@@ -111,7 +115,7 @@
   }
 
   .section-title {
-    @apply font-heading text-xl font-bold tracking-tight text-ink sm:text-2xl;
+    @apply font-display text-3xl font-normal tracking-tight text-ink sm:text-[2.4rem];
   }
 
   /* ---- surfaces ---- */
@@ -138,7 +142,7 @@
 
   /* ---- actions ---- */
   .primary-button {
-    @apply inline-flex items-center justify-center gap-2 rounded-sm bg-brand px-4 py-2.5 text-sm font-semibold text-oncontrast transition hover:bg-brand-main disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-sm bg-action px-4 py-2.5 text-sm font-semibold text-oncontrast transition hover:bg-action-hover disabled:cursor-not-allowed disabled:opacity-60;
   }
 
   .dark-button {

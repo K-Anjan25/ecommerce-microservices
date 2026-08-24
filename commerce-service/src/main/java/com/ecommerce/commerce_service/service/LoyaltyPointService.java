@@ -8,6 +8,7 @@ import com.ecommerce.commerce_service.repository.LoyaltyPointRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -34,10 +35,17 @@ public class LoyaltyPointService {
         return loyaltyPointMapper.loyaltyPointToLoyaltyPointDto(saved);
     }
 
+    @Transactional
     public LoyaltyPointDto redeemPoints(UUID customerId, int points, String description) {
-        Integer currentBalance = getPointsBalance(customerId);
+        if (points <= 0) throw new IllegalArgumentException("Points must be positive");
+        // Lock an existing ledger row first, then calculate in a fresh query.
+        // This serializes concurrent redemptions and includes entries committed
+        // by the transaction that held the lock before us.
+        loyaltyPointRepository.findLockedByCustomerId(customerId);
+        Integer summed = loyaltyPointRepository.sumPointsByCustomerId(customerId);
+        int currentBalance = summed == null ? 0 : summed;
         if (currentBalance < points) {
-            throw new RuntimeException("Insufficient loyalty points");
+            throw new IllegalArgumentException("Insufficient loyalty points");
         }
         LoyaltyPoint loyaltyPoint = LoyaltyPoint.builder()
                 .customerId(customerId)
@@ -48,6 +56,35 @@ public class LoyaltyPointService {
                 .build();
         LoyaltyPoint saved = loyaltyPointRepository.save(loyaltyPoint);
         return loyaltyPointMapper.loyaltyPointToLoyaltyPointDto(saved);
+    }
+
+    /** Ten points equal one rupee; loyalty is capped to the eligible pre-tax merchandise amount. */
+    @Transactional
+    public BigDecimal redeemForOrder(UUID customerId, int points, BigDecimal maxDiscount, String description) {
+        if (customerId == null) throw new SecurityException("Sign in to redeem loyalty points");
+        if (maxDiscount == null || maxDiscount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("This order has no loyalty-eligible amount");
+        }
+        BigDecimal discount = BigDecimal.valueOf(points)
+                .divide(BigDecimal.TEN, 2, java.math.RoundingMode.HALF_UP);
+        if (discount.compareTo(maxDiscount) > 0) {
+            throw new IllegalArgumentException("Loyalty discount exceeds the eligible order amount");
+        }
+        redeemPoints(customerId, points, description);
+        return discount;
+    }
+
+    @Transactional
+    public void restoreOrderPoints(UUID customerId, int points, String description) {
+        if (customerId == null || points <= 0) return;
+        LoyaltyPoint restored = LoyaltyPoint.builder()
+                .customerId(customerId)
+                .points(points)
+                .description(description)
+                .type(LoyaltyPointType.RESTORED)
+                .amount(BigDecimal.ZERO)
+                .build();
+        loyaltyPointRepository.save(restored);
     }
 
     public Integer getPointsBalance(UUID customerId) {

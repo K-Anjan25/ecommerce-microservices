@@ -2,29 +2,39 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link
-      rel="icon"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230B0B0F'/%3E%3Cpath d='M16 19h6l5 22h19l4-15H26' stroke='%23D8F14B' stroke-width='3.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='30' cy='49' r='3.5' fill='%235B3DF5'/%3E%3Ccircle cx='45' cy='49' r='3.5' fill='%235B3DF5'/%3E%3C/svg%3E"
-    />
+    <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#0B0B0F" />
+    <meta name="theme-color" content="#221A16" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' https://checkout.razorpay.com https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' ws: wss: https://checkout.razorpay.com https://api.razorpay.com https://api.stripe.com; frame-src 'self' https://checkout.razorpay.com https://api.razorpay.com https://js.stripe.com https://hooks.stripe.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
+    />
     <meta
       name="description"
-      content="Cartly — shop the catalog, track orders and check out in one flow. A full-stack e-commerce microservices platform."
+      content="Cartly — a considered collection across home and life, with secure checkout, orders, returns and rewards."
     />
     <link rel="apple-touch-icon" href="/logo192.png" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700;800&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700;800&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <title>Cartly — Shop everything, one cart</title>
+    <title>Cartly — Curated for everyday</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Static public fallback for crawlers and JavaScript-disabled clients.
+           React replaces this shell after hydration. -->
+      <main aria-label="Cartly storefront" style="max-width: 72rem; margin: 0 auto; padding: 4rem 1.5rem;">
+        <p style="font-size: 0.75rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;">Cartly · Curated for everyday</p>
+        <h1 style="font-family: Georgia, serif; font-size: clamp(2.75rem, 8vw, 6rem); font-weight: 400; line-height: 0.95; max-width: 11ch;">Curated finds for home &amp; life.</h1>
+        <p style="max-width: 34rem; line-height: 1.7;">Thoughtful objects, honest materials and everyday essentials selected to last.</p>
+        <p><a href="/products">Shop the collection</a></p>
+      </main>
+    </div>
     <script type="module" src="/src/index.tsx"></script>
   </body>
 </html>

@@ -21,6 +21,10 @@ dev-server.log
 .DS_Store
 .aider*
 
+# Database backups (never commit customer data)
+backups/
+*.dump
+
 # Secrets (never commit)
 .env
 .env.local

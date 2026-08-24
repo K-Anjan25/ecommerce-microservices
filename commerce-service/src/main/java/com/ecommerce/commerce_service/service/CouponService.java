@@ -94,10 +94,16 @@ public class CouponService {
 
     @Transactional
     public void markUsed(String code, UUID userId, UUID orderId) {
-        Coupon coupon = couponRepository.findByCode(code.trim().toUpperCase())
+        Coupon coupon = couponRepository.findLockedByCode(code.trim().toUpperCase())
                 .orElseThrow(() -> new CouponException("Coupon not found: " + code));
         if (!coupon.isActive()) {
             throw new CouponException("Coupon is inactive: " + code);
+        }
+        if (coupon.getUsageLimit() != null && coupon.getUsedCount() >= coupon.getUsageLimit()) {
+            throw new CouponException("Coupon usage limit reached: " + code);
+        }
+        if (couponUsageRepository.existsByCouponIdAndUserId(coupon.getId(), userId)) {
+            throw new CouponException("Coupon already used by this user: " + code);
         }
         coupon.setUsedCount(coupon.getUsedCount() + 1);
         couponRepository.save(coupon);
@@ -108,6 +114,18 @@ public class CouponService {
                 .usedAt(LocalDateTime.now())
                 .build());
         log.info("Coupon {} used by user {} on order {}", coupon.getCode(), userId, orderId);
+    }
+
+    @Transactional
+    public void releaseOrderUsage(UUID orderId) {
+        couponUsageRepository.findByOrderId(orderId).ifPresent(usage -> {
+            Coupon coupon = couponRepository.findLockedById(usage.getCoupon().getId())
+                    .orElseThrow(() -> new CouponException("Coupon for cancelled order no longer exists"));
+            couponUsageRepository.delete(usage);
+            coupon.setUsedCount(Math.max(0, coupon.getUsedCount() - 1));
+            couponRepository.save(coupon);
+            log.info("Released coupon {} from cancelled order {}", coupon.getCode(), orderId);
+        });
     }
 
     public BigDecimal computeDiscount(Coupon coupon, BigDecimal orderAmount) {

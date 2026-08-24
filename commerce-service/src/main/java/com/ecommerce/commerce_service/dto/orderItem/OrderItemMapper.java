@@ -21,7 +21,6 @@ public class OrderItemMapper {
                 .productId(createOrderItemRequest.getProductId())
                 .variantId(createOrderItemRequest.getVariantId())
                 .quantity(createOrderItemRequest.getQuantity())
-                .price(createOrderItemRequest.getPrice())
                 .build();
     }
 

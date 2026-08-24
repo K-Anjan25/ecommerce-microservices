@@ -51,8 +51,15 @@ public class Payment {
     @Column(length = 255)
     private String transactionId;
 
+    /** Provider-side captured payment ID when it differs from the initiation reference (Razorpay). */
+    @Column(length = 255)
+    private String providerPaymentId;
+
     @Column(length = 500)
     private String failureReason;
+
+    @Column(precision = 19, scale = 2)
+    private BigDecimal refundedAmount;
 
     private LocalDateTime createdAt;
 

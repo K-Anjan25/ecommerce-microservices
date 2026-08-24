@@ -1,4 +1,4 @@
-import { api } from "./axios";
+import { api } from "./client";
 
 const getMyReferralCode = async () => {
   const { data } = await api.get<string>("/user/referral/code");

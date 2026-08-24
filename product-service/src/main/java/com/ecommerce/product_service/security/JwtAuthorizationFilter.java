@@ -27,7 +27,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             return;
         }
 
-        logHeaders(httpServletRequest);
         String userId=httpServletRequest.getHeader("userId");
         String authoritiesStr = httpServletRequest.getHeader("authorities");
         String username = httpServletRequest.getHeader("username");
@@ -41,15 +40,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(httpServletRequest, httpServletResponse);
 
-    }
-
-    private void logHeaders(HttpServletRequest httpServletRequest) {
-        Enumeration<String> headerNames = httpServletRequest.getHeaderNames();
-        while(headerNames.hasMoreElements()) {
-            String header=headerNames.nextElement();
-            logger.info(String.format("Header: %s --- Value: %s", header, httpServletRequest.getHeader(header)));
-
-        }
     }
 
     private boolean validString(String input) {

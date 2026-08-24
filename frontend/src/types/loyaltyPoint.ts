@@ -1,6 +1,7 @@
 export enum LoyaltyPointType {
   EARNED = "EARNED",
   REDEEMED = "REDEEMED",
+  RESTORED = "RESTORED",
   EXPIRED = "EXPIRED",
 }
 

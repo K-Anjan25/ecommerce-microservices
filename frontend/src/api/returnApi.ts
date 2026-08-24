@@ -1,5 +1,5 @@
 import { ReturnRequest, CreateReturnRequest } from "../types/returnRequest";
-import { api } from "./axios";
+import { api } from "./client";
 
 const getReturnRequestsByOrder = async (orderId: string) => {
   const { data } = await api.get<ReturnRequest[]>(`/v1/returns/order/${orderId}`);

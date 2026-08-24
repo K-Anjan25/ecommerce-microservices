@@ -1,157 +1,138 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1034" viewBox="0 0 1440 1034">
-<rect width="1440" height="1034" fill="#FFFFFF"/>
-<g id="frame-label" data-name="frame-label">
-<text x="32" y="32" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" fill="#0B0B0F" text-anchor="start">05 · Admin console (desktop)</text>
-<text x="32" y="52" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" fill="#5A5F6E" text-anchor="start">Ink nav rail · topbar w/ scope + search · KPI row · revenue chart · status split · order table</text>
-<text x="1408" y="32" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#8A8F9E" text-anchor="end">1440 × 960</text>
-<text x="1408" y="52" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#8A8F9E" text-anchor="end">Cartly 2.0 · wireframe</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1056" viewBox="0 0 1440 1056">
+<rect width="1440" height="1056" fill="#FBF9F4"/>
+<text x="28" y="31" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" fill="#221A16" text-anchor="start">05 · Admin console (desktop)</text>
+<text x="28" y="53" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#6B5E56" text-anchor="start">Separate ink shell · role-scoped nav · operational metrics · work queue · audit visibility</text>
+<text x="1412" y="31" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#74675F" text-anchor="end">1440 × 980</text>
+<text x="1412" y="53" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#74675F" text-anchor="end">Cartly Editorial · implementation-aligned · 24 Aug 2026</text>
+<g transform="translate(0 76)"><rect width="1440" height="980" fill="#F4F0E8" stroke="#DAD0C3"/><g id="admin-rail" data-name="admin-rail">
+<rect x="0" y="0" width="252" height="980" rx="0" fill="#221A16" stroke="#221A16" stroke-width="1"/>
+<text x="28" y="48" font-family="Instrument Serif, Georgia, serif" font-size="27" font-weight="500" fill="#FBF9F4" text-anchor="start">Cartly</text>
+<text x="28" y="70" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="750" fill="#A4472D" text-anchor="start" letter-spacing="0.18em">STUDIO ADMINISTRATION</text>
+<g id="nav-Dashboard" data-name="nav-Dashboard">
+<rect x="16" y="100" width="220" height="36" rx="2" fill="#3A302A" stroke="none" stroke-width="1"/>
+<text x="34" y="123" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="650" fill="#FBF9F4" text-anchor="start">Dashboard</text>
 </g>
-<g transform="translate(0 74)">
-<rect width="1440" height="960" fill="#F6F5F2" stroke="#D3D0C8"/>
-<g id="admin-rail" data-name="admin-rail">
-<rect x="0" y="0" width="248" height="960" rx="0" fill="#0B0B0F" stroke="#0B0B0F" stroke-width="1"/>
-<text x="24" y="44" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="start" letter-spacing="0.22em">CARTLY</text>
-<rect x="24" y="60" width="84" height="20" rx="10" fill="#5B3DF5" stroke="#5B3DF5" stroke-width="1"/>
-<text x="66" y="74" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#fff" text-anchor="middle">ADMIN</text>
-<rect x="12" y="116" width="224" height="38" rx="10" fill="#221F3D" stroke="#221F3D" stroke-width="1"/>
-<rect x="24" y="129" width="12" height="12" rx="3" fill="#D8F14B"/>
-<text x="48" y="140" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="start">Dashboard</text>
-
-<rect x="24" y="173" width="12" height="12" rx="3" fill="#3A3D47"/>
-<text x="48" y="184" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#8A8F9E" text-anchor="start">Orders</text>
-
-<rect x="24" y="217" width="12" height="12" rx="3" fill="#3A3D47"/>
-<text x="48" y="228" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#8A8F9E" text-anchor="start">Products</text>
-
-<rect x="24" y="261" width="12" height="12" rx="3" fill="#3A3D47"/>
-<text x="48" y="272" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#8A8F9E" text-anchor="start">Categories</text>
-
-<rect x="24" y="305" width="12" height="12" rx="3" fill="#3A3D47"/>
-<text x="48" y="316" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#8A8F9E" text-anchor="start">Coupons</text>
-
-<rect x="24" y="349" width="12" height="12" rx="3" fill="#3A3D47"/>
-<text x="48" y="360" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#8A8F9E" text-anchor="start">Returns</text>
-
-<rect x="24" y="393" width="12" height="12" rx="3" fill="#3A3D47"/>
-<text x="48" y="404" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#8A8F9E" text-anchor="start">Customers</text>
-
-<rect x="24" y="437" width="12" height="12" rx="3" fill="#3A3D47"/>
-<text x="48" y="448" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#8A8F9E" text-anchor="start">Settings</text>
-<rect x="12" y="864" width="224" height="72" rx="12" fill="#16171D" stroke="#2A2C36" stroke-width="1"/>
-<circle cx="42" cy="900" r="16" fill="#2A2C36"/>
-<text x="68" y="896" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="start">Anjan K</text>
-<text x="68" y="912" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#8A8F9E" text-anchor="start">Super admin</text>
+<g id="nav-Orders" data-name="nav-Orders">
+<rect x="16" y="148" width="220" height="36" rx="2" fill="#221A16" stroke="none" stroke-width="1"/>
+<text x="34" y="171" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="650" fill="#C2B5A5" text-anchor="start">Orders</text>
+</g>
+<g id="nav-Products" data-name="nav-Products">
+<rect x="16" y="196" width="220" height="36" rx="2" fill="#221A16" stroke="none" stroke-width="1"/>
+<text x="34" y="219" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="650" fill="#C2B5A5" text-anchor="start">Products</text>
+</g>
+<g id="nav-Categories" data-name="nav-Categories">
+<rect x="16" y="244" width="220" height="36" rx="2" fill="#221A16" stroke="none" stroke-width="1"/>
+<text x="34" y="267" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="650" fill="#C2B5A5" text-anchor="start">Categories</text>
+</g>
+<g id="nav-Coupons" data-name="nav-Coupons">
+<rect x="16" y="292" width="220" height="36" rx="2" fill="#221A16" stroke="none" stroke-width="1"/>
+<text x="34" y="315" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="650" fill="#C2B5A5" text-anchor="start">Coupons</text>
+</g>
+<g id="nav-Returns" data-name="nav-Returns">
+<rect x="16" y="340" width="220" height="36" rx="2" fill="#221A16" stroke="none" stroke-width="1"/>
+<text x="34" y="363" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="650" fill="#C2B5A5" text-anchor="start">Returns</text>
+</g>
+<g id="nav-Storefront" data-name="nav-Storefront">
+<rect x="16" y="388" width="220" height="36" rx="2" fill="#221A16" stroke="none" stroke-width="1"/>
+<text x="34" y="411" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="650" fill="#C2B5A5" text-anchor="start">Storefront</text>
+</g>
+<g id="nav-Audit log" data-name="nav-Audit log">
+<rect x="16" y="436" width="220" height="36" rx="2" fill="#221A16" stroke="none" stroke-width="1"/>
+<text x="34" y="459" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="650" fill="#C2B5A5" text-anchor="start">Audit log</text>
+</g>
+<g id="nav-Customers" data-name="nav-Customers">
+<rect x="16" y="484" width="220" height="36" rx="2" fill="#221A16" stroke="none" stroke-width="1"/>
+<text x="34" y="507" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="650" fill="#C2B5A5" text-anchor="start">Customers</text>
+</g>
+<line x1="16" y1="868" x2="236" y2="868" stroke="#453932"/>
+<text x="28" y="905" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#FBF9F4" text-anchor="start">AK   Anjan K</text>
+<text x="28" y="928" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#C2B5A5" text-anchor="start">Super admin</text>
 </g>
 <g id="admin-topbar" data-name="admin-topbar">
-<rect x="248" y="0" width="1192" height="68" rx="0" fill="#FFFFFF" stroke="#E5E3DD" stroke-width="1"/>
-<text x="280" y="34" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" fill="#0B0B0F" text-anchor="start">Dashboard</text>
-<text x="280" y="52" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#8A8F9E" text-anchor="start">Overview · last 7 days</text>
-<rect x="920" y="18" width="240" height="32" rx="16" fill="#F6F5F2" stroke="#D3D0C8" stroke-width="1"/>
-<text x="940" y="39" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#8A8F9E" text-anchor="start">Search orders, products...</text>
-<rect x="1172" y="18" width="110" height="32" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1227" y="38" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0B0B0F" text-anchor="middle">Last 7 days ▾</text>
-<rect x="1292" y="18" width="116" height="32" rx="10" fill="#5B3DF5" stroke="#5B3DF5" stroke-width="1"/>
-<text x="1350" y="38" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">+ New product</text>
+<rect x="252" y="0" width="1188" height="74" rx="0" fill="#FBF9F4" stroke="#DAD0C3" stroke-width="1"/>
+<text x="284" y="35" font-family="Instrument Serif, Georgia, serif" font-size="24" font-weight="500" fill="#221A16" text-anchor="start">Dashboard</text>
+<text x="284" y="55" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#74675F" text-anchor="start">Admin console · 24 Aug 2026</text>
 </g>
-<g id="kpi-cards" data-name="kpi-cards">
-<rect x="280" y="100" width="267" height="116" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="300" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#8A8F9E" text-anchor="start">Revenue today</text>
-<text x="300" y="172" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="26" font-weight="700" fill="#0B0B0F" text-anchor="start">₹48,210</text>
-<rect x="300" y="184" width="76" height="22" rx="11" fill="#E3F7EF" stroke="none" stroke-width="1"/>
-<text x="338" y="199" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#0E9F6E" text-anchor="middle">+12.4%</text>
-<rect x="567" y="100" width="267" height="116" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="587" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#8A8F9E" text-anchor="start">Orders</text>
-<text x="587" y="172" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="26" font-weight="700" fill="#0B0B0F" text-anchor="start">126</text>
-<rect x="587" y="184" width="76" height="22" rx="11" fill="#E3F7EF" stroke="none" stroke-width="1"/>
-<text x="625" y="199" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#0E9F6E" text-anchor="middle">+8</text>
-<rect x="854" y="100" width="267" height="116" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="874" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#8A8F9E" text-anchor="start">Avg order value</text>
-<text x="874" y="172" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="26" font-weight="700" fill="#0B0B0F" text-anchor="start">₹2,140</text>
-<rect x="874" y="184" width="76" height="22" rx="11" fill="#EFEEE9" stroke="none" stroke-width="1"/>
-<text x="912" y="199" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#5A5F6E" text-anchor="middle">−3.1%</text>
-<rect x="1141" y="100" width="267" height="116" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1161" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#8A8F9E" text-anchor="start">Returns pending</text>
-<text x="1161" y="172" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="26" font-weight="700" fill="#0B0B0F" text-anchor="start">7</text>
-<rect x="1161" y="184" width="76" height="22" rx="11" fill="#FDF1DC" stroke="none" stroke-width="1"/>
-<text x="1199" y="199" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#B07A16" text-anchor="middle">action</text>
+<g id="kpis" data-name="kpis">
+<g id="kpi-1" data-name="kpi-1">
+<line x1="284" y1="112" x2="542" y2="112" stroke="#221A16"/>
+<text x="284" y="142" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="750" fill="#A4472D" text-anchor="start" letter-spacing="0.18em">REVENUE TODAY</text>
+<text x="284" y="184" font-family="Instrument Serif, Georgia, serif" font-size="30" font-weight="500" fill="#221A16" text-anchor="start">₹48,210</text>
 </g>
-<g id="revenue-chart" data-name="revenue-chart">
-<rect x="280" y="240" width="699.36" height="280" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="300" y="274" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" fill="#0B0B0F" text-anchor="start">Revenue · 7 days</text>
-<rect x="300" y="370" width="44" height="120" rx="8" fill="#EDE9FE" stroke="none" stroke-width="1"/>
-<rect x="402.56" y="402" width="44" height="88" rx="8" fill="#EDE9FE" stroke="none" stroke-width="1"/>
-<rect x="505.12" y="340" width="44" height="150" rx="8" fill="#EDE9FE" stroke="none" stroke-width="1"/>
-<rect x="607.6800000000001" y="386" width="44" height="104" rx="8" fill="#EDE9FE" stroke="none" stroke-width="1"/>
-<rect x="710.24" y="312" width="44" height="178" rx="8" fill="#EDE9FE" stroke="none" stroke-width="1"/>
-<rect x="812.8" y="350" width="44" height="140" rx="8" fill="#EDE9FE" stroke="none" stroke-width="1"/>
-<rect x="915.36" y="294" width="44" height="196" rx="8" fill="#5B3DF5" stroke="none" stroke-width="1"/>
+<g id="kpi-2" data-name="kpi-2">
+<line x1="560" y1="112" x2="818" y2="112" stroke="#221A16"/>
+<text x="560" y="142" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="750" fill="#A4472D" text-anchor="start" letter-spacing="0.18em">ORDERS</text>
+<text x="560" y="184" font-family="Instrument Serif, Georgia, serif" font-size="30" font-weight="500" fill="#221A16" text-anchor="start">126</text>
 </g>
-<g id="orders-by-status" data-name="orders-by-status">
-<rect x="1001.92" y="240" width="406.08" height="280" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="1021.92" y="274" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" fill="#0B0B0F" text-anchor="start">Orders by status</text>
-<text x="1021.92" y="314" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#0B0B0F" text-anchor="start">Pending</text>
-<rect x="1101.92" y="302" width="70" height="16" rx="8" fill="#D8F14B" stroke="none" stroke-width="1"/>
-<text x="1388" y="314" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#5A5F6E" text-anchor="end">18</text>
-<text x="1021.92" y="354" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#0B0B0F" text-anchor="start">Paid</text>
-<rect x="1101.92" y="342" width="220" height="16" rx="8" fill="#5B3DF5" stroke="none" stroke-width="1"/>
-<text x="1388" y="354" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#5A5F6E" text-anchor="end">64</text>
-<text x="1021.92" y="394" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#0B0B0F" text-anchor="start">Shipped</text>
-<rect x="1101.92" y="382" width="130" height="16" rx="8" fill="#7C5CFF" stroke="none" stroke-width="1"/>
-<text x="1388" y="394" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#5A5F6E" text-anchor="end">31</text>
-<text x="1021.92" y="434" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#0B0B0F" text-anchor="start">Delivered</text>
-<rect x="1101.92" y="422" width="54" height="16" rx="8" fill="#0E9F6E" stroke="none" stroke-width="1"/>
-<text x="1388" y="434" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#5A5F6E" text-anchor="end">12</text>
-<text x="1021.92" y="474" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#0B0B0F" text-anchor="start">Refunded</text>
-<rect x="1101.92" y="462" width="18" height="16" rx="8" fill="#E0334B" stroke="none" stroke-width="1"/>
-<text x="1388" y="474" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#5A5F6E" text-anchor="end">3</text>
+<g id="kpi-3" data-name="kpi-3">
+<line x1="836" y1="112" x2="1094" y2="112" stroke="#221A16"/>
+<text x="836" y="142" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="750" fill="#A4472D" text-anchor="start" letter-spacing="0.18em">AVERAGE ORDER</text>
+<text x="836" y="184" font-family="Instrument Serif, Georgia, serif" font-size="30" font-weight="500" fill="#221A16" text-anchor="start">₹2,140</text>
 </g>
-<g id="recent-orders-table" data-name="recent-orders-table">
-<rect x="280" y="544" width="1128" height="384" rx="16" fill="#FFFFFF" stroke="#D3D0C8" stroke-width="1"/>
-<text x="300" y="578" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" fill="#0B0B0F" text-anchor="start">Recent orders</text>
-<text x="1388" y="578" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#5B3DF5" text-anchor="end">View all →</text>
-<rect x="281" y="594" width="1126" height="34" rx="0" fill="#F6F5F2" stroke="none" stroke-width="1"/>
-<text x="300" y="616" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#8A8F9E" text-anchor="start" letter-spacing="0.1em">Order</text>
-<text x="481.33333333333337" y="616" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#8A8F9E" text-anchor="start" letter-spacing="0.1em">Customer</text>
-<text x="662.6666666666667" y="616" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#8A8F9E" text-anchor="start" letter-spacing="0.1em">Items</text>
-<text x="844" y="616" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#8A8F9E" text-anchor="start" letter-spacing="0.1em">Total</text>
-<text x="1025.3333333333335" y="616" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#8A8F9E" text-anchor="start" letter-spacing="0.1em">Status</text>
-<text x="1206.6666666666667" y="616" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#8A8F9E" text-anchor="start" letter-spacing="0.1em">Placed</text>
-<rect x="300" y="648" width="92" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="481.33333333333337" y="648" width="92" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="662.6666666666667" y="648" width="92" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="844" y="648" width="92" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="1025.3333333333335" y="640" width="78" height="22" rx="11" fill="#EFEEE9" stroke="none" stroke-width="1"/>
-<text x="1064.3333333333335" y="655" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#0B0B0F" text-anchor="middle">Paid</text>
-<rect x="1206.6666666666667" y="648" width="92" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="300" y="686" width="92" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="481.33333333333337" y="686" width="92" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="662.6666666666667" y="686" width="92" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="844" y="686" width="92" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="1025.3333333333335" y="678" width="78" height="22" rx="11" fill="#EFEEE9" stroke="none" stroke-width="1"/>
-<text x="1064.3333333333335" y="693" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#0B0B0F" text-anchor="middle">Shipped</text>
-<rect x="1206.6666666666667" y="686" width="92" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="300" y="724" width="92" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="481.33333333333337" y="724" width="92" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="662.6666666666667" y="724" width="92" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="844" y="724" width="92" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="1025.3333333333335" y="716" width="78" height="22" rx="11" fill="#EFEEE9" stroke="none" stroke-width="1"/>
-<text x="1064.3333333333335" y="731" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#0B0B0F" text-anchor="middle">Pending</text>
-<rect x="1206.6666666666667" y="724" width="92" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="300" y="762" width="92" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="481.33333333333337" y="762" width="92" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="662.6666666666667" y="762" width="92" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="844" y="762" width="92" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-<rect x="1025.3333333333335" y="754" width="78" height="22" rx="11" fill="#EFEEE9" stroke="none" stroke-width="1"/>
-<text x="1064.3333333333335" y="769" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#0B0B0F" text-anchor="middle">Paid</text>
-<rect x="1206.6666666666667" y="762" width="92" height="7" rx="4" fill="#E5E3DD" stroke="none" stroke-width="1"/>
-</g>
-<g id="annotations" data-name="annotations">
-<circle cx="260" cy="830" r="9" fill="#B0455A"/>
-<text x="260" y="834" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">1</text>
-<text x="275" y="834" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#B0455A" text-anchor="start">Ink rail replaces the light sidebar — admin reads instantly as a different mode</text>
-<circle cx="290" cy="84" r="9" fill="#B0455A"/>
-<text x="290" y="88" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">2</text>
-<text x="305" y="88" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#B0455A" text-anchor="start">KPIs first, then trend, then work queue (orders) — decreasing abstraction</text>
+<g id="kpi-4" data-name="kpi-4">
+<line x1="1112" y1="112" x2="1370" y2="112" stroke="#221A16"/>
+<text x="1112" y="142" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="750" fill="#A4472D" text-anchor="start" letter-spacing="0.18em">RETURNS PENDING</text>
+<text x="1112" y="184" font-family="Instrument Serif, Georgia, serif" font-size="30" font-weight="500" fill="#221A16" text-anchor="start">7</text>
 </g>
 </g>
+<g id="analytics" data-name="analytics">
+<rect x="284" y="238" width="650" height="280" rx="2" fill="#FBF9F4" stroke="#DAD0C3" stroke-width="1"/>
+<text x="306" y="270" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="750" fill="#A4472D" text-anchor="start" letter-spacing="0.18em">REVENUE · 7 DAYS</text>
+<polyline points="312,470 399,430 489,446 584,360 679,386 784,300 904,326" fill="none" stroke="#A4472D" stroke-width="3"/>
+<rect x="958" y="238" width="430" height="280" rx="2" fill="#FBF9F4" stroke="#DAD0C3" stroke-width="1"/>
+<text x="982" y="270" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="750" fill="#A4472D" text-anchor="start" letter-spacing="0.18em">ORDERS BY STATUS</text>
+<text x="982" y="316" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="650" fill="#221A16" text-anchor="start">Pending  18</text>
+<text x="982" y="358" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="650" fill="#221A16" text-anchor="start">Paid  62</text>
+<text x="982" y="400" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="650" fill="#221A16" text-anchor="start">Approved  31</text>
+<text x="982" y="442" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="650" fill="#221A16" text-anchor="start">Returns  7</text>
+</g>
+<g id="operations-table" data-name="operations-table">
+<line x1="284" y1="570" x2="1408" y2="570" stroke="#221A16"/>
+<text x="284" y="610" font-family="Instrument Serif, Georgia, serif" font-size="27" font-weight="500" fill="#221A16" text-anchor="start">Recent orders</text>
+<text x="1408" y="607" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#A4472D" text-anchor="end">View all →</text>
+<rect x="284" y="636" width="1124" height="244" rx="2" fill="#FBF9F4" stroke="#DAD0C3" stroke-width="1"/>
+<text x="302" y="666" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="750" fill="#74675F" text-anchor="start">ORDER</text>
+<text x="552" y="666" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="750" fill="#74675F" text-anchor="start">CUSTOMER</text>
+<text x="822" y="666" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="750" fill="#74675F" text-anchor="start">STATUS</text>
+<text x="1012" y="666" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="750" fill="#74675F" text-anchor="start">TOTAL</text>
+<text x="1182" y="666" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="750" fill="#74675F" text-anchor="start">PLACED</text>
+<g id="order-row-1" data-name="order-row-1">
+<line x1="284" y1="686" x2="1408" y2="686" stroke="#DAD0C3"/>
+<text x="302" y="713" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#221A16" text-anchor="start">#8A21F</text>
+<text x="552" y="713" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#221A16" text-anchor="start">Maya Rao</text>
+<text x="822" y="713" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#0E6F50" text-anchor="start">PAID</text>
+<text x="1012" y="713" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#221A16" text-anchor="start">₹3,420</text>
+</g>
+<g id="order-row-2" data-name="order-row-2">
+<line x1="284" y1="732" x2="1408" y2="732" stroke="#DAD0C3"/>
+<text x="302" y="759" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#221A16" text-anchor="start">#742BC</text>
+<text x="552" y="759" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#221A16" text-anchor="start">Arun Shah</text>
+<text x="822" y="759" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#0E6F50" text-anchor="start">PENDING</text>
+<text x="1012" y="759" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#221A16" text-anchor="start">₹840</text>
+</g>
+<g id="order-row-3" data-name="order-row-3">
+<line x1="284" y1="778" x2="1408" y2="778" stroke="#DAD0C3"/>
+<text x="302" y="805" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#221A16" text-anchor="start">#19D0A</text>
+<text x="552" y="805" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#221A16" text-anchor="start">Isha K</text>
+<text x="822" y="805" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#9A5A0A" text-anchor="start">RETURN</text>
+<text x="1012" y="805" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#221A16" text-anchor="start">₹1,299</text>
+</g>
+<g id="order-row-4" data-name="order-row-4">
+<line x1="284" y1="824" x2="1408" y2="824" stroke="#DAD0C3"/>
+<text x="302" y="851" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#221A16" text-anchor="start">#55E81</text>
+<text x="552" y="851" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#221A16" text-anchor="start">Dev Patel</text>
+<text x="822" y="851" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#0E6F50" text-anchor="start">PAID</text>
+<text x="1012" y="851" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#221A16" text-anchor="start">₹5,110</text>
+</g>
+</g>
+<g id="note-1" data-name="note-1">
+<circle cx="1004" cy="94" r="9" fill="#A4472D"/>
+<text x="1004" y="98" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="750" fill="#FBF9F4" text-anchor="middle">1</text>
+<text x="1019" y="98" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#8E3823" text-anchor="start">Managers see only Dashboard, Orders and Returns</text>
+</g>
+<g id="note-2" data-name="note-2">
+<circle cx="1044" cy="916" r="9" fill="#A4472D"/>
+<text x="1044" y="920" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="750" fill="#FBF9F4" text-anchor="middle">2</text>
+<text x="1059" y="920" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#8E3823" text-anchor="start">Audit log captures privileged mutations including gift-card issuance</text>
+</g></g>
 </svg>

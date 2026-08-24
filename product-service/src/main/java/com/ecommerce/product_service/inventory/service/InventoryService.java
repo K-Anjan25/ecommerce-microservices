@@ -4,7 +4,9 @@ import com.ecommerce.product_service.inventory.dto.DeductStockRequest;
 import com.ecommerce.product_service.inventory.dto.InventoryCheckRequest;
 import com.ecommerce.product_service.inventory.dto.InventoryCheckResponse;
 import com.ecommerce.product_service.inventory.model.Inventory;
+import com.ecommerce.product_service.inventory.model.InventoryMutation;
 import com.ecommerce.product_service.inventory.repository.InventoryRepository;
+import com.ecommerce.product_service.inventory.repository.InventoryMutationRepository;
 import com.ecommerce.product_service.model.ProductVariant;
 import com.ecommerce.product_service.repository.ProductVariantRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +25,7 @@ import java.util.UUID;
 public class InventoryService {
     private final InventoryRepository inventoryRepository;
     private final ProductVariantRepository productVariantRepository;
+    private final InventoryMutationRepository inventoryMutationRepository;
 
     @Transactional
     public void upsertStock(UUID productId, Integer quantity) {
@@ -67,52 +71,75 @@ public class InventoryService {
     }
 
     @Transactional
-    public void deductStock(List<DeductStockRequest> deductStockRequests) {
+    public void deductStock(String operationId, List<DeductStockRequest> deductStockRequests) {
+        if (!claimMutation(operationId, "DEDUCT")) return;
         for (DeductStockRequest request : deductStockRequests) {
             if (request.getVariantId() != null) {
-                ProductVariant variant = productVariantRepository.findByProductIdAndId(
+                ProductVariant variant = productVariantRepository.findLockedByProductIdAndId(
                         request.getProductId(), request.getVariantId());
-                if (variant != null) {
-                    int newQuantity = (variant.getQuantityInStock() == null ? 0 : variant.getQuantityInStock())
-                            - request.getQuantity();
-                    variant.setQuantityInStock(Math.max(newQuantity, 0));
-                    productVariantRepository.save(variant);
+                if (variant == null) {
+                    throw new IllegalStateException("Variant not found: " + request.getVariantId());
                 }
+                int current = variant.getQuantityInStock() == null ? 0 : variant.getQuantityInStock();
+                if (current < request.getQuantity()) {
+                    throw new IllegalStateException("Insufficient variant stock: " + request.getVariantId());
+                }
+                variant.setQuantityInStock(current - request.getQuantity());
+                productVariantRepository.save(variant);
             } else {
-                Inventory inventory = inventoryRepository.getByProductId(request.getProductId());
-                if (inventory != null) {
-                    int newQuantity = inventory.getQuantity() - request.getQuantity();
-                    if (newQuantity < 0) {
-                        log.warn("Insufficient stock for product {}: requested {}, available {}",
-                                request.getProductId(), request.getQuantity(), inventory.getQuantity());
-                        newQuantity = 0;
-                    }
-                    inventory.setQuantity(newQuantity);
-                    inventoryRepository.save(inventory);
+                Inventory inventory = inventoryRepository.findLockedByProductId(request.getProductId());
+                if (inventory == null) {
+                    throw new IllegalStateException("Inventory not found: " + request.getProductId());
                 }
+                int current = inventory.getQuantity() == null ? 0 : inventory.getQuantity();
+                if (current < request.getQuantity()) {
+                    throw new IllegalStateException("Insufficient stock: " + request.getProductId());
+                }
+                inventory.setQuantity(current - request.getQuantity());
+                inventoryRepository.save(inventory);
             }
         }
     }
 
     @Transactional
-    public void restoreStock(List<DeductStockRequest> restoreStockRequests) {
+    public void restoreStock(String operationId, List<DeductStockRequest> restoreStockRequests) {
+        if (!claimMutation(operationId, "RESTORE")) return;
         for (DeductStockRequest request : restoreStockRequests) {
             if (request.getVariantId() != null) {
-                ProductVariant variant = productVariantRepository.findByProductIdAndId(
+                ProductVariant variant = productVariantRepository.findLockedByProductIdAndId(
                         request.getProductId(), request.getVariantId());
-                if (variant != null) {
-                    int current = variant.getQuantityInStock() == null ? 0 : variant.getQuantityInStock();
-                    variant.setQuantityInStock(current + request.getQuantity());
-                    productVariantRepository.save(variant);
+                if (variant == null) {
+                    throw new IllegalStateException("Variant not found during restoration: " + request.getVariantId());
                 }
+                int current = variant.getQuantityInStock() == null ? 0 : variant.getQuantityInStock();
+                variant.setQuantityInStock(current + request.getQuantity());
+                productVariantRepository.save(variant);
             } else {
-                Inventory inventory = inventoryRepository.getByProductId(request.getProductId());
-                if (inventory != null) {
-                    int current = inventory.getQuantity() == null ? 0 : inventory.getQuantity();
-                    inventory.setQuantity(current + request.getQuantity());
-                    inventoryRepository.save(inventory);
+                Inventory inventory = inventoryRepository.findLockedByProductId(request.getProductId());
+                if (inventory == null) {
+                    throw new IllegalStateException("Inventory not found during restoration: " + request.getProductId());
                 }
+                int current = inventory.getQuantity() == null ? 0 : inventory.getQuantity();
+                inventory.setQuantity(current + request.getQuantity());
+                inventoryRepository.save(inventory);
             }
         }
     }
+
+    private boolean claimMutation(String operationId, String operationType) {
+        if (operationId == null || operationId.isBlank() || operationId.length() > 100) {
+            throw new IllegalArgumentException("A valid inventory operation id is required");
+        }
+        if (inventoryMutationRepository.existsById(operationId)) {
+            log.info("Inventory operation {} already applied", operationId);
+            return false;
+        }
+        // Flush the unique id before touching stock. A concurrent duplicate
+        // fails here and its transaction cannot mutate stock.
+        inventoryMutationRepository.saveAndFlush(InventoryMutation.builder()
+                .operationId(operationId).operationType(operationType)
+                .createdAt(LocalDateTime.now()).build());
+        return true;
+    }
+
 }

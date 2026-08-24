@@ -35,7 +35,7 @@ function CheckoutSteps({ current }: { current: "cart" | "details" | "done" }) {
                 <span
                   className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold transition ${
                     done
-                      ? "bg-brand text-oncontrast"
+                      ? "bg-action text-oncontrast"
                       : active
                       ? "bg-contrast text-oncontrast"
                       : "border border-line bg-paper text-ink-muted"
@@ -53,7 +53,7 @@ function CheckoutSteps({ current }: { current: "cart" | "details" | "done" }) {
               </button>
               {i < STEPS.length - 1 && (
                 <span
-                  className={`h-px flex-1 ${i < currentIndex ? "bg-brand" : "bg-line"}`}
+                  className={`h-px flex-1 ${i < currentIndex ? "bg-action" : "bg-line"}`}
                   aria-hidden
                 />
               )}
