@@ -158,5 +158,7 @@ Per-container caps (`docker-compose.yml`): postgres 384m, rabbitmq 128m, gateway
 - `docs/43-stripe-payment-element.md` — Stripe Payment Element handoff
 - `docs/44-gift-card-purchase-refunds.md` — unused-value refund policy and operations
 - `docs/45-production-configuration-and-migrations.md` — production configuration gate and migration rollout
+- `docs/46-localized-storefront-content.md` — English/Hindi CMS content and fallback behavior
+- `docs/47-operations-health-signals.md` — queue pressure signals for production alerting
 - `design/README.md` — design tokens, wireframes and the Figma handoff
 - [`cartly-wp-theme`](https://github.com/K-Anjan25/cartly-wp-theme) — the design system as a WordPress/WooCommerce theme (separate repo)

@@ -24,6 +24,8 @@ public interface EmailRetryEventRepository extends JpaRepository<EmailRetryEvent
 
     List<EmailRetryEvent> findByStatusOrderByCreatedAtAsc(EmailRetryStatus status);
 
+    long countByStatus(EmailRetryStatus status);
+
     @Modifying
     @Query("DELETE FROM email_retry_events e WHERE e.status = :status AND e.createdAt < :cutoff")
     int deleteDeadBefore(@Param("status") EmailRetryStatus status,

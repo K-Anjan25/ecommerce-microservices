@@ -18,6 +18,8 @@ public interface PaymentReconciliationCaseRepository extends JpaRepository<Payme
 
     List<PaymentReconciliationCase> findByStatusOrderByCreatedAtAsc(String status);
 
+    long countByStatus(String status);
+
     @Modifying
     @Query("DELETE FROM payment_reconciliation_cases c WHERE c.status = :status "
             + "AND c.resolvedAt IS NOT NULL AND c.resolvedAt < :cutoff")

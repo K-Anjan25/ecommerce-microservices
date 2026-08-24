@@ -48,6 +48,7 @@ email:
     max-attempts: ${EMAIL_OUTBOX_MAX_ATTEMPTS:20}
     dead-retention: ${EMAIL_OUTBOX_DEAD_RETENTION:P30D}
     retention-scan-delay-ms: ${EMAIL_OUTBOX_RETENTION_SCAN_DELAY_MS:21600000}
+    health-dead-threshold: ${EMAIL_OUTBOX_HEALTH_DEAD_THRESHOLD:10}
 
 management:
   endpoints:

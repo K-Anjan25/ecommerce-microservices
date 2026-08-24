@@ -37,6 +37,7 @@ payment:
     batch-size: ${PAYMENT_RECONCILIATION_BATCH_SIZE:100}
     resolved-retention: ${PAYMENT_RECONCILIATION_RESOLVED_RETENTION:P90D}
     retention-scan-delay-ms: ${PAYMENT_RECONCILIATION_RETENTION_SCAN_DELAY_MS:21600000}
+    health-open-case-threshold: ${PAYMENT_RECONCILIATION_HEALTH_OPEN_CASE_THRESHOLD:100}
   providers:
     stripe:
       secret-key: ${STRIPE_SECRET_KEY:}
