@@ -40,6 +40,11 @@ email:
   username: ${EMAIL_USERNAME:}
   password: ${EMAIL_PASSWORD:}
   from-email: ${EMAIL_FROM:}
+  outbox:
+    # Base64-encoded 32-byte AES key. Required to durably retry failed email.
+    encryption-key: ${EMAIL_OUTBOX_ENCRYPTION_KEY:}
+    publish-delay-ms: ${EMAIL_OUTBOX_PUBLISH_DELAY_MS:30000}
+    batch-size: ${EMAIL_OUTBOX_BATCH_SIZE:50}
 
 management:
   endpoints:
