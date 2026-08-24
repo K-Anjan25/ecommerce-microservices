@@ -8,6 +8,7 @@ import Inventory2Icon from "@mui/icons-material/Inventory2";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
+import CardGiftcardOutlinedIcon from "@mui/icons-material/CardGiftcardOutlined";
 import AssignmentReturnIcon from "@mui/icons-material/AssignmentReturn";
 import WebOutlinedIcon from "@mui/icons-material/WebOutlined";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
@@ -25,6 +26,7 @@ const NAV = [
   { path: "/admin/products", label: "Products", icon: Inventory2Icon, exact: false },
   { path: "/admin/categories", label: "Categories", icon: CategoryIcon, exact: false },
   { path: "/admin/coupons", label: "Coupons", icon: ConfirmationNumberIcon, exact: false },
+  { path: "/admin/gift-card-purchases", label: "Gift-card sales", icon: CardGiftcardOutlinedIcon, exact: false },
   { path: "/admin/returns", label: "Returns", icon: AssignmentReturnIcon, exact: false },
   { path: "/admin/storefront", label: "Storefront", icon: WebOutlinedIcon, exact: false },
   { path: "/admin/audit-log", label: "Audit log", icon: HistoryOutlinedIcon, exact: false },

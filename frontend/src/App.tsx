@@ -45,6 +45,7 @@ function App() {
   const AdminCategories = React.lazy(() => import("./pages/Admin/Categories"));
   const AdminUsers = React.lazy(() => import("./pages/Admin/Users"));
   const AdminCoupons = React.lazy(() => import("./pages/Admin/Coupons"));
+  const AdminGiftCardPurchases = React.lazy(() => import("./pages/Admin/GiftCardPurchases"));
   const AdminReturns = React.lazy(() => import("./pages/Admin/Returns"));
   const AdminStoreSettings = React.lazy(() => import("./pages/Admin/StoreSettings"));
   const AdminAuditLog = React.lazy(() => import("./pages/Admin/AuditLog"));
@@ -126,6 +127,7 @@ function App() {
                   <Route path="categories" element={<AdminCategories />} />
                   <Route path="users" element={<AdminUsers />} />
                   <Route path="coupons" element={<AdminCoupons />} />
+                  <Route path="gift-card-purchases" element={<AdminGiftCardPurchases />} />
                   <Route path="storefront" element={<AdminStoreSettings />} />
                   <Route path="audit-log" element={<AdminAuditLog />} />
                   <Route path="payment-reconciliation" element={<AdminPaymentReconciliation />} />

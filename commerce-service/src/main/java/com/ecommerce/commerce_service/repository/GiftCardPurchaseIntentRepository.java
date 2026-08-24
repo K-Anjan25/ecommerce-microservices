@@ -25,4 +25,6 @@ public interface GiftCardPurchaseIntentRepository extends JpaRepository<GiftCard
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     List<GiftCardPurchaseIntent> findByStatusOrderByCreatedAtAsc(GiftCardPurchaseStatus status,
                                                                   Pageable pageable);
+
+    List<GiftCardPurchaseIntent> findByStatusOrderByCreatedAtDesc(GiftCardPurchaseStatus status);
 }

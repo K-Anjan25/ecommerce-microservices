@@ -1,7 +1,9 @@
 import { api } from "./client";
 import {
   GiftCard,
+  GiftCardPurchaseAdmin,
   GiftCardPurchaseRequest,
+  GiftCardPurchaseRefundResponse,
   GiftCardPurchaseResponse,
 } from "../types/giftCard";
 
@@ -15,4 +17,18 @@ const purchaseGiftCard = async (request: GiftCardPurchaseRequest) => {
   return data;
 };
 
-export const GiftCardApi = { getMyGiftCards, purchaseGiftCard };
+const listPurchases = async (status: GiftCardPurchaseAdmin["status"]) => {
+  const { data } = await api.get<GiftCardPurchaseAdmin[]>("/v1/gift-cards/purchases", {
+    params: { status },
+  });
+  return data;
+};
+
+const refundPurchase = async (purchaseId: string) => {
+  const { data } = await api.post<GiftCardPurchaseRefundResponse>(
+    `/v1/gift-cards/purchases/${purchaseId}/refund`
+  );
+  return data;
+};
+
+export const GiftCardApi = { getMyGiftCards, purchaseGiftCard, listPurchases, refundPurchase };

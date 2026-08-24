@@ -6,7 +6,7 @@ Settled customer gift-card purchases now have a guarded administrative refund pa
 POST /v1/gift-cards/purchases/{purchaseId}/refund
 ```
 
-The endpoint is restricted to admins and super-admins. It locks the purchase intent and card, then:
+The endpoint is restricted to admins and super-admins. The admin console exposes it through **Admin → Gift-card sales**. It locks the purchase intent and card, then:
 
 1. Rejects pending or failed purchases.
 2. Rejects cards that are already spent or refunded.

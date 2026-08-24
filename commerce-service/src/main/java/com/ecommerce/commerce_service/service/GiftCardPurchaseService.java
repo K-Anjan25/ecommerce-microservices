@@ -1,6 +1,7 @@
 package com.ecommerce.commerce_service.service;
 
 import com.ecommerce.commerce_service.dto.giftCard.CreateGiftCardPurchaseRequest;
+import com.ecommerce.commerce_service.dto.giftCard.GiftCardPurchaseAdminDto;
 import com.ecommerce.commerce_service.dto.payment.PaymentRequest;
 import com.ecommerce.commerce_service.model.GiftCardPurchaseIntent;
 import com.ecommerce.commerce_service.model.GiftCardPurchaseStatus;
@@ -18,7 +19,9 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /** Creates a payment order without minting stored value before settlement. */
 @Service
@@ -88,6 +91,13 @@ public class GiftCardPurchaseService {
         payment.setOrderId(savedOrder.getId());
         payment.setProvider(request.getProvider());
         return new PurchaseStart(savedIntent.getId(), savedOrder.getId(), payment);
+    }
+
+    @Transactional(readOnly = true)
+    public List<GiftCardPurchaseAdminDto> findByStatus(GiftCardPurchaseStatus status) {
+        return intentRepository.findByStatusOrderByCreatedAtDesc(status).stream()
+                .map(GiftCardPurchaseAdminDto::from)
+                .collect(Collectors.toList());
     }
 
     private String blankToNull(String value) {

@@ -30,3 +30,28 @@ export interface GiftCardPurchaseResponse {
   orderId: string;
   payment: import("./payment").PaymentResponse;
 }
+
+export interface GiftCardPurchaseRefundResponse {
+  purchaseId: string;
+  orderId: string;
+  status: "REFUNDED";
+  refundedAmount?: number;
+  refundTransactionId?: string;
+  refundedAt?: string;
+}
+
+export interface GiftCardPurchaseAdmin {
+  purchaseId: string;
+  orderId: string;
+  customerId: string;
+  amount: number;
+  expiryDate: string;
+  recipientEmail?: string;
+  status: "PENDING_PAYMENT" | "FAILED" | "ISSUED" | "REFUNDED";
+  giftCardId?: string;
+  refundedAmount?: number;
+  refundTransactionId?: string;
+  createdAt?: string;
+  issuedAt?: string;
+  refundedAt?: string;
+}
