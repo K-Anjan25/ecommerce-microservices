@@ -52,7 +52,7 @@ The roadmap feature build is no longer the main activity. Current work is **Phas
 These are not hidden TODOs; they are the remaining production boundaries:
 
 1. **Interactive payment-provider handoff.** Razorpay browser Checkout and Stripe Payment Element now hand off provider operations while keeping webhook settlement authoritative. Live-provider certification and production return-path testing remain.
-2. **Provider reconciliation execution.** Stale online payments now use authenticated Stripe/Razorpay status lookups where possible and create a durable operations queue for ambiguity. Provider-specific expiry, late-capture handling, alerting and the production operations runbook remain.
+2. **Provider reconciliation execution.** Stale online payments now use authenticated Stripe/Razorpay status lookups where possible, safely auto-refund late captures on cancelled orders, and create a durable operations queue for ambiguity. Provider-specific expiry, certification, alerting and the production operations runbook remain.
 3. **Customer gift-card purchasing.** Payment-backed pending issuance, abandoned-intent cleanup, recipient delivery and unused-balance refund handling are implemented; cards activate only after verified capture. Live-provider certification and late-capture decisions remain.
 4. **Production database migrations.** A `JPA_DDL_AUTO=validate` production gate and configuration checker are now available; versioned Flyway/Liquibase migrations, rollout and rollback exercises still remain.
 5. **High-assurance SEO rendering.** A crawler policy now protects private routes and metadata exists, but the React SPA is not SSR/pre-rendered.

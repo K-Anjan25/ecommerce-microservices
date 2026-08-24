@@ -56,14 +56,15 @@ public class PaymentWebhookService {
         String type = event.path("event").asText();
         JsonNode payment = event.path("payload").path("payment").path("entity");
         String reference = payment.path("order_id").asText();
+        String providerPaymentId = payment.path("id").asText(null);
         if (reference.isBlank()) throw new IllegalArgumentException("Razorpay order reference is missing");
         if ("payment.captured".equals(type)) {
             paymentService.reconcileProviderPayment(PaymentProvider.RAZORPAY, reference, true, null,
-                    minorUnits(payment, "amount"), payment.path("currency").asText());
+                    minorUnits(payment, "amount"), payment.path("currency").asText(), providerPaymentId);
         } else if ("payment.failed".equals(type)) {
             paymentService.reconcileProviderPayment(PaymentProvider.RAZORPAY, reference, false,
                     payment.path("error_description").asText("Provider payment failed"),
-                    minorUnits(payment, "amount"), payment.path("currency").asText());
+                    minorUnits(payment, "amount"), payment.path("currency").asText(), providerPaymentId);
         }
     }
 

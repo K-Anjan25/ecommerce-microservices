@@ -90,11 +90,12 @@ public class RazorpayPaymentClient implements PaymentProviderClient {
                     .message("Razorpay credentials are missing - refund simulated")
                     .build();
         }
-        String transactionId = payment.getTransactionId();
+        String transactionId = isBlank(payment.getProviderPaymentId())
+                ? payment.getTransactionId() : payment.getProviderPaymentId();
         if (isBlank(transactionId)) {
             return ProviderPaymentResult.builder()
                     .success(false)
-                    .message("No Razorpay transaction stored for order " + payment.getOrderId())
+                    .message("No Razorpay payment reference stored for order " + payment.getOrderId())
                     .build();
         }
 

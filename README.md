@@ -161,5 +161,6 @@ Per-container caps (`docker-compose.yml`): postgres 384m, rabbitmq 128m, gateway
 - `docs/46-localized-storefront-content.md` — English/Hindi CMS content and fallback behavior
 - `docs/47-operations-health-signals.md` — queue pressure signals for production alerting
 - `docs/48-seo-crawler-policy.md` — crawler policy for public and private routes
+- `docs/49-late-provider-capture-safety.md` — late-capture refund and order-state policy
 - `design/README.md` — design tokens, wireframes and the Figma handoff
 - [`cartly-wp-theme`](https://github.com/K-Anjan25/cartly-wp-theme) — the design system as a WordPress/WooCommerce theme (separate repo)

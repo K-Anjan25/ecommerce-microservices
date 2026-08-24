@@ -150,15 +150,27 @@ public class PaymentReconciliationService {
     }
 
     private void openCaseIfNeeded(Payment payment) {
-        if (payment.getId() == null || payment.getOrderId() == null
+        flagPaymentForReview(payment, "Provider payment remained pending beyond " + pendingTtl
+                + "; verify provider status before taking any local action");
+    }
+
+    /** Keeps a provider anomaly visible without reopening a resolved lifecycle. */
+    public void flagPaymentForReview(Payment payment, String reason) {
+        if (payment == null || payment.getId() == null || payment.getOrderId() == null
                 || payment.getProvider() == null || payment.getAmount() == null
                 || payment.getCurrency() == null) {
-            log.error("Skipping incomplete payment {} during reconciliation scan", payment.getId());
+            log.error("Skipping incomplete payment {} during reconciliation review", payment == null ? null : payment.getId());
             return;
         }
-        // A payment has a single lifecycle. Once a case has been resolved by a
-        // verified callback or provider API snapshot, it must not be reopened.
-        if (caseRepository.findByPaymentId(payment.getId()).isPresent()) {
+        PaymentReconciliationCase item = caseRepository.findByPaymentId(payment.getId()).orElse(null);
+        if (item != null) {
+            if (PaymentReconciliationCase.OPEN.equals(item.getStatus())
+                    && reason != null && !reason.isBlank()
+                    && (item.getReason() == null || !item.getReason().contains(reason))) {
+                item.setReason(item.getReason() + " Additional: " + reason);
+                item.setUpdatedAt(LocalDateTime.now());
+                caseRepository.save(item);
+            }
             return;
         }
 
@@ -171,8 +183,7 @@ public class PaymentReconciliationService {
                 .amount(payment.getAmount())
                 .currency(payment.getCurrency())
                 .status(PaymentReconciliationCase.OPEN)
-                .reason("Provider payment remained pending beyond " + pendingTtl
-                        + "; verify provider status before taking any local action")
+                .reason(reason == null || reason.isBlank() ? "Provider payment requires review" : reason)
                 .createdAt(now)
                 .updatedAt(now)
                 .build());

@@ -137,6 +137,45 @@ class PaymentServiceTest {
     }
 
     @Test
+    void lateProviderCaptureIsRefundedWithoutReopeningCancelledOrder() {
+        PaymentRepository payments = mock(PaymentRepository.class);
+        OrderRepository orders = mock(OrderRepository.class);
+        PaymentProviderClient provider = mock(PaymentProviderClient.class);
+        OrderService orderService = mock(OrderService.class);
+        PaymentReconciliationService reconciliation = mock(PaymentReconciliationService.class);
+        GiftCardPurchaseFinalizer finalizer = mock(GiftCardPurchaseFinalizer.class);
+        UUID orderId = UUID.randomUUID();
+        String reference = "pi_late_capture";
+        Payment payment = Payment.builder().id(11L).orderId(orderId)
+                .provider(PaymentProvider.STRIPE).transactionId(reference)
+                .amount(new BigDecimal("120.00")).currency("INR")
+                .status(PaymentStatus.PENDING.name()).build();
+        Order order = Order.builder().id(orderId).orderStatus(OrderStatus.CANCELLED).build();
+        when(payments.findByProviderAndTransactionId(PaymentProvider.STRIPE, reference))
+                .thenReturn(Optional.of(payment));
+        when(payments.findLockedByProviderAndTransactionId(PaymentProvider.STRIPE, reference))
+                .thenReturn(Optional.of(payment));
+        when(payments.findLockedByOrderId(orderId)).thenReturn(Optional.of(payment));
+        when(orders.findLockedById(orderId)).thenReturn(order);
+        when(provider.provider()).thenReturn(PaymentProvider.STRIPE);
+        when(provider.refund(eq(payment), eq(payment.getAmount()), eq("late-capture-refund-" + orderId)))
+                .thenReturn(ProviderPaymentResult.builder().success(true).transactionId("re_late").build());
+        when(payments.save(payment)).thenReturn(payment);
+        PaymentService service = paymentService(payments, orders, List.of(provider), orderService,
+                reconciliation, finalizer);
+
+        service.reconcileProviderPayment(PaymentProvider.STRIPE, reference, true, null,
+                new BigDecimal("120.00"), "INR");
+
+        assertThat(payment.getStatus()).isEqualTo(PaymentStatus.REFUNDED.name());
+        assertThat(payment.getRefundedAmount()).isEqualByComparingTo("120.00");
+        verify(orderService, never()).applyPaymentStatus(any(), anyString(), anyString());
+        verify(provider).refund(eq(payment), eq(payment.getAmount()), eq("late-capture-refund-" + orderId));
+        verify(finalizer).applyPaymentStatus(orderId, PaymentStatus.REFUNDED.name());
+        verify(reconciliation).resolveForPayment(11L, "Late provider capture automatically refunded");
+    }
+
+    @Test
     void verifiedWebhookCannotSettleAChangedAmount() {
         PaymentRepository payments = mock(PaymentRepository.class);
         OrderRepository orders = mock(OrderRepository.class);
@@ -186,6 +225,17 @@ class PaymentServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("exceeds");
         verify(payments, never()).save(any());
+    }
+
+    private PaymentService paymentService(PaymentRepository payments,
+                                          OrderRepository orders,
+                                          List<PaymentProviderClient> providers,
+                                          OrderService orderService,
+                                          PaymentReconciliationService reconciliation,
+                                          GiftCardPurchaseFinalizer finalizer) {
+        return new PaymentService(payments, orders, mock(RabbitMQMessageProducer.class), providers,
+                mock(InvoiceService.class), new CheckoutTokenService(), mock(LoyaltyPointService.class),
+                orderService, mock(PaymentOutboxService.class), reconciliation, finalizer);
     }
 
 }

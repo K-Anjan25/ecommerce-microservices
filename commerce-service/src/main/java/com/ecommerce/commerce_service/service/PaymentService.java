@@ -186,6 +186,15 @@ public class PaymentService {
     public void reconcileProviderPayment(PaymentProvider provider, String transactionId,
                                          boolean succeeded, String failureReason,
                                          BigDecimal providerAmount, String providerCurrency) {
+        reconcileProviderPayment(provider, transactionId, succeeded, failureReason,
+                providerAmount, providerCurrency, null);
+    }
+
+    @Transactional
+    public void reconcileProviderPayment(PaymentProvider provider, String transactionId,
+                                         boolean succeeded, String failureReason,
+                                         BigDecimal providerAmount, String providerCurrency,
+                                         String providerPaymentId) {
         Payment candidate = paymentRepository.findByProviderAndTransactionId(provider, transactionId)
                 .orElseThrow(() -> new IllegalArgumentException("Payment reference was not found"));
         Order order = orderRepository.findLockedById(candidate.getOrderId());
@@ -210,8 +219,20 @@ public class PaymentService {
 
         payment.setStatus(targetStatus);
         payment.setFailureReason(succeeded ? null : failureReason);
+        if (providerPaymentId != null && !providerPaymentId.isBlank()) {
+            payment.setProviderPaymentId(providerPaymentId);
+        }
         payment.setUpdatedAt(LocalDateTime.now());
         Payment saved = paymentRepository.save(payment);
+
+        // A provider may capture after Cartly has already cancelled the local
+        // order. Never reopen the order or issue credits/value in that case;
+        // attempt an idempotent provider refund and expose any failure to ops.
+        if (succeeded && order.getOrderStatus() != OrderStatus.PENDING) {
+            handleLateProviderCapture(saved, order);
+            return;
+        }
+
         paymentReconciliationService.resolveForPayment(saved.getId(),
                 "Verified " + targetStatus.toLowerCase() + " webhook received");
         orderService.applyPaymentStatus(order.getId(), targetStatus, provider.name());
@@ -238,6 +259,31 @@ public class PaymentService {
             }
             if (succeeded) invoiceService.emailInvoice(order);
         });
+    }
+
+    private void handleLateProviderCapture(Payment payment, Order order) {
+        ProviderPaymentResult refund;
+        try {
+            refund = refundOrderPayment(order.getId(), payment.getAmount(),
+                    "late-capture-refund-" + order.getId());
+        } catch (RuntimeException failure) {
+            paymentReconciliationService.flagPaymentForReview(payment,
+                    "Late provider capture on local order " + order.getOrderStatus()
+                            + "; automatic refund could not be attempted");
+            log.error("Late provider capture for order {} could not start automatic refund", order.getId(), failure);
+            return;
+        }
+        if (refund.isSuccess()) {
+            paymentReconciliationService.resolveForPayment(payment.getId(),
+                    "Late provider capture automatically refunded");
+            giftCardPurchaseFinalizer.applyPaymentStatus(order.getId(), PaymentStatus.REFUNDED.name());
+            log.warn("Late provider capture for cancelled order {} was automatically refunded", order.getId());
+            return;
+        }
+        String reason = "Late provider capture on local order " + order.getOrderStatus()
+                + "; automatic refund failed: " + refund.getMessage();
+        paymentReconciliationService.flagPaymentForReview(payment, reason);
+        log.error("Late provider capture for order {} needs operations review", order.getId());
     }
 
     /**

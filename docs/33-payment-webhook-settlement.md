@@ -30,4 +30,6 @@ Configure `STRIPE_WEBHOOK_SECRET` and `RAZORPAY_WEBHOOK_SECRET` separately from 
 
 ## Boundary
 
-The frontend still needs provider SDK handoff for interactive authentication and challenge flows. Webhook reconciliation establishes the server-side trust boundary: only provider-confirmed settlement can mark a pending initiation paid.
+Late captures after local cancellation are handled without reopening the order: Cartly attempts an idempotent provider refund and retains an operations case when that refund cannot be completed. See [49-late-provider-capture-safety.md](49-late-provider-capture-safety.md).
+
+The frontend now has Razorpay Checkout and Stripe Payment Element handoff, but live-provider certification and challenge/return-path testing remain. Webhook reconciliation establishes the server-side trust boundary: only provider-confirmed settlement can mark a pending initiation paid.
