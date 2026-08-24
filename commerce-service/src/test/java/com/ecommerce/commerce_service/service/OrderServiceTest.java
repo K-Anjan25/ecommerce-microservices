@@ -170,6 +170,35 @@ class OrderServiceTest {
     }
 
     @Test
+    void orderAppliesLoyaltyBeforeTaxAndGiftCardAfterTax() {
+        CreateOrderRequest request = mock(CreateOrderRequest.class);
+        when(request.getLoyaltyPoints()).thenReturn(100);
+        when(request.getGiftCardCode()).thenReturn("GC-1234");
+        when(orderMapper.orderRequestToOrder(request)).thenReturn(testOrder);
+        when(productCatalogClient.findByIds(productId.toString())).thenReturn(List.of(
+                new ProductSummaryDto(productId, "Test product", BigDecimal.TEN, null, false, List.of())));
+        when(commerceInventoryService.isInStock(anyList()))
+                .thenReturn(InventoryCheckResponse.builder().isInStock(true).build());
+        when(loyaltyPointService.redeemForOrder(any(), anyInt(), any(), anyString()))
+                .thenReturn(new BigDecimal("10.00"));
+        when(giftCardService.applyToOrder(anyString(), any()))
+                .thenReturn(new GiftCardService.GiftCardApplication(UUID.randomUUID(), "1234", new BigDecimal("20.00")));
+        when(orderRepository.save(testOrder)).thenReturn(testOrder);
+        when(orderMapper.orderToOrderDto(testOrder)).thenReturn(testOrderDto);
+
+        orderService.createOrder(request);
+
+        ArgumentCaptor<BigDecimal> loyaltyCap = ArgumentCaptor.forClass(BigDecimal.class);
+        verify(loyaltyPointService).redeemForOrder(eq(testOrder.getCustomerId()), eq(100), loyaltyCap.capture(), anyString());
+        ArgumentCaptor<BigDecimal> preTenderTotal = ArgumentCaptor.forClass(BigDecimal.class);
+        verify(giftCardService).applyToOrder(eq("GC-1234"), preTenderTotal.capture());
+        assertThat(loyaltyCap.getValue()).isEqualByComparingTo("20.00");
+        assertThat(preTenderTotal.getValue()).isEqualByComparingTo("70.80");
+        assertThat(testOrder.getTaxAmount()).isEqualByComparingTo("10.80");
+        assertThat(testOrder.getTotalAmount()).isEqualByComparingTo("50.80");
+    }
+
+    @Test
     void failedPaymentRestoresReservedCreditsExactlyOnce() {
         UUID customerId = UUID.randomUUID();
         UUID cardId = UUID.randomUUID();
