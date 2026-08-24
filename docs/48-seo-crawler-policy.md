@@ -4,6 +4,6 @@
 
 The policy intentionally disallows `/guest-order` and `/order-confirmation` because those routes can carry order-specific information. Gift-card wallet, checkout, account and operational screens are also private experiences.
 
-Set `VITE_PUBLIC_STOREFRONT_URL` in `frontend/.env` for production sitemap URLs. Add optional comma-separated paths through `VITE_SITEMAP_PRODUCT_URLS` for public product routes.
+Set `VITE_PUBLIC_STOREFRONT_URL` in `frontend/.env` for production sitemap URLs. Add optional comma-separated product IDs through `VITE_SITEMAP_PRODUCT_URLS` and set `VITE_PRERENDER_API_URL` to the public catalog origin to generate data-aware product entry points at build time. Set `VITE_PRERENDER_REQUIRED=true` in a release build when missing catalog data should fail the build.
 
-This improves crawler hygiene and gives public routes a static fallback, but it does not replace data-aware SSR or full pre-rendering. Product metadata and live catalog content are still resolved by the client-side application; dependable product indexing still needs a server-rendered or data-aware build pipeline.
+This improves crawler hygiene and gives public routes a static fallback. Product entry points can now include server-fetched title, description, image, offer, availability, canonical metadata, and JSON-LD. A long-lived server-rendered catalog is still a deployment choice when content must update without rebuilding.
