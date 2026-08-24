@@ -108,6 +108,10 @@ public class EmailRetryOutboxService {
             Cipher cipher = Cipher.getInstance(CIPHER);
             cipher.init(Cipher.ENCRYPT_MODE, key(), new GCMParameterSpec(TAG_BITS, iv));
             return cipher.doFinal(plaintext.getBytes(StandardCharsets.UTF_8));
+        } catch (IllegalStateException exception) {
+            // Preserve configuration errors so the listener can fail closed
+            // and RabbitMQ can redeliver rather than acknowledge a lost email.
+            throw exception;
         } catch (Exception exception) {
             throw new IllegalStateException("Could not encrypt email retry envelope", exception);
         }
@@ -118,6 +122,8 @@ public class EmailRetryOutboxService {
             Cipher cipher = Cipher.getInstance(CIPHER);
             cipher.init(Cipher.DECRYPT_MODE, key(), new GCMParameterSpec(TAG_BITS, iv));
             return cipher.doFinal(ciphertext);
+        } catch (IllegalStateException exception) {
+            throw exception;
         } catch (Exception exception) {
             throw new IllegalStateException("Could not decrypt email retry envelope", exception);
         }
