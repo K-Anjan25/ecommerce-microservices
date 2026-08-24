@@ -19,6 +19,10 @@ A lightweight scheduled publisher runs inside commerce-service every five second
 
 A crash after RabbitMQ acceptance but before database deletion can deliver a duplicate. The local payment-status consumer is intentionally idempotent and order transitions/history are protected under the order lock.
 
+## Pending payment boundary
+
+Stale online payments are now surfaced separately through the durable reconciliation queue described in [40-payment-reconciliation-queue.md](40-payment-reconciliation-queue.md). The payment outbox remains responsible only for status-event delivery; it does not decide whether an unsettled provider operation should be released or refunded.
+
 ## Remaining email boundary
 
 Transactional emails and invoice attachments still use guarded post-commit publication. Their failure cannot roll back commerce state, but durable encrypted email outbox/retry remains future work because guest tracking capabilities and personal data must not be stored as plaintext outbox payloads.

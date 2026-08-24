@@ -50,14 +50,15 @@ The roadmap feature build is no longer the main activity. Current work is **Phas
 These are not hidden TODOs; they are the remaining production boundaries:
 
 1. **Interactive payment-provider handoff.** Signed Stripe/Razorpay webhooks now own settlement truth, but the frontend still needs production SDK/challenge flows and live-provider certification.
-2. **Customer gift-card purchasing.** Disabled until a payment-backed issuance intent can activate value only after verified capture. Admin issuance is restricted, reason-required and audited.
-3. **Production database migrations.** Development still relies on Hibernate `ddl-auto`; production needs versioned migrations, rollout and rollback exercises.
-4. **High-assurance SEO rendering.** Metadata exists, but the React SPA is not SSR/pre-rendered.
-5. **Localized merchant CMS content.** Core UI is en/hi; merchant-authored storefront fields remain single-language.
-6. **Scale and disaster testing.** The 2 GB topology is respected, but sustained load, chaos, restore-time and provider reconciliation drills require a deployment environment.
-7. **WooCommerce runtime certification.** The separate sellable theme must be tested in a real supported WordPress/WooCommerce matrix.
-8. **Real catalog photography/content.** Editorial images are branded placeholders; merchant inventory controls actual product-card/PDP media.
-9. **CI action-version warnings.** GitHub recommends newer action versions, but the current GitHub App cannot push workflow changes without `workflows` permission.
+2. **Provider reconciliation execution.** Stale online payments now create a durable, read-only operations queue and resolve only through verified callbacks. Provider API polling/expiry, late-capture handling, alerting and the production operations runbook remain.
+3. **Customer gift-card purchasing.** Disabled until a payment-backed issuance intent can activate value only after verified capture. Admin issuance is restricted, reason-required and audited.
+4. **Production database migrations.** Development still relies on Hibernate `ddl-auto`; production needs versioned migrations, rollout and rollback exercises.
+5. **High-assurance SEO rendering.** Metadata exists, but the React SPA is not SSR/pre-rendered.
+6. **Localized merchant CMS content.** Core UI is en/hi; merchant-authored storefront fields remain single-language.
+7. **Scale and disaster testing.** The 2 GB topology is respected, but sustained load, chaos, restore-time and provider reconciliation drills require a deployment environment.
+8. **WooCommerce runtime certification.** The separate sellable theme must be tested in a real supported WordPress/WooCommerce matrix.
+9. **Real catalog photography/content.** Editorial images are branded placeholders; merchant inventory controls actual product-card/PDP media.
+10. **CI action-version warnings.** GitHub recommends newer action versions, but the current GitHub App cannot push workflow changes without `workflows` permission.
 
 ## Design artifact status
 

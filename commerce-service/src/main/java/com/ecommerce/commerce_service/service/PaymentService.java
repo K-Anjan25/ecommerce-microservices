@@ -51,6 +51,7 @@ public class PaymentService {
     private final LoyaltyPointService loyaltyPointService;
     private final OrderService orderService;
     private final PaymentOutboxService paymentOutboxService;
+    private final PaymentReconciliationService paymentReconciliationService;
 
     @Value("${rabbitmq.exchanges.internal}")
     private String exchange;
@@ -208,6 +209,8 @@ public class PaymentService {
         payment.setFailureReason(succeeded ? null : failureReason);
         payment.setUpdatedAt(LocalDateTime.now());
         Payment saved = paymentRepository.save(payment);
+        paymentReconciliationService.resolveForPayment(saved.getId(),
+                "Verified " + targetStatus.toLowerCase() + " webhook received");
         orderService.applyPaymentStatus(order.getId(), targetStatus, provider.name());
 
         if (succeeded && order.getCustomerId() != null) {
