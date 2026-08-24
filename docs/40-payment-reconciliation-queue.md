@@ -29,6 +29,8 @@ GET /v1/payments/reconciliation?status=OPEN
 
 `status` may be `OPEN` or `RESOLVED`. The response contains payment/order references, provider, amount, currency, timestamps and the reason for review. It never contains provider credentials, customer checkout capabilities or email bodies. There is intentionally no manual “resolve” endpoint: operations must use provider reconciliation and the signed webhook path rather than overriding payment truth in the database.
 
+The admin console exposes the same queue at **Admin → Payment review** with automatic refresh and an explicit read-only warning. Managers do not receive access to this financial operations surface.
+
 ## Remaining production work
 
 This queue makes stale pending payments observable and durable, but it is not a provider reconciliation engine. Production still needs provider API status polling/expiry rules, late-capture handling (including any required refund or fulfilment decision), alerting, retention and an exercised operations runbook for each enabled provider.
