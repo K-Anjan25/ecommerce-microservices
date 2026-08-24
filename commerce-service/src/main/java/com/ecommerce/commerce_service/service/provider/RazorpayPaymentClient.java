@@ -121,6 +121,17 @@ public class RazorpayPaymentClient implements PaymentProviderClient {
         }
     }
 
+    @Override
+    public ProviderPaymentResult cancel(Payment payment) {
+        // Razorpay Orders have no equivalent server-side cancel endpoint. Do
+        // not release Cartly reservations while that provider order can still capture.
+        return ProviderPaymentResult.builder().success(false)
+                .transactionId(payment.getTransactionId())
+                .message("Razorpay order cancellation is not supported; provider reconciliation is required")
+                .build();
+    }
+
+
     private String basicAuth(String keyId, String keySecret) {
         String token = keyId + ":" + keySecret;
         return "Basic " + Base64.getEncoder().encodeToString(token.getBytes(StandardCharsets.UTF_8));

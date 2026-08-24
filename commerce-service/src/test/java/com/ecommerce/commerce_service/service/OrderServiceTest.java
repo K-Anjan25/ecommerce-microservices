@@ -90,6 +90,9 @@ class OrderServiceTest {
     @Mock
     private PaymentRepository paymentRepository;
 
+    @Mock
+    private PaymentProviderCancellationService paymentProviderCancellationService;
+
     private OrderService orderService;
 
     private UUID productId;
@@ -102,7 +105,7 @@ class OrderServiceTest {
         orderService = new OrderService(orderRepository, orderMapper, commerceInventoryService,
                 couponService, orderStatusHistoryRepository, rabbitMQMessageProducer, orderItemRepository,
                 shippingRateService, taxRuleService, checkoutTokenService, productCatalogClient,
-                giftCardService, loyaltyPointService, paymentRepository);
+                giftCardService, loyaltyPointService, paymentRepository, paymentProviderCancellationService);
 
         productId = UUID.randomUUID();
         orderId = UUID.randomUUID();
@@ -309,6 +312,31 @@ class OrderServiceTest {
     }
 
     @Test
+    void confirmedProviderCancellationAllowsReservationRelease() {
+        UUID customerId = UUID.randomUUID();
+        Order order = Order.builder().id(orderId).customerId(customerId).orderStatus(OrderStatus.PENDING)
+                .items(List.of(OrderItem.builder().productId(productId).quantity(1).build()))
+                .inventoryOperationId("stripe-cancel-stock").creditsRestored(true)
+                .inventoryRestored(false).build();
+        Payment payment = Payment.builder().orderId(orderId).provider(PaymentProvider.STRIPE)
+                .status(PaymentStatus.PENDING.name()).transactionId("pi_123").build();
+        when(orderRepository.findLockedById(orderId)).thenReturn(order);
+        when(paymentRepository.findByOrderId(orderId)).thenReturn(Optional.of(payment));
+        when(paymentProviderCancellationService.cancel(payment)).thenReturn(
+                com.ecommerce.commerce_service.service.provider.ProviderPaymentResult.builder()
+                        .success(true).transactionId("pi_123").build());
+        when(orderRepository.save(order)).thenReturn(order);
+        when(orderMapper.orderToOrderDto(order)).thenReturn(testOrderDto);
+
+        orderService.cancelPendingOrder(orderId, customerId, null);
+
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.CANCELLED);
+        assertThat(payment.getStatus()).isEqualTo(PaymentStatus.FAILED.name());
+        verify(commerceInventoryService).restoreStock(eq("order-payment-failed-stripe-cancel-stock"), anyList());
+        verify(paymentRepository).save(payment);
+    }
+
+    @Test
     void onlinePendingOrderCannotBeCancelledWithoutProviderReconciliation() {
         UUID customerId = UUID.randomUUID();
         Order order = Order.builder().id(orderId).customerId(customerId).orderStatus(OrderStatus.PENDING)
@@ -317,6 +345,9 @@ class OrderServiceTest {
                 .status(PaymentStatus.PENDING.name()).build();
         when(orderRepository.findLockedById(orderId)).thenReturn(order);
         when(paymentRepository.findByOrderId(orderId)).thenReturn(Optional.of(payment));
+        when(paymentProviderCancellationService.cancel(payment)).thenReturn(
+                com.ecommerce.commerce_service.service.provider.ProviderPaymentResult.builder()
+                        .success(false).message("provider reconciliation required").build());
 
         assertThatThrownBy(() -> orderService.cancelPendingOrder(orderId, customerId, null))
                 .isInstanceOf(IllegalArgumentException.class)

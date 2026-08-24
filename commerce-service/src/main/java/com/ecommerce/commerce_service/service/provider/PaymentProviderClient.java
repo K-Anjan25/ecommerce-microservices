@@ -16,4 +16,7 @@ public interface PaymentProviderClient {
      * stays testable in dev.
      */
     ProviderPaymentResult refund(Payment payment, BigDecimal amount);
+
+    /** Cancel an initiated but unsettled provider operation before releasing reservations. */
+    ProviderPaymentResult cancel(Payment payment);
 }

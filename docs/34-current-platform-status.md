@@ -81,4 +81,4 @@ The enclosed checkout now ends on a dedicated confirmation screen for gift-card-
 
 ## Pending cancellation
 
-Signed-in and capability-authenticated guest customers can cancel eligible pending/COD orders with idempotent inventory, credit and coupon compensation. Pending online-provider payments require provider reconciliation rather than unsafe local cancellation; see [37-pending-order-cancellation.md](37-pending-order-cancellation.md).
+Signed-in and capability-authenticated guest customers can cancel eligible pending/COD orders with idempotent inventory, credit and coupon compensation. Pending Stripe intents are cancelled provider-side before local release. Razorpay orders without a cancellation API still require reconciliation; see [37-pending-order-cancellation.md](37-pending-order-cancellation.md).

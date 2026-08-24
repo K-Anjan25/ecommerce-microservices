@@ -7,8 +7,10 @@ Signed-in customers and guests with the private tracking capability can cancel e
 - The order must still be `PENDING`.
 - A signed-in caller must own the order.
 - A guest must present the valid `X-Checkout-Token` capability.
-- Orders with an unsettled or successful online provider payment are not cancelled automatically. They require provider cancellation/reconciliation so a late capture cannot occur after inventory is released.
 - Cash-on-delivery payments can be cancelled locally before delivery.
+- Pending Stripe PaymentIntents are cancelled at Stripe with a deterministic idempotency key before local reservations are released.
+- Razorpay Orders do not expose an equivalent cancellation endpoint. Those orders remain blocked from automatic local cancellation and require provider reconciliation.
+- Settled online payments must use the refund flow.
 
 ## Compensation
 

@@ -71,6 +71,7 @@ public class OrderService {
     private final GiftCardService giftCardService;
     private final LoyaltyPointService loyaltyPointService;
     private final PaymentRepository paymentRepository;
+    private final PaymentProviderCancellationService paymentProviderCancellationService;
 
     @Value("${rabbitmq.exchanges.notification}")
     private String notificationExchange;
@@ -334,16 +335,18 @@ public class OrderService {
         }
 
         paymentRepository.findByOrderId(orderId).ifPresent(payment -> {
-            if (payment.getProvider() != PaymentProvider.CASH
-                    && (PaymentStatus.PENDING.name().equals(payment.getStatus())
-                        || PaymentStatus.SUCCESS.name().equals(payment.getStatus()))) {
-                throw new IllegalArgumentException(
-                        "Online payment cancellation requires provider reconciliation; contact support");
+            if (PaymentStatus.SUCCESS.name().equals(payment.getStatus())) {
+                throw new IllegalArgumentException("A settled payment must use the refund flow");
             }
-            if (payment.getProvider() == PaymentProvider.CASH
-                    && PaymentStatus.PENDING.name().equals(payment.getStatus())) {
+            if (PaymentStatus.PENDING.name().equals(payment.getStatus())) {
+                if (payment.getProvider() != PaymentProvider.CASH) {
+                    var cancellation = paymentProviderCancellationService.cancel(payment);
+                    if (!cancellation.isSuccess()) {
+                        throw new IllegalArgumentException(cancellation.getMessage());
+                    }
+                }
                 payment.setStatus(PaymentStatus.FAILED.name());
-                payment.setFailureReason("Order cancelled before delivery");
+                payment.setFailureReason("Order cancelled before settlement or delivery");
                 payment.setUpdatedAt(LocalDateTime.now());
                 paymentRepository.save(payment);
             }

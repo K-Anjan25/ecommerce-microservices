@@ -124,6 +124,43 @@ public class StripePaymentClient implements PaymentProviderClient {
         }
     }
 
+    @Override
+    public ProviderPaymentResult cancel(Payment payment) {
+        String secretKey = paymentProviderProperties.getStripe().getSecretKey();
+        if (secretKey == null || secretKey.isBlank()) {
+            return ProviderPaymentResult.builder().success(false)
+                    .message("Stripe secret key is missing; payment intent was not cancelled").build();
+        }
+        if (payment.getTransactionId() == null || payment.getTransactionId().isBlank()) {
+            return ProviderPaymentResult.builder().success(false)
+                    .message("Stripe payment intent reference is missing").build();
+        }
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            headers.set(HttpHeaders.AUTHORIZATION, basicAuth(secretKey));
+            headers.set("Idempotency-Key", "cartly-cancel-" + payment.getOrderId());
+            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(
+                    new LinkedMultiValueMap<>(), headers);
+            ResponseEntity<Map> response = restTemplate.postForEntity(
+                    STRIPE_PAYMENT_INTENT_URL + "/" + payment.getTransactionId() + "/cancel",
+                    request, Map.class);
+            Map<String, Object> body = response.getBody();
+            String status = body == null ? null : String.valueOf(body.get("status"));
+            boolean cancelled = response.getStatusCode().is2xxSuccessful()
+                    && "canceled".equalsIgnoreCase(status);
+            return ProviderPaymentResult.builder().success(cancelled)
+                    .transactionId(payment.getTransactionId())
+                    .message(cancelled ? "Stripe payment intent cancelled"
+                            : "Stripe did not confirm payment intent cancellation").build();
+        } catch (Exception exception) {
+            log.error("Stripe cancellation failed for order {}", payment.getOrderId(), exception);
+            return ProviderPaymentResult.builder().success(false)
+                    .message("Stripe cancellation error: " + exception.getMessage()).build();
+        }
+    }
+
+
     private String basicAuth(String secretKey) {
         String token = secretKey + ":";
         return "Basic " + Base64.getEncoder().encodeToString(token.getBytes(StandardCharsets.UTF_8));
