@@ -1,140 +1,149 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1154" viewBox="0 0 1440 1154">
-<rect width="1440" height="1154" fill="#FBF9F4"/>
-<g id="frame-label" data-name="frame-label">
-<text x="32" y="32" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" fill="#221A16" text-anchor="start">07 · Commerce components &amp; semantic tokens</text>
-<text x="32" y="52" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" fill="#6B5E56" text-anchor="start">Brand foreground ≠ action fill · type roles · actions · product anatomy · states · layout rules</text>
-<text x="1408" y="32" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#74675F" text-anchor="end">1440 × 1080</text>
-<text x="1408" y="52" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#74675F" text-anchor="end">Cartly 3.0 · evidence-led commerce wireframe</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1176" viewBox="0 0 1440 1176">
+<rect width="1440" height="1176" fill="#FBF9F4"/>
+<text x="28" y="31" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" fill="#221A16" text-anchor="start">07 · Components &amp; semantic foundations</text>
+<text x="28" y="53" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#6B5E56" text-anchor="start">Editorial typography · restrained controls · product anatomy · truthful payment/credit states</text>
+<text x="1412" y="31" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#74675F" text-anchor="end">1440 × 1100</text>
+<text x="1412" y="53" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#74675F" text-anchor="end">Cartly Editorial · implementation-aligned · 24 Aug 2026</text>
+<g transform="translate(0 76)"><rect width="1440" height="1100" fill="#F4F0E8" stroke="#DAD0C3"/><text x="64" y="48" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="750" fill="#A4472D" text-anchor="start" letter-spacing="0.18em">FOUNDATIONS</text>
+<text x="64" y="86" font-family="Instrument Serif, Georgia, serif" font-size="34" font-weight="500" fill="#221A16" text-anchor="start">Editorial Warmth</text>
+<text x="64" y="114" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6B5E56" text-anchor="start">Cream canvas · espresso type · rust actions · muted brass detail</text>
+<g id="color-tokens" data-name="color-tokens">
+<g id="token-canvas" data-name="token-canvas">
+<rect x="64" y="150" width="134" height="64" rx="2" fill="#F4F0E8" stroke="#C2B5A5" stroke-width="1"/>
+<text x="64" y="236" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#221A16" text-anchor="start">canvas</text>
+<text x="64" y="252" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="500" fill="#74675F" text-anchor="start">#F4F0E8</text>
 </g>
-<g transform="translate(0 74)">
-<rect width="1440" height="1080" fill="#F4F0E8" stroke="#C2B5A5"/>
-<rect x="64" y="32" width="1312" height="150" rx="16" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
-<text x="84" y="60" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#74675F" text-anchor="start" letter-spacing="0.16em">COLOUR</text>
-<rect x="84" y="52" width="92" height="62" rx="12" fill="#A4472D" stroke="#C2B5A5" stroke-width="1"/>
-<text x="84" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#221A16" text-anchor="start">brand/600</text>
-<text x="84" y="146" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#74675F" text-anchor="start">#A4472D</text>
-<rect x="192" y="52" width="92" height="62" rx="12" fill="#F3E2D9" stroke="#C2B5A5" stroke-width="1"/>
-<text x="192" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#221A16" text-anchor="start">brand/100</text>
-<text x="192" y="146" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#74675F" text-anchor="start">#F3E2D9</text>
-<rect x="300" y="52" width="92" height="62" rx="12" fill="#C8A96B" stroke="#C2B5A5" stroke-width="1"/>
-<text x="300" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#221A16" text-anchor="start">accent/500</text>
-<text x="300" y="146" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#74675F" text-anchor="start">#C8A96B</text>
-<rect x="408" y="52" width="92" height="62" rx="12" fill="#221A16" stroke="#C2B5A5" stroke-width="1"/>
-<text x="408" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#221A16" text-anchor="start">ink/900</text>
-<text x="408" y="146" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#74675F" text-anchor="start">#221A16</text>
-<rect x="516" y="52" width="92" height="62" rx="12" fill="#6B5E56" stroke="#C2B5A5" stroke-width="1"/>
-<text x="516" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#221A16" text-anchor="start">ink/500</text>
-<text x="516" y="146" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#74675F" text-anchor="start">#6B5E56</text>
-<rect x="624" y="52" width="92" height="62" rx="12" fill="#74675F" stroke="#C2B5A5" stroke-width="1"/>
-<text x="624" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#221A16" text-anchor="start">ink/400</text>
-<text x="624" y="146" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#74675F" text-anchor="start">#74675F</text>
-<rect x="732" y="52" width="92" height="62" rx="12" fill="#F4F0E8" stroke="#C2B5A5" stroke-width="1"/>
-<text x="732" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#221A16" text-anchor="start">canvas</text>
-<text x="732" y="146" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#74675F" text-anchor="start">#F4F0E8</text>
-<rect x="840" y="52" width="92" height="62" rx="12" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
-<text x="840" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#221A16" text-anchor="start">paper</text>
-<text x="840" y="146" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#74675F" text-anchor="start">#FBF9F4</text>
-<rect x="948" y="52" width="92" height="62" rx="12" fill="#C2B5A5" stroke="#C2B5A5" stroke-width="1"/>
-<text x="948" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#221A16" text-anchor="start">line</text>
-<text x="948" y="146" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#74675F" text-anchor="start">#C2B5A5</text>
-<rect x="1056" y="52" width="92" height="62" rx="12" fill="#0E9F6E" stroke="#C2B5A5" stroke-width="1"/>
-<text x="1056" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#221A16" text-anchor="start">success</text>
-<text x="1056" y="146" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#74675F" text-anchor="start">#0E9F6E</text>
-<rect x="1164" y="52" width="92" height="62" rx="12" fill="#F0A020" stroke="#C2B5A5" stroke-width="1"/>
-<text x="1164" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#221A16" text-anchor="start">warning</text>
-<text x="1164" y="146" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#74675F" text-anchor="start">#F0A020</text>
-<rect x="1272" y="52" width="92" height="62" rx="12" fill="#E0334B" stroke="#C2B5A5" stroke-width="1"/>
-<text x="1272" y="132" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#221A16" text-anchor="start">danger</text>
-<text x="1272" y="146" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#74675F" text-anchor="start">#E0334B</text>
-<rect x="64" y="200" width="629.76" height="300" rx="16" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
-<text x="84" y="228" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#74675F" text-anchor="start" letter-spacing="0.16em">TYPE SCALE</text>
-<text x="84" y="250" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="30" font-weight="700" fill="#221A16" text-anchor="start">Display 56 / Instrument Serif</text>
-<text x="84" y="284" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="24" font-weight="700" fill="#221A16" text-anchor="start">H1 36 / Inter Tight 700</text>
-<text x="84" y="318" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" fill="#221A16" text-anchor="start">H2 28 / Inter Tight 700</text>
-<text x="84" y="352" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="700" fill="#221A16" text-anchor="start">H3 21 / Inter Tight 600</text>
-<text x="84" y="386" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="500" fill="#221A16" text-anchor="start">Body 15 / Inter 400</text>
-<text x="84" y="420" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#221A16" text-anchor="start">Small 13 / Inter 500</text>
-<text x="84" y="454" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#221A16" text-anchor="start">EYEBROW 11 / 700 · 0.16em</text>
-<rect x="720" y="200" width="656" height="300" rx="16" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
-<text x="740" y="228" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#74675F" text-anchor="start" letter-spacing="0.16em">ACTIONS &amp; INPUTS</text>
-<rect x="740" y="232" width="130" height="44" rx="10" fill="#A4472D" stroke="#A4472D" stroke-width="1"/>
-<text x="805" y="258" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FBF9F4" text-anchor="middle">Primary</text>
-<rect x="882" y="232" width="130" height="44" rx="10" fill="#221A16" stroke="#221A16" stroke-width="1"/>
-<text x="947" y="258" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#FBF9F4" text-anchor="middle">Dark</text>
-<rect x="1024" y="232" width="130" height="44" rx="10" fill="#C8A96B" stroke="#C8A96B" stroke-width="1"/>
-<text x="1089" y="258" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#221A16" text-anchor="middle">Accent</text>
-<rect x="1166" y="232" width="130" height="44" rx="10" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
-<text x="1231" y="258" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#221A16" text-anchor="middle">Ghost</text>
-<rect x="740" y="292" width="260" height="44" rx="10" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
-<text x="754" y="318" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" fill="#74675F" text-anchor="start">Text input</text>
-<rect x="1016" y="292" width="280" height="44" rx="10" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
-<text x="1030" y="318" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" fill="#74675F" text-anchor="start">Search with icon</text>
-<rect x="740" y="352" width="92" height="28" rx="14" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
-<text x="786" y="370" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#221A16" text-anchor="middle">Chip</text>
-<rect x="842" y="352" width="110" height="28" rx="14" fill="#F3E2D9" stroke="#F3E2D9" stroke-width="1"/>
-<text x="897" y="370" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#A4472D" text-anchor="middle">Chip · active</text>
-<rect x="962" y="352" width="84" height="28" rx="14" fill="#E0334B" stroke="#E0334B" stroke-width="1"/>
-<text x="1004" y="370" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#fff" text-anchor="middle">SALE</text>
-<rect x="1056" y="352" width="100" height="28" rx="14" fill="#E3F7EF" stroke="#E3F7EF" stroke-width="1"/>
-<text x="1106" y="370" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#0E9F6E" text-anchor="middle">In stock</text>
-<rect x="1166" y="352" width="110" height="28" rx="14" fill="#FDF1DC" stroke="#FDF1DC" stroke-width="1"/>
-<text x="1221" y="370" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#B07A16" text-anchor="middle">Low stock 3</text>
-<text x="740" y="410" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6B5E56" text-anchor="start">Radius: xs 6 · sm 10 · md 14 · lg 20 · xl 28 · pill</text>
-<text x="740" y="432" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6B5E56" text-anchor="start">Shadow: xs / sm / md / lg / brand</text>
-<text x="740" y="454" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6B5E56" text-anchor="start">Motion: 150ms ease-out (hover) · 240ms cubic-bezier(.21,1.02,.73,1) (enter)</text>
-<text x="740" y="476" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6B5E56" text-anchor="start">Focus: 2px brand/55 ring, 2px offset · respects prefers-reduced-motion</text>
-<rect x="64" y="520" width="419.84000000000003" height="520" rx="16" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
-<text x="84" y="548" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#74675F" text-anchor="start" letter-spacing="0.16em">PRODUCT CARD — ANATOMY</text>
-<rect x="104" y="566" width="339.84000000000003" height="380" rx="16" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
-<rect x="105" y="567" width="337.84000000000003" height="200" rx="15" fill="#E9E2D7" stroke="#C2B5A5" stroke-width="1"/>
-<path d="M105 767 L442.84000000000003 567" stroke="#C2B5A5" stroke-width="1"/>
-<path d="M105 567 L442.84000000000003 767" stroke="#C2B5A5" stroke-width="1"/>
-<text x="273.92" y="671" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#74675F" text-anchor="middle">4:3 cover</text>
-<rect x="116" y="578" width="60" height="22" rx="11" fill="#E0334B" stroke="#E0334B" stroke-width="1"/>
-<text x="146" y="593" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#fff" text-anchor="middle">SALE</text>
-<circle cx="417.84000000000003" cy="592" r="15" fill="#FBF9F4" stroke="#C2B5A5"/>
-<text x="417.84000000000003" y="597" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#6B5E56" text-anchor="middle">♡</text>
-<text x="120" y="796" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#74675F" text-anchor="start" letter-spacing="0.14em">BRAND</text>
-<text x="120" y="820" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#221A16" text-anchor="start">Product name, two lines max</text>
-<text x="120" y="846" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6B5E56" text-anchor="start">★★★★☆  4.6 (128)</text>
-<text x="120" y="880" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" fill="#221A16" text-anchor="start">₹2,499</text>
-<text x="200" y="880" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#74675F" text-anchor="start">₹3,699</text>
-<rect x="105" y="898" width="337.84000000000003" height="47" rx="15" fill="#221A16" stroke="#221A16" stroke-width="1"/>
-<text x="273.92" y="927" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#FBF9F4" text-anchor="middle">+  Add to cart   (hover / always on touch)</text>
-<rect x="510.08000000000004" y="520" width="419.84000000000003" height="520" rx="16" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
-<text x="530.08" y="548" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#74675F" text-anchor="start" letter-spacing="0.16em">STATES &amp; FEEDBACK</text>
-<rect x="530.08" y="566" width="379.84000000000003" height="120" rx="14" fill="#FBF9F4" stroke="#DAD0C3" stroke-width="1" stroke-dasharray="5 5"/>
-<text x="550.08" y="610" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" fill="#221A16" text-anchor="start">Empty state</text>
-<text x="550.08" y="630" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#6B5E56" text-anchor="start">Icon + one-line reason + one action</text>
-<rect x="550.08" y="644" width="120" height="32" rx="10" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
-<text x="610.08" y="664" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#221A16" text-anchor="middle">Browse shop</text>
-<rect x="530.08" y="702" width="379.84000000000003" height="110" rx="14" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
-<text x="550.08" y="730" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#221A16" text-anchor="start">Skeleton</text>
-<rect x="550.08" y="742" width="56" height="56" rx="10" fill="#E9E2D7" stroke="#C2B5A5" stroke-width="1"/>
-<path d="M550.08 798 L606.08 742" stroke="#C2B5A5" stroke-width="1"/>
-<path d="M550.08 742 L606.08 798" stroke="#C2B5A5" stroke-width="1"/>
-<text x="578.08" y="774" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#74675F" text-anchor="middle"></text>
-<rect x="618.08" y="754" width="180" height="7" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
-<rect x="618.08" y="770" width="180" height="7" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
-<rect x="618.08" y="786" width="108" height="7" rx="4" fill="#DAD0C3" stroke="none" stroke-width="1"/>
-<rect x="530.08" y="828" width="379.84000000000003" height="56" rx="12" fill="#FCE8EB" stroke="#F5C2CA" stroke-width="1"/>
-<text x="550.08" y="862" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#E0334B" text-anchor="start">Error - inline, never a blocking modal</text>
-<rect x="530.08" y="900" width="379.84000000000003" height="56" rx="12" fill="#221A16" stroke="#221A16" stroke-width="1"/>
-<text x="550.08" y="934" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#FBF9F4" text-anchor="start">Toast - bottom-right, 3s, single line</text>
-<rect x="956.1600000000001" y="520" width="419.84000000000003" height="520" rx="16" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
-<text x="976.1600000000001" y="548" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#74675F" text-anchor="start" letter-spacing="0.16em">LAYOUT RULES</text>
-<text x="976.1600000000001" y="570" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#6B5E56" text-anchor="start">· Container 1280 · gutters 16 / 32</text>
-<text x="976.1600000000001" y="600" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#6B5E56" text-anchor="start">· Grid 12 col desktop · 8 tablet · 4 mobile</text>
-<text x="976.1600000000001" y="630" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#6B5E56" text-anchor="start">· Card grid 4-up ≥1280 · 3-up ≥1024 · 2-up ≥640 · 1-up</text>
-<text x="976.1600000000001" y="660" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#6B5E56" text-anchor="start">· Vertical rhythm: 8pt · sections 48/64</text>
-<text x="976.1600000000001" y="690" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#6B5E56" text-anchor="start">· Sticky: header 68 · toolbar 56 · summary top-24</text>
-<text x="976.1600000000001" y="720" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#6B5E56" text-anchor="start">· Mobile bottom nav 62 + safe-area inset</text>
-<text x="976.1600000000001" y="750" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#6B5E56" text-anchor="start">· Max line length 68ch for body copy</text>
-<text x="976.1600000000001" y="780" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="500" fill="#6B5E56" text-anchor="start">· Touch target ≥ 44 × 44</text>
-<text x="976.1600000000001" y="830" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#221A16" text-anchor="start">Accessibility</text>
-<text x="976.1600000000001" y="856" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6B5E56" text-anchor="start">· Contrast ≥ 4.5:1 body / 3:1 large</text>
-<text x="976.1600000000001" y="880" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6B5E56" text-anchor="start">· Every icon-only button has aria-label</text>
-<text x="976.1600000000001" y="904" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6B5E56" text-anchor="start">· Focus ring visible on keyboard only</text>
-<text x="976.1600000000001" y="928" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#6B5E56" text-anchor="start">· Reduced-motion disables enter animations</text>
+<g id="token-paper" data-name="token-paper">
+<rect x="222" y="150" width="134" height="64" rx="2" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
+<text x="222" y="236" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#221A16" text-anchor="start">paper</text>
+<text x="222" y="252" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="500" fill="#74675F" text-anchor="start">#FBF9F4</text>
 </g>
+<g id="token-espresso" data-name="token-espresso">
+<rect x="380" y="150" width="134" height="64" rx="2" fill="#221A16" stroke="#C2B5A5" stroke-width="1"/>
+<text x="380" y="236" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#221A16" text-anchor="start">espresso</text>
+<text x="380" y="252" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="500" fill="#74675F" text-anchor="start">#221A16</text>
+</g>
+<g id="token-rust action" data-name="token-rust action">
+<rect x="538" y="150" width="134" height="64" rx="2" fill="#A4472D" stroke="#C2B5A5" stroke-width="1"/>
+<text x="538" y="236" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#221A16" text-anchor="start">rust action</text>
+<text x="538" y="252" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="500" fill="#74675F" text-anchor="start">#A4472D</text>
+</g>
+<g id="token-rust hover" data-name="token-rust hover">
+<rect x="696" y="150" width="134" height="64" rx="2" fill="#8E3823" stroke="#C2B5A5" stroke-width="1"/>
+<text x="696" y="236" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#221A16" text-anchor="start">rust hover</text>
+<text x="696" y="252" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="500" fill="#74675F" text-anchor="start">#8E3823</text>
+</g>
+<g id="token-muted brass" data-name="token-muted brass">
+<rect x="854" y="150" width="134" height="64" rx="2" fill="#C8A96B" stroke="#C2B5A5" stroke-width="1"/>
+<text x="854" y="236" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#221A16" text-anchor="start">muted brass</text>
+<text x="854" y="252" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="500" fill="#74675F" text-anchor="start">#C8A96B</text>
+</g>
+<g id="token-line" data-name="token-line">
+<rect x="1012" y="150" width="134" height="64" rx="2" fill="#DAD0C3" stroke="#C2B5A5" stroke-width="1"/>
+<text x="1012" y="236" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#221A16" text-anchor="start">line</text>
+<text x="1012" y="252" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="500" fill="#74675F" text-anchor="start">#DAD0C3</text>
+</g>
+<g id="token-success" data-name="token-success">
+<rect x="1170" y="150" width="134" height="64" rx="2" fill="#0E6F50" stroke="#C2B5A5" stroke-width="1"/>
+<text x="1170" y="236" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="700" fill="#221A16" text-anchor="start">success</text>
+<text x="1170" y="252" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="500" fill="#74675F" text-anchor="start">#0E6F50</text>
+</g>
+</g>
+<g id="type" data-name="type">
+<text x="64" y="314" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="750" fill="#A4472D" text-anchor="start" letter-spacing="0.18em">TYPE</text>
+<text x="64" y="362" font-family="Instrument Serif, Georgia, serif" font-size="39" font-weight="500" fill="#221A16" text-anchor="start">Beautiful things for everyday life</text>
+<text x="64" y="402" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#6B5E56" text-anchor="start">Instrument Serif · editorial display and wordmark</text>
+<text x="64" y="442" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="500" fill="#221A16" text-anchor="start">Inter supports operational UI, prices, forms and navigation.</text>
+<text x="64" y="470" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" fill="#6B5E56" text-anchor="start">Noto Sans Devanagari supports हिन्दी without changing hierarchy.</text>
+</g>
+<g id="actions-and-inputs" data-name="actions-and-inputs">
+<text x="760" y="314" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="750" fill="#A4472D" text-anchor="start" letter-spacing="0.18em">ACTIONS &amp; FIELDS</text>
+<g id="button-Primary action" data-name="button-Primary action">
+<rect x="760" y="340" width="150" height="42" rx="2" fill="#A4472D" stroke="#A4472D" stroke-width="1"/>
+<text x="835" y="365" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#FBF9F4" text-anchor="middle">Primary action</text>
+</g>
+<g id="button-Secondary" data-name="button-Secondary">
+<rect x="924" y="340" width="150" height="42" rx="2" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
+<text x="999" y="365" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#221A16" text-anchor="middle">Secondary</text>
+</g>
+<g id="button-Dark action" data-name="button-Dark action">
+<rect x="1088" y="340" width="150" height="42" rx="2" fill="#221A16" stroke="#221A16" stroke-width="1"/>
+<text x="1163" y="365" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#FBF9F4" text-anchor="middle">Dark action</text>
+</g>
+<g id="input-Field label / value" data-name="input-Field label / value">
+<rect x="760" y="404" width="478" height="42" rx="2" fill="#FBF9F4" stroke="#DAD0C3" stroke-width="1"/>
+<text x="772" y="429" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#74675F" text-anchor="start">Field label / value</text>
+</g>
+<g id="chip-Active" data-name="chip-Active">
+<rect x="760" y="466" width="72" height="28" rx="14" fill="#221A16" stroke="#221A16" stroke-width="1"/>
+<text x="796" y="484" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="650" fill="#FBF9F4" text-anchor="middle">Active</text>
+</g>
+<g id="chip-Category" data-name="chip-Category">
+<rect x="842" y="466" width="88" height="28" rx="14" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
+<text x="886" y="484" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="650" fill="#221A16" text-anchor="middle">Category</text>
+</g>
+<g id="chip-Low stock" data-name="chip-Low stock">
+<rect x="940" y="466" width="96" height="28" rx="14" fill="#FBF9F4" stroke="#C2B5A5" stroke-width="1"/>
+<text x="988" y="484" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="650" fill="#221A16" text-anchor="middle">Low stock</text>
+</g>
+</g>
+<line x1="64" y1="540" x2="1376" y2="540" stroke="#221A16"/>
+<g id="product-card-anatomy" data-name="product-card-anatomy">
+<text x="64" y="578" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="750" fill="#A4472D" text-anchor="start" letter-spacing="0.18em">PRODUCT CARD</text>
+<g id="product-card-1" data-name="product-card-1">
+<g id="merchant product image" data-name="merchant product image">
+<rect x="64" y="606" width="260" height="190" rx="2" fill="#E9E2D7" stroke="#C2B5A5" stroke-width="1"/>
+<line x1="64" y1="606" x2="324" y2="796" stroke="#C2B5A5"/>
+<line x1="324" y1="606" x2="64" y2="796" stroke="#C2B5A5"/>
+<text x="194" y="705" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#74675F" text-anchor="middle">merchant product image</text>
+</g>
+<text x="64" y="822" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="750" fill="#A4472D" text-anchor="start" letter-spacing="0.18em">MAKER / CATEGORY</text>
+<text x="64" y="848" font-family="Instrument Serif, Georgia, serif" font-size="16" font-weight="500" fill="#221A16" text-anchor="start">Considered everyday object</text>
+<text x="64" y="871" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#74675F" text-anchor="start">★ 4.7  ·  86 reviews</text>
+<text x="64" y="897" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="750" fill="#221A16" text-anchor="start">₹2,499</text>
+<g id="button-Add to cart" data-name="button-Add to cart">
+<rect x="64" y="912" width="260" height="36" rx="2" fill="#A4472D" stroke="#A4472D" stroke-width="1"/>
+<text x="194" y="934" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#FBF9F4" text-anchor="middle">Add to cart</text>
+</g>
+</g>
+<g id="note-1" data-name="note-1">
+<circle cx="354" cy="640" r="9" fill="#A4472D"/>
+<text x="354" y="644" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="750" fill="#FBF9F4" text-anchor="middle">1</text>
+<text x="369" y="644" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#8E3823" text-anchor="start">Merchant image, not editorial placeholder</text>
+</g>
+<g id="note-2" data-name="note-2">
+<circle cx="354" cy="708" r="9" fill="#A4472D"/>
+<text x="354" y="712" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="750" fill="#FBF9F4" text-anchor="middle">2</text>
+<text x="369" y="712" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#8E3823" text-anchor="start">Minimal metadata and one full-width action</text>
+</g>
+<g id="note-3" data-name="note-3">
+<circle cx="354" cy="782" r="9" fill="#A4472D"/>
+<text x="354" y="786" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="750" fill="#FBF9F4" text-anchor="middle">3</text>
+<text x="369" y="786" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="500" fill="#8E3823" text-anchor="start">No resting shadow, no stacked badge clutter</text>
+</g>
+</g>
+<g id="commerce-states" data-name="commerce-states">
+<text x="650" y="578" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="750" fill="#A4472D" text-anchor="start" letter-spacing="0.18em">TRUTHFUL COMMERCE STATES</text>
+<rect x="650" y="606" width="310" height="88" rx="2" fill="#E3F7EF" stroke="#0E6F50" stroke-width="1"/>
+<text x="670" y="635" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#0E6F50" text-anchor="start">Payment confirmed</text>
+<text x="670" y="660" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#6B5E56" text-anchor="start">Provider reports captured / succeeded</text>
+<rect x="974" y="606" width="310" height="88" rx="2" fill="#FDF1DC" stroke="#9A5A0A" stroke-width="1"/>
+<text x="994" y="635" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#9A5A0A" text-anchor="start">Confirmation pending</text>
+<text x="994" y="660" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#6B5E56" text-anchor="start">Initiated is not settled</text>
+<rect x="650" y="714" width="310" height="88" rx="2" fill="#F3E2D9" stroke="#A4472D" stroke-width="1"/>
+<text x="670" y="743" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#221A16" text-anchor="start">Gift-card wallet</text>
+<text x="670" y="768" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#6B5E56" text-anchor="start">Purchases disabled until capture exists</text>
+<rect x="974" y="714" width="310" height="88" rx="2" fill="#FBF9F4" stroke="#DAD0C3" stroke-width="1"/>
+<text x="994" y="743" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#221A16" text-anchor="start">Mixed-tender refund</text>
+<text x="994" y="768" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#6B5E56" text-anchor="start">Gift card first · provider remainder</text>
+</g>
+<g id="rules" data-name="rules">
+<line x1="650" y1="850" x2="1284" y2="850" stroke="#221A16"/>
+<text x="650" y="884" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="750" fill="#A4472D" text-anchor="start" letter-spacing="0.18em">LAYOUT RULES</text>
+<text x="650" y="918" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#221A16" text-anchor="start">• Image-led hierarchy; typography creates rhythm</text>
+<text x="650" y="946" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#221A16" text-anchor="start">• Small corner radii; pills only for compact choices/status</text>
+<text x="650" y="974" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#221A16" text-anchor="start">• No Browse rail or floating catalog toolbar</text>
+<text x="650" y="1002" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#221A16" text-anchor="start">• Checkout is enclosed; server owns every monetary amount</text>
+<text x="650" y="1030" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="500" fill="#221A16" text-anchor="start">• Focus, reduced motion, dark mode and en/hi are first-class</text>
+</g></g>
 </svg>

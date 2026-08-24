@@ -16,7 +16,7 @@
 | Piece | Size | State |
 |---|---|---|
 | Spring Boot services (4 + event-bus + common) | 275 files · ~10,600 LOC | CI green, Phases 6–9 done |
-| React storefront | 120 files · ~11,500 LOC | Fully redesigned (Cartly 2.0) |
+| React storefront | 120 files · ~11,500 LOC | Editorial Warmth implementation; portfolio/demo platform |
 | WordPress theme | 32 files · ~2,800 LOC | Renders on real WP; Woo untested |
 | Design kit (tokens, 7 wireframes, palettes) | — | **Front-end agnostic — survives any choice** |
 

@@ -1,5 +1,5 @@
 /**
- * Cartly 2.0 — design preview mock gateway (DEV ONLY).
+ * Cartly Editorial — design preview mock gateway (DEV ONLY).
  *
  * Serves just enough of the API-gateway surface (`:8889`) to review the new
  * frontend without booting Postgres/RabbitMQ/4 Spring Boot services. It is a

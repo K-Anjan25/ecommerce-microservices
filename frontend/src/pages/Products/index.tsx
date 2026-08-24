@@ -96,7 +96,7 @@ function Products() {
     if (inView) fetchNextPage();
   }, [inView, fetchNextPage]);
 
-  /* Navbar hand-offs: global search, category rail, mobile "Search" tab. */
+  /* Shell hand-offs: global search, category selection and mobile “Search” tab. */
   useEffect(() => {
     const state = location.state as
       | { search?: string; category?: string; focusSearch?: boolean }

@@ -1,11 +1,12 @@
 /**
- * Cartly 3.0 — commerce wireframe generator.
+ * Cartly Editorial — current implementation wireframes.
  *
- * Emits one SVG per screen into ./  (this folder). Every SVG is a single
- * artboard sized to a real Figma frame width, so dragging the file into Figma
- * produces an editable frame with named layers (rects, labels, groups).
+ * Source of truth for the seven SVG artboards in this directory. These frames
+ * intentionally mirror the shipped React storefront (2026-08-24): no category
+ * rail, no floating catalog toolbar, no violet/lime system, and no fake paid
+ * payment state before provider confirmation.
  *
- * Run:  node design/wireframes/generate.mjs
+ * Run: node design/wireframes/generate.mjs
  */
 import { writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -14,1105 +15,175 @@ import { fileURLToPath } from "node:url";
 const OUT = dirname(fileURLToPath(import.meta.url));
 mkdirSync(OUT, { recursive: true });
 
-/* ------------------------------------------------------------------ tokens */
 const C = {
-  paper: "#FBF9F4",
-  canvas: "#F4F0E8",
-  sunken: "#E9E2D7",
-  line: "#C2B5A5",
-  lineSoft: "#DAD0C3",
-  ink: "#221A16",
-  ink500: "#6B5E56",
-  ink400: "#74675F",
-  brand: "#A4472D",
-  brandSoft: "#F3E2D9",
-  accent: "#C8A96B",
-  danger: "#E0334B",
-  success: "#0E9F6E",
-  note: "#B0455A",
+  paper: "#FBF9F4", canvas: "#F4F0E8", sunken: "#E9E2D7",
+  line: "#DAD0C3", lineStrong: "#C2B5A5", ink: "#221A16",
+  muted: "#6B5E56", soft: "#74675F", rust: "#A4472D",
+  rustDark: "#8E3823", rustSoft: "#F3E2D9", brass: "#C8A96B",
+  success: "#0E6F50", warning: "#9A5A0A", danger: "#B3263E",
 };
-const F = `font-family="Inter, 'Helvetica Neue', Arial, sans-serif"`;
-
-/* ------------------------------------------------------------- primitives */
-const esc = (s) =>
-  String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
-const g = (name, children) =>
-  `<g id="${esc(name)}" data-name="${esc(name)}">\n${children.filter(Boolean).join("\n")}\n</g>`;
-
-const box = (x, y, w, h, o = {}) =>
-  `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${o.r ?? 10}" ` +
-  `fill="${o.fill ?? C.paper}" stroke="${o.stroke ?? C.line}" stroke-width="${o.sw ?? 1}"` +
-  `${o.dash ? ` stroke-dasharray="${o.dash}"` : ""}${o.opacity ? ` opacity="${o.opacity}"` : ""}/>`;
-
-const text = (x, y, s, o = {}) =>
-  `<text x="${x}" y="${y}" ${F} font-size="${o.size ?? 13}" font-weight="${o.weight ?? 500}" ` +
-  `fill="${o.fill ?? C.ink}" text-anchor="${o.anchor ?? "start"}"` +
-  `${o.tracking ? ` letter-spacing="${o.tracking}"` : ""}>${esc(s)}</text>`;
-
-/** grey placeholder text lines */
-const lines = (x, y, w, n, o = {}) =>
-  Array.from({ length: n }, (_, i) =>
-    box(x, y + i * (o.gap ?? 12), i === n - 1 && n > 1 ? w * 0.6 : w, o.h ?? 7, {
-      r: 4,
-      fill: o.fill ?? C.lineSoft,
-      stroke: "none",
-    })
-  ).join("\n");
-
-/** labelled placeholder area (the classic wireframe crossed box) */
-const imgBox = (x, y, w, h, label = "image", o = {}) =>
-  [
-    box(x, y, w, h, { r: o.r ?? 12, fill: C.sunken, stroke: C.line }),
-    `<path d="M${x} ${y + h} L${x + w} ${y}" stroke="${C.line}" stroke-width="1"/>`,
-    `<path d="M${x} ${y} L${x + w} ${y + h}" stroke="${C.line}" stroke-width="1"/>`,
-    text(x + w / 2, y + h / 2 + 4, label, { anchor: "middle", size: 11, fill: C.ink400 }),
-  ].join("\n");
-
-const pill = (x, y, w, h, label, o = {}) =>
-  [
-    box(x, y, w, h, { r: h / 2, fill: o.fill ?? C.paper, stroke: o.stroke ?? C.line }),
-    text(x + w / 2, y + h / 2 + 4, label, {
-      anchor: "middle",
-      size: o.size ?? 11,
-      weight: o.weight ?? 600,
-      fill: o.color ?? C.ink,
-    }),
-  ].join("\n");
-
+const BODY = `font-family="Inter, 'Helvetica Neue', Arial, sans-serif"`;
+const DISPLAY = `font-family="Instrument Serif, Georgia, serif"`;
+const esc = (value) => String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const group = (name, children) => `<g id="${esc(name)}" data-name="${esc(name)}">\n${children.filter(Boolean).join("\n")}\n</g>`;
+const rect = (x, y, w, h, options = {}) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${options.r ?? 2}" fill="${options.fill ?? C.paper}" stroke="${options.stroke ?? C.line}" stroke-width="${options.sw ?? 1}"${options.dash ? ` stroke-dasharray="${options.dash}"` : ""}${options.opacity ? ` opacity="${options.opacity}"` : ""}/>`;
+const text = (x, y, value, options = {}) => `<text x="${x}" y="${y}" ${options.display ? DISPLAY : BODY} font-size="${options.size ?? 13}" font-weight="${options.weight ?? 500}" fill="${options.fill ?? C.ink}" text-anchor="${options.anchor ?? "start"}"${options.tracking ? ` letter-spacing="${options.tracking}"` : ""}>${esc(value)}</text>`;
+const rule = (x1, y1, x2, y2, color = C.line) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}"/>`;
+const image = (x, y, w, h, label) => group(label, [rect(x, y, w, h, { fill: C.sunken, stroke: C.lineStrong }), rule(x, y, x + w, y + h, C.lineStrong), rule(x + w, y, x, y + h, C.lineStrong), text(x + w / 2, y + h / 2 + 4, label, { anchor: "middle", size: 11, fill: C.soft })]);
 const button = (x, y, w, h, label, kind = "primary") => {
-  const s = {
-    primary: { fill: C.brand, stroke: C.brand, color: C.paper },
-    dark: { fill: C.ink, stroke: C.ink, color: C.paper },
-    accent: { fill: C.accent, stroke: C.accent, color: C.ink },
-    ghost: { fill: C.paper, stroke: C.line, color: C.ink },
-  }[kind];
-  return [
-    box(x, y, w, h, { r: 10, fill: s.fill, stroke: s.stroke }),
-    text(x + w / 2, y + h / 2 + 4, label, {
-      anchor: "middle",
-      size: 12,
-      weight: 700,
-      fill: s.color,
-    }),
-  ].join("\n");
+  const style = kind === "primary" ? { fill: C.rust, stroke: C.rust, color: C.paper }
+    : kind === "dark" ? { fill: C.ink, stroke: C.ink, color: C.paper }
+    : { fill: C.paper, stroke: C.lineStrong, color: C.ink };
+  return group(`button-${label}`, [rect(x, y, w, h, { r: 2, fill: style.fill, stroke: style.stroke }), text(x + w / 2, y + h / 2 + 4, label, { anchor: "middle", size: 11, weight: 700, fill: style.color })]);
 };
+const input = (x, y, w, h, label) => group(`input-${label}`, [rect(x, y, w, h, { r: 2 }), text(x + 12, y + h / 2 + 4, label, { size: 11, fill: C.soft, weight: 400 })]);
+const chip = (x, y, w, label, active = false) => group(`chip-${label}`, [rect(x, y, w, 28, { r: 14, fill: active ? C.ink : C.paper, stroke: active ? C.ink : C.lineStrong }), text(x + w / 2, y + 18, label, { anchor: "middle", size: 10, weight: 650, fill: active ? C.paper : C.ink })]);
+const eyebrow = (x, y, value) => text(x, y, value.toUpperCase(), { size: 9, weight: 750, fill: C.rust, tracking: "0.18em" });
+const note = (x, y, number, value) => group(`note-${number}`, [`<circle cx="${x}" cy="${y}" r="9" fill="${C.rust}"/>`, text(x, y + 4, number, { anchor: "middle", size: 10, weight: 750, fill: C.paper }), text(x + 15, y + 4, value, { size: 10, fill: C.rustDark })]);
+const productCard = (x, y, w, index = 1) => group(`product-card-${index}`, [
+  image(x, y, w, 190, "merchant product image"),
+  eyebrow(x, y + 216, "Maker / category"),
+  text(x, y + 242, "Considered everyday object", { size: 16, display: true }),
+  text(x, y + 265, "★ 4.7  ·  86 reviews", { size: 10, fill: C.soft }),
+  text(x, y + 291, "₹2,499", { size: 15, weight: 750 }),
+  button(x, y + 306, w, 36, "Add to cart", index === 1 ? "primary" : "ghost"),
+]);
 
-const input = (x, y, w, h, placeholder) =>
-  [
-    box(x, y, w, h, { r: 10, fill: C.paper, stroke: C.line }),
-    text(x + 14, y + h / 2 + 4, placeholder, { size: 12, weight: 400, fill: C.ink400 }),
-  ].join("\n");
-
-/** red annotation callout with leader dot — the "why" of the rearrangement */
-const note = (x, y, n, msg) =>
-  [
-    `<circle cx="${x}" cy="${y}" r="9" fill="${C.note}"/>`,
-    text(x, y + 4, String(n), { anchor: "middle", size: 11, weight: 700, fill: "#fff" }),
-    text(x + 15, y + 4, msg, { size: 11, weight: 500, fill: C.note }),
-  ].join("\n");
-
-const sectionLabel = (x, y, s) =>
-  text(x, y, s.toUpperCase(), { size: 10, weight: 700, fill: C.ink400, tracking: "0.16em" });
-
-/* ------------------------------------------------------------------ frame */
-function frame({ name, w, h, title, subtitle, body }) {
-  const HEAD = 74;
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h + HEAD}" viewBox="0 0 ${w} ${h + HEAD}">
-<rect width="${w}" height="${h + HEAD}" fill="#FBF9F4"/>
-${g("frame-label", [
-  text(32, 32, title, { size: 18, weight: 700, fill: C.ink }),
-  text(32, 52, subtitle, { size: 12, weight: 400, fill: C.ink500 }),
-  text(w - 32, 32, `${w} × ${h}`, { anchor: "end", size: 11, weight: 600, fill: C.ink400 }),
-  text(w - 32, 52, "Cartly 3.0 · evidence-led commerce wireframe", { anchor: "end", size: 11, weight: 400, fill: C.ink400 }),
-])}
-<g transform="translate(0 ${HEAD})">
-<rect width="${w}" height="${h}" fill="${C.canvas}" stroke="${C.line}"/>
-${body}
-</g>
+function frame({ name, width, height, title, subtitle, body }) {
+  const head = 76;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height + head}" viewBox="0 0 ${width} ${height + head}">
+<rect width="${width}" height="${height + head}" fill="${C.paper}"/>
+${text(28, 31, title, { size: 18, weight: 700 })}
+${text(28, 53, subtitle, { size: 11, fill: C.muted, weight: 400 })}
+${text(width - 28, 31, `${width} × ${height}`, { anchor: "end", size: 10, fill: C.soft })}
+${text(width - 28, 53, "Cartly Editorial · implementation-aligned · 24 Aug 2026", { anchor: "end", size: 10, fill: C.soft })}
+<g transform="translate(0 ${head})"><rect width="${width}" height="${height}" fill="${C.canvas}" stroke="${C.line}"/>${body}</g>
 </svg>`;
   writeFileSync(join(OUT, `${name}.svg`), svg);
-  console.log(`  ✓ ${name}.svg  (${w}×${h + HEAD})`);
+  console.log(`✓ ${name}.svg`);
 }
 
-/* =================================================================== 01 shell
-   The global chrome: announcement · header · category rail · footer · mobile
-   bottom nav. This is the "rearranged pieces" contract every page inherits. */
-{
-  const W = 1440,
-    H = 900,
-    M = 80,
-    CW = W - M * 2;
-  const b = [];
-  // announcement
-  b.push(
-    g("announcement-bar", [
-      box(0, 0, W, 36, { r: 0, fill: C.ink, stroke: C.ink }),
-      text(W / 2, 23, "Free shipping over ₹999  ·  Flash sale ends in 04:12:56", {
-        anchor: "middle",
-        size: 11,
-        weight: 600,
-        fill: C.paper,
-      }),
-      text(W - M, 23, "✕", { anchor: "end", size: 11, fill: C.ink400 }),
-    ])
-  );
-  // header
-  const hy = 36;
-  b.push(
-    g("header", [
-      box(0, hy, W, 68, { r: 0, fill: C.paper, stroke: C.lineSoft }),
-      box(M, hy + 16, 38, 38, { r: 12, fill: C.ink, stroke: C.ink }),
-      text(M + 19, hy + 41, "C", { anchor: "middle", size: 16, weight: 700, fill: C.accent }),
-      text(M + 50, hy + 36, "CARTLY", { size: 18, weight: 700, tracking: "0.18em" }),
-      text(M + 50, hy + 50, "FIND IT · LOVE IT", { size: 7, weight: 700, fill: C.ink400, tracking: "0.18em" }),
-      // dominant visual search: product finding owns the widest header column
-      box(M + 238, hy + 12, 650, 46, { r: 14, fill: C.canvas, stroke: C.line }),
-      text(M + 266, hy + 40, "⌕  Search products, brands and categories", { size: 12, weight: 400, fill: C.ink400 }),
-      button(M + 806, hy + 18, 74, 34, "Search", "primary"),
-      // compact utility cluster
-      pill(W - M - 286, hy + 20, 62, 30, "◐  Theme"),
-      pill(W - M - 216, hy + 20, 62, 30, "⇄  Compare"),
-      pill(W - M - 146, hy + 20, 62, 30, "Account"),
-      button(W - M - 76, hy + 18, 76, 34, "Cart · 3", "dark"),
-    ])
-  );
-  // content slot
-  const cy = hy + 68 + 32;
-  b.push(
-    g("page-content-slot", [
-      box(M, cy, CW, 380, { r: 20, fill: C.paper, stroke: C.line, dash: "6 6" }),
-      text(W / 2, cy + 190, "PAGE CONTENT SLOT  ·  max-width 1280 · 12-col grid · 32px gutters", {
-        anchor: "middle",
-        size: 13,
-        weight: 600,
-        fill: C.ink400,
-      }),
-      // 12 col overlay
-      ...Array.from({ length: 12 }, (_, i) =>
-        box(M + 24 + i * ((CW - 48) / 12), cy + 24, (CW - 48) / 12 - 24, 332, {
-          r: 4,
-          fill: C.brand,
-          stroke: "none",
-          opacity: "0.05",
-        })
-      ),
-    ])
-  );
-  // footer
-  const fy = cy + 380 + 32;
-  b.push(
-    g("footer", [
-      box(0, fy, W, H - fy, { r: 0, fill: C.ink, stroke: C.ink }),
-      text(M, fy + 44, "CARTLY", { size: 16, weight: 700, fill: C.paper, tracking: "0.22em" }),
-      lines(M, fy + 60, 200, 2, { fill: "#2A2C36" }),
-      ...["Shop", "Account", "Support", "Company"].map((h2, i) =>
-        [
-          text(M + 340 + i * 180, fy + 40, h2, { size: 12, weight: 700, fill: C.paper }),
-          lines(M + 340 + i * 180, fy + 54, 96, 4, { fill: "#2A2C36", gap: 14 }),
-        ].join("\n")
-      ),
-      text(M, H - 24, "© 2026 Cartly · Spring Boot microservices", { size: 11, weight: 400, fill: C.ink400 }),
-      pill(W - M - 260, H - 40, 80, 24, "Visa", { fill: "#2A2C36", stroke: "#2A2C36", color: C.ink400 }),
-      pill(W - M - 172, H - 40, 80, 24, "UPI", { fill: "#2A2C36", stroke: "#2A2C36", color: C.ink400 }),
-      pill(W - M - 84, H - 40, 84, 24, "Razorpay", { fill: "#2A2C36", stroke: "#2A2C36", color: C.ink400 }),
-    ])
-  );
-  b.push(
-    g("annotations", [
-      note(M + 318, hy + 6, 1, "Search owns 650px and one baseline; navigation no longer competes for width"),
-      note(W - 470, fy - 16, 3, "Footer inverts to ink: clear end-of-page stop + trust badges"),
-    ])
-  );
-  frame({
-    name: "01-global-shell-desktop",
-    w: W,
-    h: H,
-    title: "01 · Global shell (desktop)",
-    subtitle: "Announcement · editorial header · content slot · inverse footer",
-    body: b.join("\n"),
-  });
+function shellHeader(width, margin, options = {}) {
+  const out = [];
+  if (!options.checkout) {
+    out.push(rect(0, 0, width, 34, { r: 0, fill: C.ink, stroke: C.ink }));
+    out.push(text(width / 2, 22, "Free shipping over ₹999  ·  The seasonal edit", { anchor: "middle", size: 10, fill: C.paper }));
+  }
+  const y = options.checkout ? 0 : 34;
+  out.push(rect(0, y, width, 72, { r: 0, fill: C.paper, stroke: C.line }));
+  out.push(text(margin, y + 43, "Cartly", { size: 27, display: true }));
+  if (options.checkout) {
+    out.push(text(width - margin, y + 40, "Secure checkout  ·  Need help?", { anchor: "end", size: 10, fill: C.muted }));
+  } else {
+    out.push(text(margin + 135, y + 41, "SHOP     DEALS     GIFT CARDS     REWARDS", { size: 10, weight: 700, tracking: "0.08em" }));
+    out.push(input(width - margin - 420, y + 17, 235, 38, "Search products, brands…  ⌘K"));
+    out.push(text(width - margin - 164, y + 42, "हि   ◐   Account", { size: 11, fill: C.muted }));
+    out.push(button(width - margin - 72, y + 18, 72, 36, "Bag · 3", "dark"));
+  }
+  return group(options.checkout ? "checkout-header" : "storefront-header", out);
 }
 
-/* ============================================================== 02 storefront */
+// 01 — shell
 {
-  const W = 1440,
-    H = 1860,
-    M = 80,
-    CW = W - M * 2;
-  const b = [];
-  b.push(box(0, 0, W, 152, { r: 0, fill: C.paper, stroke: C.lineSoft }));
-  b.push(text(M, 60, "GLOBAL SHELL (see frame 01)", { size: 11, weight: 600, fill: C.ink400 }));
-  b.push(box(M, 76, CW, 56, { r: 12, fill: C.canvas, stroke: C.line, dash: "5 5" }));
-  b.push(text(W / 2, 110, "editorial header · navigation · compact search", { anchor: "middle", size: 11, fill: C.ink400 }));
+  const W = 1440, H = 900, M = 80;
+  const body = [shellHeader(W, M),
+    group("page-content", [rect(M, 142, W - 2 * M, 390, { fill: C.paper, dash: "6 6" }), text(W / 2, 337, "PAGE CONTENT  ·  editorial sections on one continuous canvas", { anchor: "middle", size: 13, fill: C.soft })]),
+    group("footer", [rect(0, 572, W, 328, { r: 0, fill: C.ink, stroke: C.ink }), text(M, 628, "Cartly", { size: 28, display: true, fill: C.paper }), text(M, 656, "A considered collection for home and life.", { size: 11, fill: C.lineStrong }), ...["Shop", "Account", "Support"].flatMap((label, i) => [text(460 + i * 210, 626, label, { size: 11, weight: 750, fill: C.paper }), text(460 + i * 210, 651, "Four concise destination links", { size: 10, fill: C.lineStrong })]), text(M, 850, "© 2026 Cartly  ·  Curated for everyday  ·  Hyderabad, India", { size: 10, fill: C.lineStrong })]),
+    note(M + 40, 126, 1, "Typographic wordmark; no generic cart/app icon"),
+    note(700, 548, 2, "No category rail below the header"),
+  ].join("\n");
+  frame({ name: "01-global-shell-desktop", width: W, height: H, title: "01 · Global shell (desktop)", subtitle: "Announcement · editorial wordmark · concise nav · compact visual search · inverse footer", body });
+}
 
-  // HERO — split editorial
-  const hy = 184;
-  b.push(
-    g("hero", [
-      box(M, hy, CW * 0.56, 340, { r: 24, fill: C.ink, stroke: C.ink }),
-      sectionLabel(M + 40, hy + 48, "New season"),
-      text(M + 40, hy + 108, "Everything you", { size: 40, weight: 700, fill: C.paper }),
-      text(M + 40, hy + 154, "need, one cart.", { size: 40, weight: 400, fill: C.accent }),
-      lines(M + 40, hy + 184, 300, 2, { fill: "#2A2C36" }),
-      button(M + 40, hy + 232, 150, 44, "Shop the drop", "accent"),
-      button(M + 202, hy + 232, 130, 44, "View deals", "ghost"),
-      pill(M + 40, hy + 296, 210, 26, "★ 4.8 · 12,400 orders shipped", { fill: "#2A2C36", stroke: "#2A2C36", color: C.paper }),
-      imgBox(M + CW * 0.58, hy, CW * 0.42, 340, "hero product shot", { r: 24 }),
-      pill(M + CW * 0.58 + 20, hy + 20, 90, 26, "−32% off", { fill: C.danger, stroke: C.danger, color: "#fff" }),
-    ])
-  );
-
-  // confidence strip: operational facts, not generic marketing claims
-  const trustY = hy + 356;
-  b.push(g("confidence-strip", [
-    ...[["Free shipping", "Threshold shown early"], ["Delivery date", "Pincode-aware estimate"], ["Easy returns", "Policy beside purchase"], ["Secure checkout", "UPI · Cards · COD"]].map(([a, d], i) => {
-      const x = M + i * (CW / 4);
-      return [box(x, trustY, CW / 4 - 12, 66, { r: 14, fill: C.paper, stroke: C.line }), text(x + 18, trustY + 28, a, { size: 12, weight: 700 }), text(x + 18, trustY + 46, d, { size: 10, fill: C.ink400 })].join("\n");
-    })
+// 02 — storefront
+{
+  const W = 1440, H = 1870, M = 80, CW = W - 2 * M;
+  const b = [shellHeader(W, M)];
+  b.push(group("editorial-hero", [
+    rect(M, 142, 560, 420, { fill: C.paper, stroke: "none" }), eyebrow(M + 34, 194, "The seasonal edit"),
+    text(M + 34, 248, "Curated finds", { size: 48, display: true }), text(M + 34, 297, "for home & life.", { size: 48, display: true, fill: C.rust }),
+    text(M + 34, 344, "Thoughtful objects, honest materials and everyday", { size: 12, fill: C.muted }), text(M + 34, 364, "essentials selected to last.", { size: 12, fill: C.muted }),
+    button(M + 34, 405, 150, 42, "Shop the collection"), button(M + 196, 405, 130, 42, "Explore the edit", "ghost"),
+    text(M + 34, 516, "THE CARTLY EDIT  ·  VOL. 01", { size: 9, tracking: "0.16em", fill: C.soft }),
+    image(M + 560, 142, CW - 560, 420, "editorial campaign image"),
   ]));
-
-  // category tiles
-  const ty = trustY + 116;
-  b.push(
-    g("category-tiles", [
-      text(M, ty, "Shop by category", { size: 21, weight: 700 }),
-      text(W - M, ty, "See all →", { anchor: "end", size: 12, weight: 600, fill: C.brand }),
-      ...Array.from({ length: 6 }, (_, i) => {
-        const tw = (CW - 5 * 20) / 6;
-        const x = M + i * (tw + 20);
-        return [
-          imgBox(x, ty + 20, tw, 132, "", { r: 16 }),
-          text(x + tw / 2, ty + 176, ["Electronics", "Home", "Fashion", "Beauty", "Sports", "Toys"][i], {
-            anchor: "middle",
-            size: 12,
-            weight: 600,
-          }),
-        ].join("\n");
-      }),
-    ])
-  );
-
-  // toolbar + results
-  const ry = ty + 220;
-  b.push(
-    g("collection-heading", [
-      sectionLabel(M, ry + 12, "The collection"),
-      text(M, ry + 48, "All products", { size: 28, weight: 400 }),
-      text(W - M, ry + 46, "248 items", { anchor: "end", size: 11, fill: C.ink400 }),
-      box(M, ry + 66, CW, 1, { r: 0, fill: C.line, stroke: "none" }),
-    ])
-  );
-
-  // sidebar facets + grid
-  const gy = ry + 96;
-  const SW = 264;
-  b.push(
-    g("facet-sidebar", [
-      box(M, gy, SW, 520, { r: 16, fill: C.paper, stroke: C.line }),
-      text(M + 20, gy + 34, "Filters", { size: 15, weight: 700 }),
-      ...["Category", "Brand", "Price", "Rating", "Availability"].map((s, i) =>
-        [
-          text(M + 20, gy + 76 + i * 96, s, { size: 12, weight: 700 }),
-          lines(M + 20, gy + 90 + i * 96, SW - 40, 3, { gap: 16, h: 9 }),
-        ].join("\n")
-      ),
-    ])
-  );
-  const GX = M + SW + 28;
-  const GW = CW - SW - 28;
-  const cw = (GW - 3 * 24) / 4;
-  b.push(
-    g("product-grid", [
-      ...Array.from({ length: 8 }, (_, i) => {
-        const x = GX + (i % 4) * (cw + 24);
-        const y = gy + Math.floor(i / 4) * 388;
-        return g(`product-card-${i + 1}`, [
-          box(x, y, cw, 360, { r: 16, fill: C.paper, stroke: C.line }),
-          imgBox(x + 1, y + 1, cw - 2, 176, "product", { r: 15 }),
-          i % 3 === 0 ? pill(x + 12, y + 12, 56, 22, "SALE", { fill: C.danger, stroke: C.danger, color: "#fff", size: 10 }) : "",
-          `<circle cx="${x + cw - 24}" cy="${y + 24}" r="14" fill="${C.paper}" stroke="${C.line}"/>`,
-          text(x + cw - 24, y + 28, "♡", { anchor: "middle", size: 12, fill: C.ink500 }),
-          text(x + 14, y + 202, "BRAND", { size: 9, weight: 700, fill: C.ink400, tracking: "0.14em" }),
-          lines(x + 14, y + 212, cw - 28, 2, { gap: 13 }),
-          text(x + 14, y + 262, "★★★★☆  (128)", { size: 10, weight: 500, fill: C.ink500 }),
-          text(x + 14, y + 288, "₹2,499", { size: 16, weight: 700 }),
-          text(x + 86, y + 288, "₹3,699", { size: 11, weight: 400, fill: C.ink400 }),
-          
-          box(x + 1, y + 314, cw - 2, 45, { r: 15, fill: C.ink, stroke: C.ink }),
-          text(x + cw / 2, y + 342, "+  Add to cart", { anchor: "middle", size: 12, weight: 700, fill: C.paper }),
-        ]);
-      }),
-      button(GX + GW / 2 - 90, gy + 388 + 380, 180, 44, "Load more", "ghost"),
-    ])
-  );
-
-  b.push(
-    g("annotations", [
-      note(M + CW * 0.58 + 30, hy + 320, 1, "Hero replaces the plain page title — one clear entry point"),
-      note(M + 20, ty - 26, 2, "Category tiles surface the taxonomy above the fold"),
-      note(W - 430, ry - 14, 3, "No sticky toolbar: refinement stays in the quiet left column"),
-      note(GX + 10, gy - 18, 4, "Card: hover reveals full-width Add to cart; wishlist ♡ top-right; badges top-left"),
-    ])
-  );
-
-  frame({
-    name: "02-storefront-desktop",
-    w: W,
-    h: H,
-    title: "02 · Storefront / catalog (desktop)",
-    subtitle: "Hero → category tiles → sticky results toolbar → facet sidebar + 4-up product grid",
-    body: b.join("\n"),
-  });
+  b.push(group("trust-strip", [rule(M, 604, W - M, 604, C.lineStrong), ...["Free shipping · over ₹999", "7-day returns", "Secure checkout", "Dispatch in 24h"].map((label, i) => text(M + i * 320, 642, label, { size: 11, weight: 650 })), rule(M, 665, W - M, 665, C.line)]));
+  b.push(eyebrow(M, 720, "Browse the edit"), text(M, 758, "Shop by category", { size: 34, display: true }));
+  b.push(group("editorial-category-tiles", Array.from({ length: 4 }, (_, i) => {
+    const x = M + i * 320; return group(`category-tile-${i + 1}`, [image(x, 790, 292, i % 2 ? 205 : 250, "category photography"), text(x, i % 2 ? 1022 : 1067, ["Home", "Fashion", "Beauty", "Electronics"][i], { size: 19, display: true })]);
+  })));
+  b.push(eyebrow(M, 1142, "The collection"), text(M, 1180, "Objects worth keeping", { size: 34, display: true }));
+  b.push(text(W - M, 1178, "84 products     Sort: Newest", { anchor: "end", size: 11, fill: C.muted }));
+  b.push(group("catalog", [
+    group("facet-sidebar", [rule(M, 1212, M + 246, 1212, C.ink), eyebrow(M, 1240, "Refine"), text(M, 1275, "Category", { size: 12, weight: 700 }), chip(M, 1290, 56, "All", true), chip(M + 64, 1290, 82, "Home"), text(M, 1352, "Brand", { size: 12, weight: 700 }), text(M, 1380, "□ Studio maker              18", { size: 10, fill: C.muted }), text(M, 1405, "□ Cartly edit                 12", { size: 10, fill: C.muted }), text(M, 1452, "Price", { size: 12, weight: 700 }), input(M, 1470, 108, 34, "Min ₹"), input(M + 116, 1470, 108, 34, "Max ₹"), text(M, 1537, "Rating", { size: 12, weight: 700 }), text(M, 1565, "○ 4★ & up", { size: 10, fill: C.muted })]),
+    ...Array.from({ length: 3 }, (_, i) => productCard(M + 286 + i * 324, 1212, 292, i + 1)),
+  ]));
+  b.push(note(M + 650, 1116, 1, "No Browse rail and no floating/sticky search-filter toolbar"));
+  b.push(note(M + 530, 1810, 2, "Filters remain a quiet left column; merchant imagery leads"));
+  frame({ name: "02-storefront-desktop", width: W, height: H, title: "02 · Storefront / catalog (desktop)", subtitle: "Image-led editorial hero → trust → category stories → inline results header → facets + product grid", body: b.join("\n") });
 }
 
-/* ======================================================== 03 product detail */
+// 03 — product detail
 {
-  const W = 1440,
-    H = 1240,
-    M = 80,
-    CW = W - M * 2;
+  const W = 1440, H = 1260, M = 80;
+  const b = [shellHeader(W, M), text(M, 138, "Home  /  Collection  /  Considered everyday object", { size: 10, fill: C.soft })];
+  b.push(group("gallery", [image(M, 170, 650, 630, "merchant product gallery"), ...Array.from({ length: 4 }, (_, i) => image(M + i * 104, 820, 88, 88, `view ${i + 1}`))]));
+  b.push(group("buy-box", [eyebrow(790, 190, "Studio maker"), text(790, 238, "Considered everyday", { size: 40, display: true }), text(790, 278, "object", { size: 40, display: true }), text(790, 316, "★ 4.7  ·  86 reviews", { size: 11, fill: C.muted }), text(790, 362, "₹2,499", { size: 26, weight: 750 }), text(886, 360, "₹3,199", { size: 12, fill: C.soft }), rule(790, 388, 1280, 388), eyebrow(790, 426, "Choose a variation"), chip(790, 443, 76, "Natural", true), chip(875, 443, 64, "Black"), chip(948, 443, 72, "Walnut"), text(790, 510, "In stock  ·  dispatches within 24 hours", { size: 11, fill: C.success }), button(790, 540, 330, 48, "Add to bag"), button(1132, 540, 148, 48, "Compare", "ghost"), rule(790, 620, 1280, 620), text(790, 656, "Free delivery over ₹999", { size: 12, weight: 700 }), text(790, 678, "Standard and express rates shown before payment", { size: 10, fill: C.muted }), text(790, 718, "7-day returns", { size: 12, weight: 700 }), text(790, 740, "Refunded to original gift card and/or provider", { size: 10, fill: C.muted }), rule(790, 774, 1280, 774), eyebrow(790, 812, "Details"), text(790, 842, "Description     Materials & care     Reviews     Shipping", { size: 11, weight: 650 })]));
+  b.push(group("recommendations", [rule(M, 960, W - M, 960, C.ink), eyebrow(M, 998, "Complete the edit"), text(M, 1036, "Often chosen together", { size: 31, display: true }), ...Array.from({ length: 3 }, (_, i) => image(M + 450 + i * 265, 990, 235, 190, "related product"))]));
+  b.push(note(790, 162, 1, "Purchase facts stay beside the decision, not in hidden tabs"));
+  frame({ name: "03-product-detail-desktop", width: W, height: H, title: "03 · Product detail (desktop)", subtitle: "Merchant gallery · editorial buy box · variations · delivery/returns · long-form detail · related products", body: b.join("\n") });
+}
+
+// 04 — enclosed checkout
+{
+  const W = 1440, H = 1240, M = 120;
+  const b = [shellHeader(W, M, { checkout: true }), text(M, 112, "CART     DETAILS     CONFIRMATION", { size: 10, weight: 700, tracking: "0.12em" }), text(M, 164, "Checkout", { size: 40, display: true })];
+  const section = (y, n, title, subtitle) => group(`checkout-section-${n}`, [rule(M, y, 890, y, n === 1 ? C.ink : C.line), rect(M, y + 24, 28, 28, { fill: C.paper, stroke: C.ink }), text(M + 14, y + 43, n, { anchor: "middle", size: 11, weight: 700 }), text(M + 44, y + 45, title, { size: 22, display: true }), text(M + 44, y + 65, subtitle, { size: 10, fill: C.muted })]);
+  b.push(section(200, 1, "Delivery address", "Guest checkout supported; pincode required"), input(M + 44, 282, 310, 40, "State"), input(M + 366, 282, 310, 40, "District"), input(M + 44, 334, 632, 40, "Address"), input(M + 44, 386, 220, 40, "6-digit pincode"));
+  b.push(section(466, 2, "Delivery method", "Server rate for the selected pincode"), rect(M + 44, 544, 296, 72, { fill: C.rustSoft, stroke: C.rust }), text(M + 62, 572, "Standard  ·  3–5 days", { size: 11, weight: 700 }), text(M + 62, 596, "Free over threshold", { size: 10, fill: C.muted }), rect(M + 352, 544, 296, 72), text(M + 370, 572, "Express  ·  1–2 days", { size: 11, weight: 700 }), text(M + 370, 596, "₹100", { size: 10, fill: C.muted }));
+  b.push(section(648, 3, "Payment", "Provider initiation is not settlement"), rect(M + 44, 726, 296, 74, { fill: C.rustSoft, stroke: C.rust }), text(M + 62, 756, "Card / UPI", { size: 11, weight: 700 }), text(M + 62, 778, "Pending until signed provider confirmation", { size: 9, fill: C.muted }), rect(M + 352, 726, 296, 74), text(M + 370, 756, "Cash on delivery", { size: 11, weight: 700 }), text(M + 370, 778, "Pay the courier on arrival", { size: 9, fill: C.muted }));
+  b.push(section(832, 4, "Credits & extras", "All amounts validated and applied by commerce"), input(M + 44, 910, 250, 40, "Coupon code"), input(M + 306, 910, 250, 40, "Gift card code"), input(M + 568, 910, 108, 40, "Points"), text(M + 44, 982, "□ Gift wrap this order (+₹50)", { size: 11 }));
+  b.push(group("order-summary", [rule(970, 200, 1320, 200, C.ink), text(970, 238, "Order summary", { size: 27, display: true }), text(970, 282, "Subtotal (3 items)", { size: 11, fill: C.muted }), text(1320, 282, "₹3,420", { anchor: "end", size: 11, weight: 700 }), text(970, 318, "Coupon", { size: 11, fill: C.success }), text(1320, 318, "−₹200", { anchor: "end", size: 11, fill: C.success }), text(970, 354, "100 loyalty points", { size: 11, fill: C.success }), text(1320, 354, "−₹10", { anchor: "end", size: 11, fill: C.success }), text(970, 390, "Shipping", { size: 11, fill: C.muted }), text(1320, 390, "Free", { anchor: "end", size: 11 }), text(970, 426, "GST", { size: 11, fill: C.muted }), text(1320, 426, "₹577.80", { anchor: "end", size: 11 }), rule(970, 454, 1320, 454), text(970, 492, "Estimated total", { size: 12, weight: 700 }), text(1320, 492, "₹3,787.80", { anchor: "end", size: 23, display: true }), text(970, 530, "Gift-card balance is applied securely", { size: 9, fill: C.soft }), text(970, 548, "after tax; provider is charged only the remainder.", { size: 9, fill: C.soft }), button(970, 582, 350, 46, "Place order", "primary"), text(1145, 656, "Encrypted · authoritative server totals", { anchor: "middle", size: 9, fill: C.soft })]));
+  b.push(note(970, 178, 1, "Enclosed checkout removes storefront navigation and promotions"), note(M + 44, 1048, 2, "Coupon → loyalty → tax → gift-card tender → provider remainder"));
+  frame({ name: "04-cart-checkout-desktop", width: W, height: H, title: "04 · Cart → checkout (desktop)", subtitle: "Enclosed header · address · delivery · provider-confirmed payment · order-bound credits · summary", body: b.join("\n") });
+}
+
+// 05 — admin
+{
+  const W = 1440, H = 980, rail = 252;
+  const b = [group("admin-rail", [rect(0, 0, rail, H, { r: 0, fill: C.ink, stroke: C.ink }), text(28, 48, "Cartly", { size: 27, display: true, fill: C.paper }), eyebrow(28, 70, "Studio administration"), ...["Dashboard", "Orders", "Products", "Categories", "Coupons", "Returns", "Storefront", "Audit log", "Customers"].map((label, i) => group(`nav-${label}`, [rect(16, 100 + i * 48, 220, 36, { fill: i === 0 ? "#3A302A" : C.ink, stroke: "none" }), text(34, 123 + i * 48, label, { size: 11, weight: 650, fill: i === 0 ? C.paper : C.lineStrong })])), rule(16, 868, 236, 868, "#453932"), text(28, 905, "AK   Anjan K", { size: 11, weight: 700, fill: C.paper }), text(28, 928, "Super admin", { size: 9, fill: C.lineStrong })])];
+  b.push(group("admin-topbar", [rect(rail, 0, W - rail, 74, { r: 0, fill: C.paper, stroke: C.line }), text(rail + 32, 35, "Dashboard", { size: 24, display: true }), text(rail + 32, 55, "Admin console · 24 Aug 2026", { size: 9, fill: C.soft })]));
+  const x = rail + 32, y = 112, cardW = 258;
+  b.push(group("kpis", ["Revenue today|₹48,210", "Orders|126", "Average order|₹2,140", "Returns pending|7"].map((item, i) => { const [label, value] = item.split("|"); return group(`kpi-${i + 1}`, [rule(x + i * 276, y, x + i * 276 + cardW, y, C.ink), eyebrow(x + i * 276, y + 30, label), text(x + i * 276, y + 72, value, { size: 30, display: true })]); })));
+  b.push(group("analytics", [rect(x, 238, 650, 280), eyebrow(x + 22, 270, "Revenue · 7 days"), `<polyline points="${x + 28},470 ${x + 115},430 ${x + 205},446 ${x + 300},360 ${x + 395},386 ${x + 500},300 ${x + 620},326" fill="none" stroke="${C.rust}" stroke-width="3"/>`, rect(x + 674, 238, 430, 280), eyebrow(x + 698, 270, "Orders by status"), ...["Pending  18", "Paid  62", "Approved  31", "Returns  7"].map((label, i) => text(x + 698, 316 + i * 42, label, { size: 12, weight: 650 }))]));
+  b.push(group("operations-table", [rule(x, 570, W - 32, 570, C.ink), text(x, 610, "Recent orders", { size: 27, display: true }), text(W - 32, 607, "View all →", { anchor: "end", size: 10, fill: C.rust }), rect(x, 636, W - x - 32, 244), ...["ORDER", "CUSTOMER", "STATUS", "TOTAL", "PLACED"].map((label, i) => text(x + 18 + [0, 250, 520, 710, 880][i], 666, label, { size: 9, weight: 750, fill: C.soft })), ...Array.from({ length: 4 }, (_, row) => group(`order-row-${row + 1}`, [rule(x, 686 + row * 46, W - 32, 686 + row * 46), text(x + 18, 713 + row * 46, `#${["8A21F", "742BC", "19D0A", "55E81"][row]}`, { size: 10, weight: 700 }), text(x + 268, 713 + row * 46, ["Maya Rao", "Arun Shah", "Isha K", "Dev Patel"][row], { size: 10 }), text(x + 538, 713 + row * 46, ["PAID", "PENDING", "RETURN", "PAID"][row], { size: 9, fill: row === 2 ? C.warning : C.success }), text(x + 728, 713 + row * 46, ["₹3,420", "₹840", "₹1,299", "₹5,110"][row], { size: 10 })]))]));
+  b.push(note(x + 720, 94, 1, "Managers see only Dashboard, Orders and Returns"), note(x + 760, 916, 2, "Audit log captures privileged mutations including gift-card issuance"));
+  frame({ name: "05-admin-console-desktop", width: W, height: H, title: "05 · Admin console (desktop)", subtitle: "Separate ink shell · role-scoped nav · operational metrics · work queue · audit visibility", body: b.join("\n") });
+}
+
+// 06 — mobile flows
+{
+  const W = 1354, H = 940, phoneW = 390, phoneH = 844, gap = 52, top = 54;
+  const phone = (x, title, content) => group(title, [text(x, 30, title, { size: 13, weight: 700 }), rect(x, top, phoneW, phoneH, { r: 24, fill: C.paper, stroke: C.lineStrong }), ...content(x, top)]);
+  const status = (x, y) => [text(x + 18, y + 24, "9:41", { size: 9, weight: 700 }), text(x + 350, y + 24, "5G  100%", { anchor: "end", size: 8 })];
   const b = [];
-  b.push(box(0, 0, W, 116, { r: 0, fill: C.paper, stroke: C.lineSoft }));
-  b.push(box(M, 34, 36, 36, { r: 11, fill: C.ink, stroke: C.ink }));
-  b.push(text(M + 18, 58, "C", { anchor: "middle", size: 15, weight: 700, fill: C.accent }));
-  b.push(text(M + 48, 58, "CARTLY", { size: 17, weight: 700, tracking: "0.18em" }));
-  b.push(text(W - M, 58, "Secure checkout  ·  Need help?", { anchor: "end", size: 11, weight: 600, fill: C.ink500 }));
-  b.push(text(M, 152, "Home  >  Electronics  >  Headphones  >  Acme Studio Pro", { size: 11, weight: 500, fill: C.ink500 }));
-
-  const gy = 176;
-  const THUMB = 76;
-  const GALX = M + THUMB + 16;
-  const GALW = 520;
-  b.push(
-    g("gallery", [
-      ...Array.from({ length: 4 }, (_, i) => imgBox(M, gy + i * (THUMB + 12), THUMB, THUMB, "", { r: 10 })),
-      imgBox(GALX, gy, GALW, 390, "main image (4:3)", { r: 16 }),
-      pill(GALX + 16, gy + 16, 70, 26, "-32%", { fill: C.danger, stroke: C.danger, color: "#fff" }),
-    ])
-  );
-
-  /* buy box sits under the gallery-column x, to the right of it */
-  const bx = GALX + GALW + 44;
-  const RAILW = 280;
-  const sx = W - M - RAILW;
-  const bw = sx - bx - 36;
-
-  b.push(
-    g("buy-box", [
-      text(bx, gy + 14, "ACME", { size: 10, weight: 700, fill: C.ink400, tracking: "0.16em" }),
-      text(bx, gy + 46, "Acme Studio Pro", { size: 24, weight: 700 }),
-      text(bx, gy + 74, "Headphones", { size: 24, weight: 700 }),
-      text(bx, gy + 100, "4.6  ·  128 reviews", { size: 11, weight: 500, fill: C.ink500 }),
-
-      text(bx, gy + 146, "Rs 2,499", { size: 30, weight: 700 }),
-      text(bx + 152, gy + 146, "Rs 3,699", { size: 12, weight: 400, fill: C.ink400 }),
-      pill(bx + 222, gy + 128, 78, 24, "Save 32%", { fill: C.accent, stroke: C.accent, color: C.ink, size: 10 }),
-      text(bx, gy + 168, "Inclusive of all taxes", { size: 10, weight: 400, fill: C.ink400 }),
-
-      sectionLabel(bx, gy + 206, "Variant"),
-      ...["Black S", "Sand M", "Sage L"].map((c, i) =>
-        pill(bx + i * 102, gy + 218, 94, 32, c, i === 1 ? { fill: C.ink, stroke: C.ink, color: C.paper, size: 10 } : { size: 10 })
-      ),
-      pill(bx, gy + 268, 150, 24, "In stock · 12 left", { fill: "#E3F7EF", stroke: "#E3F7EF", color: C.success, size: 10 }),
-
-      /* CTA row */
-      box(bx, gy + 312, 100, 48, { r: 10, fill: C.paper, stroke: C.line }),
-      text(bx + 50, gy + 342, "-   1   +", { anchor: "middle", size: 13, weight: 700 }),
-      button(bx + 112, gy + 312, 140, 48, "Add to cart", "primary"),
-      pill(bx + 262, gy + 318, 44, 36, "Cmp", { size: 9 }),
-
-      pill(bx, gy + 376, 208, 30, "Price-drop alert (email me)", { size: 10 }),
-
-      /* delivery / trust panel */
-      box(bx, gy + 424, bw, 168, { r: 14, fill: C.paper, stroke: C.line }),
-      ...[
-        ["Free delivery over Rs 999", "Standard 4-6 days · express at checkout"],
-        ["7-day returns", "Request from order detail · refund to source"],
-        ["Secure checkout", "UPI · cards · Razorpay · cash on delivery"],
-        ["Gift wrap & gift cards", "Add a message at checkout"],
-      ].map(([t, c], i) =>
-        [
-          `<circle cx="${bx + 26}" cy="${gy + 452 + i * 40}" r="12" fill="${C.brandSoft}"/>`,
-          text(bx + 48, gy + 450 + i * 40, t, { size: 11, weight: 700 }),
-          text(bx + 48, gy + 464 + i * 40, c, { size: 9, weight: 400, fill: C.ink500 }),
-        ].join("\n")
-      ),
-    ])
-  );
-
-  b.push(
-    g("sticky-rail", [
-      box(sx, gy, RAILW, 250, { r: 16, fill: C.paper, stroke: C.line }),
-      sectionLabel(sx + 18, gy + 30, "Your selection"),
-      text(sx + 18, gy + 56, "Acme Studio Pro", { size: 13, weight: 700 }),
-      pill(sx + 18, gy + 68, 74, 22, "Sand M", { size: 9 }),
-      ...[
-        ["Unit price", "Rs 2,499"],
-        ["In cart", "1"],
-        ["Line total", "Rs 2,499"],
-      ].map(([k, v], i) =>
-        [
-          text(sx + 18, gy + 122 + i * 24, k, { size: 11, weight: i === 2 ? 700 : 500, fill: i === 2 ? C.ink : C.ink500 }),
-          text(sx + RAILW - 18, gy + 122 + i * 24, v, { anchor: "end", size: 11, weight: 700 }),
-        ].join("\n")
-      ),
-      button(sx + 18, gy + 186, RAILW - 36, 42, "Add to cart", "primary"),
-      text(sx + 18, gy + 244, "Earn 24 loyalty points", { size: 10, weight: 700, fill: C.brand }),
-
-      box(sx, gy + 274, RAILW, 224, { r: 16, fill: C.paper, stroke: C.line }),
-      sectionLabel(sx + 18, gy + 304, "Frequently bought together"),
-      ...Array.from({ length: 3 }, (_, i) =>
-        [
-          imgBox(sx + 18, gy + 320 + i * 60, 48, 48, "", { r: 10 }),
-          lines(sx + 78, gy + 334 + i * 60, RAILW - 100, 2, { gap: 13 }),
-        ].join("\n")
-      ),
-    ])
-  );
-
-  const ty2 = gy + 636;
-  b.push(
-    g("detail-tabs", [
-      box(M, ty2, CW, 268, { r: 16, fill: C.paper, stroke: C.line }),
-      ...["Description", "Specifications", "Reviews (128)", "Shipping & returns"].map((t, i) =>
-        pill(M + 20 + i * 168, ty2 + 18, 156, 32, t, i === 0 ? { fill: C.ink, stroke: C.ink, color: C.paper, size: 10 } : { size: 10 })
-      ),
-      lines(M + 20, ty2 + 86, CW - 320, 6, { gap: 20, h: 9 }),
-    ])
-  );
-
-  b.push(
-    g("annotations", [
-      note(M + 20, gy - 40, 1, "Variants are chips, not a dropdown; CTA row sits directly under the price"),
-      note(sx - 4, gy - 18, 2, "Sticky rail: live line total + cross-sell stay in view"),
-      note(M + 20, ty2 - 18, 3, "Long content moves into tabs (was one endless column)"),
-    ])
-  );
-
-  frame({
-    name: "03-product-detail-desktop",
-    w: W,
-    h: H,
-    title: "03 · Product detail (desktop)",
-    subtitle: "Thumb rail + gallery · buy box (variant chips) · sticky selection rail · tabs",
-    body: b.join("\n"),
-  });
+  b.push(phone(28, "A · Storefront", (x, y) => [...status(x, y), text(x + 20, y + 66, "Cartly", { size: 25, display: true }), text(x + 352, y + 64, "हि   Bag", { anchor: "end", size: 10 }), input(x + 20, y + 84, 350, 38, "Search products…"), image(x + 20, y + 142, 350, 250, "seasonal editorial image"), eyebrow(x + 38, y + 180, "The seasonal edit"), text(x + 38, y + 225, "Curated finds", { size: 31, display: true }), text(x + 38, y + 258, "for home & life.", { size: 31, display: true, fill: C.rust }), button(x + 38, y + 286, 126, 38, "Shop collection"), text(x + 20, y + 438, "Objects worth keeping", { size: 24, display: true }), image(x + 20, y + 460, 168, 150, "product"), image(x + 202, y + 460, 168, 150, "product"), text(x + 20, y + 638, "Shop      Search      Bag      Orders      You", { size: 9, weight: 650 }), rect(x, y + 784, phoneW, 60, { r: 0, fill: C.paper, stroke: C.line })]));
+  b.push(phone(28 + phoneW + gap, "B · Product", (x, y) => [...status(x, y), text(x + 20, y + 66, "‹  Product", { size: 12, weight: 700 }), image(x + 20, y + 88, 350, 310, "merchant gallery"), eyebrow(x + 20, y + 430, "Studio maker"), text(x + 20, y + 470, "Considered object", { size: 31, display: true }), text(x + 20, y + 505, "₹2,499     ★ 4.7", { size: 15, weight: 700 }), chip(x + 20, y + 532, 72, "Natural", true), chip(x + 100, y + 532, 62, "Black"), text(x + 20, y + 592, "Free delivery over ₹999", { size: 10, weight: 700 }), text(x + 20, y + 620, "7-day returns · refund to original tender", { size: 10, fill: C.muted }), rect(x, y + 766, phoneW, 78, { r: 0, fill: C.paper, stroke: C.line }), button(x + 20, y + 786, 350, 42, "Add to bag") ]));
+  b.push(phone(28 + 2 * (phoneW + gap), "C · Enclosed checkout", (x, y) => [...status(x, y), text(x + 20, y + 68, "Cartly", { size: 24, display: true }), text(x + 370, y + 65, "Secure", { anchor: "end", size: 9, fill: C.muted }), rule(x + 20, y + 88, x + 370, y + 88), text(x + 20, y + 126, "Checkout", { size: 31, display: true }), text(x + 20, y + 172, "1   Delivery address", { size: 13, weight: 700 }), input(x + 20, y + 190, 350, 38, "Address and pincode"), text(x + 20, y + 266, "2   Delivery method", { size: 13, weight: 700 }), rect(x + 20, y + 284, 350, 54, { fill: C.rustSoft, stroke: C.rust }), text(x + 34, y + 315, "Standard · Free", { size: 10, weight: 700 }), text(x + 20, y + 382, "3   Payment", { size: 13, weight: 700 }), rect(x + 20, y + 400, 350, 58), text(x + 34, y + 426, "Card / UPI", { size: 10, weight: 700 }), text(x + 34, y + 445, "Pending until provider confirms", { size: 8, fill: C.muted }), text(x + 20, y + 502, "4   Credits & extras", { size: 13, weight: 700 }), input(x + 20, y + 520, 350, 38, "Coupon · gift card · loyalty"), rect(x, y + 744, phoneW, 100, { r: 0, fill: C.paper, stroke: C.line }), text(x + 20, y + 776, "Total", { size: 10, fill: C.muted }), text(x + 370, y + 777, "₹3,787.80", { anchor: "end", size: 17, display: true }), button(x + 20, y + 792, 350, 38, "Place order") ]));
+  frame({ name: "06-mobile-flows", width: W, height: H, title: "06 · Mobile flows (390 × 844)", subtitle: "Editorial storefront with bottom nav · product decision · enclosed checkout with docked total", body: b.join("\n") });
 }
 
-/* ============================================================= 04 cart+checkout */
+// 07 — components
 {
-  const W = 1440,
-    H = 1180,
-    M = 80,
-    CW = W - M * 2;
-  const b = [];
-  b.push(box(0, 0, W, 116, { r: 0, fill: C.paper, stroke: C.lineSoft }));
-  b.push(box(M, 34, 36, 36, { r: 11, fill: C.ink, stroke: C.ink }));
-  b.push(text(M + 18, 58, "C", { anchor: "middle", size: 15, weight: 700, fill: C.accent }));
-  b.push(text(M + 48, 58, "CARTLY", { size: 17, weight: 700, tracking: "0.18em" }));
-  b.push(text(W - M, 58, "Secure checkout  ·  Need help?", { anchor: "end", size: 11, weight: 600, fill: C.ink500 }));
-
-  /* 3-step progress header — matches components/CheckoutSteps */
-  b.push(
-    g("checkout-stepper", [
-      ...["Cart", "Address & payment", "Confirmation"].map((s, i) => {
-        const x = M + i * 300;
-        const done = i === 0;
-        const active = i === 1;
-        return [
-          `<circle cx="${x + 14}" cy="162" r="14" fill="${done ? C.brand : active ? C.ink : C.paper}" stroke="${done ? C.brand : active ? C.ink : C.line}"/>`,
-          text(x + 14, 167, done ? "v" : String(i + 1), {
-            anchor: "middle", size: 11, weight: 700, fill: done || active ? "#fff" : C.ink400,
-          }),
-          text(x + 38, 167, s, { size: 13, weight: active ? 700 : 500, fill: active ? C.ink : done ? C.brand : C.ink400 }),
-          i < 2 ? box(x + 190, 161, 90, 2, { r: 1, fill: i === 0 ? C.brand : C.line, stroke: "none" }) : "",
-        ].join("\n");
-      }),
-    ])
-  );
-
-  b.push(text(M, 214, "STEP 2 OF 3", { size: 10, weight: 700, fill: C.ink400, tracking: "0.16em" }));
-  b.push(text(M, 246, "Checkout", { size: 28, weight: 700 }));
-
-  const cy = 274;
-  const RAILW = 340;
-  const sx = W - M - RAILW;
-  const MAINW = sx - M - 28;
-
-  /** numbered section header */
-  const secHead = (y, n, title, sub) =>
-    [
-      `<circle cx="${M + 40}" cy="${y + 26}" r="15" fill="${C.ink}"/>`,
-      text(M + 40, y + 31, String(n), { anchor: "middle", size: 11, weight: 700, fill: "#fff" }),
-      text(M + 66, y + 24, title, { size: 14, weight: 700 }),
-      sub ? text(M + 66, y + 40, sub, { size: 10, weight: 400, fill: C.ink400 }) : "",
-    ].join("\n");
-
-  /* 1 · delivery address */
-  let y = cy;
-  b.push(
-    g("s1-address", [
-      box(M, y, MAINW, 250, { r: 16, fill: C.paper, stroke: C.line }),
-      secHead(y, 1, "Delivery address", "Guest checkout - no account needed"),
-      box(M + 24, y + 72, MAINW - 48, 52, { r: 10, fill: C.canvas, stroke: C.line }),
-      text(M + 40, y + 94, "Use saved address", { size: 11, weight: 700 }),
-      text(M + 40, y + 110, "12 Rose Lane, Hyderabad, Telangana", { size: 10, weight: 400, fill: C.ink500 }),
-      text(M + MAINW - 40, y + 102, "Apply", { anchor: "end", size: 10, weight: 700, fill: C.brand }),
-      input(M + 24, y + 136, (MAINW - 60) / 2, 40, "State"),
-      input(M + 36 + (MAINW - 60) / 2, y + 136, (MAINW - 60) / 2, 40, "District"),
-      input(M + 24, y + 186, MAINW - 48, 40, "Delivery pincode"),
-    ])
-  );
-
-  /* 2 · delivery method */
-  y += 266;
-  b.push(
-    g("s2-delivery", [
-      box(M, y, MAINW, 146, { r: 16, fill: C.paper, stroke: C.line }),
-      secHead(y, 2, "Delivery method", "Rate quoted for your pincode"),
-      ...[
-        ["Standard", "3-5 working days", "Free"],
-        ["Express", "1-2 working days", "Rs 100"],
-      ].map(([t, c, p], i) => {
-        const x = M + 24 + i * ((MAINW - 60) / 2 + 12);
-        const w2 = (MAINW - 60) / 2;
-        const active = i === 0;
-        return [
-          box(x, y + 72, w2, 56, { r: 10, fill: active ? C.brandSoft : C.paper, stroke: active ? C.brand : C.line }),
-          `<circle cx="${x + 26}" cy="${y + 100}" r="13" fill="${active ? C.brand : C.sunken}"/>`,
-          text(x + 48, y + 96, t, { size: 11, weight: 700 }),
-          text(x + 48, y + 112, c, { size: 9, weight: 400, fill: C.ink500 }),
-          text(x + w2 - 14, y + 100, p, { anchor: "end", size: 11, weight: 700 }),
-        ].join("\n");
-      }),
-    ])
-  );
-
-  /* 3 · payment */
-  y += 162;
-  b.push(
-    g("s3-payment", [
-      box(M, y, MAINW, 146, { r: 16, fill: C.paper, stroke: C.line }),
-      secHead(y, 3, "Payment", "Razorpay will open to complete your payment"),
-      ...[
-        ["Card / UPI", "Razorpay"],
-        ["Cash on delivery", "Pay the courier on arrival"],
-      ].map(([t, c], i) => {
-        const x = M + 24 + i * ((MAINW - 60) / 2 + 12);
-        const w2 = (MAINW - 60) / 2;
-        const active = i === 0;
-        return [
-          box(x, y + 72, w2, 56, { r: 10, fill: active ? C.brandSoft : C.paper, stroke: active ? C.brand : C.line }),
-          `<circle cx="${x + 26}" cy="${y + 100}" r="13" fill="${active ? C.brand : C.sunken}"/>`,
-          text(x + 48, y + 96, t, { size: 11, weight: 700 }),
-          text(x + 48, y + 112, c, { size: 9, weight: 400, fill: C.ink500 }),
-        ].join("\n");
-      }),
-    ])
-  );
-
-  /* 4 · credits & extras */
-  y += 162;
-  b.push(
-    g("s4-credits", [
-      box(M, y, MAINW, 150, { r: 16, fill: C.paper, stroke: C.line }),
-      secHead(y, 4, "Credits & extras", "Coupons, gift cards, loyalty and gift wrap in one row"),
-      input(M + 24, y + 72, MAINW - 160, 42, "Coupon / gift card code"),
-      button(M + MAINW - 128, y + 72, 104, 42, "Apply", "primary"),
-      box(M + 24, y + 126, 14, 14, { r: 4, fill: C.brand, stroke: C.brand }),
-      text(M + 46, y + 137, "Gift wrap this order (+Rs 50)", { size: 11, weight: 500, fill: C.ink500 }),
-    ])
-  );
-
-  /* 5 · review (collapsed) */
-  y += 166;
-  b.push(
-    g("s5-review", [
-      box(M, y, MAINW, 78, { r: 16, fill: C.paper, stroke: C.line }),
-      `<circle cx="${M + 40}" cy="${y + 39}" r="15" fill="${C.sunken}"/>`,
-      text(M + 40, y + 44, "3", { anchor: "middle", size: 11, weight: 700, fill: C.ink }),
-      text(M + 66, y + 34, "Review items", { size: 14, weight: 700 }),
-      text(M + 66, y + 50, "Show what you're buying (collapsed by default)", { size: 10, weight: 400, fill: C.ink400 }),
-      text(M + MAINW - 32, y + 45, "v", { anchor: "end", size: 14, weight: 700, fill: C.ink400 }),
-    ])
-  );
-
-  /* sticky summary */
-  b.push(
-    g("order-summary-sticky", [
-      box(sx, cy, RAILW, 430, { r: 16, fill: C.paper, stroke: C.line }),
-      text(sx + 20, cy + 36, "Order summary", { size: 15, weight: 700 }),
-      ...[
-        ["Subtotal (3 items)", "Rs 7,497"],
-        ["Coupon SAVE10", "-Rs 749"],
-        ["Shipping", "FREE"],
-        ["Tax (GST 18%)", "Rs 1,214"],
-        ["Gift wrap", "Rs 49"],
-      ].map(([k, v], i) =>
-        [
-          text(sx + 20, cy + 76 + i * 30, k, { size: 12, weight: 500, fill: i === 1 ? C.success : C.ink500 }),
-          text(sx + RAILW - 20, cy + 76 + i * 30, v, { anchor: "end", size: 12, weight: 700, fill: i === 1 || i === 2 ? C.success : C.ink }),
-        ].join("\n")
-      ),
-      box(sx + 20, cy + 244, RAILW - 40, 1, { r: 0, fill: C.line, stroke: "none" }),
-      text(sx + 20, cy + 278, "Total", { size: 16, weight: 700 }),
-      text(sx + RAILW - 20, cy + 280, "Rs 7,891", { anchor: "end", size: 22, weight: 700 }),
-      button(sx + 20, cy + 300, RAILW - 40, 50, "Pay Rs 7,891", "primary"),
-      text(sx + RAILW / 2, cy + 374, "256-bit secure · PCI compliant", { anchor: "middle", size: 10, weight: 500, fill: C.ink400 }),
-      ...["Visa", "Mastercard", "UPI", "COD"].map((m, i) =>
-        pill(sx + 22 + i * 78, cy + 388, 72, 22, m, { size: 9, color: C.ink500 })
-      ),
-    ])
-  );
-
-  b.push(
-    g("annotations", [
-      note(M + 20, 130, 1, "Enclosed checkout removes store navigation; logo remains the safe exit"),
-      note(sx, cy - 20, 2, "Summary is sticky - total always visible, CTA never off-screen"),
-      note(M + 20, y + 100, 3, "Coupon / gift card / loyalty / gift wrap collapse into one credits section"),
-    ])
-  );
-
-  frame({
-    name: "04-cart-checkout-desktop",
-    w: W,
-    h: H,
-    title: "04 · Cart -> checkout (desktop, single flow)",
-    subtitle: "3-step header · numbered sections (address / delivery / payment / credits / review) · sticky summary",
-    body: b.join("\n"),
-  });
+  const W = 1440, H = 1100, M = 64;
+  const b = [eyebrow(M, 48, "Foundations"), text(M, 86, "Editorial Warmth", { size: 34, display: true }), text(M, 114, "Cream canvas · espresso type · rust actions · muted brass detail", { size: 11, fill: C.muted })];
+  const swatches = [["canvas", C.canvas], ["paper", C.paper], ["espresso", C.ink], ["rust action", C.rust], ["rust hover", C.rustDark], ["muted brass", C.brass], ["line", C.line], ["success", C.success]];
+  b.push(group("color-tokens", swatches.map(([label, color], i) => { const x = M + i * 158; return group(`token-${label}`, [rect(x, 150, 134, 64, { fill: color, stroke: C.lineStrong }), text(x, 236, label, { size: 9, weight: 700 }), text(x, 252, color, { size: 8, fill: C.soft })]); })));
+  b.push(group("type", [eyebrow(M, 314, "Type"), text(M, 362, "Beautiful things for everyday life", { size: 39, display: true }), text(M, 402, "Instrument Serif · editorial display and wordmark", { size: 10, fill: C.muted }), text(M, 442, "Inter supports operational UI, prices, forms and navigation.", { size: 14 }), text(M, 470, "Noto Sans Devanagari supports हिन्दी without changing hierarchy.", { size: 13, fill: C.muted })]));
+  b.push(group("actions-and-inputs", [eyebrow(760, 314, "Actions & fields"), button(760, 340, 150, 42, "Primary action"), button(924, 340, 150, 42, "Secondary", "ghost"), button(1088, 340, 150, 42, "Dark action", "dark"), input(760, 404, 478, 42, "Field label / value"), chip(760, 466, 72, "Active", true), chip(842, 466, 88, "Category"), chip(940, 466, 96, "Low stock") ]));
+  b.push(rule(M, 540, W - M, 540, C.ink));
+  b.push(group("product-card-anatomy", [eyebrow(M, 578, "Product card"), productCard(M, 606, 260, 1), note(M + 290, 640, 1, "Merchant image, not editorial placeholder"), note(M + 290, 708, 2, "Minimal metadata and one full-width action"), note(M + 290, 782, 3, "No resting shadow, no stacked badge clutter") ]));
+  b.push(group("commerce-states", [eyebrow(650, 578, "Truthful commerce states"), rect(650, 606, 310, 88, { fill: "#E3F7EF", stroke: C.success }), text(670, 635, "Payment confirmed", { size: 12, weight: 700, fill: C.success }), text(670, 660, "Provider reports captured / succeeded", { size: 9, fill: C.muted }), rect(974, 606, 310, 88, { fill: "#FDF1DC", stroke: C.warning }), text(994, 635, "Confirmation pending", { size: 12, weight: 700, fill: C.warning }), text(994, 660, "Initiated is not settled", { size: 9, fill: C.muted }), rect(650, 714, 310, 88, { fill: C.rustSoft, stroke: C.rust }), text(670, 743, "Gift-card wallet", { size: 12, weight: 700 }), text(670, 768, "Purchases disabled until capture exists", { size: 9, fill: C.muted }), rect(974, 714, 310, 88), text(994, 743, "Mixed-tender refund", { size: 12, weight: 700 }), text(994, 768, "Gift card first · provider remainder", { size: 9, fill: C.muted })]));
+  b.push(group("rules", [rule(650, 850, 1284, 850, C.ink), eyebrow(650, 884, "Layout rules"), text(650, 918, "• Image-led hierarchy; typography creates rhythm", { size: 11 }), text(650, 946, "• Small corner radii; pills only for compact choices/status", { size: 11 }), text(650, 974, "• No Browse rail or floating catalog toolbar", { size: 11 }), text(650, 1002, "• Checkout is enclosed; server owns every monetary amount", { size: 11 }), text(650, 1030, "• Focus, reduced motion, dark mode and en/hi are first-class", { size: 11 })]));
+  frame({ name: "07-component-sheet", width: W, height: H, title: "07 · Components & semantic foundations", subtitle: "Editorial typography · restrained controls · product anatomy · truthful payment/credit states", body: b.join("\n") });
 }
-
-/* ============================================================ 05 admin console */
-{
-  const W = 1440,
-    H = 960;
-  const b = [];
-  const RAIL = 248;
-  b.push(
-    g("admin-rail", [
-      box(0, 0, RAIL, H, { r: 0, fill: C.ink, stroke: C.ink }),
-      text(24, 44, "CARTLY", { size: 14, weight: 700, fill: C.paper, tracking: "0.22em" }),
-      pill(24, 60, 84, 20, "ADMIN", { fill: C.brand, stroke: C.brand, color: "#fff", size: 9 }),
-      ...["Dashboard", "Orders", "Products", "Categories", "Coupons", "Returns", "Customers", "Settings"].map((s, i) => {
-        const y = 116 + i * 44;
-        const active = i === 0;
-        return [
-          active ? box(12, y, RAIL - 24, 38, { r: 10, fill: "#221F3D", stroke: "#221F3D" }) : "",
-          `<rect x="24" y="${y + 13}" width="12" height="12" rx="3" fill="${active ? C.accent : "#3A3D47"}"/>`,
-          text(48, y + 24, s, { size: 13, weight: active ? 700 : 500, fill: active ? C.paper : C.ink400 }),
-        ].join("\n");
-      }),
-      box(12, H - 96, RAIL - 24, 72, { r: 12, fill: "#16171D", stroke: "#2A2C36" }),
-      `<circle cx="42" cy="${H - 60}" r="16" fill="#2A2C36"/>`,
-      text(68, H - 64, "Anjan K", { size: 12, weight: 700, fill: C.paper }),
-      text(68, H - 48, "Super admin", { size: 10, weight: 400, fill: C.ink400 }),
-    ])
-  );
-
-  const X = RAIL + 32;
-  const CW = W - X - 32;
-  b.push(
-    g("admin-topbar", [
-      box(RAIL, 0, W - RAIL, 68, { r: 0, fill: C.paper, stroke: C.lineSoft }),
-      text(X, 34, "Dashboard", { size: 18, weight: 700 }),
-      text(X, 52, "Overview · last 7 days", { size: 11, weight: 400, fill: C.ink400 }),
-      box(W - 520, 18, 240, 32, { r: 16, fill: C.canvas, stroke: C.line }),
-      text(W - 500, 39, "Search orders, products...", { size: 11, weight: 400, fill: C.ink400 }),
-      pill(W - 268, 18, 110, 32, "Last 7 days ▾"),
-      button(W - 148, 18, 116, 32, "+ New product", "primary"),
-    ])
-  );
-
-  // KPI row
-  const ky = 100;
-  const kw = (CW - 3 * 20) / 4;
-  b.push(
-    g("kpi-cards", [
-      ...[
-        ["Revenue today", "₹48,210", "+12.4%"],
-        ["Orders", "126", "+8"],
-        ["Avg order value", "₹2,140", "−3.1%"],
-        ["Returns pending", "7", "action"],
-      ].map(([k, v, d], i) => {
-        const x = X + i * (kw + 20);
-        return [
-          box(x, ky, kw, 116, { r: 16, fill: C.paper, stroke: C.line }),
-          text(x + 20, ky + 32, k, { size: 11, weight: 600, fill: C.ink400 }),
-          text(x + 20, ky + 72, v, { size: 26, weight: 700 }),
-          pill(x + 20, ky + 84, 76, 22, d, {
-            fill: i === 3 ? "#FDF1DC" : i === 2 ? C.sunken : "#E3F7EF",
-            stroke: "none",
-            size: 9,
-            color: i === 3 ? "#B07A16" : i === 2 ? C.ink500 : C.success,
-          }),
-        ].join("\n");
-      }),
-    ])
-  );
-
-  // chart + status
-  const chy = ky + 140;
-  b.push(
-    g("revenue-chart", [
-      box(X, chy, CW * 0.62, 280, { r: 16, fill: C.paper, stroke: C.line }),
-      text(X + 20, chy + 34, "Revenue · 7 days", { size: 14, weight: 700 }),
-      ...Array.from({ length: 7 }, (_, i) => {
-        const bw2 = 44;
-        const gap = (CW * 0.62 - 40 - 7 * bw2) / 6;
-        const h = [120, 88, 150, 104, 178, 140, 196][i];
-        return box(X + 20 + i * (bw2 + gap), chy + 250 - h, bw2, h, {
-          r: 8,
-          fill: i === 6 ? C.brand : C.brandSoft,
-          stroke: "none",
-        });
-      }),
-    ])
-  );
-  b.push(
-    g("orders-by-status", [
-      box(X + CW * 0.64, chy, CW * 0.36, 280, { r: 16, fill: C.paper, stroke: C.line }),
-      text(X + CW * 0.64 + 20, chy + 34, "Orders by status", { size: 14, weight: 700 }),
-      ...["Pending 18", "Paid 64", "Shipped 31", "Delivered 12", "Refunded 3"].map((s, i) =>
-        [
-          text(X + CW * 0.64 + 20, chy + 74 + i * 40, s.split(" ")[0], { size: 12, weight: 600 }),
-          box(X + CW * 0.64 + 100, chy + 62 + i * 40, [70, 220, 130, 54, 18][i], 16, {
-            r: 8,
-            fill: [C.accent, C.brand, "#7C5CFF", C.success, C.danger][i],
-            stroke: "none",
-          }),
-          text(X + CW - 20, chy + 74 + i * 40, s.split(" ")[1], { anchor: "end", size: 11, weight: 700, fill: C.ink500 }),
-        ].join("\n")
-      ),
-    ])
-  );
-
-  // table
-  const ty3 = chy + 304;
-  b.push(
-    g("recent-orders-table", [
-      box(X, ty3, CW, H - ty3 - 32, { r: 16, fill: C.paper, stroke: C.line }),
-      text(X + 20, ty3 + 34, "Recent orders", { size: 14, weight: 700 }),
-      text(X + CW - 20, ty3 + 34, "View all →", { anchor: "end", size: 11, weight: 600, fill: C.brand }),
-      box(X + 1, ty3 + 50, CW - 2, 34, { r: 0, fill: C.canvas, stroke: "none" }),
-      ...["Order", "Customer", "Items", "Total", "Status", "Placed"].map((h2, i) =>
-        text(X + 20 + i * ((CW - 40) / 6), ty3 + 72, h2, { size: 10, weight: 700, fill: C.ink400, tracking: "0.1em" })
-      ),
-      ...Array.from({ length: 4 }, (_, r) =>
-        Array.from({ length: 6 }, (_, c) =>
-          c === 4
-            ? pill(X + 20 + c * ((CW - 40) / 6), ty3 + 96 + r * 38, 78, 22, ["Paid", "Shipped", "Pending", "Paid"][r], {
-                fill: C.sunken,
-                stroke: "none",
-                size: 9,
-              })
-            : lines(X + 20 + c * ((CW - 40) / 6), ty3 + 104 + r * 38, 92, 1)
-        ).join("\n")
-      ),
-    ])
-  );
-
-  b.push(
-    g("annotations", [
-      note(RAIL + 12, H - 130, 1, "Ink rail replaces the light sidebar — admin reads instantly as a different mode"),
-      note(X + 10, ky - 16, 2, "KPIs first, then trend, then work queue (orders) — decreasing abstraction"),
-    ])
-  );
-
-  frame({
-    name: "05-admin-console-desktop",
-    w: W,
-    h: H,
-    title: "05 · Admin console (desktop)",
-    subtitle: "Ink nav rail · topbar w/ scope + search · KPI row · revenue chart · status split · order table",
-    body: b.join("\n"),
-  });
-}
-
-/* ================================================================ 06 mobile */
-{
-  const SW2 = 390,
-    SH = 844,
-    GAP = 46;
-  const screens = 3;
-  const W = SW2 * screens + GAP * (screens + 1),
-    H = SH + 96;
-  const parts = [];
-
-  const shell = (ox, label) => {
-    const oy = 48;
-    return { ox, oy, chrome: [
-      box(ox, oy, SW2, SH, { r: 28, fill: C.canvas, stroke: C.line }),
-      text(ox + SW2 / 2, oy - 14, label, { anchor: "middle", size: 12, weight: 700, fill: C.ink500 }),
-      // status bar
-      text(ox + 22, oy + 26, "9:41", { size: 11, weight: 700 }),
-      text(ox + SW2 - 22, oy + 26, "5G  100%", { anchor: "end", size: 10, fill: C.ink500 }),
-    ]};
-  };
-
-  /* --- A: storefront --- */
-  {
-    const { ox, oy, chrome } = shell(GAP, "A · Storefront");
-    const p = [...chrome];
-    p.push(box(ox, oy + 40, SW2, 56, { r: 0, fill: C.paper, stroke: C.lineSoft }));
-    p.push(text(ox + 18, oy + 74, "CARTLY", { size: 14, weight: 700, tracking: "0.2em" }));
-    p.push(text(ox + SW2 - 66, oy + 76, "♡", { size: 16, fill: C.ink500 }));
-    p.push(text(ox + SW2 - 32, oy + 76, "☰", { size: 16, fill: C.ink500 }));
-    p.push(box(ox + 16, oy + 108, SW2 - 32, 42, { r: 21, fill: C.paper, stroke: C.line }));
-    p.push(text(ox + 40, oy + 134, "Search products...", { size: 12, weight: 400, fill: C.ink400 }));
-    p.push(
-      ...["All", "Electronics", "Home", "Fashion"].map((c, i) =>
-        pill(ox + 16 + i * 88, oy + 162, 80, 30, c, i === 0 ? { fill: C.ink, stroke: C.ink, color: C.paper, size: 10 } : { size: 10 })
-      )
-    );
-    p.push(box(ox + 16, oy + 206, SW2 - 32, 132, { r: 18, fill: C.ink, stroke: C.ink }));
-    p.push(text(ox + 34, oy + 254, "Everything you", { size: 20, weight: 700, fill: C.paper }));
-    p.push(text(ox + 34, oy + 278, "need, one cart.", { size: 20, weight: 400, fill: C.accent }));
-    p.push(button(ox + 34, oy + 294, 120, 32, "Shop now", "accent"));
-    // 2-up grid
-    for (let i = 0; i < 4; i++) {
-      const cw2 = (SW2 - 48) / 2;
-      const x = ox + 16 + (i % 2) * (cw2 + 16);
-      const y = oy + 356 + Math.floor(i / 2) * 220;
-      p.push(box(x, y, cw2, 204, { r: 14, fill: C.paper, stroke: C.line }));
-      p.push(imgBox(x + 1, y + 1, cw2 - 2, 116, "", { r: 13 }));
-      p.push(lines(x + 10, y + 130, cw2 - 20, 2, { gap: 12 }));
-      p.push(text(x + 10, y + 178, "₹2,499", { size: 13, weight: 700 }));
-      p.push(`<circle cx="${x + cw2 - 22}" cy="${y + 172}" r="14" fill="${C.brand}"/>`);
-      p.push(text(x + cw2 - 22, y + 177, "+", { anchor: "middle", size: 13, weight: 700, fill: "#fff" }));
-    }
-    // bottom nav
-    p.push(box(ox, oy + SH - 74, SW2, 74, { r: 0, fill: C.paper, stroke: C.lineSoft }));
-    ["Shop", "Search", "Cart", "Orders", "You"].forEach((s, i) => {
-      const x = ox + 20 + i * ((SW2 - 40) / 5);
-      const w2 = (SW2 - 40) / 5;
-      p.push(`<rect x="${x + w2 / 2 - 11}" y="${oy + SH - 58}" width="22" height="22" rx="6" fill="${i === 0 ? C.brand : C.ink200 ?? "#C9CCD5"}"/>`);
-      p.push(text(x + w2 / 2, oy + SH - 22, s, { anchor: "middle", size: 10, weight: i === 0 ? 700 : 500, fill: i === 0 ? C.brand : C.ink400 }));
-      if (i === 2) {
-        p.push(`<circle cx="${x + w2 / 2 + 12}" cy="${oy + SH - 58}" r="8" fill="${C.danger}"/>`);
-        p.push(text(x + w2 / 2 + 12, oy + SH - 54, "3", { anchor: "middle", size: 9, weight: 700, fill: "#fff" }));
-      }
-    });
-    parts.push(g("mobile-storefront", p));
-  }
-
-  /* --- B: product detail --- */
-  {
-    const { ox, oy, chrome } = shell(GAP * 2 + SW2, "B · Product detail");
-    const p = [...chrome];
-    p.push(text(ox + 20, oy + 74, "←", { size: 18, weight: 700 }));
-    p.push(text(ox + SW2 - 60, oy + 76, "♡", { size: 16, fill: C.ink500 }));
-    p.push(text(ox + SW2 - 28, oy + 76, "Share", { size: 15, fill: C.ink500 }));
-    p.push(imgBox(ox, oy + 92, SW2, 300, "gallery · swipe", { r: 0 }));
-    p.push(pill(ox + SW2 / 2 - 30, oy + 368, 60, 14, "o  .  .  .", { fill: "#FBF9F4CC", stroke: "none", size: 8 }));
-    p.push(box(ox, oy + 380, SW2, SH - 380 - 96, { r: 24, fill: C.paper, stroke: C.line }));
-    p.push(text(ox + 20, oy + 414, "ACME", { size: 9, weight: 700, fill: C.ink400, tracking: "0.16em" }));
-    p.push(text(ox + 20, oy + 440, "Acme Studio Pro", { size: 19, weight: 700 }));
-    p.push(text(ox + 20, oy + 462, "★★★★☆ 4.6 · 128 reviews", { size: 11, weight: 500, fill: C.ink500 }));
-    p.push(text(ox + 20, oy + 498, "₹2,499", { size: 24, weight: 700 }));
-    p.push(text(ox + 108, oy + 498, "₹3,699", { size: 12, weight: 400, fill: C.ink400 }));
-    p.push(pill(ox + 168, oy + 482, 64, 22, "−32%", { fill: C.accent, stroke: C.accent, size: 10 }));
-    p.push(sectionLabel(ox + 20, oy + 532, "Variant"));
-    p.push(...["S", "M", "L"].map((s, i) => pill(ox + 20 + i * 62, oy + 544, 54, 32, s, i === 1 ? { fill: C.ink, stroke: C.ink, color: C.paper } : {})));
-    p.push(pill(ox + 20, oy + 592, 140, 24, "In stock · 12 left", { fill: "#E3F7EF", stroke: "none", color: C.success, size: 10 }));
-    p.push(lines(ox + 20, oy + 632, SW2 - 40, 4, { gap: 16, h: 8 }));
-    // sticky buy bar
-    p.push(box(ox, oy + SH - 96, SW2, 96, { r: 0, fill: C.paper, stroke: C.line }));
-    p.push(text(ox + 20, oy + SH - 56, "₹2,499", { size: 18, weight: 700 }));
-    p.push(text(ox + 20, oy + SH - 38, "Free delivery Fri", { size: 10, weight: 400, fill: C.ink500 }));
-    p.push(button(ox + 130, oy + SH - 74, 110, 44, "Add", "ghost"));
-    p.push(button(ox + 250, oy + SH - 74, 120, 44, "Buy now", "primary"));
-    parts.push(g("mobile-pdp", p));
-  }
-
-  /* --- C: cart / checkout --- */
-  {
-    const { ox, oy, chrome } = shell(GAP * 3 + SW2 * 2, "C · Cart → checkout");
-    const p = [...chrome];
-    p.push(text(ox + 20, oy + 74, "←", { size: 18, weight: 700 }));
-    p.push(text(ox + SW2 / 2, oy + 76, "Checkout", { anchor: "middle", size: 14, weight: 700 }));
-    // stepper
-    ["Cart", "Details", "Done"].forEach((s, i) => {
-      const x = ox + 24 + i * 118;
-      const active = i <= 1;
-      p.push(`<circle cx="${x + 10}" cy="${oy + 116}" r="10" fill="${active ? C.brand : C.paper}" stroke="${active ? C.brand : C.line}"/>`);
-      p.push(text(x + 10, oy + 120, String(i + 1), { anchor: "middle", size: 9, weight: 700, fill: active ? "#fff" : C.ink400 }));
-      p.push(text(x + 26, oy + 120, s, { size: 11, weight: active ? 700 : 500, fill: active ? C.ink : C.ink400 }));
-      if (i < 2) p.push(box(x + 68, oy + 115, 42, 2, { r: 1, fill: C.line, stroke: "none" }));
-    });
-    // items
-    p.push(box(ox + 16, oy + 142, SW2 - 32, 172, { r: 16, fill: C.paper, stroke: C.line }));
-    p.push(text(ox + 32, oy + 172, "3 items", { size: 12, weight: 700 }));
-    p.push(text(ox + SW2 - 32, oy + 172, "Edit", { anchor: "end", size: 11, weight: 600, fill: C.brand }));
-    for (let i = 0; i < 2; i++) {
-      const y = oy + 188 + i * 60;
-      p.push(imgBox(ox + 32, y, 48, 48, "", { r: 10 }));
-      p.push(lines(ox + 92, y + 12, 150, 2, { gap: 13 }));
-      p.push(text(ox + SW2 - 32, y + 30, "₹2,499", { anchor: "end", size: 12, weight: 700 }));
-    }
-    // address
-    p.push(box(ox + 16, oy + 328, SW2 - 32, 104, { r: 16, fill: C.paper, stroke: C.line }));
-    p.push(text(ox + 32, oy + 358, "Deliver to · Home", { size: 12, weight: 700 }));
-    p.push(text(ox + SW2 - 32, oy + 358, "Change", { anchor: "end", size: 11, weight: 600, fill: C.brand }));
-    p.push(lines(ox + 32, oy + 374, 220, 3, { gap: 15 }));
-    // credits
-    p.push(box(ox + 16, oy + 446, SW2 - 32, 84, { r: 16, fill: C.paper, stroke: C.line }));
-    p.push(text(ox + 32, oy + 476, "Coupon · gift card · points", { size: 12, weight: 700 }));
-    p.push(input(ox + 32, oy + 488, SW2 - 150, 34, "Enter code"));
-    p.push(button(ox + SW2 - 108, oy + 488, 76, 34, "Apply", "ghost"));
-    // summary
-    p.push(box(ox + 16, oy + 544, SW2 - 32, 150, { r: 16, fill: C.paper, stroke: C.line }));
-    [["Subtotal", "₹7,497"], ["Discount", "−₹749"], ["Shipping", "Free"], ["Tax", "₹1,214"]].forEach(([k, v], i) => {
-      p.push(text(ox + 32, oy + 578 + i * 24, k, { size: 11, weight: 500, fill: C.ink500 }));
-      p.push(text(ox + SW2 - 32, oy + 578 + i * 24, v, { anchor: "end", size: 11, weight: 600 }));
-    });
-    p.push(text(ox + 32, oy + 678, "Total", { size: 13, weight: 700 }));
-    p.push(text(ox + SW2 - 32, oy + 678, "₹7,891", { anchor: "end", size: 15, weight: 700 }));
-    // sticky pay bar
-    p.push(box(ox, oy + SH - 90, SW2, 90, { r: 0, fill: C.paper, stroke: C.line }));
-    p.push(button(ox + 16, oy + SH - 72, SW2 - 32, 50, "Pay ₹7,891", "primary"));
-    p.push(text(ox + SW2 / 2, oy + SH - 12, "Secure · guest checkout supported", { anchor: "middle", size: 9, fill: C.ink400 }));
-    parts.push(g("mobile-checkout", p));
-  }
-
-  parts.push(
-    g("annotations", [
-      note(GAP + 12, SH + 74, 1, "Persistent bottom tab bar replaces the hamburger for the 5 core jobs"),
-      note(GAP * 2 + SW2 + 12, SH + 74, 2, "Sticky buy bar keeps price + CTA docked"),
-      note(GAP * 3 + SW2 * 2 + 12, SH + 74, 3, "One-screen checkout, sticky pay bar"),
-    ])
-  );
-
-  frame({
-    name: "06-mobile-flows",
-    w: W,
-    h: H,
-    title: "06 · Mobile (390 × 844)",
-    subtitle: "Storefront · product detail · cart→checkout — bottom tab bar + sticky action bars",
-    body: parts.join("\n"),
-  });
-}
-
-/* ========================================================= 07 component sheet */
-{
-  const W = 1440,
-    H = 1080,
-    M = 64;
-  const b = [];
-  const panel = (x, y, w, h, title) =>
-    [box(x, y, w, h, { r: 16, fill: C.paper, stroke: C.line }), sectionLabel(x + 20, y + 28, title)].join("\n");
-
-  // colours
-  b.push(panel(M, 32, W - M * 2, 150, "Colour"));
-  const swatches = [
-    ["brand/600", C.brand], ["brand/100", C.brandSoft], ["accent/500", C.accent],
-    ["ink/900", C.ink], ["ink/500", C.ink500], ["ink/400", C.ink400],
-    ["canvas", C.canvas], ["paper", C.paper], ["line", C.line],
-    ["success", C.success], ["warning", "#F0A020"], ["danger", C.danger],
-  ];
-  swatches.forEach(([n, c], i) => {
-    const x = M + 20 + i * 108;
-    b.push(box(x, 52, 92, 62, { r: 12, fill: c, stroke: C.line }));
-    b.push(text(x, 132, n, { size: 10, weight: 700 }));
-    b.push(text(x, 146, c, { size: 9, weight: 400, fill: C.ink400 }));
-  });
-
-  // type
-  b.push(panel(M, 200, (W - M * 2) * 0.48, 300, "Type scale"));
-  [
-    ["Display 56 / Instrument Serif", 30],
-    ["H1 36 / Inter Tight 700", 24],
-    ["H2 28 / Inter Tight 700", 20],
-    ["H3 21 / Inter Tight 600", 17],
-    ["Body 15 / Inter 400", 14],
-    ["Small 13 / Inter 500", 12],
-    ["EYEBROW 11 / 700 · 0.16em", 10],
-  ].forEach(([s, sz], i) => b.push(text(M + 20, 250 + i * 34, s, { size: sz, weight: i < 4 ? 700 : 500 })));
-
-  // buttons/inputs
-  const px = M + (W - M * 2) * 0.5;
-  const pw = (W - M * 2) * 0.5;
-  b.push(panel(px, 200, pw, 300, "Actions & inputs"));
-  b.push(button(px + 20, 232, 130, 44, "Primary", "primary"));
-  b.push(button(px + 162, 232, 130, 44, "Dark", "dark"));
-  b.push(button(px + 304, 232, 130, 44, "Accent", "accent"));
-  b.push(button(px + 446, 232, 130, 44, "Ghost", "ghost"));
-  b.push(input(px + 20, 292, 260, 44, "Text input"));
-  b.push(input(px + 296, 292, 280, 44, "Search with icon"));
-  b.push(pill(px + 20, 352, 92, 28, "Chip"));
-  b.push(pill(px + 122, 352, 110, 28, "Chip · active", { fill: C.brandSoft, stroke: C.brandSoft, color: C.brand }));
-  b.push(pill(px + 242, 352, 84, 28, "SALE", { fill: C.danger, stroke: C.danger, color: "#fff" }));
-  b.push(pill(px + 336, 352, 100, 28, "In stock", { fill: "#E3F7EF", stroke: "#E3F7EF", color: C.success }));
-  b.push(pill(px + 446, 352, 110, 28, "Low stock 3", { fill: "#FDF1DC", stroke: "#FDF1DC", color: "#B07A16" }));
-  b.push(text(px + 20, 410, "Radius: xs 6 · sm 10 · md 14 · lg 20 · xl 28 · pill", { size: 11, weight: 500, fill: C.ink500 }));
-  b.push(text(px + 20, 432, "Shadow: xs / sm / md / lg / brand", { size: 11, weight: 500, fill: C.ink500 }));
-  b.push(text(px + 20, 454, "Motion: 150ms ease-out (hover) · 240ms cubic-bezier(.21,1.02,.73,1) (enter)", { size: 11, weight: 500, fill: C.ink500 }));
-  b.push(text(px + 20, 476, "Focus: 2px brand/55 ring, 2px offset · respects prefers-reduced-motion", { size: 11, weight: 500, fill: C.ink500 }));
-
-  // product card anatomy
-  b.push(panel(M, 520, (W - M * 2) * 0.32, 520, "Product card — anatomy"));
-  const cx2 = M + 40,
-    cy2 = 566,
-    cw3 = (W - M * 2) * 0.32 - 80;
-  b.push(box(cx2, cy2, cw3, 380, { r: 16, fill: C.paper, stroke: C.line }));
-  b.push(imgBox(cx2 + 1, cy2 + 1, cw3 - 2, 200, "4:3 cover", { r: 15 }));
-  b.push(pill(cx2 + 12, cy2 + 12, 60, 22, "SALE", { fill: C.danger, stroke: C.danger, color: "#fff", size: 9 }));
-  b.push(`<circle cx="${cx2 + cw3 - 26}" cy="${cy2 + 26}" r="15" fill="${C.paper}" stroke="${C.line}"/>`);
-  b.push(text(cx2 + cw3 - 26, cy2 + 31, "♡", { anchor: "middle", size: 13, fill: C.ink500 }));
-  b.push(text(cx2 + 16, cy2 + 230, "BRAND", { size: 9, weight: 700, fill: C.ink400, tracking: "0.14em" }));
-  b.push(text(cx2 + 16, cy2 + 254, "Product name, two lines max", { size: 13, weight: 600 }));
-  b.push(text(cx2 + 16, cy2 + 280, "★★★★☆  4.6 (128)", { size: 11, weight: 500, fill: C.ink500 }));
-  b.push(text(cx2 + 16, cy2 + 314, "₹2,499", { size: 18, weight: 700 }));
-  b.push(text(cx2 + 96, cy2 + 314, "₹3,699", { size: 11, weight: 400, fill: C.ink400 }));
-  b.push(box(cx2 + 1, cy2 + 332, cw3 - 2, 47, { r: 15, fill: C.ink, stroke: C.ink }));
-  b.push(text(cx2 + cw3 / 2, cy2 + 361, "+  Add to cart   (hover / always on touch)", { anchor: "middle", size: 11, weight: 700, fill: C.paper }));
-
-  // states
-  b.push(panel(M + (W - M * 2) * 0.34, 520, (W - M * 2) * 0.32, 520, "States & feedback"));
-  const sx2 = M + (W - M * 2) * 0.34 + 20;
-  b.push(box(sx2, 566, (W - M * 2) * 0.32 - 40, 120, { r: 14, fill: C.paper, stroke: C.lineSoft, dash: "5 5" }));
-  b.push(text(sx2 + 20, 610, "Empty state", { size: 13, weight: 700 }));
-  b.push(text(sx2 + 20, 630, "Icon + one-line reason + one action", { size: 11, weight: 400, fill: C.ink500 }));
-  b.push(button(sx2 + 20, 644, 120, 32, "Browse shop", "ghost"));
-  b.push(box(sx2, 702, (W - M * 2) * 0.32 - 40, 110, { r: 14, fill: C.paper, stroke: C.line }));
-  b.push(text(sx2 + 20, 730, "Skeleton", { size: 12, weight: 700 }));
-  b.push(imgBox(sx2 + 20, 742, 56, 56, "", { r: 10 }));
-  b.push(lines(sx2 + 88, 754, 180, 3, { gap: 16 }));
-  b.push(box(sx2, 828, (W - M * 2) * 0.32 - 40, 56, { r: 12, fill: "#FCE8EB", stroke: "#F5C2CA" }));
-  b.push(text(sx2 + 20, 862, "Error - inline, never a blocking modal", { size: 12, weight: 600, fill: C.danger }));
-  b.push(box(sx2, 900, (W - M * 2) * 0.32 - 40, 56, { r: 12, fill: C.ink, stroke: C.ink }));
-  b.push(text(sx2 + 20, 934, "Toast - bottom-right, 3s, single line", { size: 12, weight: 600, fill: C.paper }));
-
-  // grid + spacing
-  b.push(panel(M + (W - M * 2) * 0.68, 520, (W - M * 2) * 0.32, 520, "Layout rules"));
-  const lx = M + (W - M * 2) * 0.68 + 20;
-  [
-    "Container 1280 · gutters 16 / 32",
-    "Grid 12 col desktop · 8 tablet · 4 mobile",
-    "Card grid 4-up ≥1280 · 3-up ≥1024 · 2-up ≥640 · 1-up",
-    "Vertical rhythm: 8pt · sections 48/64",
-    "Sticky: header 68 · toolbar 56 · summary top-24",
-    "Mobile bottom nav 62 + safe-area inset",
-    "Max line length 68ch for body copy",
-    "Touch target ≥ 44 × 44",
-  ].forEach((s, i) => b.push(text(lx, 570 + i * 30, "· " + s, { size: 12, weight: 500, fill: C.ink500 })));
-  b.push(text(lx, 830, "Accessibility", { size: 12, weight: 700 }));
-  [
-    "Contrast ≥ 4.5:1 body / 3:1 large",
-    "Every icon-only button has aria-label",
-    "Focus ring visible on keyboard only",
-    "Reduced-motion disables enter animations",
-  ].forEach((s, i) => b.push(text(lx, 856 + i * 24, "· " + s, { size: 11, weight: 500, fill: C.ink500 })));
-
-  frame({
-    name: "07-component-sheet",
-    w: W,
-    h: H,
-    title: "07 · Commerce components & semantic tokens",
-    subtitle: "Brand foreground ≠ action fill · type roles · actions · product anatomy · states · layout rules",
-    body: b.join("\n"),
-  });
-}
-
-console.log("\nWireframes written to design/wireframes/");

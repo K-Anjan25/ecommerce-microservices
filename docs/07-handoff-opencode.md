@@ -1,4 +1,6 @@
-# 7. Handoff — Phases 6-9 backend complete, frontend redesigned (Cartly 2.0)
+# 7. Historical implementation handoff (archived)
+
+> **Archive notice (2026-08-24):** This document records earlier Phase 6–9 implementation sessions and contains stale branch names, interim caveats and superseded design language. Do not use it as current status. Use [`06-roadmap.md`](06-roadmap.md), [`34-current-platform-status.md`](34-current-platform-status.md), and the numbered hardening documents 20–33.
 
 > Purpose: self-contained status + exact commands so the resting opencode agent (or any
 > teammate) can pick this up without re-deriving context. Generated 2026-08-21 after

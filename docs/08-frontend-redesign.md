@@ -1,4 +1,6 @@
-# 8. Frontend redesign — Cartly 2.0
+# 8. Historical frontend redesign record — rejected Cartly 2.0
+
+> **Archive notice (2026-08-24):** This document describes the superseded violet/lime redesign and its former category rail/sticky-toolbar architecture. It is retained as decision history only. Current implementation guidance is [`12-editorial-redesign-direction.md`](12-editorial-redesign-direction.md) and [`../design/README.md`](../design/README.md).
 
 > Session: 2026-08-23, branch `arena/01a02c1c-ecommerce-microservices`.
 > Scope: a new visual language + an information-architecture rearrangement of the
