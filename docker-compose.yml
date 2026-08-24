@@ -59,7 +59,10 @@ services:
       COMMERCE_SERVICE_URI: http://commerce-service:8081
       USER_SERVICE_URI: http://user-service:8084
       CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN:-http://localhost:*}
+      FILE_STORAGE_PATH: /data/product-images
       JAVA_OPTS: *jvm-tiny
+    volumes:
+      - product-images:/data/product-images
     ports:
       - "8889:8889"
     depends_on:
@@ -181,3 +184,4 @@ networks:
 
 volumes:
   postgres:
+  product-images:

@@ -3,9 +3,20 @@ server:
   error:
     include-message: always
 
+file:
+  storage:
+    path: ${FILE_STORAGE_PATH:${user.home}/ecommerce-product-images}
+
 spring:
   application:
     name: api-gateway
+  codec:
+    max-in-memory-size: 6MB
+  webflux:
+    multipart:
+      max-in-memory-size: 1MB
+      max-disk-usage-per-part: 5MB
+      max-parts: 4
   cloud:
     gateway:
       globalcors:

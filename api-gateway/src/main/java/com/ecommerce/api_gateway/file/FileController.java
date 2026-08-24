@@ -1,38 +1,44 @@
 package com.ecommerce.api_gateway.file;
 
-import com.ecommerce.api_gateway.file.FileService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
-import static com.ecommerce.api_gateway.file.FileConstant.FORWARD_SLASH;
-import static com.ecommerce.api_gateway.file.FileConstant.IMAGE_FOLDER;
 
 @RestController
 @RequestMapping("/file")
 @RequiredArgsConstructor
 public class FileController {
-
     private final FileService fileService;
+    private final FileAuthorizationService authorizationService;
 
     @PostMapping(value = "/saveImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Mono<ResponseEntity<String>> saveImage(@RequestPart("file") FilePart image) {
-        return fileService.saveImage(image).map(ResponseEntity::ok);
+    public Mono<ResponseEntity<String>> saveImage(
+            @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorization,
+            @RequestPart("file") FilePart image) {
+        return authorizationService.authenticatedUser(authorization)
+                .flatMap(ignored -> fileService.saveImage(image))
+                .map(ResponseEntity::ok);
     }
 
-    @GetMapping(path = "/image/{imageName}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public Mono<byte[]> getImage(@PathVariable String imageName) {
-        return Mono.fromCallable(() -> Files.readAllBytes(Paths.get(IMAGE_FOLDER + FORWARD_SLASH + imageName)));
+    @GetMapping(path = "/image/{imageName}")
+    public Mono<ResponseEntity<byte[]>> getImage(@PathVariable String imageName) {
+        MediaType type = imageName.endsWith(".png") ? MediaType.IMAGE_PNG
+                : imageName.endsWith(".gif") ? MediaType.IMAGE_GIF : MediaType.IMAGE_JPEG;
+        return fileService.readImage(imageName)
+                .map(bytes -> ResponseEntity.ok().contentType(type).cacheControl(CacheControl.noCache()).body(bytes));
     }
 
     @DeleteMapping("/removeImage")
-    public Mono<ResponseEntity<String>> removeImage(@RequestParam String imagePath) {
-        return fileService.removeImage(imagePath).map(ResponseEntity::ok);
+    public Mono<ResponseEntity<String>> removeImage(
+            @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorization,
+            @RequestParam String imagePath) {
+        return authorizationService.authenticatedUser(authorization)
+                .flatMap(user -> authorizationService.isAdmin(user)
+                        ? fileService.removeImage(imagePath)
+                        : Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Admin role required")))
+                .map(ResponseEntity::ok);
     }
 }

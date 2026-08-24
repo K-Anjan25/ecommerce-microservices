@@ -74,6 +74,7 @@ public class RateLimitFilter implements GlobalFilter, Ordered {
         if ("POST".equals(method) && "/v1/orders".equals(path)) return new Rule("guest-order", 20);
         if ("POST".equals(method) && "/v1/payments".equals(path)) return new Rule("payment", 20);
         if ("POST".equals(method) && path.startsWith("/v1/comments")) return new Rule("comment", 30);
+        if ("POST".equals(method) && "/file/saveImage".equals(path)) return new Rule("image-upload", 20);
         return null;
     }
 

@@ -9,5 +9,5 @@ public class FileConstant {
     public static final String FILE_UPLOAD_ERROR = "Something went wrong when update file";
     public static final String FILE_REMOVE_ERROR = "Something went wrong when remove file";
     public static final String FILE_EXIST_ERROR = "File is already exist with the same name, please change file name!!";
-    public static final String FILE_SERVER = "http://localhost:8889/file/image/";
+    public static final String FILE_SERVER = "/file/image/";
 }
