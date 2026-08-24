@@ -26,9 +26,9 @@ class FileServiceTest {
         ReflectionTestUtils.setField(service, "storagePath", folder.toString());
 
         assertThatThrownBy(() -> service.readImage("../secrets.txt").block())
-                .hasCauseInstanceOf(FileUploadException.class);
+                .isInstanceOf(FileUploadException.class);
         assertThatThrownBy(() -> service.removeImage("not-a-managed-file.jpg").block())
-                .hasCauseInstanceOf(FileUploadException.class);
+                .isInstanceOf(FileUploadException.class);
     }
 
     @Test
