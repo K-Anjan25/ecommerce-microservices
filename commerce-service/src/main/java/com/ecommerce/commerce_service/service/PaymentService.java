@@ -46,6 +46,7 @@ public class PaymentService {
     private final List<PaymentProviderClient> providerClients;
     private final InvoiceService invoiceService;
     private final CheckoutTokenService checkoutTokenService;
+    private final LoyaltyPointService loyaltyPointService;
 
     @Value("${rabbitmq.exchanges.internal}")
     private String exchange;
@@ -120,6 +121,15 @@ public class PaymentService {
         Payment savedPayment = paymentRepository.save(payment);
 
         log.info("Payment {} saved with status {}", savedPayment.getId(), savedPayment.getStatus());
+
+        if (PaymentStatus.SUCCESS.name().equals(savedPayment.getStatus()) && order.getCustomerId() != null) {
+            try {
+                loyaltyPointService.earnPoints(order.getCustomerId(), order.getTotalAmount(), "Paid order #" + order.getId());
+            } catch (RuntimeException loyaltyFailure) {
+                // A rewards outage must never roll back an external provider charge.
+                log.error("Payment {} succeeded but loyalty points could not be credited", savedPayment.getId(), loyaltyFailure);
+            }
+        }
 
         rabbitMQMessageProducer.publish(
                 PaymentStatusEvent.builder()

@@ -8,6 +8,7 @@ import com.ecommerce.commerce_service.repository.LoyaltyPointRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -34,8 +35,11 @@ public class LoyaltyPointService {
         return loyaltyPointMapper.loyaltyPointToLoyaltyPointDto(saved);
     }
 
+    @Transactional
     public LoyaltyPointDto redeemPoints(UUID customerId, int points, String description) {
-        Integer currentBalance = getPointsBalance(customerId);
+        if (points <= 0) throw new IllegalArgumentException("Points must be positive");
+        int currentBalance = loyaltyPointRepository.findLockedByCustomerId(customerId).stream()
+                .mapToInt(LoyaltyPoint::getPoints).sum();
         if (currentBalance < points) {
             throw new RuntimeException("Insufficient loyalty points");
         }

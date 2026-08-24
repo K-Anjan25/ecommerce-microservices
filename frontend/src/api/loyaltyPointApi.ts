@@ -1,5 +1,5 @@
-import { LoyaltyPoint, LoyaltyPointType } from "../types/loyaltyPoint";
 import { api } from "./client";
+import { LoyaltyPoint } from "../types/loyaltyPoint";
 
 const getBalance = async () => {
   const { data } = await api.get<number>("/v1/loyalty/balance");
@@ -11,13 +11,4 @@ const getHistory = async () => {
   return data;
 };
 
-const redeemPoints = async (points: number) => {
-  const { data } = await api.post<LoyaltyPoint>("/v1/loyalty/redeem", null, { params: { points } });
-  return data;
-};
-
-export const LoyaltyPointApi = {
-  getBalance,
-  getHistory,
-  redeemPoints,
-};
+export const LoyaltyPointApi = { getBalance, getHistory };

@@ -28,11 +28,6 @@ public class GiftCardController {
         return new ResponseEntity<>(giftCardService.purchaseGiftCard(purchaseGiftCardRequest, purchasedBy), HttpStatus.CREATED);
     }
 
-    @GetMapping("/{code}")
-    public ResponseEntity<GiftCardDto> getGiftCardByCode(@PathVariable String code){
-        return ResponseEntity.ok(giftCardService.getGiftCardByCode(code));
-    }
-
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<List<GiftCardDto>> getUserGiftCards(){
@@ -40,9 +35,4 @@ public class GiftCardController {
         return ResponseEntity.ok(giftCardService.getGiftCardsByUser(userId));
     }
 
-    @PostMapping("/{code}/redeem")
-    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
-    public ResponseEntity<GiftCardDto> redeemGiftCard(@PathVariable String code, @RequestParam java.math.BigDecimal amount){
-        return ResponseEntity.ok(giftCardService.redeemGiftCard(code, amount));
-    }
 }

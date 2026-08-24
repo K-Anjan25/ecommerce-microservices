@@ -36,7 +36,7 @@ class PaymentServiceTest {
         when(cash.provider()).thenReturn(PaymentProvider.CASH);
         when(cash.charge(any())).thenReturn(ProviderPaymentResult.builder().success(true).transactionId("cash-1").build());
         when(payments.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
-        PaymentService service = new PaymentService(payments, orders, producer, List.of(cash), invoices, tokens);
+        PaymentService service = new PaymentService(payments, orders, producer, List.of(cash), invoices, tokens, mock(LoyaltyPointService.class));
         PaymentRequest request = new PaymentRequest();
         request.setOrderId(orderId);
         request.setProvider(PaymentProvider.CASH);
@@ -57,7 +57,7 @@ class PaymentServiceTest {
         when(payments.findByOrderId(orderId)).thenReturn(Optional.empty());
         when(orders.findById(orderId)).thenReturn(Optional.of(order));
         PaymentService service = new PaymentService(payments, orders, mock(RabbitMQMessageProducer.class),
-                List.of(), mock(InvoiceService.class), new CheckoutTokenService());
+                List.of(), mock(InvoiceService.class), new CheckoutTokenService(), mock(LoyaltyPointService.class));
         PaymentRequest request = new PaymentRequest();
         request.setOrderId(orderId);
         request.setProvider(PaymentProvider.CASH);

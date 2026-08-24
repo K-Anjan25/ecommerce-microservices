@@ -9,6 +9,7 @@ import com.ecommerce.commerce_service.repository.GiftCardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -45,8 +46,12 @@ public class GiftCardService {
         return giftCardMapper.giftCardToGiftCardDto(giftCard);
     }
 
+    @Transactional
     public GiftCardDto redeemGiftCard(String code, BigDecimal orderAmount) {
-        GiftCard giftCard = giftCardRepository.findByCode(code)
+        if (orderAmount == null || orderAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Redemption amount must be positive");
+        }
+        GiftCard giftCard = giftCardRepository.findLockedByCode(code)
                 .orElseThrow(() -> new RuntimeException("Gift card not found"));
         validateGiftCard(giftCard);
 
@@ -86,7 +91,7 @@ public class GiftCardService {
     private String generateGiftCardCode() {
         String code;
         do {
-            code = "GC-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+            code = "GC-" + UUID.randomUUID().toString().replace("-", "").toUpperCase();
         } while (giftCardRepository.findByCode(code).isPresent());
         return code;
     }

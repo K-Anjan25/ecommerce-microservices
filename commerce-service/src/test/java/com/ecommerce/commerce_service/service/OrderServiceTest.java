@@ -65,9 +65,6 @@ class OrderServiceTest {
     private OrderItemRepository orderItemRepository;
 
     @Mock
-    private LoyaltyPointService loyaltyPointService;
-
-    @Mock
     private ShippingRateService shippingRateService;
 
     @Mock
@@ -89,7 +86,7 @@ class OrderServiceTest {
     @BeforeEach
     void setUp() {
         orderService = new OrderService(orderRepository, orderMapper, commerceInventoryService,
-                couponService, orderStatusHistoryRepository, rabbitMQMessageProducer, orderItemRepository, loyaltyPointService,
+                couponService, orderStatusHistoryRepository, rabbitMQMessageProducer, orderItemRepository,
                 shippingRateService, taxRuleService, checkoutTokenService, productCatalogClient);
 
         productId = UUID.randomUUID();

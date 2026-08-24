@@ -63,7 +63,6 @@ public class OrderService {
     private final OrderStatusHistoryRepository orderStatusHistoryRepository;
     private final RabbitMQMessageProducer rabbitMQMessageProducer;
     private final OrderItemRepository orderItemRepository;
-    private final LoyaltyPointService loyaltyPointService;
     private final ShippingRateService shippingRateService;
     private final TaxRuleService taxRuleService;
     private final CheckoutTokenService checkoutTokenService;
@@ -150,10 +149,6 @@ public class OrderService {
 
         if (savedOrder.getCouponCode() != null && !savedOrder.getCouponCode().isBlank()) {
             couponService.markUsed(savedOrder.getCouponCode(), savedOrder.getCustomerId(), savedOrder.getId());
-        }
-
-        if (savedOrder.getCustomerId() != null) {
-            loyaltyPointService.earnPoints(savedOrder.getCustomerId(), savedOrder.getTotalAmount(), "Order #" + savedOrder.getId());
         }
 
         try {

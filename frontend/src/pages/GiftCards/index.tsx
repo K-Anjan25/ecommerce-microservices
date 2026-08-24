@@ -148,7 +148,7 @@ function GiftCards() {
             <p className="mt-1 text-xs text-ink-muted">
               Gift card · valid {VALIDITY.find((v) => v.days === days)?.label}
             </p>
-            <p className="mt-6 font-mono text-sm tracking-[0.25em] text-oncontrast/80">
+            <p className="mt-6 break-all font-mono text-xs tracking-[0.08em] text-oncontrast/80">
               {purchased?.code ?? "XXXX-XXXX-XXXX"}
             </p>
           </div>
