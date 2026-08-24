@@ -20,6 +20,10 @@ Customer self-service gift-card purchasing now has a payment-backed issuance int
 
 A browser callback, redirect status or client-reported success never mints stored value. Stripe/Razorpay signed webhooks and authenticated provider reconciliation are the only paths that can cause `GiftCardPurchaseFinalizer` to issue a card.
 
+## Purchase lifecycle cleanup
+
+A scheduled lifecycle worker marks a purchase `FAILED` immediately when its linked payment is already failed. If no payment row was ever created, it cancels the virtual order and marks the intent failed after the configured pending TTL. A still-`PENDING` provider payment is never expired locally because the provider may still capture it; it remains with the reconciliation worker and operations queue.
+
 ## Remaining production boundary
 
 Live provider certification, expiry/late-capture decisions, refund handling for gift-card purchases and operational monitoring remain required before treating customer gift-card purchasing as production-certified.

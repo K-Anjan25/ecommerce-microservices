@@ -50,6 +50,12 @@ storefront:
 checkout:
   capability-ttl: ${CHECKOUT_CAPABILITY_TTL:PT720H}
 
+gift-card:
+  purchase:
+    pending-ttl: ${GIFT_CARD_PURCHASE_PENDING_TTL:PT30M}
+    lifecycle-scan-delay-ms: ${GIFT_CARD_PURCHASE_LIFECYCLE_SCAN_DELAY_MS:60000}
+    lifecycle-batch-size: ${GIFT_CARD_PURCHASE_LIFECYCLE_BATCH_SIZE:100}
+
 product-service:
   url: ${PRODUCT_SERVICE_URL:http://localhost:8080}
 
