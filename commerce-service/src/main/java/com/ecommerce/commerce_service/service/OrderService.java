@@ -35,6 +35,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -72,6 +75,7 @@ public class OrderService {
     @Value("${rabbitmq.routing-keys.send-email}")
     private String sendEmailRoutingKey;
 
+    @Transactional
     public OrderDto createOrder(CreateOrderRequest createOrderRequest){
 
         Order order = orderMapper.orderRequestToOrder(createOrderRequest);
@@ -92,7 +96,6 @@ public class OrderService {
         List<DeductStockRequest> deductStockRequests = order.getItems().stream()
                 .map(item -> new DeductStockRequest(item.getProductId(), item.getQuantity(), item.getVariantId()))
                 .collect(Collectors.toList());
-        commerceInventoryService.deductStock(deductStockRequests);
 
         BigDecimal subtotal = order.getItems().stream()
                 .map(item -> item.getPrice() == null ? BigDecimal.ZERO : item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
@@ -127,6 +130,20 @@ public class OrderService {
             order.setCheckoutTokenHash(checkoutTokenService.hash(checkoutToken));
         }
 
+        // Deduct only after all pricing/tax/coupon validation succeeds. If the
+        // local order transaction rolls back, compensate the remote inventory.
+        commerceInventoryService.deductStock(deductStockRequests);
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCompletion(int status) {
+                    if (status != TransactionSynchronization.STATUS_COMMITTED) {
+                        commerceInventoryService.restoreStock(deductStockRequests);
+                    }
+                }
+            });
+        }
+
         Order savedOrder = orderRepository.save(order);
 
         recordStatus(savedOrder.getId(), OrderStatus.PENDING, "Order placed");
@@ -139,7 +156,11 @@ public class OrderService {
             loyaltyPointService.earnPoints(savedOrder.getCustomerId(), savedOrder.getTotalAmount(), "Order #" + savedOrder.getId());
         }
 
-        sendOrderPlacedEmail(savedOrder);
+        try {
+            sendOrderPlacedEmail(savedOrder);
+        } catch (RuntimeException notificationFailure) {
+            log.error("Order {} committed but confirmation email could not be queued", savedOrder.getId(), notificationFailure);
+        }
 
         OrderDto response = orderMapper.orderToOrderDto(savedOrder);
         response.setCheckoutToken(checkoutToken);

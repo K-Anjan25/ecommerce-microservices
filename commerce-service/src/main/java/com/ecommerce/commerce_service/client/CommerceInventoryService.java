@@ -39,6 +39,7 @@ public class CommerceInventoryService {
 
     private void deductStockFallback(List<DeductStockRequest> deductStockRequests, Throwable throwable) {
         log.error("Stock deduction failed: {}", throwable.getMessage());
+        throw new IllegalStateException("Inventory deduction is unavailable", throwable);
     }
 
     private void restoreStockFallback(List<DeductStockRequest> restoreStockRequests, Throwable throwable) {

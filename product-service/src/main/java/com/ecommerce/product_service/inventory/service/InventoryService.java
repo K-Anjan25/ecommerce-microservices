@@ -70,26 +70,28 @@ public class InventoryService {
     public void deductStock(List<DeductStockRequest> deductStockRequests) {
         for (DeductStockRequest request : deductStockRequests) {
             if (request.getVariantId() != null) {
-                ProductVariant variant = productVariantRepository.findByProductIdAndId(
+                ProductVariant variant = productVariantRepository.findLockedByProductIdAndId(
                         request.getProductId(), request.getVariantId());
-                if (variant != null) {
-                    int newQuantity = (variant.getQuantityInStock() == null ? 0 : variant.getQuantityInStock())
-                            - request.getQuantity();
-                    variant.setQuantityInStock(Math.max(newQuantity, 0));
-                    productVariantRepository.save(variant);
+                if (variant == null) {
+                    throw new IllegalStateException("Variant not found: " + request.getVariantId());
                 }
+                int current = variant.getQuantityInStock() == null ? 0 : variant.getQuantityInStock();
+                if (current < request.getQuantity()) {
+                    throw new IllegalStateException("Insufficient variant stock: " + request.getVariantId());
+                }
+                variant.setQuantityInStock(current - request.getQuantity());
+                productVariantRepository.save(variant);
             } else {
-                Inventory inventory = inventoryRepository.getByProductId(request.getProductId());
-                if (inventory != null) {
-                    int newQuantity = inventory.getQuantity() - request.getQuantity();
-                    if (newQuantity < 0) {
-                        log.warn("Insufficient stock for product {}: requested {}, available {}",
-                                request.getProductId(), request.getQuantity(), inventory.getQuantity());
-                        newQuantity = 0;
-                    }
-                    inventory.setQuantity(newQuantity);
-                    inventoryRepository.save(inventory);
+                Inventory inventory = inventoryRepository.findLockedByProductId(request.getProductId());
+                if (inventory == null) {
+                    throw new IllegalStateException("Inventory not found: " + request.getProductId());
                 }
+                int current = inventory.getQuantity() == null ? 0 : inventory.getQuantity();
+                if (current < request.getQuantity()) {
+                    throw new IllegalStateException("Insufficient stock: " + request.getProductId());
+                }
+                inventory.setQuantity(current - request.getQuantity());
+                inventoryRepository.save(inventory);
             }
         }
     }
