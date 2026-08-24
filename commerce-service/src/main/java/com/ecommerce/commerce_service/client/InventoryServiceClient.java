@@ -6,6 +6,7 @@ import com.ecommerce.commerce_service.dto.inventory.InventoryCheckResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.List;
 
@@ -20,8 +21,10 @@ public interface InventoryServiceClient {
     InventoryCheckResponse isInStock(@RequestBody List<InventoryCheckRequest> inventoryCheckRequest);
 
     @PostMapping("/deductStock")
-    void deductStock(@RequestBody List<DeductStockRequest> deductStockRequests);
+    void deductStock(@RequestHeader("X-Idempotency-Key") String operationId,
+                     @RequestBody List<DeductStockRequest> deductStockRequests);
 
     @PostMapping("/restoreStock")
-    void restoreStock(@RequestBody List<DeductStockRequest> restoreStockRequests);
+    void restoreStock(@RequestHeader("X-Idempotency-Key") String operationId,
+                      @RequestBody List<DeductStockRequest> restoreStockRequests);
 }

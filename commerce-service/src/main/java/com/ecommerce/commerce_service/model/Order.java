@@ -71,6 +71,10 @@ public class Order extends AdvanceBaseModal {
     @Column(precision = 19, scale = 2)
     private BigDecimal providerRefundedAmount;
 
+    @Column(length = 64)
+    private String inventoryOperationId;
+
+    private Boolean inventoryRestored;
     private Boolean creditsRestored;
 
     /** SHA-256 capability used only to authorize guest payment initiation. */

@@ -144,6 +144,8 @@ public class OrderService {
         order.setLoyaltyDiscountAmount(loyaltyDiscount);
         order.setGiftCardAmount(giftCardAmount);
         order.setCreditsRestored(false);
+        order.setInventoryRestored(false);
+        order.setInventoryOperationId(UUID.randomUUID().toString());
 
         String checkoutToken = null;
         if (order.getCustomerId() == null) {
@@ -153,13 +155,14 @@ public class OrderService {
 
         // Deduct only after all pricing/tax/coupon validation succeeds. If the
         // local order transaction rolls back, compensate the remote inventory.
-        commerceInventoryService.deductStock(deductStockRequests);
+        commerceInventoryService.deductStock("order-deduct-" + order.getInventoryOperationId(), deductStockRequests);
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
                 @Override
                 public void afterCompletion(int status) {
                     if (status != TransactionSynchronization.STATUS_COMMITTED) {
-                        commerceInventoryService.restoreStock(deductStockRequests);
+                        commerceInventoryService.restoreStock(
+                                "order-rollback-" + order.getInventoryOperationId(), deductStockRequests);
                     }
                 }
             });
@@ -287,7 +290,9 @@ public class OrderService {
             } else if ("FAILED".equalsIgnoreCase(paymentStatus)) {
                 order.setOrderStatus(OrderStatus.CANCELLED);
                 restoreReservedCredits(order);
-                recordStatus(orderId, OrderStatus.CANCELLED, "Payment failed; reserved credits restored");
+                restoreOrderInventory(order);
+                recordStatus(orderId, OrderStatus.CANCELLED,
+                        "Payment failed; reserved credits and inventory restored");
             } else if ("PENDING".equalsIgnoreCase(paymentStatus)) {
                 recordStatus(orderId, OrderStatus.PENDING, "Cash on delivery selected");
             } else if ("REFUNDED".equalsIgnoreCase(paymentStatus)) {
@@ -297,6 +302,21 @@ public class OrderService {
             orderRepository.save(order);
             log.info("Order {} updated to {} after payment status {}", orderId, order.getOrderStatus(), paymentStatus);
         });
+    }
+
+    private void restoreOrderInventory(Order order) {
+        if (Boolean.TRUE.equals(order.getInventoryRestored())) return;
+        List<DeductStockRequest> items = order.getItems() == null ? List.of() : order.getItems().stream()
+                .map(item -> new DeductStockRequest(item.getProductId(), item.getQuantity(), item.getVariantId()))
+                .collect(Collectors.toList());
+        if (items.isEmpty()) {
+            order.setInventoryRestored(true);
+            return;
+        }
+        String source = order.getInventoryOperationId() == null
+                ? order.getId().toString() : order.getInventoryOperationId();
+        commerceInventoryService.restoreStock("order-payment-failed-" + source, items);
+        order.setInventoryRestored(true);
     }
 
     private void restoreReservedCredits(Order order) {

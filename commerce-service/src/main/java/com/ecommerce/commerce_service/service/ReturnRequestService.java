@@ -105,7 +105,7 @@ public class ReturnRequestService {
             throw new IllegalArgumentException("Only requested returns can be approved");
         }
         UUID variantUuid = returnRequest.getVariantId() != null ? UUID.fromString(returnRequest.getVariantId()) : null;
-        commerceInventoryService.restoreStock(List.of(
+        commerceInventoryService.restoreStock("return-approved-" + returnRequest.getId(), List.of(
                 new DeductStockRequest(returnRequest.getProductId(), returnRequest.getQuantity(), variantUuid)
         ));
         returnRequest.setStatus(ReturnStatus.APPROVED);

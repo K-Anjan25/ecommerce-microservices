@@ -143,7 +143,7 @@ class OrderServiceTest {
 
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<DeductStockRequest>> deductCaptor = ArgumentCaptor.forClass(List.class);
-        verify(commerceInventoryService).deductStock(deductCaptor.capture());
+        verify(commerceInventoryService).deductStock(anyString(), deductCaptor.capture());
         assertThat(deductCaptor.getValue()).hasSize(1);
         assertThat(deductCaptor.getValue().get(0).getProductId()).isEqualTo(productId);
         assertThat(deductCaptor.getValue().get(0).getQuantity()).isEqualTo(2);
@@ -165,7 +165,7 @@ class OrderServiceTest {
         assertThatThrownBy(() -> orderService.createOrder(request))
                 .isInstanceOf(ProductNotInStockException.class);
 
-        verify(commerceInventoryService, never()).deductStock(any());
+        verify(commerceInventoryService, never()).deductStock(anyString(), any());
         verify(orderRepository, never()).save(any());
     }
 
@@ -214,6 +214,26 @@ class OrderServiceTest {
         verify(giftCardService, times(1)).restoreOrderCredit(cardId, new BigDecimal("25.00"));
         verify(loyaltyPointService, times(1)).restoreOrderPoints(eq(customerId), eq(100), anyString());
         assertThat(order.getCreditsRestored()).isTrue();
+    }
+
+    @Test
+    void failedPaymentRestoresInventoryExactlyOnce() {
+        OrderItem item = OrderItem.builder().productId(productId).quantity(2).build();
+        Order order = Order.builder().id(orderId).orderStatus(OrderStatus.PENDING)
+                .items(List.of(item)).inventoryOperationId("stock-op")
+                .inventoryRestored(false).creditsRestored(true).build();
+        when(orderRepository.findLockedById(orderId)).thenReturn(order);
+
+        orderService.applyPaymentStatus(orderId, "FAILED");
+        orderService.applyPaymentStatus(orderId, "FAILED");
+
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<DeductStockRequest>> restored = ArgumentCaptor.forClass(List.class);
+        verify(commerceInventoryService, times(1))
+                .restoreStock(eq("order-payment-failed-stock-op"), restored.capture());
+        assertThat(restored.getValue()).hasSize(1);
+        assertThat(restored.getValue().get(0).getQuantity()).isEqualTo(2);
+        assertThat(order.getInventoryRestored()).isTrue();
     }
 
     @Test

@@ -18,3 +18,7 @@ Notification failures are logged separately and do not roll back a valid order.
 This is a lightweight compensating transaction suitable for the current stack.
 At larger scale, replace the synchronous boundary with an idempotent reservation
 and outbox/saga workflow.
+
+## Idempotent failure restoration
+
+Post-order payment failures and replay-safe product-service mutation keys are documented in [31-inventory-mutation-idempotency.md](31-inventory-mutation-idempotency.md).

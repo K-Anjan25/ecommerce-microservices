@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -40,18 +41,29 @@ public class InventoryController {
     @PostMapping("/deductStock")
     public ResponseEntity<Void> deductStock(
             @RequestHeader(value = "X-Internal-Service", required = false) String suppliedSecret,
+            @RequestHeader("X-Idempotency-Key") String operationId,
             @RequestBody List<DeductStockRequest> deductStockRequests) {
         requireInternalService(suppliedSecret);
-        inventoryService.deductStock(deductStockRequests);
+        try {
+            inventoryService.deductStock(operationId, deductStockRequests);
+        } catch (DataIntegrityViolationException duplicateOperation) {
+            // The unique operation claim is flushed before stock is touched;
+            // a concurrent duplicate safely rolls back and is acknowledged.
+        }
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/restoreStock")
     public ResponseEntity<Void> restoreStock(
             @RequestHeader(value = "X-Internal-Service", required = false) String suppliedSecret,
+            @RequestHeader("X-Idempotency-Key") String operationId,
             @RequestBody List<DeductStockRequest> restoreStockRequests) {
         requireInternalService(suppliedSecret);
-        inventoryService.restoreStock(restoreStockRequests);
+        try {
+            inventoryService.restoreStock(operationId, restoreStockRequests);
+        } catch (DataIntegrityViolationException duplicateOperation) {
+            // See deductStock: duplicate claim means the other transaction owns the mutation.
+        }
         return ResponseEntity.ok().build();
     }
 

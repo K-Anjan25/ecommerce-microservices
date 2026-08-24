@@ -18,7 +18,7 @@ class InventoryControllerTest {
         InventoryController controller = new InventoryController(inventory);
         ReflectionTestUtils.setField(controller, "internalSecret", "expected-secret");
 
-        assertThatThrownBy(() -> controller.deductStock(null, List.of()))
+        assertThatThrownBy(() -> controller.deductStock(null, "op-1", List.of()))
                 .isInstanceOf(ResponseStatusException.class)
                 .hasMessageContaining("401");
     }
@@ -29,8 +29,8 @@ class InventoryControllerTest {
         InventoryController controller = new InventoryController(inventory);
         ReflectionTestUtils.setField(controller, "internalSecret", "expected-secret");
 
-        controller.restoreStock("expected-secret", List.of());
+        controller.restoreStock("expected-secret", "op-1", List.of());
 
-        verify(inventory).restoreStock(List.of());
+        verify(inventory).restoreStock("op-1", List.of());
     }
 }
