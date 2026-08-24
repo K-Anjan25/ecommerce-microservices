@@ -178,13 +178,22 @@ public class PaymentService {
     /** Applies a signature-verified asynchronous provider result exactly once. */
     @Transactional
     public void reconcileProviderPayment(PaymentProvider provider, String transactionId,
-                                         boolean succeeded, String failureReason) {
+                                         boolean succeeded, String failureReason,
+                                         BigDecimal providerAmount, String providerCurrency) {
         Payment candidate = paymentRepository.findByProviderAndTransactionId(provider, transactionId)
                 .orElseThrow(() -> new IllegalArgumentException("Payment reference was not found"));
         Order order = orderRepository.findLockedById(candidate.getOrderId());
         if (order == null) throw new IllegalArgumentException("Order not found for payment reference");
         Payment payment = paymentRepository.findLockedByProviderAndTransactionId(provider, transactionId)
                 .orElseThrow(() -> new IllegalArgumentException("Payment reference was not found"));
+        if (providerAmount == null || payment.getAmount() == null
+                || providerAmount.compareTo(payment.getAmount()) != 0) {
+            throw new SecurityException("Provider payment amount does not match the order");
+        }
+        if (providerCurrency == null || payment.getCurrency() == null
+                || !payment.getCurrency().equalsIgnoreCase(providerCurrency)) {
+            throw new SecurityException("Provider payment currency does not match the order");
+        }
         String targetStatus = succeeded ? PaymentStatus.SUCCESS.name() : PaymentStatus.FAILED.name();
         if (targetStatus.equals(payment.getStatus())) return;
         if (!PaymentStatus.PENDING.name().equals(payment.getStatus())) {

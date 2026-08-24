@@ -113,13 +113,45 @@ class PaymentServiceTest {
         PaymentService service = new PaymentService(payments, orders, mock(RabbitMQMessageProducer.class),
                 List.of(), mock(InvoiceService.class), new CheckoutTokenService(), loyalty, orderService);
 
-        service.reconcileProviderPayment(PaymentProvider.STRIPE, reference, true, null);
-        service.reconcileProviderPayment(PaymentProvider.STRIPE, reference, true, null);
+        service.reconcileProviderPayment(PaymentProvider.STRIPE, reference, true, null,
+                new BigDecimal("120.00"), "inr");
+        service.reconcileProviderPayment(PaymentProvider.STRIPE, reference, true, null,
+                new BigDecimal("120.00"), "inr");
 
         assertThat(payment.getStatus()).isEqualTo(PaymentStatus.SUCCESS.name());
         verify(payments, times(1)).save(payment);
         verify(orderService, times(1)).applyPaymentStatus(orderId, PaymentStatus.SUCCESS.name(), "STRIPE");
         verify(loyalty, times(1)).earnPoints(customerId, new BigDecimal("120.00"), "Paid order #" + orderId);
+    }
+
+    @Test
+    void verifiedWebhookCannotSettleAChangedAmount() {
+        PaymentRepository payments = mock(PaymentRepository.class);
+        OrderRepository orders = mock(OrderRepository.class);
+        UUID orderId = UUID.randomUUID();
+        String reference = "pi_amount_mismatch";
+        Payment payment = Payment.builder().id(10L).orderId(orderId)
+                .provider(PaymentProvider.STRIPE).transactionId(reference)
+                .amount(new BigDecimal("120.00")).currency("INR")
+                .status(PaymentStatus.PENDING.name()).build();
+        when(payments.findByProviderAndTransactionId(PaymentProvider.STRIPE, reference))
+                .thenReturn(Optional.of(payment));
+        when(payments.findLockedByProviderAndTransactionId(PaymentProvider.STRIPE, reference))
+                .thenReturn(Optional.of(payment));
+        when(orders.findLockedById(orderId)).thenReturn(Order.builder().id(orderId)
+                .orderStatus(OrderStatus.PENDING).build());
+        OrderService orderService = mock(OrderService.class);
+        PaymentService service = new PaymentService(payments, orders, mock(RabbitMQMessageProducer.class),
+                List.of(), mock(InvoiceService.class), new CheckoutTokenService(),
+                mock(LoyaltyPointService.class), orderService);
+
+        assertThatThrownBy(() -> service.reconcileProviderPayment(PaymentProvider.STRIPE, reference,
+                true, null, new BigDecimal("1.20"), "INR"))
+                .isInstanceOf(SecurityException.class)
+                .hasMessageContaining("amount");
+        assertThat(payment.getStatus()).isEqualTo(PaymentStatus.PENDING.name());
+        verify(payments, never()).save(any());
+        verifyNoInteractions(orderService);
     }
 
     @Test

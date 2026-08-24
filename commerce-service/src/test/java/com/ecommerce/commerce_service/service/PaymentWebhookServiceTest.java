@@ -21,11 +21,12 @@ class PaymentWebhookServiceTest {
         properties.getRazorpay().setWebhookSecret("webhook-secret");
         PaymentService payments = mock(PaymentService.class);
         PaymentWebhookService service = new PaymentWebhookService(properties, new ObjectMapper(), payments);
-        String payload = "{\"event\":\"payment.captured\",\"payload\":{\"payment\":{\"entity\":{\"order_id\":\"order_ref_1\"}}}}";
+        String payload = "{\"event\":\"payment.captured\",\"payload\":{\"payment\":{\"entity\":{\"order_id\":\"order_ref_1\",\"amount\":12000,\"currency\":\"INR\"}}}}";
 
         service.handleRazorpay(payload, hmac("webhook-secret", payload));
 
-        verify(payments).reconcileProviderPayment(PaymentProvider.RAZORPAY, "order_ref_1", true, null);
+        verify(payments).reconcileProviderPayment(PaymentProvider.RAZORPAY, "order_ref_1", true, null,
+                new java.math.BigDecimal("120.00"), "INR");
     }
 
     @Test
