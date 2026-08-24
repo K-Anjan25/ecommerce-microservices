@@ -52,7 +52,8 @@ public class EmailRetryOutboxService {
     @Transactional
     public void deliverDueEmails() {
         int safeBatchSize = Math.max(1, Math.min(batchSize, 200));
-        List<EmailRetryEvent> due = repository.findDue(LocalDateTime.now(), PageRequest.of(0, safeBatchSize));
+        List<EmailRetryEvent> due = repository.findByNextAttemptAtLessThanEqualOrderByCreatedAtAsc(
+                LocalDateTime.now(), PageRequest.of(0, safeBatchSize));
         for (EmailRetryEvent event : due) {
             try {
                 emailService.sendEmail(decrypt(event));

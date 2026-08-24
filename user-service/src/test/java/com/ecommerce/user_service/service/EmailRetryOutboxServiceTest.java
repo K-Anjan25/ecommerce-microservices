@@ -36,7 +36,7 @@ class EmailRetryOutboxServiceTest {
         assertThat(event.getEncryptedPayload()).doesNotContain("secret-token");
         assertThat(event.getEncryptedPayload()).doesNotContain("customer@example.com");
         assertThat(event.getInitializationVector()).isNotBlank();
-        assertThat(event.getAttempts()).isZero();
+        assertThat(event.getAttempts()).isEqualTo(0);
     }
 
     @Test
@@ -50,7 +50,7 @@ class EmailRetryOutboxServiceTest {
         verify(repository).save(captured.capture());
         EmailRetryEvent event = captured.getValue();
         reset(repository);
-        when(repository.findDue(any(LocalDateTime.class), any(Pageable.class))).thenReturn(List.of(event));
+        when(repository.findByNextAttemptAtLessThanEqualOrderByCreatedAtAsc(any(LocalDateTime.class), any(Pageable.class))).thenReturn(List.of(event));
 
         service.deliverDueEmails();
 
@@ -72,7 +72,7 @@ class EmailRetryOutboxServiceTest {
         verify(repository).save(captured.capture());
         EmailRetryEvent event = captured.getValue();
         reset(repository);
-        when(repository.findDue(any(LocalDateTime.class), any(Pageable.class))).thenReturn(List.of(event));
+        when(repository.findByNextAttemptAtLessThanEqualOrderByCreatedAtAsc(any(LocalDateTime.class), any(Pageable.class))).thenReturn(List.of(event));
         doThrow(new RuntimeException("smtp unavailable")).when(emailService).sendEmail(any());
         LocalDateTime before = LocalDateTime.now();
 
