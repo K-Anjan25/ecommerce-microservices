@@ -16,6 +16,6 @@ public class PaymentStatusConsumer {
     @RabbitListener(queues = "${rabbitmq.queues.payment-status}")
     public void consume(PaymentStatusEvent event) {
         log.info("Consumed payment event for order {}, status {}", event.getOrderId(), event.getStatus());
-        orderService.applyPaymentStatus(event.getOrderId(), event.getStatus());
+        orderService.applyPaymentStatus(event.getOrderId(), event.getStatus(), event.getProvider());
     }
 }

@@ -34,9 +34,11 @@ payment:
   providers:
     stripe:
       secret-key: ${STRIPE_SECRET_KEY:}
+      webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
     razorpay:
       key-id: ${RAZORPAY_KEY_ID:}
       key-secret: ${RAZORPAY_KEY_SECRET:}
+      webhook-secret: ${RAZORPAY_WEBHOOK_SECRET:}
 
 product-service:
   url: ${PRODUCT_SERVICE_URL:http://localhost:8080}

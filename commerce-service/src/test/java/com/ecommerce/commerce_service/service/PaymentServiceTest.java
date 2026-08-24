@@ -90,6 +90,39 @@ class PaymentServiceTest {
     }
 
     @Test
+    void verifiedSettlementReconcilesPendingPaymentExactlyOnce() {
+        PaymentRepository payments = mock(PaymentRepository.class);
+        OrderRepository orders = mock(OrderRepository.class);
+        OrderService orderService = mock(OrderService.class);
+        LoyaltyPointService loyalty = mock(LoyaltyPointService.class);
+        UUID orderId = UUID.randomUUID();
+        UUID customerId = UUID.randomUUID();
+        String reference = "pi_pending_1";
+        Payment payment = Payment.builder().id(9L).orderId(orderId).userId(customerId)
+                .provider(PaymentProvider.STRIPE).transactionId(reference)
+                .amount(new BigDecimal("120.00")).currency("INR")
+                .status(PaymentStatus.PENDING.name()).build();
+        Order order = Order.builder().id(orderId).customerId(customerId)
+                .orderStatus(OrderStatus.PENDING).totalAmount(new BigDecimal("120.00")).build();
+        when(payments.findByProviderAndTransactionId(PaymentProvider.STRIPE, reference))
+                .thenReturn(Optional.of(payment));
+        when(payments.findLockedByProviderAndTransactionId(PaymentProvider.STRIPE, reference))
+                .thenReturn(Optional.of(payment));
+        when(orders.findLockedById(orderId)).thenReturn(order);
+        when(payments.save(payment)).thenReturn(payment);
+        PaymentService service = new PaymentService(payments, orders, mock(RabbitMQMessageProducer.class),
+                List.of(), mock(InvoiceService.class), new CheckoutTokenService(), loyalty, orderService);
+
+        service.reconcileProviderPayment(PaymentProvider.STRIPE, reference, true, null);
+        service.reconcileProviderPayment(PaymentProvider.STRIPE, reference, true, null);
+
+        assertThat(payment.getStatus()).isEqualTo(PaymentStatus.SUCCESS.name());
+        verify(payments, times(1)).save(payment);
+        verify(orderService, times(1)).applyPaymentStatus(orderId, PaymentStatus.SUCCESS.name(), "STRIPE");
+        verify(loyalty, times(1)).earnPoints(customerId, new BigDecimal("120.00"), "Paid order #" + orderId);
+    }
+
+    @Test
     void rejectsRefundBeyondCapturedProviderAmount() {
         PaymentRepository payments = mock(PaymentRepository.class);
         UUID orderId = UUID.randomUUID();

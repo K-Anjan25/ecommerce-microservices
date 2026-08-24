@@ -3,6 +3,7 @@ package com.ecommerce.commerce_service.controller;
 import com.ecommerce.commerce_service.dto.payment.PaymentRequest;
 import com.ecommerce.commerce_service.dto.payment.PaymentResponse;
 import com.ecommerce.commerce_service.service.PaymentService;
+import com.ecommerce.commerce_service.service.PaymentWebhookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import java.util.UUID;
 public class PaymentController {
 
     private final PaymentService paymentService;
+    private final PaymentWebhookService paymentWebhookService;
 
     @PostMapping
     public ResponseEntity<PaymentResponse> makePayment(@Valid @RequestBody PaymentRequest request,
@@ -28,6 +30,21 @@ public class PaymentController {
         log.info("payment request received for order {} from user {}", request.getOrderId(), userId);
         UUID customerUuid = (userId == null || userId.isBlank()) ? null : UUID.fromString(userId);
         return new ResponseEntity<>(paymentService.processPayment(request, customerUuid), HttpStatus.CREATED);
+    }
+
+
+    @PostMapping("/webhooks/stripe")
+    public ResponseEntity<Void> stripeWebhook(@RequestBody String payload,
+            @RequestHeader(value = "Stripe-Signature", required = false) String signature) {
+        paymentWebhookService.handleStripe(payload, signature);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/webhooks/razorpay")
+    public ResponseEntity<Void> razorpayWebhook(@RequestBody String payload,
+            @RequestHeader(value = "X-Razorpay-Signature", required = false) String signature) {
+        paymentWebhookService.handleRazorpay(payload, signature);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/test")

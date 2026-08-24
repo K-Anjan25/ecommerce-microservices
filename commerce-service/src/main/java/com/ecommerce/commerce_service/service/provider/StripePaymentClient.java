@@ -58,11 +58,16 @@ public class StripePaymentClient implements PaymentProviderClient {
             ResponseEntity<Map> response = restTemplate.postForEntity(STRIPE_PAYMENT_INTENT_URL, requestEntity, Map.class);
             Map<String, Object> responseBody = response.getBody();
             String paymentIntentId = responseBody != null ? String.valueOf(responseBody.get("id")) : null;
+            String intentStatus = responseBody != null ? String.valueOf(responseBody.get("status")) : null;
+            boolean initiated = response.getStatusCode().is2xxSuccessful() && paymentIntentId != null;
+            boolean settled = initiated && "succeeded".equalsIgnoreCase(intentStatus);
 
             return ProviderPaymentResult.builder()
-                    .success(response.getStatusCode().is2xxSuccessful() && paymentIntentId != null)
+                    .success(initiated)
+                    .settled(settled)
                     .transactionId(paymentIntentId)
-                    .message(response.getStatusCode().is2xxSuccessful() ? "Stripe charge created" : "Stripe charge failed")
+                    .message(settled ? "Stripe payment succeeded" : initiated
+                            ? "Stripe payment requires provider confirmation" : "Stripe charge failed")
                     .build();
         } catch (Exception exception) {
             log.error("Stripe payment failed for orderId {}", payment.getOrderId(), exception);

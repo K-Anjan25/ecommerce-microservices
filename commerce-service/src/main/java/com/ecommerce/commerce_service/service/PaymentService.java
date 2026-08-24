@@ -115,7 +115,7 @@ public class PaymentService {
 
         String resolvedStatus;
         if (result.isSuccess()) {
-            resolvedStatus = request.getProvider() == PaymentProvider.CASH
+            resolvedStatus = request.getProvider() == PaymentProvider.CASH || !result.isSettled()
                     ? PaymentStatus.PENDING.name()
                     : PaymentStatus.SUCCESS.name();
         } else {
@@ -141,7 +141,8 @@ public class PaymentService {
         // The order and its compensation state are committed in the same local
         // transaction as the payment. RabbitMQ is notification/event transport,
         // not the source of truth for this in-process commerce boundary.
-        orderService.applyPaymentStatus(savedPayment.getOrderId(), savedPayment.getStatus());
+        orderService.applyPaymentStatus(savedPayment.getOrderId(), savedPayment.getStatus(),
+                savedPayment.getProvider().name());
 
         PaymentStatusEvent statusEvent = PaymentStatusEvent.builder()
                 .orderId(savedPayment.getOrderId())
@@ -172,6 +173,53 @@ public class PaymentService {
                 .transactionId(savedPayment.getTransactionId())
                 .message(result.getMessage())
                 .build();
+    }
+
+    /** Applies a signature-verified asynchronous provider result exactly once. */
+    @Transactional
+    public void reconcileProviderPayment(PaymentProvider provider, String transactionId,
+                                         boolean succeeded, String failureReason) {
+        Payment candidate = paymentRepository.findByProviderAndTransactionId(provider, transactionId)
+                .orElseThrow(() -> new IllegalArgumentException("Payment reference was not found"));
+        Order order = orderRepository.findLockedById(candidate.getOrderId());
+        if (order == null) throw new IllegalArgumentException("Order not found for payment reference");
+        Payment payment = paymentRepository.findLockedByProviderAndTransactionId(provider, transactionId)
+                .orElseThrow(() -> new IllegalArgumentException("Payment reference was not found"));
+        String targetStatus = succeeded ? PaymentStatus.SUCCESS.name() : PaymentStatus.FAILED.name();
+        if (targetStatus.equals(payment.getStatus())) return;
+        if (!PaymentStatus.PENDING.name().equals(payment.getStatus())) {
+            log.warn("Ignoring {} webhook for payment {} already in state {}",
+                    targetStatus, payment.getId(), payment.getStatus());
+            return;
+        }
+
+        payment.setStatus(targetStatus);
+        payment.setFailureReason(succeeded ? null : failureReason);
+        payment.setUpdatedAt(LocalDateTime.now());
+        Payment saved = paymentRepository.save(payment);
+        orderService.applyPaymentStatus(order.getId(), targetStatus, provider.name());
+
+        if (succeeded && order.getCustomerId() != null) {
+            try {
+                loyaltyPointService.earnPoints(order.getCustomerId(), order.getTotalAmount(),
+                        "Paid order #" + order.getId());
+            } catch (RuntimeException loyaltyFailure) {
+                log.error("Webhook settled payment {} but loyalty points could not be credited", saved.getId(), loyaltyFailure);
+            }
+        }
+
+        PaymentStatusEvent event = PaymentStatusEvent.builder()
+                .orderId(order.getId()).status(targetStatus).provider(provider.name())
+                .transactionId(transactionId).amount(payment.getAmount()).currency(payment.getCurrency()).build();
+        scheduleAfterCommit(() -> {
+            safePublishStatus(event);
+            try {
+                sendPaymentEmail(saved);
+            } catch (RuntimeException notificationFailure) {
+                log.error("Reconciled payment {} committed but email could not be queued", saved.getId(), notificationFailure);
+            }
+            if (succeeded) invoiceService.emailInvoice(order);
+        });
     }
 
     /**

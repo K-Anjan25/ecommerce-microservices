@@ -287,10 +287,13 @@ function Checkout() {
         return;
       }
 
-      const isCod = payment.provider === "CASH" || payment.status === "PENDING";
+      const isCod = payment.provider === "CASH";
+      const awaitingProvider = payment.status === "PENDING" && !isCod;
       showSuccess(
         isCod
           ? "Order placed successfully — pay on delivery"
+          : awaitingProvider
+          ? "Payment initiated — your order remains pending until the provider confirms settlement"
           : "Payment completed and order has been created successfully"
       );
       dispatch(clearAllItems());

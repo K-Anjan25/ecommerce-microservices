@@ -280,8 +280,12 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public void applyPaymentStatus(UUID orderId, String paymentStatus) {
+        applyPaymentStatus(orderId, paymentStatus, null);
+    }
+
+    @Transactional
+    public void applyPaymentStatus(UUID orderId, String paymentStatus, String provider) {
         Order lockedOrder = orderRepository.findLockedById(orderId);
         java.util.Optional.ofNullable(lockedOrder).ifPresent(order -> {
             if ("SUCCESS".equalsIgnoreCase(paymentStatus)) {
@@ -308,7 +312,10 @@ public class OrderService {
                         "Payment failed; reserved credits and inventory restored");
             } else if ("PENDING".equalsIgnoreCase(paymentStatus)) {
                 if (order.getOrderStatus() != OrderStatus.PENDING) return;
-                recordStatusOnce(orderId, OrderStatus.PENDING, "Cash on delivery selected");
+                String pendingNote = "CASH".equalsIgnoreCase(provider)
+                        ? "Cash on delivery selected"
+                        : "Provider payment initiated; settlement pending";
+                recordStatusOnce(orderId, OrderStatus.PENDING, pendingNote);
             } else if ("REFUNDED".equalsIgnoreCase(paymentStatus)) {
                 if (order.getOrderStatus() == OrderStatus.REFUNDED) return;
                 if (order.getOrderStatus() != OrderStatus.PAID) {

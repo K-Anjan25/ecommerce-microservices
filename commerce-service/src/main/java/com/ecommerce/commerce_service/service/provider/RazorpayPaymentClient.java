@@ -60,6 +60,7 @@ public class RazorpayPaymentClient implements PaymentProviderClient {
 
             return ProviderPaymentResult.builder()
                     .success(response.getStatusCode().is2xxSuccessful() && razorpayOrderId != null)
+                    .settled(false)
                     .transactionId(razorpayOrderId)
                     .message(response.getStatusCode().is2xxSuccessful() ? "Razorpay order created" : "Razorpay order failed")
                     .build();

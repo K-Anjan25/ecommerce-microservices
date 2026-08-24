@@ -58,6 +58,13 @@ spring:
           filters:
             - AuthFilter
 
+        # Provider callbacks authenticate with provider HMAC signatures, not customer JWTs.
+        - id: payment-webhooks
+          uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
+          predicates:
+            - Path=/v1/payments/webhooks/**
+            - Method=POST
+
         - id: payment-service
           uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
           predicates:

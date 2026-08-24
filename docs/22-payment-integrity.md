@@ -19,3 +19,7 @@ mutation, and guessing a guest order UUID to change its payment state.
 ## Initiation race and post-commit messaging
 
 Order locking, provider idempotency keys, synchronous local status, and post-commit notifications are documented in [32-payment-initiation-consistency.md](32-payment-initiation-consistency.md).
+
+## Provider-confirmed settlement
+
+Initiation versus capture semantics and signature-verified callbacks are documented in [33-payment-webhook-settlement.md](33-payment-webhook-settlement.md).

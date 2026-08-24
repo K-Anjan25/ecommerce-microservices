@@ -17,6 +17,7 @@ public class PaymentProviderProperties {
     @Setter
     public static class Stripe {
         private String secretKey;
+        private String webhookSecret;
     }
 
     @Getter
@@ -24,5 +25,6 @@ public class PaymentProviderProperties {
     public static class Razorpay {
         private String keyId;
         private String keySecret;
+        private String webhookSecret;
     }
 }
