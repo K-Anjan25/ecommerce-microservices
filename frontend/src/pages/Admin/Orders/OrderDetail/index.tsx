@@ -127,8 +127,8 @@ function OrderDetail() {
     return (
       <div className="space-y-6">
         <Skeleton variant="text" width={240} height={40} />
-        <Skeleton variant="rectangular" height={110} className="!rounded-lg" />
-        <Skeleton variant="rectangular" height={280} className="!rounded-lg" />
+        <Skeleton variant="rectangular" height={110} className="!rounded-sm" />
+        <Skeleton variant="rectangular" height={280} className="!rounded-sm" />
       </div>
     );
   }
@@ -285,7 +285,7 @@ function OrderDetail() {
       {/* ── lines + totals ───────────────────────────────────────────── */}
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
         {productsLoading ? (
-          <Skeleton variant="rectangular" height={240} className="!rounded-lg" />
+          <Skeleton variant="rectangular" height={240} className="!rounded-sm" />
         ) : (
           <DataTable<LineRow>
             rows={rows}
@@ -295,7 +295,7 @@ function OrderDetail() {
           />
         )}
 
-        <aside className="panel-raised h-fit p-5">
+        <aside className="panel h-fit p-5">
           <h2 className="mb-4 font-heading text-base font-bold">Totals</h2>
           <dl className="space-y-2.5 text-sm">
             {summaryRows.map(([label, value, positive]) => (

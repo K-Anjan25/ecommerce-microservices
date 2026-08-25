@@ -99,7 +99,7 @@ function Product() {
               ))}
             </div>
             <div className="space-y-6">
-              <Skeleton variant="rectangular" className="!aspect-[4/3] !h-auto !rounded-lg" />
+              <Skeleton variant="rectangular" className="!aspect-[4/5] !h-auto !rounded-none" />
               <div className="space-y-3">
                 <Skeleton width="30%" />
                 <Skeleton width="70%" height={40} />
@@ -108,7 +108,7 @@ function Product() {
               </div>
             </div>
           </div>
-          <Skeleton variant="rectangular" height={280} className="!rounded-lg" />
+          <Skeleton variant="rectangular" height={280} className="!rounded-sm" />
         </div>
       )}
 

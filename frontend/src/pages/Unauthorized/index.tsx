@@ -14,10 +14,10 @@ function Unauthorized() {
         minHeight: "100vh",
       }}
     >
-      <Typography variant="h1" color="primary">
+      <Typography variant="h1" className="!font-display !text-ink">
         401
       </Typography>
-      <Typography variant="h6" color="primary">
+      <Typography variant="h6" className="!text-ink-muted">
         You don't have permission to access this page
       </Typography>
 

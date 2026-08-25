@@ -22,6 +22,7 @@ import Card from "../index";
 import { ProductApi } from "../../../api/productApi";
 import { CommentApi } from "../../../api/comment";
 import { showSuccess } from "../../../utils/showSuccess";
+import { showError } from "../../../utils/showError";
 import { CreateCommentRequest } from "../../../types/comment";
 import { ProductAdmin, ProductVariant } from "../../../types/product";
 import { AppState } from "../../../store";
@@ -111,10 +112,12 @@ const ProductCard = ({ product }: CardProps) => {
       showSuccess("Comment has been created successfully");
       queryClient.invalidateQueries("products:comments");
     },
+    onError: (error: any) =>
+      showError(error?.response?.data?.message ?? "Could not post your review"),
   });
 
-  const handleCreateComment = (comment: string) =>
-    createMutation.mutate({ productId, text: comment } as CreateCommentRequest);
+  const handleCreateComment = (comment: string, rating?: number) =>
+    createMutation.mutateAsync({ productId, text: comment, rating } as CreateCommentRequest);
 
   const handleVariantChange = (variantId: string) => {
     setSelectedVariantId(variantId === selectedVariantId ? "" : variantId);
@@ -324,7 +327,7 @@ const ProductCard = ({ product }: CardProps) => {
                           }`}
                         >
                           {variant.name}
-                          <span className={active ? "text-white/70" : "text-ink-muted"}>
+                          <span className={active ? "text-oncontrast/70" : "text-ink-muted"}>
                             {formatPrice(variant.price)}
                           </span>
                         </button>

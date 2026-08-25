@@ -151,7 +151,7 @@ function AddEditProduct() {
                 <img
                   src={form.values.imageUrl}
                   alt="Product preview"
-                  className="h-14 w-14 rounded-lg border border-ink/10 object-cover"
+                  className="h-14 w-14 rounded-sm border border-line object-cover"
                 />
                 <IconButton
                   aria-label="Remove image"

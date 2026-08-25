@@ -96,7 +96,7 @@ function Addresses() {
       {isLoading ? (
         <div className="grid gap-4 md:grid-cols-2">
           {Array.from({ length: 2 }).map((_, i) => (
-            <Skeleton key={i} variant="rectangular" height={140} className="!rounded-lg" />
+            <Skeleton key={i} variant="rectangular" height={140} className="!rounded-sm" />
           ))}
         </div>
       ) : list.length === 0 ? (

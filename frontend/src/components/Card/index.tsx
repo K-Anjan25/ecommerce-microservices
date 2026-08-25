@@ -124,7 +124,7 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
         <div className="absolute left-2.5 top-2.5 flex flex-col items-start gap-1.5">
           {onSale && <span className="badge-sale">−{discount}%</span>}
           {product.badge && !onSale && (
-            <span className="badge-sale !bg-contrast">{product.badge}</span>
+            <span className="badge-neutral">{product.badge}</span>
           )}
           {product.flashSaleActive && (
             <span className="badge-sale !bg-action">Flash</span>

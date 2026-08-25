@@ -30,7 +30,7 @@ import { calculateCountOfCartItems } from "../../utils/cart";
 import { setToLocalStorage } from "../../utils/localStorage";
 import { showError } from "../../utils/showError";
 import { useColorSchemeContext } from "../../context/colorScheme";
-import { BrandMark } from "../../brand";
+import { BrandMark, BRAND } from "../../brand";
 import { CommerceSearch } from "../../features/catalog";
 import { useStoreSettings } from "../../features/storefront";
 import { MiniCartDrawer } from "../../features/cart";
@@ -192,7 +192,7 @@ const Navbar = () => {
               {storeSettings.announcementText}
               {storeSettings.announcementLinkText && (
                 <>
-                  <span className="mx-2 text-ink-muted">·</span>
+                  <span className="mx-2 text-oncontrast/50">·</span>
                   <a className="text-accent hover:underline" href={storeSettings.announcementLinkUrl || "/flash-sales"}>
                     {storeSettings.announcementLinkText}
                   </a>
@@ -202,7 +202,7 @@ const Navbar = () => {
             <button
               aria-label="Dismiss announcement"
               onClick={dismissAnnounce}
-              className="absolute right-3 text-ink-muted transition hover:text-oncontrast sm:right-6"
+              className="absolute right-3 text-oncontrast/60 transition hover:text-oncontrast sm:right-6"
             >
               <CloseIcon sx={{ fontSize: 14 }} />
             </button>
@@ -334,7 +334,7 @@ const Navbar = () => {
                   transformOrigin={{ vertical: "top", horizontal: "right" }}
                   open={Boolean(anchorElUser)}
                   onClose={() => setAnchorElUser(null)}
-                  slotProps={{ paper: { className: "!mt-2 !min-w-[220px] !rounded-lg !border !border-line" } }}
+                  slotProps={{ paper: { className: "!mt-2 !min-w-[220px] !rounded-sm !border !border-line" } }}
                 >
                   <div className="px-4 pb-2 pt-1">
                     <p className="truncate text-sm font-bold text-ink">
@@ -383,8 +383,8 @@ const Navbar = () => {
       <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
         <div className="flex h-full w-[19rem] flex-col bg-paper">
           <div className="flex items-center justify-between px-5 py-4">
-            <span className="font-heading text-lg font-extrabold tracking-[0.18em] text-ink">
-              CARTLY
+            <span className="font-display text-2xl tracking-[0.04em] text-ink">
+              {BRAND.wordmark}
             </span>
             <button aria-label="Close menu" className="icon-button" onClick={() => setDrawerOpen(false)}>
               <CloseIcon />

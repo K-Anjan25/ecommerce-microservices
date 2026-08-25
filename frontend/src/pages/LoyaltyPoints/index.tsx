@@ -48,7 +48,7 @@ function LoyaltyPoints() {
           sub: `≈ ${(points / 10).toFixed(0)} off your next order`,
         }}
         actions={
-          <button onClick={() => navigate("/")} className="accent-button">
+          <button onClick={() => navigate("/")} className="primary-button">
             Shop and earn
           </button>
         }

@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 /* ==========================================================================
-   Cartly 2.0 — base
+   Cartly Editorial — base
    ========================================================================== */
 @layer base {
   html {
@@ -120,15 +120,7 @@
 
   /* ---- surfaces ---- */
   .panel {
-    @apply rounded-lg border border-line bg-paper shadow-none;
-  }
-
-  .panel-raised {
-    @apply rounded-lg border border-line bg-paper shadow-card;
-  }
-
-  .panel-ink {
-    @apply rounded-lg border border-white/10 bg-contrast text-oncontrast;
+    @apply rounded-sm border border-line bg-paper shadow-none;
   }
 
   /* A surface that is dark in BOTH modes — hero, footer, admin rail. */
@@ -147,10 +139,6 @@
 
   .dark-button {
     @apply inline-flex items-center justify-center gap-2 rounded-sm bg-contrast px-4 py-2.5 text-sm font-semibold text-oncontrast transition hover:bg-contrast-lift disabled:cursor-not-allowed disabled:opacity-60;
-  }
-
-  .accent-button {
-    @apply inline-flex items-center justify-center gap-2 rounded-sm bg-accent px-4 py-2.5 text-sm font-bold text-ink transition hover:bg-accent-dark disabled:cursor-not-allowed disabled:opacity-60;
   }
 
   .secondary-button {
@@ -175,7 +163,11 @@
   }
 
   .badge-sale {
-    @apply inline-flex items-center rounded-full bg-state-danger px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-wide text-white;
+    @apply inline-flex items-center rounded-full bg-state-danger px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-wide text-oncontrast;
+  }
+
+  .badge-neutral {
+    @apply inline-flex items-center rounded-full bg-contrast px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-wide text-oncontrast;
   }
 
   .badge-stock-in {
@@ -211,21 +203,7 @@
     overflow: hidden;
   }
 
-  .brand-gradient {
-    @apply bg-gradient-to-r from-brand via-brand-light to-brand;
-  }
-
-  .gradient-text {
-    @apply bg-gradient-to-r from-brand via-brand-light to-brand-main bg-clip-text text-transparent;
-  }
-
   .product-grid {
     @apply grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 xl:grid-cols-4;
-  }
-
-  /* dotted grain used on ink surfaces */
-  .grain {
-    background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
-    background-size: 14px 14px;
   }
 }
