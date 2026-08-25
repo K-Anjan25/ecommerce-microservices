@@ -97,25 +97,31 @@ export default function MiniCartDrawer({ open, onClose }: Props) {
                       </button>
                       {item.variantName && <p className="mt-1 text-xs text-ink-muted">{item.variantName}</p>}
                       <div className="mt-4 flex items-center justify-between gap-3">
-                        <div className="flex items-center border border-line">
+                        <div className="flex items-center rounded-sm border border-line bg-paper px-0.5">
                           <button
                             onClick={() =>
                               item.quantity <= 1
                                 ? dispatch(removeFromCart(item.product.id, variant))
                                 : dispatch(decreaseProductQuantity(item.product.id, variant))
                             }
-                            className="flex h-8 w-8 items-center justify-center text-ink-soft hover:bg-sunken"
+                            className="flex h-7 w-7 items-center justify-center rounded-xs text-ink transition hover:bg-sunken active:scale-95"
                             aria-label="Decrease quantity"
                           >
-                            <RemoveIcon sx={{ fontSize: 15 }} />
+                            <RemoveIcon sx={{ fontSize: 14 }} />
                           </button>
-                          <span className="min-w-7 text-center text-xs font-semibold">{item.quantity}</span>
+                          <span className="min-w-[1.75rem] select-none text-center font-mono text-xs font-bold text-ink">
+                            {item.quantity}
+                          </span>
                           <button
+                            disabled={
+                              (item.product.quantityInStock ?? 0) > 0 &&
+                              item.quantity >= (item.product.quantityInStock ?? 0)
+                            }
                             onClick={() => dispatch(increaseProductQuantity(item.product.id, variant))}
-                            className="flex h-8 w-8 items-center justify-center text-ink-soft hover:bg-sunken"
+                            className="flex h-7 w-7 items-center justify-center rounded-xs text-ink transition hover:bg-sunken active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
                             aria-label="Increase quantity"
                           >
-                            <AddIcon sx={{ fontSize: 15 }} />
+                            <AddIcon sx={{ fontSize: 14 }} />
                           </button>
                         </div>
                         <span className="font-display text-lg text-ink">

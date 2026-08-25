@@ -314,6 +314,16 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public OrderDto updateOrderStatusByAdmin(UUID orderId, OrderStatus newStatus, String note) {
+        Order order = orderRepository.findLockedById(orderId);
+        if (order == null) throw new OrderNotFoundException("Order not found: " + orderId);
+        order.setOrderStatus(newStatus);
+        Order saved = orderRepository.save(order);
+        recordStatus(orderId, newStatus, note != null && !note.isBlank() ? note : "Status updated to " + newStatus);
+        return orderMapper.orderToOrderDto(saved);
+    }
+
     public void applyPaymentStatus(UUID orderId, String paymentStatus) {
         applyPaymentStatus(orderId, paymentStatus, null);
     }

@@ -38,7 +38,7 @@ spring:
         - id: guest-order-tracking
           uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
           predicates:
-            - Path=/v1/orders/*/guest
+            - Path=/v1/orders/*/guest,/v1/orders/*/guest/track
             - Method=GET
 
         - id: guest-order-cancel

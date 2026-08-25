@@ -195,6 +195,7 @@ function Checkout() {
   const itemCount = calculateCountOfCartItems(items);
 
   const { data: defaultAddress } = useQuery("defaultAddress", AddressApi.getDefaultAddress, {
+    enabled: isLoggedIn,
     retry: false,
   });
   const { data: loyaltyBalance = 0 } = useQuery("checkoutLoyaltyBalance", LoyaltyPointApi.getBalance, {
@@ -230,6 +231,7 @@ function Checkout() {
           state: values.state,
           district: values.district,
           addressDetail: values.addressDetail,
+          phoneNumber: values.phoneNumber || undefined,
         },
         items: products,
         shippingMethod,
@@ -240,6 +242,7 @@ function Checkout() {
         couponCode: coupon?.code,
         giftCardCode: giftCardCode.trim() || undefined,
         loyaltyPoints: appliedLoyaltyPoints || undefined,
+        phoneNumber: values.phoneNumber || undefined,
       } as CreateOrderRequest;
 
       createOrderMutation.mutate(order);
@@ -626,12 +629,21 @@ function Checkout() {
                 <SelectInput name="state" label="State" form={form} data={states} />
                 <SelectInput name="district" label="District" form={form} data={districts} />
               </div>
-              <TextInput
-                name="pincode"
-                label="Delivery pincode"
-                form={form}
-                inputProps={{ maxLength: 6, inputMode: "numeric" }}
-              />
+              <div className="grid gap-3 sm:grid-cols-2">
+                <TextInput
+                  name="pincode"
+                  label="Delivery pincode"
+                  form={form}
+                  inputProps={{ maxLength: 6, inputMode: "numeric" }}
+                />
+                <TextInput
+                  name="phoneNumber"
+                  label="Mobile number (optional)"
+                  form={form}
+                  type="tel"
+                  inputProps={{ maxLength: 10, inputMode: "numeric" }}
+                />
+              </div>
               <TextInput
                 name="addressDetail"
                 label="Address detail"
@@ -680,7 +692,7 @@ function Checkout() {
                 ? "Pay in cash when your order is delivered"
                 : paymentProvider === "STRIPE"
                 ? "Complete card or wallet verification in a secure Stripe form"
-                : "Razorpay will open to complete your payment"
+                : "Razorpay will open to complete UPI, Cards, or Netbanking payment"
             }
             icon={CreditCardIcon}
           >
@@ -688,17 +700,19 @@ function Checkout() {
               <OptionCard
                 active={paymentProvider === "RAZORPAY"}
                 onClick={() => setPaymentProvider("RAZORPAY")}
-                title="UPI / netbanking"
-                copy="Razorpay · provider checkout"
+                title="UPI / Cards / Netbanking"
+                copy="Razorpay · instant & secure"
                 icon={CreditCardIcon}
               />
-              <OptionCard
-                active={paymentProvider === "STRIPE"}
-                onClick={() => setPaymentProvider("STRIPE")}
-                title="Card / wallets"
-                copy="Stripe · secure Payment Element"
-                icon={CreditCardIcon}
-              />
+              {import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY && (
+                <OptionCard
+                  active={paymentProvider === "STRIPE"}
+                  onClick={() => setPaymentProvider("STRIPE")}
+                  title="International Card"
+                  copy="Stripe · secure Payment Element"
+                  icon={CreditCardIcon}
+                />
+              )}
               <OptionCard
                 active={paymentProvider === "CASH"}
                 onClick={() => setPaymentProvider("CASH")}
@@ -853,7 +867,7 @@ function Checkout() {
               loading={busy}
               className="!mt-5 !hidden !py-3 lg:!flex"
             >
-              Pay {formatPrice(total)}
+              {paymentProvider === "CASH" ? "Place order (Cash on delivery)" : `Pay ${formatPrice(total)}`}
             </LoadingButton>
             <p className="mt-4 flex items-center justify-center gap-1.5 text-[0.6875rem] text-ink-muted">
               <LockOutlinedIcon sx={{ fontSize: 13 }} />
@@ -889,7 +903,7 @@ function Checkout() {
             loading={busy}
             className="!ml-auto !flex-1 !py-3"
           >
-            {t("checkout.pay")}
+            {paymentProvider === "CASH" ? "Place order (COD)" : t("checkout.pay")}
           </LoadingButton>
         </div>
       </div>

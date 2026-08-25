@@ -204,15 +204,18 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
             <button
               onClick={handleRemove}
               aria-label="Decrease quantity"
-              className="flex h-8 w-8 items-center justify-center rounded-xs transition hover:bg-white/10"
+              className="flex h-8 w-8 items-center justify-center rounded-xs transition hover:bg-white/10 active:scale-95"
             >
               <RemoveIcon sx={{ fontSize: 16 }} />
             </button>
-            <span className="text-sm font-bold">{quantity} {t("product.inCart")}</span>
+            <span className="select-none text-sm font-bold">
+              {quantity} {t("product.inCart")}
+            </span>
             <button
               onClick={handleAdd}
+              disabled={stock > 0 && quantity >= stock}
               aria-label="Increase quantity"
-              className="flex h-8 w-8 items-center justify-center rounded-xs transition hover:bg-white/10"
+              className="flex h-8 w-8 items-center justify-center rounded-xs transition hover:bg-white/10 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
             >
               <AddIcon sx={{ fontSize: 16 }} />
             </button>

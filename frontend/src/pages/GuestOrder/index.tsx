@@ -36,6 +36,12 @@ function GuestOrder() {
     () => OrderApi.getGuestOrder(orderId!, capability),
     { enabled: Boolean(orderId && capability), retry: false }
   );
+
+  const { data: tracking = [] } = useQuery(
+    ["guest-order-track", orderId, capability],
+    () => OrderApi.getGuestOrderTracking(orderId!, capability),
+    { enabled: Boolean(orderId && capability), retry: false }
+  );
   const cancelMutation = useMutation(
     () => OrderApi.cancelGuestOrder(orderId!, capability),
     {
@@ -102,20 +108,42 @@ function GuestOrder() {
       </header>
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
-        <section className="border-t border-line">
-          <div className="flex items-center gap-2 py-5">
-            <Inventory2OutlinedIcon sx={{ fontSize: 18 }} className="text-ink-muted" />
-            <h2 className="font-display text-2xl">Items</h2>
-          </div>
-          <ul className="divide-y divide-line border-y border-line">
-            {order.items.map((item) => (
-              <li key={`${item.productId}-${item.variantId ?? "base"}`} className="flex justify-between gap-4 py-4 text-sm">
-                <span className="font-semibold text-ink">{names.get(item.productId) ?? `Product ${item.productId.slice(0, 8)}`}</span>
-                <span className="text-ink-muted">Quantity {item.quantity}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
+        <div className="space-y-6">
+          <section className="border-t border-line">
+            <div className="flex items-center gap-2 py-5">
+              <Inventory2OutlinedIcon sx={{ fontSize: 18 }} className="text-ink-muted" />
+              <h2 className="font-display text-2xl">Items</h2>
+            </div>
+            <ul className="divide-y divide-line border-y border-line">
+              {order.items.map((item) => (
+                <li key={`${item.productId}-${item.variantId ?? "base"}`} className="flex justify-between gap-4 py-4 text-sm">
+                  <span className="font-semibold text-ink">{names.get(item.productId) ?? `Product ${item.productId.slice(0, 8)}`}</span>
+                  <span className="text-ink-muted">Quantity {item.quantity}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {tracking.length > 0 && (
+            <section className="border-t border-line py-5">
+              <h2 className="mb-4 font-display text-2xl">Order activity &amp; timeline</h2>
+              <ol className="relative ml-2 space-y-3 border-l border-line pl-4">
+                {tracking.map((evt: any, idx: number) => (
+                  <li key={evt.id || idx} className="relative">
+                    <div className="absolute -left-[1.3125rem] mt-1 h-2.5 w-2.5 rounded-full border border-paper bg-brand" />
+                    <div className="flex flex-wrap items-baseline gap-2">
+                      <span className="text-xs font-bold uppercase text-ink">{evt.status}</span>
+                      {evt.changedAt && (
+                        <span className="text-xs text-ink-muted">{formatDate(evt.changedAt)}</span>
+                      )}
+                    </div>
+                    {evt.note && <p className="mt-0.5 text-xs text-ink-soft">{evt.note}</p>}
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )}
+        </div>
 
         <aside className="space-y-7">
           <section className="border-t border-ink py-5">

@@ -21,6 +21,10 @@ const createOrderForm = (options: OrderFormOptions = {}) => {
           .matches(/^\d{6}$/, "Enter a valid 6-digit pincode")
           .required("pincode is required")
       : yup.string(),
+    phoneNumber: yup
+      .string()
+      .matches(/^$|^[6-9]\d{9}$/, "Enter a valid 10-digit mobile number")
+      .nullable(),
     // Only require an email for guest checkout — the field is not rendered
     // for logged-in users, so a blanket required() would block their submit.
     customerEmail: guest
@@ -36,6 +40,7 @@ const createOrderForm = (options: OrderFormOptions = {}) => {
     district: "",
     addressDetail: "",
     pincode: "",
+    phoneNumber: "",
     customerEmail: "",
   };
 

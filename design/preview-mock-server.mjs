@@ -169,6 +169,44 @@ createServer((req, res) => {
     return json(res, { message: "Mock password reset accepted" });
   }
 
+  if (p === "/user/login" && req.method === "POST") {
+    return json(res, {
+      accessToken: "mock-access-token",
+      refreshToken: "mock-refresh-token",
+      userId: "user-1",
+      email: "admin@cartly.com",
+      firstName: "Admin",
+      lastName: "User",
+      roles: ["ROLE_ADMIN"],
+    });
+  }
+
+  if (p === "/user/me" && req.method === "GET") {
+    return json(res, {
+      id: "user-1",
+      userId: "user-1",
+      email: "admin@cartly.com",
+      firstName: "Admin",
+      lastName: "User",
+      roles: ["ROLE_ADMIN"],
+    });
+  }
+
+  if (p === "/user/token/refresh" && req.method === "GET") {
+    return json(res, {
+      accessToken: "mock-access-token",
+      refreshToken: "mock-refresh-token",
+    });
+  }
+
+  if (p === "/v1/shipping/calculate" && req.method === "POST") {
+    return json(res, { active: true, cost: 50 });
+  }
+
+  if (p.startsWith("/v1/tax/rule")) {
+    return json(res, { taxName: "GST", rate: 0.18 });
+  }
+
   if (p === "/v1/store-settings" && req.method === "GET") return json(res, STORE_SETTINGS);
   if (p === "/v1/store-settings" && req.method === "PUT") {
     let raw = "";
@@ -346,9 +384,71 @@ createServer((req, res) => {
     });
     return;
   }
+  if (p === "/v1/payments/webhooks/razorpay" && req.method === "POST") {
+    let raw = "";
+    req.on("data", (chunk) => { raw += chunk; });
+    req.on("end", () => {
+      try {
+        const body = JSON.parse(raw);
+        const entity = body?.payload?.payment?.entity;
+        const orderId = entity?.order_id;
+        const event = body?.event;
+        const found = ORDERS.find((o) => o.id === orderId || o.id.includes(orderId));
+        if (found) {
+          if (event === "payment.captured") {
+            found.orderStatus = "PAID";
+          } else if (event === "payment.failed") {
+            found.orderStatus = "CANCELLED";
+          }
+        }
+        json(res, { status: "ok", reconciled: true, orderId, event });
+      } catch {
+        json(res, { message: "Webhook received" });
+      }
+    });
+    return;
+  }
+  if (p === "/v1/payments/webhooks/stripe" && req.method === "POST") {
+    let raw = "";
+    req.on("data", (chunk) => { raw += chunk; });
+    req.on("end", () => {
+      try {
+        const body = JSON.parse(raw);
+        const intent = body?.data?.object;
+        const orderId = intent?.id;
+        const type = body?.type;
+        const found = ORDERS.find((o) => o.id === orderId);
+        if (found && type === "payment_intent.succeeded") {
+          found.orderStatus = "PAID";
+        }
+        json(res, { status: "ok", reconciled: true });
+      } catch {
+        json(res, { message: "Webhook received" });
+      }
+    });
+    return;
+  }
   if (p === "/v1/orders/my") return json(res, ORDERS);
   if (p === "/v1/orders")
     return json(res, { data: ORDERS, totalSize: ORDERS.length, totalPage: 1 });
+  if (/^\/v1\/orders\/[^/]+\/status$/.test(p) && req.method === "PUT") {
+    const oid = p.split("/")[3];
+    const status = q.get("status");
+    const found = ORDERS.find((o) => o.id === oid);
+    if (found && status) {
+      found.orderStatus = status;
+      return json(res, found);
+    }
+    return json(res, { message: "not found" }, 404);
+  }
+  if (/^\/v1\/orders\/[^/]+\/track$/.test(p) && req.method === "GET") {
+    const oid = p.split("/")[3];
+    const found = ORDERS.find((o) => o.id === oid);
+    return json(res, [
+      { id: "trk-1", orderId: oid, status: "PENDING", note: "Order placed", changedAt: found?.createdDate ?? new Date().toISOString() },
+      ...(found?.orderStatus !== "PENDING" ? [{ id: "trk-2", orderId: oid, status: found?.orderStatus ?? "PAID", note: `Order ${found?.orderStatus?.toLowerCase()}`, changedAt: new Date().toISOString() }] : []),
+    ]);
+  }
   if (/^\/v1\/orders\/[^/]+\/invoice$/.test(p))
     return json(res, { message: "mock: invoices are not generated in the preview" }, 501);
   if (/^\/v1\/orders\/[^/]+$/.test(p)) {

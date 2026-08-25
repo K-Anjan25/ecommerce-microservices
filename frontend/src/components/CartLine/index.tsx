@@ -84,7 +84,7 @@ function CartLine({ item, readOnly = false }: { item: CartItem; readOnly?: boole
 
         {!readOnly && (
           <div className="mt-auto flex items-center justify-between gap-3 pt-2">
-            <div className="flex h-9 items-center rounded-sm border border-line bg-paper">
+            <div className="flex h-9 items-center rounded-sm border border-line bg-paper px-0.5">
               <button
                 aria-label="Decrease quantity"
                 onClick={() =>
@@ -92,15 +92,18 @@ function CartLine({ item, readOnly = false }: { item: CartItem; readOnly?: boole
                     ? dispatch(removeFromCart(product.id, variantId))
                     : dispatch(decreaseProductQuantity(product.id, variantId))
                 }
-                className="flex h-full w-9 items-center justify-center text-ink transition hover:bg-sunken"
+                className="flex h-full w-8 items-center justify-center rounded-xs text-ink transition hover:bg-sunken active:scale-95"
               >
                 <RemoveIcon sx={{ fontSize: 15 }} />
               </button>
-              <span className="min-w-8 text-center text-sm font-bold">{quantity}</span>
+              <span className="min-w-[2rem] select-none text-center font-mono text-sm font-bold text-ink">
+                {quantity}
+              </span>
               <button
                 aria-label="Increase quantity"
+                disabled={stock > 0 && quantity >= stock}
                 onClick={() => dispatch(increaseProductQuantity(product.id, variantId))}
-                className="flex h-full w-9 items-center justify-center text-ink transition hover:bg-sunken"
+                className="flex h-full w-8 items-center justify-center rounded-xs text-ink transition hover:bg-sunken active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
               >
                 <AddIcon sx={{ fontSize: 15 }} />
               </button>

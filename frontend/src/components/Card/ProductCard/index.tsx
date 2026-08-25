@@ -342,31 +342,38 @@ const ProductCard = ({ product }: CardProps) => {
               {/* CTA row — same eye-line as the price */}
               <div className="flex flex-wrap items-center gap-3">
                 {quantity > 0 && (
-                  <div className="flex h-12 items-center gap-1 rounded-sm border border-line bg-paper px-1.5">
+                  <div className="flex h-12 items-center rounded-sm border border-line bg-paper px-1 shadow-none transition focus-within:border-brand">
                     <button
                       onClick={handleRemove}
                       aria-label="Decrease quantity"
-                      className="flex h-9 w-9 items-center justify-center rounded-xs text-ink transition hover:bg-sunken"
+                      className="flex h-10 w-10 items-center justify-center rounded-xs text-ink transition hover:bg-sunken active:scale-95"
                     >
-                      <RemoveIcon fontSize="small" />
+                      <RemoveIcon sx={{ fontSize: 18 }} />
                     </button>
-                    <span className="min-w-8 text-center text-sm font-bold">{quantity}</span>
+                    <span className="min-w-[2.25rem] select-none text-center font-display text-base font-bold text-ink">
+                      {quantity}
+                    </span>
                     <button
                       onClick={handleAdd}
+                      disabled={displayStock > 0 && quantity >= displayStock}
                       aria-label="Increase quantity"
-                      className="flex h-9 w-9 items-center justify-center rounded-xs text-ink transition hover:bg-sunken"
+                      className="flex h-10 w-10 items-center justify-center rounded-xs text-ink transition hover:bg-sunken active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
                     >
-                      <AddIcon fontSize="small" />
+                      <AddIcon sx={{ fontSize: 18 }} />
                     </button>
                   </div>
                 )}
                 <button
                   onClick={handleAdd}
-                  disabled={displayStock <= 0}
+                  disabled={displayStock <= 0 || (displayStock > 0 && quantity >= displayStock)}
                   className="primary-button !h-12 min-w-[11rem] flex-1 sm:flex-none"
                 >
                   <AddShoppingCartIcon sx={{ fontSize: 18 }} />
-                  {quantity ? t("product.addMore") : t("product.add")}
+                  {quantity
+                    ? displayStock > 0 && quantity >= displayStock
+                      ? "Max stock reached"
+                      : t("product.addMore")
+                    : t("product.add")}
                 </button>
                 <Tooltip title="Compare">
                   <button

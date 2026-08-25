@@ -133,7 +133,10 @@ const request = async <T>(method: string, path: string, body?: unknown, config: 
     return await rawRequest<T>(method, path, body, config, token);
   } catch (error) {
     const authEntry = path.includes("/user/login") || path.includes("/user/token/refresh");
-    if (!(error instanceof HttpError) || error.response?.status !== 401 || authEntry) throw error;
+    const hasRefreshToken = Boolean(localStorage.getItem("refresh-token"));
+    if (!(error instanceof HttpError) || error.response?.status !== 401 || authEntry || !hasRefreshToken) {
+      throw error;
+    }
 
     // Only a failed refresh invalidates the local session. If the retry itself
     // is rejected (for example because the user lacks a role), do not erase a

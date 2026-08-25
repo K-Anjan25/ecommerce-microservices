@@ -16,6 +16,7 @@ import { CategoryApi } from "../../api/categoryApi";
 import { PRODUCT_PARAM } from "../../constants/product";
 import { Category } from "../../types/category";
 import Card from "../../components/Card";
+import NumberStepperInput from "../../components/NumberStepperInput";
 import ProductViewPlaceholder from "../../components/ProductViewPlaceholder";
 import EmptyState from "../../components/EmptyState";
 import { useStoreSettings } from "../../features/storefront";
@@ -253,24 +254,37 @@ function Products() {
       </section>
 
       <section>
-        <p className="eyebrow mb-3">Price</p>
-        <div className="flex items-center gap-2">
-          <TextField
+        <div className="mb-3 flex items-center justify-between">
+          <p className="eyebrow !mb-0">Price</p>
+          {(minPrice || maxPrice) && (
+            <button
+              type="button"
+              onClick={() => {
+                setMinPrice("");
+                setMaxPrice("");
+              }}
+              className="text-[0.6875rem] font-semibold text-brand hover:underline"
+            >
+              Reset
+            </button>
+          )}
+        </div>
+        <div className="grid grid-cols-2 gap-2.5">
+          <NumberStepperInput
             label="Min"
-            type="number"
-            size="small"
-            fullWidth
             value={minPrice}
-            onChange={(e) => setMinPrice(e.target.value)}
+            onChange={setMinPrice}
+            step={100}
+            min={0}
+            placeholder="0"
           />
-          <span className="text-ink-muted">–</span>
-          <TextField
+          <NumberStepperInput
             label="Max"
-            type="number"
-            size="small"
-            fullWidth
             value={maxPrice}
-            onChange={(e) => setMaxPrice(e.target.value)}
+            onChange={setMaxPrice}
+            step={100}
+            min={0}
+            placeholder="Any"
           />
         </div>
         {facets?.priceMin != null && (

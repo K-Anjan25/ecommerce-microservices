@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Skeleton } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
@@ -39,6 +39,7 @@ type LineRow = {
 
 function OrderDetail() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { orderId } = useParams();
   const { state: orderFromNav }: OrderLocation = useLocation();
 
@@ -53,6 +54,26 @@ function OrderDetail() {
   );
 
   const resolvedOrder = orderFromNav ?? order;
+
+  const { data: tracking, refetch: refetchTracking } = useQuery(
+    ["admin:order:track", resolvedOrder?.id],
+    () => (resolvedOrder ? OrderApi.getOrderTracking(resolvedOrder.id) : []),
+    { enabled: Boolean(resolvedOrder) }
+  );
+
+  const updateStatusMutation = useMutation(
+    ({ status, note }: { status: string; note?: string }) =>
+      OrderApi.updateOrderStatus(resolvedOrder!.id, status, note),
+    {
+      onSuccess: () => {
+        showSuccess("Order status updated");
+        queryClient.invalidateQueries(["admin:order", orderId]);
+        queryClient.invalidateQueries(["admin:orders"]);
+        refetchTracking();
+      },
+      onError: (e: any) => showError(e.response?.data?.message ?? "Could not update status"),
+    }
+  );
 
   const { data: products, isLoading: productsLoading } = useQuery(
     ["admin:order-product", resolvedOrder?.id],
@@ -231,8 +252,38 @@ function OrderDetail() {
       <div className="grid gap-3 md:grid-cols-3">
         <div className="panel p-5">
           <p className="eyebrow">Status</p>
-          <div className="mt-2">
+          <div className="mt-2 flex flex-wrap items-center gap-2">
             <StatusPill value={resolvedOrder.orderStatus} />
+            {resolvedOrder.orderStatus === "PENDING" && (
+              <LoadingButton
+                size="small"
+                variant="contained"
+                loading={updateStatusMutation.isLoading}
+                onClick={() =>
+                  updateStatusMutation.mutate({
+                    status: "APPROVED",
+                    note: "Approved by store administration",
+                  })
+                }
+              >
+                Approve
+              </LoadingButton>
+            )}
+            {resolvedOrder.orderStatus === "PAID" && (
+              <LoadingButton
+                size="small"
+                variant="contained"
+                loading={updateStatusMutation.isLoading}
+                onClick={() =>
+                  updateStatusMutation.mutate({
+                    status: "APPROVED",
+                    note: "Fulfillment approved",
+                  })
+                }
+              >
+                Approve for Fulfillment
+              </LoadingButton>
+            )}
           </div>
           <p className="mt-3 font-heading text-xl font-extrabold text-ink">
             {formatPrice(resolvedOrder.totalAmount)}
@@ -315,6 +366,27 @@ function OrderDetail() {
           </div>
         </aside>
       </div>
+
+      {/* ── tracking activity ──────────────────────────────────────── */}
+      {tracking && tracking.length > 0 && (
+        <section className="panel p-5 sm:p-6">
+          <h2 className="mb-4 font-heading text-base font-bold">Order activity &amp; timeline</h2>
+          <ol className="relative ml-2 space-y-4 border-l border-line pl-4">
+            {tracking.map((evt, idx) => (
+              <li key={evt.id || idx} className="relative">
+                <div className="absolute -left-[1.3125rem] mt-1 h-2.5 w-2.5 rounded-full border border-paper bg-brand" />
+                <div className="flex flex-wrap items-baseline gap-2">
+                  <span className="text-xs font-bold uppercase text-ink">{evt.status}</span>
+                  {evt.changedAt && (
+                    <span className="text-xs text-ink-muted">{formatDate(evt.changedAt)}</span>
+                  )}
+                </div>
+                {evt.note && <p className="mt-0.5 text-xs text-ink-soft">{evt.note}</p>}
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
 
       {/* ── returns queue ────────────────────────────────────────────── */}
       {returns && returns.length > 0 && (

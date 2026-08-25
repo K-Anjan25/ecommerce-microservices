@@ -36,12 +36,14 @@ export interface CreateOrderRequest {
   couponCode?: string;
   giftCardCode?: string;
   loyaltyPoints?: number;
+  phoneNumber?: string;
 }
 
 interface OrderAdress {
   state: string;
   district: string;
   addressDetail: string;
+  phoneNumber?: string;
 }
 
 export interface OrderItem {
@@ -81,4 +83,5 @@ export interface OrderForm {
   addressDetail: string;
   pincode: string;
   customerEmail?: string;
+  phoneNumber?: string;
 }

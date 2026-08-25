@@ -65,6 +65,12 @@ function UserOrderDetail() {
     { enabled: Boolean(orderId) }
   );
 
+  const { data: tracking = [] } = useQuery(
+    ["user:order:track", orderId],
+    () => OrderApi.getOrderTracking(orderId!),
+    { enabled: Boolean(orderId), retry: false }
+  );
+
   const createMutation = useMutation(ReturnApi.createReturnRequest, {
     onSuccess: () => {
       showSuccess("Return request submitted");
@@ -237,6 +243,25 @@ function UserOrderDetail() {
               );
             })}
           </ol>
+        )}
+        {tracking.length > 0 && (
+          <div className="mt-5 border-t border-line/60 pt-4">
+            <p className="eyebrow mb-3">Activity history</p>
+            <ol className="relative ml-2 space-y-3 border-l border-line pl-4">
+              {tracking.map((evt: any, idx: number) => (
+                <li key={evt.id || idx} className="relative">
+                  <div className="absolute -left-[1.3125rem] mt-1 h-2.5 w-2.5 rounded-full border border-paper bg-brand" />
+                  <div className="flex flex-wrap items-baseline gap-2">
+                    <span className="text-xs font-bold uppercase text-ink">{evt.status}</span>
+                    {evt.changedAt && (
+                      <span className="text-xs text-ink-muted">{formatDate(evt.changedAt)}</span>
+                    )}
+                  </div>
+                  {evt.note && <p className="mt-0.5 text-xs text-ink-soft">{evt.note}</p>}
+                </li>
+              ))}
+            </ol>
+          </div>
         )}
       </section>
 

@@ -12,6 +12,7 @@ import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined
 import ReplayOutlinedIcon from "@mui/icons-material/ReplayOutlined";
 
 import { OrderApi } from "../../api/orderApi";
+import { PaymentApi } from "../../api/paymentApi";
 import { ProductApi } from "../../api/productApi";
 import CartLine from "../../components/CartLine";
 import CheckoutSteps from "../../components/CheckoutSteps";
@@ -39,13 +40,14 @@ function Cart() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const items = useSelector((state: AppState) => state.cart);
+  const isLoggedIn = useSelector((state: AppState) => state.user.data.isLogedIn);
   const [modalOpen, setModalOpen] = useState(searchParams.get("order") === "true");
   const [districts, setDistricts] = useState<{ name: string; id: string }[]>([]);
   const dispatch = useDispatch<any>();
   const { t } = useI18n();
 
   const form = useFormik({
-    ...createOrderForm(),
+    ...createOrderForm({ guest: !isLoggedIn }),
     onSubmit: (values) => {
       const products = items.map((item) => ({
         productId: item.product.id,
@@ -57,9 +59,12 @@ function Cart() {
           state: values.state,
           district: values.district,
           addressDetail: values.addressDetail,
+          phoneNumber: values.phoneNumber || undefined,
         },
         items: products,
         state: values.state,
+        customerEmail: isLoggedIn ? undefined : values.customerEmail,
+        phoneNumber: values.phoneNumber || undefined,
       } as CreateOrderRequest;
       createMutation.mutate(order);
     },
@@ -82,14 +87,36 @@ function Cart() {
   };
 
   const createMutation = useMutation(OrderApi.createOrder, {
-    onSuccess: () => {
-      showSuccess("Order has been created successfully");
+    onSuccess: async (order) => {
+      try {
+        await PaymentApi.initiatePayment({
+          orderId: order.id,
+          provider: "CASH",
+          checkoutToken: order.checkoutToken,
+        });
+      } catch (ignored) {}
+      showSuccess("Order placed successfully — pay on delivery");
       dispatch(clearAllItems());
       closeModal();
+      navigate("/order-confirmation", {
+        replace: true,
+        state: {
+          orderId: order.id,
+          orderStatus: "PENDING",
+          paymentStatus: "PENDING",
+          provider: "CASH",
+          amount: Number(order.totalAmount),
+          signedIn: isLoggedIn,
+        },
+      });
     },
     onError: (e: any) => {
       const res = e.response?.data?.message as string;
-      getProducts(res);
+      if (res && res.startsWith("[") && res.endsWith("]")) {
+        getProducts(res);
+      } else {
+        showError(e.response?.data?.message ?? e.message ?? "Order could not be created");
+      }
     },
   });
 
@@ -271,6 +298,21 @@ function Cart() {
         onClose={closeModal}
       >
         <form onSubmit={form.handleSubmit} className="space-y-4 pt-2">
+          {!isLoggedIn && (
+            <TextInput
+              name="customerEmail"
+              label="Email address"
+              form={form}
+              type="email"
+            />
+          )}
+          <TextInput
+            name="phoneNumber"
+            label="Mobile number (optional)"
+            form={form}
+            type="tel"
+            inputProps={{ maxLength: 10, inputMode: "numeric" }}
+          />
           <SelectInput name="state" label="State" form={form} data={states} />
           <SelectInput name="district" label="District" form={form} data={districts} />
           <TextInput name="addressDetail" label="Address detail" form={form} />

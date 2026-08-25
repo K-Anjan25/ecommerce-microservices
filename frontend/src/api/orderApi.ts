@@ -17,6 +17,13 @@ const getGuestOrder = async (orderId: string, checkoutToken: string) => {
   return data;
 };
 
+const getGuestOrderTracking = async (orderId: string, checkoutToken: string) => {
+  const { data } = await api.get<any[]>(`/v1/orders/${orderId}/guest/track`, {
+    headers: { "X-Checkout-Token": checkoutToken },
+  });
+  return data;
+};
+
 const cancelGuestOrder = async (orderId: string, checkoutToken: string) => {
   const { data } = await api.post<Order>(`/v1/orders/${orderId}/guest/cancel`, undefined, {
     headers: { "X-Checkout-Token": checkoutToken },
@@ -46,6 +53,18 @@ const createOrder = async (order: CreateOrderRequest) => {
   return data;
 };
 
+const updateOrderStatus = async (orderId: string, status: string, note?: string) => {
+  const { data } = await api.put<Order>(`/v1/orders/${orderId}/status`, undefined, {
+    params: { status, note },
+  });
+  return data;
+};
+
+const getOrderTracking = async (orderId: string) => {
+  const { data } = await api.get<any[]>(`/v1/orders/${orderId}/track`);
+  return data;
+};
+
 // Regenerated server-side from current order data; returns a PDF blob.
 const getInvoice = async (orderId: string) => {
   const res = await api.get<Blob>(`/v1/orders/${orderId}/invoice`, {
@@ -64,9 +83,12 @@ export const OrderApi = {
   getMyOrders,
   getOrderById,
   getGuestOrder,
+  getGuestOrderTracking,
   cancelGuestOrder,
   cancelMyOrder,
   createOrder,
+  updateOrderStatus,
+  getOrderTracking,
   getInvoice,
   getDashboardStats,
 };

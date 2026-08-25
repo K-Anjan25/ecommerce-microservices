@@ -65,6 +65,13 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getGuestOrder(orderId, checkoutToken));
     }
 
+    @GetMapping("/{orderId}/guest/track")
+    public ResponseEntity<List<OrderStatusHistoryDto>> getGuestOrderTracking(@PathVariable UUID orderId,
+            @RequestHeader(value = "X-Checkout-Token", required = false) String checkoutToken) {
+        orderService.getGuestOrder(orderId, checkoutToken);
+        return ResponseEntity.ok(orderService.getOrderTracking(orderId));
+    }
+
 
     @PostMapping("/{orderId}/cancel")
     @PreAuthorize("hasAuthority('ROLE_USER')")
@@ -72,6 +79,15 @@ public class OrderController {
         UUID customerId = UUID.fromString(String.valueOf(
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal()));
         return ResponseEntity.ok(orderService.cancelPendingOrder(orderId, customerId, null));
+    }
+
+    @PutMapping("/{orderId}/status")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER')")
+    public ResponseEntity<OrderDto> updateOrderStatus(
+            @PathVariable UUID orderId,
+            @RequestParam OrderStatus status,
+            @RequestParam(required = false) String note) {
+        return ResponseEntity.ok(orderService.updateOrderStatusByAdmin(orderId, status, note));
     }
 
     @PostMapping("/{orderId}/guest/cancel")

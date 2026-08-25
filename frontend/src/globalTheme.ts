@@ -194,6 +194,73 @@ export function createAppTheme(mode: Mode = "light") {
           },
         },
       },
+      MuiOutlinedInput: {
+        styleOverrides: {
+          root: {
+            borderRadius: 10,
+            backgroundColor: c.paper,
+            color: c.ink,
+            "& fieldset": { borderColor: c.line },
+            "&:hover fieldset": { borderColor: c.inkFaint },
+            "&.Mui-focused fieldset": { borderColor: c.action },
+          },
+        },
+      },
+      MuiInputLabel: {
+        styleOverrides: {
+          root: {
+            color: c.inkSoft,
+            "&.Mui-focused": {
+              color: c.action,
+            },
+          },
+        },
+      },
+      MuiFormHelperText: {
+        styleOverrides: {
+          root: {
+            marginLeft: 4,
+            fontSize: 11,
+          },
+        },
+      },
+      MuiSelect: {
+        defaultProps: { size: "small" },
+        styleOverrides: {
+          select: {
+            borderRadius: 10,
+            color: c.ink,
+            "&:focus": {
+              borderRadius: 10,
+              backgroundColor: "transparent",
+            },
+          },
+          icon: {
+            color: c.inkSoft,
+          },
+        },
+      },
+      MuiMenuItem: {
+        styleOverrides: {
+          root: {
+            fontSize: 14,
+            color: c.ink,
+            paddingTop: 8,
+            paddingBottom: 8,
+            "&.Mui-selected": {
+              backgroundColor: mode === "dark" ? "rgba(227,165,143,0.16)" : "rgba(164,71,45,0.08)",
+              fontWeight: 600,
+              color: c.brand,
+              "&:hover": {
+                backgroundColor: mode === "dark" ? "rgba(227,165,143,0.22)" : "rgba(164,71,45,0.12)",
+              },
+            },
+            "&:hover": {
+              backgroundColor: c.sunken,
+            },
+          },
+        },
+      },
       MuiCard: {
         styleOverrides: {
           root: { borderRadius: 10, border: `1px solid ${c.line}`, boxShadow: "none" },
