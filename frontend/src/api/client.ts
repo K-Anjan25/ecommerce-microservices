@@ -133,23 +133,30 @@ const request = async <T>(method: string, path: string, body?: unknown, config: 
     return await rawRequest<T>(method, path, body, config, token);
   } catch (error) {
     const authEntry = path.includes("/user/login") || path.includes("/user/token/refresh");
-    const hasRefreshToken = Boolean(localStorage.getItem("refresh-token"));
-    if (!(error instanceof HttpError) || error.response?.status !== 401 || authEntry || !hasRefreshToken) {
+    if (!(error instanceof HttpError) || error.response?.status !== 401 || authEntry) {
       throw error;
     }
 
-    // Only a failed refresh invalidates the local session. If the retry itself
-    // is rejected (for example because the user lacks a role), do not erase a
-    // valid refresh token and do not bounce the user to the login screen.
-    let tokens: TokenPair;
-    try {
-      tokens = await refreshTokens();
-    } catch (refreshError) {
+    const hasRefreshToken = Boolean(localStorage.getItem("refresh-token"));
+    if (hasRefreshToken) {
+      try {
+        const tokens = await refreshTokens();
+        return await rawRequest<T>(method, path, body, config, tokens.accessToken);
+      } catch (refreshError) {
+        clearSession();
+      }
+    } else {
       clearSession();
-      if (window.location.pathname !== "/login") window.location.assign("/login");
-      throw refreshError;
     }
-    return await rawRequest<T>(method, path, body, config, tokens.accessToken);
+
+    // If this was a public or guest-allowed endpoint (like creating an order or initiating payment),
+    // retry once without the invalid/expired token so the gateway can route to the public/guest handler.
+    const isGuestAllowed = (path === "/v1/orders" || path === "/v1/payments") && method === "POST";
+    if (isGuestAllowed) {
+      return await rawRequest<T>(method, path, body, config, null);
+    }
+
+    throw error;
   }
 };
 
