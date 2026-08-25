@@ -6,7 +6,11 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
   FormControlLabel,
+  InputLabel,
+  MenuItem,
+  Select,
   Skeleton,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
@@ -157,46 +161,39 @@ function Addresses() {
         <DialogTitle className="!font-display !text-2xl !font-normal">Add a new address</DialogTitle>
         <DialogContent dividers>
           <div className="space-y-4 py-1">
-            <div>
-              <label htmlFor="addr-state" className="eyebrow mb-1.5 block">
-                State
-              </label>
-              <select
+            <FormControl fullWidth size="small">
+              <InputLabel id="addr-state-label">State</InputLabel>
+              <Select
+                labelId="addr-state-label"
                 id="addr-state"
-                className="input-control"
+                label="State"
                 value={form.state}
                 onChange={(e) => setForm({ ...form, state: e.target.value, district: "" })}
               >
-                <option value="">Select state</option>
                 {states.map((s) => (
-                  <option key={s} value={s}>
+                  <MenuItem key={s} value={s}>
                     {s}
-                  </option>
+                  </MenuItem>
                 ))}
-              </select>
-            </div>
+              </Select>
+            </FormControl>
 
-            <div>
-              <label htmlFor="addr-district" className="eyebrow mb-1.5 block">
-                District
-              </label>
-              <select
+            <FormControl fullWidth size="small" disabled={!form.state}>
+              <InputLabel id="addr-district-label">District</InputLabel>
+              <Select
+                labelId="addr-district-label"
                 id="addr-district"
-                className="input-control"
+                label="District"
                 value={form.district}
-                disabled={!form.state}
                 onChange={(e) => setForm({ ...form, district: e.target.value })}
               >
-                <option value="">
-                  {form.state ? "Select district" : "Pick a state first"}
-                </option>
                 {districts.map((d: string) => (
-                  <option key={d} value={d}>
+                  <MenuItem key={d} value={d}>
                     {d}
-                  </option>
+                  </MenuItem>
                 ))}
-              </select>
-            </div>
+              </Select>
+            </FormControl>
 
             <div>
               <label htmlFor="addr-detail" className="eyebrow mb-1.5 block">

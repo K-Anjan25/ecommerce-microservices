@@ -6,6 +6,10 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
   Skeleton,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
@@ -452,24 +456,22 @@ function UserOrderDetail() {
         <DialogTitle className="!font-display !text-2xl !font-normal">Request a return</DialogTitle>
         <DialogContent dividers>
           <div className="space-y-4 py-1">
-            <div>
-              <label htmlFor="ret-product" className="eyebrow mb-1.5 block">
-                Item
-              </label>
-              <select
+            <FormControl fullWidth size="small">
+              <InputLabel id="ret-product-label">Item</InputLabel>
+              <Select
+                labelId="ret-product-label"
                 id="ret-product"
-                className="input-control"
+                label="Item"
                 value={form.productId}
                 onChange={(e) => setForm({ ...form, productId: e.target.value, quantity: 1 })}
               >
-                <option value="">Select an item</option>
                 {order.items.map((item) => (
-                  <option key={item.productId} value={item.productId}>
+                  <MenuItem key={item.productId} value={item.productId}>
                     {nameOf(item.productId)} (qty {item.quantity})
-                  </option>
+                  </MenuItem>
                 ))}
-              </select>
-            </div>
+              </Select>
+            </FormControl>
 
             <div>
               <label htmlFor="ret-qty" className="eyebrow mb-1.5 block">

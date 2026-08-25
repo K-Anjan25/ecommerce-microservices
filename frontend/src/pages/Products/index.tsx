@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState, useRef } from "react";
 import { useInfiniteQuery, useQuery } from "react-query";
 import { useInView } from "react-intersection-observer";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Drawer, Checkbox, FormControlLabel, TextField, Rating } from "@mui/material";
+import { Drawer, Checkbox, FormControlLabel, TextField, Rating, FormControl, Select, MenuItem } from "@mui/material";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -191,17 +191,22 @@ function Products() {
   const FacetPanel = (
     <div className="space-y-7">
       <section>
-        <p className="eyebrow mb-3">Sort</p>
-        <select
-          value={sortBy}
-          onChange={(event) => setSortBy(event.target.value)}
-          aria-label="Sort products"
-          className="input-control cursor-pointer"
-        >
-          {SORTS.map((option) => (
-            <option key={option.value} value={option.value}>{option.label}</option>
-          ))}
-        </select>
+        <p className="eyebrow mb-2">Sort by</p>
+        <FormControl fullWidth size="small" variant="outlined">
+          <Select
+            value={sortBy}
+            onChange={(event) => setSortBy(event.target.value as string)}
+            aria-label="Sort products"
+            displayEmpty
+            size="small"
+          >
+            {SORTS.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </section>
       <section>
         <p className="eyebrow mb-3">Category</p>
