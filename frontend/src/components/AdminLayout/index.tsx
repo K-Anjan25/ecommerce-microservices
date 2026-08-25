@@ -71,7 +71,7 @@ function AdminLayout() {
         </div>
         <button
           aria-label="Close navigation"
-          className="text-ink-muted hover:text-oncontrast lg:hidden"
+          className="text-oncontrast/60 hover:text-oncontrast lg:hidden"
           onClick={() => setOpen(false)}
         >
           <CloseIcon />
@@ -91,7 +91,7 @@ function AdminLayout() {
               className={`flex w-full items-center gap-3 rounded-sm px-3 py-2.5 text-sm font-semibold transition ${
                 active
                   ? "bg-white/10 text-oncontrast"
-                  : "text-ink-muted hover:bg-white/5 hover:text-oncontrast"
+                  : "text-oncontrast/60 hover:bg-white/5 hover:text-oncontrast"
               }`}
             >
               <Icon sx={{ fontSize: 18 }} className={active ? "text-accent" : ""} />
@@ -104,7 +104,7 @@ function AdminLayout() {
       <div className="space-y-2 border-t border-white/10 p-3">
         <button
           onClick={() => navigate("/")}
-          className="flex w-full items-center gap-3 rounded-sm px-3 py-2.5 text-sm font-semibold text-ink-muted transition hover:bg-white/5 hover:text-oncontrast"
+          className="flex w-full items-center gap-3 rounded-sm px-3 py-2.5 text-sm font-semibold text-oncontrast/60 transition hover:bg-white/5 hover:text-oncontrast"
         >
           <StorefrontIcon sx={{ fontSize: 18 }} />
           Back to shop
@@ -117,7 +117,7 @@ function AdminLayout() {
             <p className="truncate text-xs font-bold">
               {user.firstName} {user.lastName}
             </p>
-            <p className="truncate text-[0.625rem] text-ink-muted">
+            <p className="truncate text-[0.625rem] text-oncontrast/60">
               {user.roles?.includes("ROLE_SUPER_ADMIN")
                 ? "Super admin"
                 : managerOnly

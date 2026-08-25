@@ -1,5 +1,5 @@
 /**
- * Cartly 2.0 — colour tokens as CSS custom properties.
+ * Cartly Editorial — colour tokens as CSS custom properties.
  *
  * Values are space-separated RGB channels so Tailwind can apply opacity
  * modifiers (`bg-paper/90`) through `rgb(var(--x) / <alpha-value>)`.
@@ -79,7 +79,7 @@
   --c-brand-soft: 67 38 30;
   --c-brand-tint: 45 29 24;
 
-  /* Lime already sings on dark — unchanged. */
+  /* Muted brass is reserved for foreground detail; keep it gentle on dark. */
   --c-accent: 200 169 107;
   --c-accent-dark: 166 132 70;
   --c-accent-light: 224 204 161;

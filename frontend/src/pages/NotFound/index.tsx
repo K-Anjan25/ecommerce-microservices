@@ -12,10 +12,10 @@ function NotFound() {
         minHeight: "100vh",
       }}
     >
-      <Typography variant="h1" color="primary">
+      <Typography variant="h1" className="!font-display !text-ink">
         404
       </Typography>
-      <Typography variant="h6" color="primary">
+      <Typography variant="h6" className="!text-ink-muted">
         The page you’re looking for doesn’t exist.
       </Typography>
       <Button component={Link} to="/" variant="contained" color="primary">

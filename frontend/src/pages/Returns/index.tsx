@@ -48,7 +48,7 @@ function Returns() {
       {isLoading ? (
         <div className="space-y-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} variant="rectangular" height={110} className="!rounded-lg" />
+            <Skeleton key={i} variant="rectangular" height={110} className="!rounded-sm" />
           ))}
         </div>
       ) : all.length === 0 ? (

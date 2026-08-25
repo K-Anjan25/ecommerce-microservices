@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 /**
- * Cartly 2.0 — generated from design/tokens.json.
+ * Cartly Editorial — generated from design/tokens.json.
  *
  * Colours resolve through CSS custom properties declared in `src/tokens.css`
  * (`:root` = light, `.dark` = dark), so adding dark mode required zero page

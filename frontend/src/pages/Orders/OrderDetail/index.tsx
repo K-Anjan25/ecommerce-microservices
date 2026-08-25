@@ -123,8 +123,8 @@ function UserOrderDetail() {
       <div className="page-shell space-y-6">
         <Skeleton variant="text" width={220} height={40} />
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
-          <Skeleton variant="rectangular" height={340} className="!rounded-lg" />
-          <Skeleton variant="rectangular" height={260} className="!rounded-lg" />
+          <Skeleton variant="rectangular" height={340} className="!rounded-sm" />
+          <Skeleton variant="rectangular" height={260} className="!rounded-sm" />
         </div>
       </div>
     );

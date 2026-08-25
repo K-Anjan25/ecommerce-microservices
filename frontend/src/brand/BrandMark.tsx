@@ -12,8 +12,8 @@ export default function BrandMark({ compact = false, inverse = false }: BrandMar
       {compact && (
         <span
           aria-hidden="true"
-          className={`flex h-9 w-9 items-center justify-center rounded-full border font-display text-xl ${
-            inverse ? "border-white/30 text-oncontrast" : "border-ink/25 text-ink"
+          className={`font-display text-2xl leading-none ${
+            inverse ? "text-oncontrast" : "text-ink"
           }`}
         >
           C

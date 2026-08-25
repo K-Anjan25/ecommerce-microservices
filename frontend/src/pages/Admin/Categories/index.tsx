@@ -83,7 +83,7 @@ function Categories() {
             <Chip
               key={category.id}
               label={category.name}
-              className="!border-ink/10 !bg-white !px-3 !py-5 !text-base !font-medium !text-ink shadow-card"
+              className="!border-line !bg-paper !px-3 !py-5 !text-base !font-medium !text-ink"
             />
           ))}
         </Box>

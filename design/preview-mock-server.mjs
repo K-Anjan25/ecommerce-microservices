@@ -104,6 +104,25 @@ const ORDERS = ORDER_STATUSES.map((status, i) => {
   };
 });
 
+const COMMENTS = [
+  {
+    id: "cmt-1",
+    productId: "p-1",
+    creator: "Aarav M.",
+    createdDate: new Date(Date.now() - 3 * 86400000).toISOString(),
+    text: "Beautifully made and it arrived exactly as pictured. The materials feel far better than the price suggests.",
+    rating: 5,
+  },
+  {
+    id: "cmt-2",
+    productId: "p-1",
+    creator: "Sana K.",
+    createdDate: new Date(Date.now() - 9 * 86400000).toISOString(),
+    text: "Lovely finish and quick dispatch. Would happily buy from this collection again.",
+    rating: 4,
+  },
+];
+
 const RETURNS = [
   {
     id: "ret-501",
@@ -231,6 +250,27 @@ createServer((req, res) => {
     );
   }
 
+  if (p === "/v1/comments" && req.method === "POST") {
+    let raw = "";
+    req.on("data", (chunk) => { raw += chunk; });
+    req.on("end", () => {
+      try {
+        const body = JSON.parse(raw);
+        const comment = {
+          id: `cmt-${Date.now()}`,
+          productId: body.productId,
+          creator: "You (preview)",
+          createdDate: new Date().toISOString(),
+          text: body.text,
+          rating: body.rating ?? undefined,
+        };
+        COMMENTS.unshift(comment);
+        json(res, comment, 201);
+      } catch { json(res, { message: "Invalid comment" }, 400); }
+    });
+    return;
+  }
+
   if (p === "/v1/products/brands") return json(res, BRANDS);
   if (p === "/v1/flash-sales") return json(res, PRODUCTS.filter((_, i) => i % 4 === 0));
   if (p === "/v1/orders/stats/bestsellers")
@@ -240,7 +280,10 @@ createServer((req, res) => {
     const ids = decodeURIComponent(p.split("/findByIds/")[1]).split(",");
     return json(res, PRODUCTS.filter((x) => ids.includes(x.id)));
   }
-  if (/^\/v1\/products\/[^/]+\/comments$/.test(p)) return json(res, []);
+  if (/^\/v1\/products\/[^/]+\/comments$/.test(p)) {
+    const productId = p.split("/")[3];
+    return json(res, COMMENTS.filter((c) => c.productId === productId));
+  }
   if (/^\/v1\/products\/[^/]+\/related$/.test(p)) return json(res, PRODUCTS.slice(4, 8));
   if (/^\/v1\/products\/[^/]+\/watch$/.test(p)) return json(res, { watching: false });
   if (/^\/v1\/products\/[^/]+$/.test(p)) {

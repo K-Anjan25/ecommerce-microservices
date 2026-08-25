@@ -64,7 +64,7 @@ function Referral() {
         description="Share your code. When someone signs up with it and places their first order, credit lands on both accounts."
         actions={
           <>
-            <button onClick={share} className="accent-button" disabled={!referralCode}>
+            <button onClick={share} className="primary-button" disabled={!referralCode}>
               <IosShareIcon sx={{ fontSize: 17 }} />
               Share invite link
             </button>

@@ -156,7 +156,7 @@ function Compare() {
       />
 
       {isLoading ? (
-        <Skeleton variant="rectangular" height={420} className="!rounded-lg" />
+        <Skeleton variant="rectangular" height={420} className="!rounded-sm" />
       ) : (
         <div className="overflow-x-auto border-t border-ink">
           <table className="w-full min-w-[40rem] border-collapse text-sm">

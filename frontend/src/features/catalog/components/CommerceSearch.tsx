@@ -106,13 +106,13 @@ export default function CommerceSearch({
         aria-expanded={open}
         aria-activedescendant={active >= 0 ? `${listId}-${active}` : undefined}
         className={`w-full border bg-canvas pl-12 pr-24 text-ink outline-none transition placeholder:text-ink-muted hover:border-ink-faint focus:border-brand focus:bg-paper focus:ring-4 focus:ring-brand/10 ${
-          prominent ? "h-12 rounded-lg border-line text-[0.9375rem] shadow-xs" : "h-10 rounded-full border-line text-sm"
+          prominent ? "h-12 rounded-sm border-line text-[0.9375rem]" : "h-10 rounded-sm border-line text-sm"
         }`}
       />
       <button
         type="submit"
         disabled={!value.trim()}
-        className={`absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full bg-contrast font-bold text-oncontrast transition hover:bg-action disabled:opacity-40 ${
+        className={`absolute right-1.5 top-1/2 -translate-y-1/2 rounded-sm bg-contrast font-bold text-oncontrast transition hover:bg-action disabled:opacity-40 ${
           prominent ? "h-9 px-4 text-xs" : "h-7 px-3 text-[0.6875rem]"
         }`}
       >
@@ -123,7 +123,7 @@ export default function CommerceSearch({
         <ul
           id={listId}
           role="listbox"
-          className="absolute inset-x-0 top-[calc(100%+0.5rem)] z-[70] overflow-hidden rounded-lg border border-line bg-paper p-2 shadow-pop"
+          className="absolute inset-x-0 top-[calc(100%+0.5rem)] z-[70] overflow-hidden rounded-sm border border-line bg-paper p-2 shadow-card"
         >
           <li className="px-3 pb-2 pt-1 text-eyebrow font-bold uppercase text-ink-muted">
 {isLoading ? t("common.loading") : t("search.products")}

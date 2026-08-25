@@ -64,11 +64,11 @@ function DashboardLayout() {
 
       {/* Checkout deliberately removes catalog navigation and promotional exits. */}
       {!isCheckout && (
-      <footer className="grain mt-auto bg-contrast text-oncontrast">
+      <footer className="mt-auto bg-contrast text-oncontrast">
         <div className="page-shell grid gap-10 py-14 md:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div>
             <BrandMark inverse />
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-ink-muted">
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-oncontrast/60">
               A considered collection for home and life. Thoughtful objects, honest pricing,
               secure checkout and support that stays with you after delivery.
             </p>
@@ -76,7 +76,7 @@ function DashboardLayout() {
               {["Visa", "Mastercard", "UPI", "Razorpay", "COD"].map((p) => (
                 <span
                   key={p}
-                  className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[0.625rem] font-semibold text-ink-muted"
+                  className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[0.625rem] font-semibold text-oncontrast/70"
                 >
                   {p}
                 </span>
@@ -92,7 +92,7 @@ function DashboardLayout() {
                   <li key={item.label}>
                     <button
                       onClick={() => navigate(item.to)}
-                      className="text-sm text-ink-muted transition hover:text-accent"
+                      className="text-sm text-oncontrast/70 transition hover:text-accent"
                     >
                       {item.label}
                     </button>
@@ -104,7 +104,7 @@ function DashboardLayout() {
         </div>
 
         <div className="border-t border-white/10">
-          <div className="page-shell flex flex-col items-center justify-between gap-2 py-5 text-xs text-ink-muted sm:flex-row">
+          <div className="page-shell flex flex-col items-center justify-between gap-2 py-5 text-xs text-oncontrast/60 sm:flex-row">
             <span>© {new Date().getFullYear()} Cartly. All rights reserved.</span>
             <span>Curated for everyday · Hyderabad, India</span>
           </div>

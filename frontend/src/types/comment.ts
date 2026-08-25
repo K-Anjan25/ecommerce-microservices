@@ -4,9 +4,11 @@ export interface Comment {
   createdDate: string;
   text: string;
   creator: string;
+  rating?: number;
 }
 
 export interface CreateCommentRequest {
   productId: string;
   text: string;
+  rating?: number;
 }

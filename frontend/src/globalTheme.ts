@@ -1,7 +1,7 @@
 import { createTheme } from "@mui/material/styles";
 
 /**
- * Cartly 2.0 — MUI theme, generated from design/tokens.json and kept in
+ * Cartly Editorial — MUI theme, generated from design/tokens.json and kept in
  * lock-step with tailwind.config.js / src/tokens.css.
  *
  * Tailwind resolves colours through CSS variables, so it flips for free when
@@ -80,7 +80,7 @@ export const accent = {
   main: LIGHT.accent,
   dark: LIGHT.accentDark,
   light: LIGHT.accentLight,
-  soft: "#F2FBC9",
+  soft: "#F7F0DE",
 };
 export const ink = {
   primary: LIGHT.ink,
@@ -138,7 +138,7 @@ export function createAppTheme(mode: Mode = "light") {
       button: { fontWeight: 600, textTransform: "none" },
       overline: { fontWeight: 700, letterSpacing: "0.16em" },
     },
-    shape: { borderRadius: 14 },
+    shape: { borderRadius: 10 },
     shadows: [
       "none",
       mode === "dark" ? "0 1px 2px rgba(0,0,0,0.4)" : "0 1px 2px rgba(11,11,15,0.05)",
@@ -196,7 +196,7 @@ export function createAppTheme(mode: Mode = "light") {
       },
       MuiCard: {
         styleOverrides: {
-          root: { borderRadius: 16, border: `1px solid ${c.line}`, boxShadow: "none" },
+          root: { borderRadius: 10, border: `1px solid ${c.line}`, boxShadow: "none" },
         },
       },
       MuiPaper: {
@@ -207,7 +207,7 @@ export function createAppTheme(mode: Mode = "light") {
       },
       MuiDialog: {
         styleOverrides: {
-          paper: { borderRadius: 20, boxShadow: c.shadowPop, backgroundColor: c.paper },
+          paper: { borderRadius: 12, boxShadow: c.shadowPop, backgroundColor: c.paper },
         },
       },
       MuiAppBar: { styleOverrides: { root: { boxShadow: "none", backgroundImage: "none" } } },
@@ -231,9 +231,9 @@ export function createAppTheme(mode: Mode = "light") {
           root: { borderBottomColor: c.line },
         },
       },
-      MuiTableContainer: { styleOverrides: { root: { borderRadius: 16 } } },
+      MuiTableContainer: { styleOverrides: { root: { borderRadius: 10 } } },
       MuiTablePagination: { styleOverrides: { root: { color: c.inkSoft } } },
-      MuiAlert: { styleOverrides: { root: { borderRadius: 12 } } },
+      MuiAlert: { styleOverrides: { root: { borderRadius: 10 } } },
       MuiTooltip: {
         styleOverrides: {
           tooltip: {

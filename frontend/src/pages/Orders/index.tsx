@@ -113,7 +113,7 @@ function Orders() {
       {isLoading ? (
         <div className="space-y-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} variant="rectangular" height={148} className="!rounded-lg" />
+            <Skeleton key={i} variant="rectangular" height={148} className="!rounded-sm" />
           ))}
         </div>
       ) : userOrders.length === 0 ? (

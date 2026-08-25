@@ -273,7 +273,7 @@ function Home() {
                 className={
                   (product.quantityInStock ?? 0) <= 0
                     ? "!bg-state-danger-soft !font-medium !text-state-danger-on"
-                    : "!bg-white !font-medium !text-state-warning-on"
+                    : "!bg-state-warning-soft !font-medium !text-state-warning-on"
                 }
                 onClick={() => navigate(`/admin/addEditProduct/${product.id}`)}
               />
