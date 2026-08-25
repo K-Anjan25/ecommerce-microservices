@@ -4,6 +4,7 @@ import com.ecommerce.commerce_service.dto.Pagination;
 import com.ecommerce.commerce_service.dto.order.OrderDto;
 import com.ecommerce.commerce_service.dto.order.CreateOrderRequest;
 import com.ecommerce.commerce_service.dto.tracking.OrderStatusHistoryDto;
+import com.ecommerce.commerce_service.model.OrderStatus;
 import com.ecommerce.commerce_service.service.InvoiceService;
 import com.ecommerce.commerce_service.service.OrderService;
 import lombok.RequiredArgsConstructor;
