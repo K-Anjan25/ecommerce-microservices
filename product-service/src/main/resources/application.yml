@@ -6,7 +6,7 @@ spring:
     name: product-service
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/product}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/productdb}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
     password: ${SPRING_DATASOURCE_PASSWORD:root}
   rabbitmq:

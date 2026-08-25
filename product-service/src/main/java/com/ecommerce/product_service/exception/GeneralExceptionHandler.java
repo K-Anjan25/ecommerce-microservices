@@ -41,6 +41,7 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> generalExceptionHandler(Exception exception) {
+        log.error("Unhandled exception in product-service: ", exception);
         return new ResponseEntity<>(exception.getMessage(), INTERNAL_SERVER_ERROR);
     }
 

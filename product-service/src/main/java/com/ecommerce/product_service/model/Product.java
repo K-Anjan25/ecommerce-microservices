@@ -8,7 +8,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -16,7 +15,6 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 @Entity(name = "products")
 @Table
@@ -29,13 +27,6 @@ import java.util.UUID;
 @SQLDelete(sql = "UPDATE products SET deleted = true WHERE id=?")
 @Where(clause = "deleted=false")
 public class Product extends AdvanceBaseModal{
-    @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
-    private UUID id;
 
     private String name;
     private BigDecimal unitPrice;

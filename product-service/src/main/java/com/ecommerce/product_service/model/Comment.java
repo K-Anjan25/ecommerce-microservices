@@ -7,11 +7,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.UUID;
 
 @Entity(name = "comments")
 @Table
@@ -22,13 +20,6 @@ import java.util.UUID;
 @ToString(exclude = "product")
 @SuperBuilder
 public class Comment extends AdvanceBaseModal {
-    @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
-    private UUID id;
     private String text;
     private Integer rating;
     @ManyToOne()

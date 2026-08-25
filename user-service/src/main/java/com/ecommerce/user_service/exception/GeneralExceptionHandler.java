@@ -49,6 +49,7 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> generalExceptionHandler(Exception exception) {
+        log.error("Unhandled exception in user-service: ", exception);
         return new ResponseEntity<>(exception.getMessage(), INTERNAL_SERVER_ERROR);
     }
     private static final String ACCOUNT_LOCKED = "Your account has been locked. Please contact administration";
