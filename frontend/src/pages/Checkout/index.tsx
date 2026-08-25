@@ -400,7 +400,11 @@ function Checkout() {
       paymentMutation.mutate(payment);
     },
     onError: (e: any) => {
-      showError(e.response?.data?.message ?? "Order could not be created");
+      // Surface the real backend reason when available (the HttpError message
+      // carries `data.message`, or a "Request failed with status NNN" hint for
+      // validation 400s that return a field-error map without a `message` key)
+      // instead of hiding it behind the generic fallback.
+      showError(e.response?.data?.message ?? e.message ?? "Order could not be created");
     },
   });
 
