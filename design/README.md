@@ -13,7 +13,7 @@ This directory documents the **currently shipped Editorial Warmth direction** fo
 | `frontend/src/tokens.css` | Runtime CSS token projection |
 | `frontend/src/globalTheme.ts` | MUI token projection |
 
-The files under `design/palettes/` are **archived exploration only**. Ink/violet, lime and the earlier forest treatment are rejected directions and are not implementation guidance.
+Rejected palette explorations (Ink/Violet, neon lime, Forest/Gold, Teal/Coral, Cobalt/Amber, Mono/Signal, Terracotta/Ochre) were removed from the working tree on 2026-08-25. They remain in Git history as decision context only and must not be restored to the platform or WooCommerce theme.
 
 ## Current wireframes
 
@@ -55,7 +55,6 @@ Suggested pages:
 | `03 · Checkout` | Frame 04 |
 | `04 · Administration` | Frame 05 |
 | `05 · Mobile` | Frame 06 |
-| `99 · Rejected archive` | Legacy palette explorations, never current components |
 
 ## Editorial Warmth contract
 
