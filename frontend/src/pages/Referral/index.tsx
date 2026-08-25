@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useQuery } from "react-query";
-import { toast } from "react-toastify";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CheckIcon from "@mui/icons-material/Check";
 import IosShareIcon from "@mui/icons-material/IosShare";
 
 import { ReferralApi } from "../../api/referralApi";
 import FeatureHero, { HowItWorks } from "../../components/FeatureHero";
+import { showError } from "../../utils/showError";
 import { showSuccess } from "../../utils/showSuccess";
 
 function Referral() {
@@ -26,7 +26,7 @@ function Referral() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast.error("Couldn't copy — select the code manually");
+      showError("Couldn't copy — select the code manually");
     }
   };
 
@@ -48,9 +48,9 @@ function Referral() {
     setChecking(true);
     try {
       const valid = await ReferralApi.validateReferralCode(inputCode.trim());
-      valid ? showSuccess("Referral code is valid!") : toast.error("Invalid referral code");
+      valid ? showSuccess("Referral code is valid!") : showError("Invalid referral code");
     } catch (e: any) {
-      toast.error(e.response?.data?.message ?? "Failed to validate referral code");
+      showError(e.response?.data?.message ?? "Failed to validate referral code");
     } finally {
       setChecking(false);
     }
