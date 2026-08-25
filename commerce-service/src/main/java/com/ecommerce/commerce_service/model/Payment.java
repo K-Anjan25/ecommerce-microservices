@@ -29,39 +29,41 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "order_id", nullable = false, unique = true)
     private UUID orderId;
 
-    @Column(nullable = false)
+    @Column(name = "user_id", nullable = false)
     private UUID userId;
 
-    @Column(nullable = false, precision = 19, scale = 2)
+    @Column(name = "amount", nullable = false, precision = 19, scale = 2)
     private BigDecimal amount;
 
-    @Column(nullable = false, length = 10)
+    @Column(name = "currency", nullable = false, length = 10)
     private String currency;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @Column(name = "provider", nullable = false, length = 20)
     private PaymentProvider provider;
 
-    @Column(nullable = false, length = 30)
+    @Column(name = "status", nullable = false, length = 30)
     private String status;
 
-    @Column(length = 255)
+    @Column(name = "transaction_id", length = 255)
     private String transactionId;
 
     /** Provider-side captured payment ID when it differs from the initiation reference (Razorpay). */
-    @Column(length = 255)
+    @Column(name = "provider_payment_id", length = 255)
     private String providerPaymentId;
 
-    @Column(length = 500)
+    @Column(name = "failure_reason", length = 500)
     private String failureReason;
 
-    @Column(precision = 19, scale = 2)
+    @Column(name = "refunded_amount", precision = 19, scale = 2)
     private BigDecimal refundedAmount;
 
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 }

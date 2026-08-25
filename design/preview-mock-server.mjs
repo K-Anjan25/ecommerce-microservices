@@ -379,8 +379,23 @@ createServer((req, res) => {
     let raw = "";
     req.on("data", (chunk) => { raw += chunk; });
     req.on("end", () => {
-      const request = JSON.parse(raw || "{}");
-      json(res, { ...request, amount: 0, currency: "INR", status: request.provider === "CASH" ? "PENDING" : "SUCCESS", transactionId: "preview-payment" }, 201);
+      try {
+        const request = JSON.parse(raw || "{}");
+        const foundOrder = ORDERS.find((o) => o.id === request.orderId);
+        const amount = foundOrder ? foundOrder.totalAmount : 1499;
+        json(res, {
+          orderId: request.orderId,
+          amount: amount,
+          currency: "INR",
+          provider: request.provider || "RAZORPAY",
+          status: "PENDING",
+          transactionId: "order_mock_" + Date.now().toString(36),
+          checkoutToken: request.checkoutToken,
+          message: request.provider === "CASH" ? "Cash on delivery confirmed" : "Razorpay order created",
+        }, 201);
+      } catch {
+        json(res, { message: "Invalid payment request" }, 400);
+      }
     });
     return;
   }
