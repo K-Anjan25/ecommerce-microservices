@@ -29,18 +29,19 @@ public class PaymentOutboxEvent {
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(name = "order_id", nullable = false)
     private UUID orderId;
-    @Column(nullable = false, length = 30)
+    @Column(name = "payment_status", nullable = false, length = 30)
     private String paymentStatus;
-    @Column(nullable = false, length = 20)
+    @Column(name = "provider", nullable = false, length = 20)
     private String provider;
+    @Column(name = "transaction_id")
     private String transactionId;
-    @Column(nullable = false, precision = 19, scale = 2)
+    @Column(name = "amount", nullable = false, precision = 19, scale = 2)
     private BigDecimal amount;
-    @Column(nullable = false, length = 10)
+    @Column(name = "currency", nullable = false, length = 10)
     private String currency;
-    @Column(nullable = false)
+    @Column(name = "attempts", nullable = false)
     private Integer attempts;
     @Column(name = "next_attempt_at", nullable = false)
     private LocalDateTime nextAttemptAt;

@@ -45,33 +45,34 @@ public class PaymentReconciliationCase {
     @Column(name = "payment_id", nullable = false)
     private Long paymentId;
 
-    @Column(nullable = false)
+    @Column(name = "order_id", nullable = false)
     private UUID orderId;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @Column(name = "provider", nullable = false, length = 20)
     private PaymentProvider provider;
 
-    @Column(length = 255)
+    @Column(name = "transaction_id", length = 255)
     private String transactionId;
 
-    @Column(nullable = false, precision = 19, scale = 2)
+    @Column(name = "amount", nullable = false, precision = 19, scale = 2)
     private BigDecimal amount;
 
-    @Column(nullable = false, length = 10)
+    @Column(name = "currency", nullable = false, length = 10)
     private String currency;
 
-    @Column(nullable = false, length = 20)
+    @Column(name = "status", nullable = false, length = 20)
     private String status;
 
-    @Column(nullable = false, length = 500)
+    @Column(name = "reason", nullable = false, length = 500)
     private String reason;
 
-    @Column(nullable = false, name = "created_at")
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false, name = "updated_at")
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(name = "resolved_at")
     private LocalDateTime resolvedAt;
 }

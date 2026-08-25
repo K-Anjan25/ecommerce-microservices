@@ -35,10 +35,10 @@ public class EmailRetryEvent {
     private UUID id;
 
     @Lob
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(name = "encrypted_payload", nullable = false, columnDefinition = "TEXT")
     private String encryptedPayload;
 
-    @Column(nullable = false, length = 24)
+    @Column(name = "initialization_vector", nullable = false, length = 24)
     private String initializationVector;
 
     @Column(nullable = false)
@@ -56,5 +56,6 @@ public class EmailRetryEvent {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "last_attempt_at")
     private LocalDateTime lastAttemptAt;
 }

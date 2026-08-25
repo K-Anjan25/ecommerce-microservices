@@ -41,29 +41,40 @@ public class GiftCardPurchaseIntent {
     @Column(name = "order_id", nullable = false)
     private UUID orderId;
 
-    @Column(nullable = false)
+    @Column(name = "customer_id", nullable = false)
     private UUID customerId;
 
-    @Column(nullable = false, precision = 19, scale = 2)
+    @Column(name = "amount", nullable = false, precision = 19, scale = 2)
     private BigDecimal amount;
 
-    @Column(nullable = false)
+    @Column(name = "expiry_date", nullable = false)
     private LocalDate expiryDate;
 
-    @Column(length = 320)
+    @Column(name = "recipient_email", length = 320)
     private String recipientEmail;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 24)
+    @Column(name = "status", nullable = false, length = 24)
     private GiftCardPurchaseStatus status;
 
+    @Column(name = "gift_card_id")
     private UUID giftCardId;
-    @Column(precision = 19, scale = 2)
+
+    @Column(name = "refunded_amount", precision = 19, scale = 2)
     private BigDecimal refundedAmount;
-    @Column(length = 255)
+
+    @Column(name = "refund_transaction_id", length = 255)
     private String refundTransactionId;
+
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(name = "issued_at")
     private LocalDateTime issuedAt;
+
+    @Column(name = "refunded_at")
     private LocalDateTime refundedAt;
 }
