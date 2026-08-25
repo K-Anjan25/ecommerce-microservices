@@ -86,6 +86,58 @@
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* ==========================================================================
+   Notification pops (react-toastify engine, Cartly Editorial shell)
+   ========================================================================== */
+@keyframes toast-progress {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
+/* Slim state-coloured progress line inside a branded toast. Duration comes from
+   the `--toast-duration` custom property (set per toast), so hovering a toast
+   can pause it via `animation-play-state` to match react-toastify's
+   pause-on-hover countdown. */
+.cartly-progress {
+  animation: toast-progress var(--toast-duration, 2200ms) linear forwards;
+}
+.Toastify__toast.cartly-toast:hover .cartly-progress {
+  animation-play-state: paused;
+}
+
+/* Neutralise the stock react-toastify look; the branded card inside owns all
+   surface styling (paper, hairline border, shadow, radius, close button). */
+.Toastify__toast.cartly-toast {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  border-radius: 0;
+  min-height: 0;
+  margin-bottom: 0.75rem;
+  cursor: default;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+.Toastify__toast.cartly-toast:hover {
+  box-shadow: none;
+}
+
+.Toastify__toast-body.cartly-toast-body {
+  padding: 0;
+  margin: 0;
+  flex: 1 1 auto;
+}
+
+.Toastify__toast-container--bottom-right {
+  padding-bottom: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .Toastify__toast .cartly-progress {
+    animation: none !important;
+  }
+}
+
+/* ==========================================================================
    Components
    ========================================================================== */
 @layer components {

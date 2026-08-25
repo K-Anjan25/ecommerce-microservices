@@ -7,7 +7,7 @@ import reportWebVitals from "./reportWebVitals";
 import { ThemeProvider } from "@mui/material/styles";
 import { createAppTheme } from "./globalTheme";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { ToastContainer } from "react-toastify";
+import { Toasts } from "./components/Toasts";
 // @ts-ignore: allow importing toastify CSS without type declarations
 import "react-toastify/dist/ReactToastify.css";
 import { PersistGate } from "redux-persist/integration/react";
@@ -39,16 +39,7 @@ function Root() {
     <ColorSchemeContext.Provider value={ctx}>
       <ThemeProvider theme={muiTheme}>
         <CssBaseline />
-        <ToastContainer
-          position="bottom-right"
-          autoClose={2200}
-          newestOnTop
-          closeOnClick
-          pauseOnFocusLoss={false}
-          draggable
-          pauseOnHover
-          theme={isDark ? "dark" : "light"}
-        />
+        <Toasts />
         <QueryClientProvider client={queryClient}>
           <Provider store={store}>
             <PersistGate loading={<Loader />} persistor={persistor}>
