@@ -23,10 +23,28 @@ function App() {
   const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
-    if (localStorage.getItem("access-token")) {
-      dispatch(userMe());
+    let mounted = true;
+    const hasSession =
+      Boolean(localStorage.getItem("access-token")) ||
+      Boolean(localStorage.getItem("refresh-token"));
+
+    if (!hasSession) {
+      setInitialLoading(false);
+      return () => {
+        mounted = false;
+      };
     }
-    setInitialLoading(false);
+
+    // Wait for /user/me (and, when necessary, the refresh-token request)
+    // before rendering protected routes. Rendering with an empty Redux user
+    // for even one frame sends a returning user to login/unauthorized.
+    Promise.resolve(dispatch(userMe())).finally(() => {
+      if (mounted) setInitialLoading(false);
+    });
+
+    return () => {
+      mounted = false;
+    };
   }, [dispatch]);
 
   if (loading || initialLoading) {

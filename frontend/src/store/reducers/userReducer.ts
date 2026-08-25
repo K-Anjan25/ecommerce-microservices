@@ -44,6 +44,7 @@ const userReducer = (state: UserState = defaultState, action: UserAction) => {
       return {
         ...state,
         loading: false,
+        data: { isLogedIn: false } as UserReducer,
       };
     case "REFRESH_TOKEN_ERROR":
       return {
