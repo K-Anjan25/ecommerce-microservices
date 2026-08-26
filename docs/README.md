@@ -68,6 +68,24 @@ docker compose up -d --build        # whole stack
 ./tools/production-smoke.sh         # read-only post-deploy smoke
 ```
 
+### Staging rollout checklist (P12 gate)
+
+1. **Backups**: verified backup + restore point before touching schema (`tools/db-backup.sh`).
+2. **Schema baselines**: generate the Hibernate baseline per service with
+   `tools/generate-schema-baseline.sh`, review the DDL, commit as
+   `V2__baseline_schema.sql`, then `flyway-baseline.sh` (existing DBs) →
+   `flyway-migrate.sh`.
+3. **Config gate**: `JPA_DDL_AUTO=validate FLYWAY_ENABLED=true` — services must
+   boot clean; `tools/check-production-config.sh` for env completeness.
+4. **Providers**: live Stripe/Razorpay test-mode keys, signed webhook endpoints
+   registered, return-path (`/stripe-payment-return`, Razorpay handoff) exercised.
+5. **Webhooks/settlement**: `tools/simulate-payment-webhook.mjs` for signed
+   signature checks; run a payment → capture → refund → gift-card round trip.
+6. **Reconciliation & alerts**: monitor `/actuator/health` (reconciliation +
+   email-retry health detail included), alert on RabbitMQ queue depth and
+   payment-review open cases.
+7. **Smoke**: `tools/production-smoke.sh` (read-only) post-deploy.
+
 Design kit (wireframes, tokens, mock preview server): [`design/`](../design/).
 WordPress/WooCommerce theme: separate repo `cartly-wp-theme`; tokens stay
 canonical here.
