@@ -10,7 +10,9 @@ function RequireAuth({ allowedRoles, roles }: AuthProps) {
 
   let isPermitted = roles?.find((role) => allowedRoles?.includes(role));
 
-  const token = localStorage.getItem("access-token");
+  // No session storage on the server: crawlers never see protected routes,
+  // and the client gate re-runs this check after hydration anyway.
+  const token = typeof window === "undefined" ? null : localStorage.getItem("access-token");
 
   if (!token) {
     return <Navigate to="/login" state={{ from: location }} replace />;

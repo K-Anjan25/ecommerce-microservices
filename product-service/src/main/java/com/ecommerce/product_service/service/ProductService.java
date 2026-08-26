@@ -200,19 +200,37 @@ public class ProductService {
         if (variants == null) {
             return;
         }
-        productVariantRepository.deleteByProductId(product.getId());
+        // Rows echoed back with their id are updated in place; only rows the
+        // client removed (or brand-new rows) change identity. Cart and order
+        // items store variantId, so a blanket delete+recreate would orphan them.
+        java.util.Map<UUID, ProductVariant> existing = product.getVariants() == null
+                ? java.util.Collections.emptyMap()
+                : product.getVariants().stream()
+                        .collect(Collectors.toMap(ProductVariant::getId, v -> v));
+        java.util.Set<UUID> keepIds = variants.stream()
+                .map(com.ecommerce.product_service.dto.product.variant.ProductVariantDto::getId)
+                .filter(java.util.Objects::nonNull)
+                .collect(Collectors.toSet());
+        List<ProductVariant> removable = existing.values().stream()
+                .filter(v -> !keepIds.contains(v.getId()))
+                .collect(Collectors.toList());
+        productVariantRepository.deleteAll(removable);
+
         List<ProductVariant> productVariants = new ArrayList<>();
         for (var v : variants) {
-            productVariants.add(ProductVariant.builder()
-                    .product(product)
-                    .name(v.getName())
-                    .sku(v.getSku())
-                    .price(v.getPrice())
-                    .quantityInStock(v.getQuantityInStock())
-                    .attributes(v.getAttributes())
-                    .build());
+            ProductVariant variant = v.getId() != null ? existing.get(v.getId()) : null;
+            if (variant == null) {
+                variant = ProductVariant.builder()
+                        .product(product)
+                        .build();
+            }
+            variant.setName(v.getName());
+            variant.setSku(v.getSku());
+            variant.setPrice(v.getPrice());
+            variant.setQuantityInStock(v.getQuantityInStock());
+            variant.setAttributes(v.getAttributes());
+            productVariants.add(productVariantRepository.save(variant));
         }
-        productVariantRepository.saveAll(productVariants);
         product.setVariants(new HashSet<>(productVariants));
     }
 

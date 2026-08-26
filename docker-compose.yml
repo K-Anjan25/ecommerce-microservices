@@ -89,6 +89,7 @@ services:
     mem_limit: 160m
     cpus: 0.5
     environment:
+      TZ: ${APP_TIMEZONE:-Asia/Kolkata}
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/userdb
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USERNAME:-postgres}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-root}
@@ -134,6 +135,7 @@ services:
     mem_limit: 224m
     cpus: 0.5
     environment:
+      TZ: ${APP_TIMEZONE:-Asia/Kolkata}
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/productdb
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USERNAME:-postgres}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-root}
@@ -168,6 +170,7 @@ services:
     mem_limit: 224m
     cpus: 0.5
     environment:
+      TZ: ${APP_TIMEZONE:-Asia/Kolkata}
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/commercedb
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USERNAME:-postgres}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-root}

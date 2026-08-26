@@ -510,13 +510,23 @@ public class OrderService {
      * excluded from revenue; order lines drive the top-products ranking.
      */
     public DashboardStatsDto getDashboardStats() {
+        return getDashboardStats(7);
+    }
+
+    /**
+     * Dashboard analytics over a selectable window. `days` is clamped to
+     * 1..90; the dailyRevenue list and the window revenue KPI both follow it,
+     * while revenueToday/ordersToday/totalOrders stay absolute.
+     */
+    public DashboardStatsDto getDashboardStats(int days) {
+        int window = Math.max(1, Math.min(90, days));
         List<Order> all = orderRepository.findAll();
         List<Order> revenueOrders = all.stream()
                 .filter(order -> order.getOrderStatus() != OrderStatus.CANCELLED)
                 .collect(Collectors.toList());
 
         LocalDate today = LocalDate.now();
-        LocalDate windowStart = today.minusDays(6);
+        LocalDate windowStart = today.minusDays(window - 1L);
 
         BigDecimal totalRevenue = revenueOrders.stream()
                 .map(o -> nvl(o.getTotalAmount()))
@@ -527,7 +537,7 @@ public class OrderService {
                 .map(o -> nvl(o.getTotalAmount()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        BigDecimal revenue7d = revenueOrders.stream()
+        BigDecimal revenueWindow = revenueOrders.stream()
                 .filter(o -> o.getCreatedDate() != null
                         && !o.getCreatedDate().toLocalDate().isBefore(windowStart)
                         && !o.getCreatedDate().toLocalDate().isAfter(today))
@@ -543,7 +553,7 @@ public class OrderService {
 
         List<DashboardStatsDto.DailyRevenueDto> daily = new ArrayList<>();
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("EEE d");
-        for (long i = 0; i < 7; i++) {
+        for (long i = 0; i < window; i++) {
             LocalDate day = windowStart.plusDays(i);
             List<Order> dayOrders = revenueOrders.stream()
                     .filter(o -> o.getCreatedDate() != null && o.getCreatedDate().toLocalDate().equals(day))
@@ -578,7 +588,7 @@ public class OrderService {
 
         return DashboardStatsDto.builder()
                 .revenueToday(revenueToday)
-                .revenueLast7Days(revenue7d)
+                .revenueLast7Days(revenueWindow)
                 .avgOrderValue(revenueOrders.isEmpty()
                         ? BigDecimal.ZERO
                         : totalRevenue.divide(BigDecimal.valueOf(revenueOrders.size()), 2, RoundingMode.HALF_UP))
@@ -587,7 +597,62 @@ public class OrderService {
                 .ordersByStatus(byStatus)
                 .dailyRevenue(daily)
                 .topProducts(topProducts)
+                .topCategories(topCategories(top))
+                .windowDays(window)
                 .build();
+    }
+
+    /**
+     * Category revenue roll-up over the same item aggregation as topProducts.
+     * Resolves category via the catalog projection in chunks (bounded URL
+     * length); best-effort — an unavailable catalog yields an empty list.
+     */
+    private List<DashboardStatsDto.TopCategoryDto> topCategories(
+            Map<UUID, DashboardStatsDto.TopProductDto> productRevenue) {
+        try {
+            List<UUID> ids = new ArrayList<>(productRevenue.keySet());
+            Map<UUID, Long> productCategory = new LinkedHashMap<>();
+            Map<Long, String> categoryNames = new LinkedHashMap<>();
+            int chunkSize = 80;
+            for (int i = 0; i < ids.size(); i += chunkSize) {
+                List<UUID> batch = ids.subList(i, Math.min(ids.size(), i + chunkSize));
+                String joined = batch.stream().map(UUID::toString).collect(Collectors.joining(","));
+                for (ProductSummaryDto summary : productCatalogClient.findByIds(joined)) {
+                    if (summary.getCategory() != null && summary.getCategory().getId() != null) {
+                        productCategory.put(summary.getId(), summary.getCategory().getId());
+                        categoryNames.putIfAbsent(summary.getCategory().getId(), summary.getCategory().getName());
+                    }
+                }
+            }
+            Map<Long, DashboardStatsDto.TopCategoryDto> categories = new LinkedHashMap<>();
+            for (Map.Entry<UUID, DashboardStatsDto.TopProductDto> entry : productRevenue.entrySet()) {
+                Long categoryId = productCategory.get(entry.getKey());
+                if (categoryId == null) {
+                    continue;
+                }
+                DashboardStatsDto.TopProductDto product = entry.getValue();
+                DashboardStatsDto.TopCategoryDto aggregate = categories.get(categoryId);
+                if (aggregate == null) {
+                    aggregate = DashboardStatsDto.TopCategoryDto.builder()
+                            .categoryId(categoryId)
+                            .categoryName(categoryNames.getOrDefault(categoryId, "Category " + categoryId))
+                            .unitsSold(product.getUnitsSold())
+                            .revenue(product.getRevenue())
+                            .build();
+                    categories.put(categoryId, aggregate);
+                } else {
+                    aggregate.setUnitsSold(aggregate.getUnitsSold() + product.getUnitsSold());
+                    aggregate.setRevenue(aggregate.getRevenue().add(product.getRevenue()));
+                }
+            }
+            return categories.values().stream()
+                    .sorted(Comparator.comparing(DashboardStatsDto.TopCategoryDto::getRevenue).reversed())
+                    .limit(5)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            log.warn("Could not compute top categories for dashboard ({}); skipping", e.getMessage());
+            return List.of();
+        }
     }
 
     private BigDecimal nvl(BigDecimal value) {

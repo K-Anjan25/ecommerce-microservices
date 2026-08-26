@@ -9,6 +9,9 @@ import StorefrontIcon from "@mui/icons-material/Storefront";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import CardGiftcardOutlinedIcon from "@mui/icons-material/CardGiftcardOutlined";
+import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
+import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
+import PercentOutlinedIcon from "@mui/icons-material/PercentOutlined";
 import AssignmentReturnIcon from "@mui/icons-material/AssignmentReturn";
 import WebOutlinedIcon from "@mui/icons-material/WebOutlined";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
@@ -28,8 +31,11 @@ const NAV = [
   { path: "/admin/orders", label: "Orders", icon: ReceiptLongIcon, exact: false },
   { path: "/admin/products", label: "Products", icon: Inventory2Icon, exact: false },
   { path: "/admin/categories", label: "Categories", icon: CategoryIcon, exact: false },
+  { path: "/admin/flash-sales", label: "Flash sales", icon: LocalOfferOutlinedIcon, exact: false },
   { path: "/admin/coupons", label: "Coupons", icon: ConfirmationNumberIcon, exact: false },
   { path: "/admin/gift-card-purchases", label: "Gift-card sales", icon: CardGiftcardOutlinedIcon, exact: false },
+  { path: "/admin/shipping-rates", label: "Shipping rates", icon: LocalShippingOutlinedIcon, exact: false },
+  { path: "/admin/tax-rules", label: "Tax rules", icon: PercentOutlinedIcon, exact: false },
   { path: "/admin/returns", label: "Returns", icon: AssignmentReturnIcon, exact: false },
   { path: "/admin/storefront", label: "Storefront", icon: WebOutlinedIcon, exact: false },
   { path: "/admin/audit-log", label: "Audit log", icon: HistoryOutlinedIcon, exact: false },

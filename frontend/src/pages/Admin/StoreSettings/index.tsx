@@ -137,6 +137,44 @@ export default function StoreSettingsPage() {
                 fullWidth
               />
             </div>
+
+            <div className="border-t border-line pt-5">
+              <p className="font-display text-xl text-ink">Brand &amp; invoice</p>
+              <p className="mb-4 mt-1 text-sm text-ink-muted">
+                Shown on invoices emailed to customers and in their subject lines.
+              </p>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <TextField
+                  label="Store name"
+                  value={form.storeName}
+                  onChange={(event) => set("storeName", event.target.value)}
+                  helperText="Defaults to Cartly when left empty."
+                  fullWidth
+                />
+                <TextField
+                  label="Tagline"
+                  value={form.storeTagline}
+                  onChange={(event) => set("storeTagline", event.target.value)}
+                  helperText="Small line under the store name."
+                  fullWidth
+                />
+                <TextField
+                  label="Support email"
+                  type="email"
+                  value={form.supportEmail}
+                  onChange={(event) => set("supportEmail", event.target.value)}
+                  helperText="Optional “Questions? Contact …” line."
+                  fullWidth
+                />
+                <TextField
+                  label="Invoice footer note"
+                  value={form.invoiceFooterNote}
+                  onChange={(event) => set("invoiceFooterNote", event.target.value)}
+                  helperText="Replaces the default “system generated invoice” line."
+                  fullWidth
+                />
+              </div>
+            </div>
           </div>
 
           <aside className="sticky top-[9rem]">

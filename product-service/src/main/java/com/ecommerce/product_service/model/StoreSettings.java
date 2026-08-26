@@ -21,6 +21,12 @@ public class StoreSettings {
     @Id
     private Long id;
 
+    /** Merchant identity used on invoices and customer emails. */
+    private String storeName;
+    private String storeTagline;
+    private String supportEmail;
+    private String invoiceFooterNote;
+
     private boolean announcementEnabled;
     private String announcementText;
     private String announcementTextHi;

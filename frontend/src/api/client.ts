@@ -1,3 +1,4 @@
+import { apiOrigin } from "../utils/origin";
 import { setToken } from "../utils/token";
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || "";
@@ -30,9 +31,8 @@ const buildUrl = (path: string, params?: RequestConfig["params"]) => {
   if (/^[a-z][a-z\d+.-]*:/i.test(path) || path.startsWith("//")) {
     throw new Error("Feature API calls must use relative URLs");
   }
-  const base = API_BASE_URL
-    ? new URL(API_BASE_URL, window.location.origin).href
-    : window.location.origin;
+  const origin = apiOrigin();
+  const base = API_BASE_URL ? new URL(API_BASE_URL, origin).href : origin;
   const url = new URL(path, base.endsWith("/") ? base : `${base}/`);
   Object.entries(params ?? {}).forEach(([key, raw]) => {
     const values = Array.isArray(raw) ? raw : [raw];
@@ -65,7 +65,7 @@ const rawRequest = async <T>(
   else if (body !== undefined && !headers.has("Content-Type")) headers.set("Content-Type", "application/json");
 
   const controller = new AbortController();
-  const timer = window.setTimeout(() => controller.abort(), 30_000);
+  const timer = setTimeout(() => controller.abort(), 30_000);
   try {
     const response = await fetch(buildUrl(path, config.params), {
       method,
@@ -85,7 +85,7 @@ const rawRequest = async <T>(
     if (error instanceof DOMException && error.name === "AbortError") throw new HttpError("Request timed out");
     throw error;
   } finally {
-    window.clearTimeout(timer);
+    clearTimeout(timer);
   }
 };
 
@@ -128,12 +128,19 @@ const refreshTokens = () => {
 export const refreshAuthTokens = () => refreshTokens();
 
 const request = async <T>(method: string, path: string, body?: unknown, config: RequestConfig = {}) => {
-  const token = localStorage.getItem("access-token");
+  // Server-side rendering only performs the public prefetch GETs; session
+  // storage and the 401 refresh dance are browser-only concerns.
+  const token = typeof window === "undefined" ? null : localStorage.getItem("access-token");
   try {
     return await rawRequest<T>(method, path, body, config, token);
   } catch (error) {
     const authEntry = path.includes("/user/login") || path.includes("/user/token/refresh");
-    if (!(error instanceof HttpError) || error.response?.status !== 401 || authEntry) {
+    if (
+      !(error instanceof HttpError) ||
+      error.response?.status !== 401 ||
+      authEntry ||
+      typeof window === "undefined"
+    ) {
       throw error;
     }
 

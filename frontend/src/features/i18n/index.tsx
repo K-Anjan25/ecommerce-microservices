@@ -6,7 +6,7 @@ const STORAGE_KEY = "cartly-language";
 const messages = {
   en: {
     "nav.shop": "Shop", "nav.deals": "Deals", "nav.gifts": "Gift Cards", "nav.rewards": "Rewards",
-    "nav.orders": "Orders", "nav.returns": "Returns", "nav.addresses": "Addresses", "nav.compare": "Compare",
+    "nav.orders": "Orders", "nav.returns": "Returns", "nav.addresses": "Addresses", "nav.compare": "Compare", "nav.wishlist": "Wishlist",
     "nav.account": "Account", "nav.login": "Login", "nav.register": "Create account", "nav.logout": "Logout",
     "search.placeholder": "Search products, brands and categories", "search.action": "Search", "search.products": "Products",
     "search.hint": "Use ↑ ↓ to browse · Enter to search · Esc to close",
@@ -19,7 +19,7 @@ const messages = {
   },
   hi: {
     "nav.shop": "खरीदें", "nav.deals": "ऑफ़र", "nav.gifts": "गिफ़्ट कार्ड", "nav.rewards": "रिवॉर्ड्स",
-    "nav.orders": "ऑर्डर", "nav.returns": "रिटर्न", "nav.addresses": "पते", "nav.compare": "तुलना",
+    "nav.orders": "ऑर्डर", "nav.returns": "रिटर्न", "nav.addresses": "पते", "nav.compare": "तुलना", "nav.wishlist": "विशलिस्ट",
     "nav.account": "खाता", "nav.login": "लॉग इन", "nav.register": "खाता बनाएँ", "nav.logout": "लॉग आउट",
     "search.placeholder": "उत्पाद, ब्रांड और श्रेणियाँ खोजें", "search.action": "खोजें", "search.products": "उत्पाद",
     "search.hint": "चुनने के लिए ↑ ↓ · खोजने के लिए Enter · बंद करने के लिए Esc",
@@ -37,7 +37,9 @@ type I18nValue = { language: Language; locale: string; setLanguage: (language: L
 const I18nContext = createContext<I18nValue | null>(null);
 
 export function I18nProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguage] = useState<Language>(() => localStorage.getItem(STORAGE_KEY) === "hi" ? "hi" : "en");
+  const [language, setLanguage] = useState<Language>(
+    () => (typeof window !== "undefined" && localStorage.getItem(STORAGE_KEY) === "hi") ? "hi" : "en"
+  );
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, language);
     document.documentElement.lang = language;

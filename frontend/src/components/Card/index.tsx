@@ -7,6 +7,8 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
 import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
+import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
+import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 
 import {
@@ -21,6 +23,7 @@ import { formatPrice } from "../../utils/cart";
 import { addToCompare, isInCompare } from "../../utils/compare";
 import { showSuccess } from "../../utils/showSuccess";
 import { useI18n } from "../../features/i18n";
+import { useWishlist } from "../../hooks/useWishlist";
 
 type CardProps = {
   product: Product | ProductAdmin;
@@ -42,6 +45,10 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
   const navigate = useNavigate();
   const { t } = useI18n();
   const cartItems = useSelector((state: AppState) => state.cart);
+  const signedIn = useSelector(
+    (state: AppState) => Boolean(state.user.data?.isLogedIn)
+  );
+  const { isInWishlist, toggle } = useWishlist();
   const quantity =
     cartItems.find(
       (item) => item.product.id === product.id && item.variantId === variantId
@@ -75,6 +82,22 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
     }
     addToCompare(product.id);
     showSuccess(`${product.name} added to compare`);
+  };
+
+  const wishlisted = isInWishlist(product.id);
+
+  const handleWishlist = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!signedIn) {
+      navigate("/login");
+      return;
+    }
+    toggle({
+      productId: product.id,
+      productName: product.name,
+      unitPrice: product.unitPrice,
+      imageUrl: cover,
+    });
   };
 
   const categoryName =
@@ -131,8 +154,26 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
           )}
         </div>
 
-        {/* compare — top-right */}
+        {/* wishlist + compare — top-right */}
         <div className="absolute right-2.5 top-2.5 flex flex-col gap-1.5">
+          <Tooltip title={wishlisted ? "Saved to wishlist" : "Save to wishlist"} placement="left">
+            <button
+              onClick={handleWishlist}
+              aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+              aria-pressed={wishlisted}
+              className={`flex h-8 w-8 items-center justify-center rounded-full border backdrop-blur transition ${
+                wishlisted
+                  ? "border-brand bg-action text-oncontrast"
+                  : "border-line bg-paper/90 text-ink-soft hover:border-ink hover:text-ink"
+              }`}
+            >
+              {wishlisted ? (
+                <FavoriteOutlinedIcon sx={{ fontSize: 16 }} />
+              ) : (
+                <FavoriteBorderOutlinedIcon sx={{ fontSize: 16 }} />
+              )}
+            </button>
+          </Tooltip>
           <Tooltip title="Compare" placement="left">
             <button
               onClick={handleCompare}

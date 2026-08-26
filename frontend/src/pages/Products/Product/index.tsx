@@ -6,6 +6,7 @@ import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 import { ProductApi } from "../../../api/productApi";
+import { currentOrigin } from "../../../utils/origin";
 import ProductDetail from "../../../components/Card/ProductCard";
 import EmptyState from "../../../components/EmptyState";
 import usePageMetadata from "../../../hooks/usePageMetadata";
@@ -53,7 +54,7 @@ function Product() {
                 (product.quantityInStock ?? 0) > 0
                   ? "https://schema.org/InStock"
                   : "https://schema.org/OutOfStock",
-              url: new URL(`/products/${product.id}`, window.location.origin).href,
+              url: new URL(`/products/${product.id}`, currentOrigin()).href,
             },
           }
         : undefined,

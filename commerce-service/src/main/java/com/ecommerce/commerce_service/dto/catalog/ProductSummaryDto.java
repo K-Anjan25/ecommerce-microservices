@@ -16,6 +16,16 @@ public class ProductSummaryDto {
     private BigDecimal flashPrice;
     private Boolean flashSaleActive;
     private List<VariantSummaryDto> variants;
+    /** Present in product-service responses; used for dashboard analytics. */
+    private CategorySummaryDto category;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CategorySummaryDto {
+        private Long id;
+        private String name;
+    }
 
     @Data
     @NoArgsConstructor

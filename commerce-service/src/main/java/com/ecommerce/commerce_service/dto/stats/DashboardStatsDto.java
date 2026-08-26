@@ -23,6 +23,9 @@ public class DashboardStatsDto {
     private Map<String, Long> ordersByStatus;
     private List<DailyRevenueDto> dailyRevenue;
     private List<TopProductDto> topProducts;
+    private List<TopCategoryDto> topCategories;
+    /** The revenue-chart window in days (echoes the request parameter). */
+    private Integer windowDays;
 
     @Data
     @Builder
@@ -40,6 +43,17 @@ public class DashboardStatsDto {
     @AllArgsConstructor
     public static class TopProductDto {
         private UUID productId;
+        private Long unitsSold;
+        private BigDecimal revenue;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TopCategoryDto {
+        private Long categoryId;
+        private String categoryName;
         private Long unitsSold;
         private BigDecimal revenue;
     }

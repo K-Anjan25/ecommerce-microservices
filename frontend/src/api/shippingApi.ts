@@ -21,7 +21,34 @@ const getTaxRule = async (state: string) => {
   return data ?? null;
 };
 
+// ---- Admin: shipping rate management (/v1/shipping/rates, ROLE_ADMIN) ----
+
+export type ShippingRate = ShippingQuote & { id: string };
+
+const getRates = async () => {
+  const { data } = await api.get<ShippingRate[]>("/v1/shipping/rates");
+  return data;
+};
+
+const createRate = async (rate: Omit<ShippingRate, "id">) => {
+  const { data } = await api.post<ShippingRate>("/v1/shipping/rates", rate);
+  return data;
+};
+
+const updateRate = async (id: string, rate: Omit<ShippingRate, "id">) => {
+  const { data } = await api.put<ShippingRate>(`/v1/shipping/rates/${id}`, rate);
+  return data;
+};
+
+const deleteRate = async (id: string) => {
+  await api.delete(`/v1/shipping/rates/${id}`);
+};
+
 export const ShippingApi = {
   calculateShipping,
   getTaxRule,
+  getRates,
+  createRate,
+  updateRate,
+  deleteRate,
 };

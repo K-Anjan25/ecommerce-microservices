@@ -8,6 +8,7 @@ import TrendingUpOutlinedIcon from "@mui/icons-material/TrendingUpOutlined";
 import TodayOutlinedIcon from "@mui/icons-material/TodayOutlined";
 import { useTheme } from "@mui/material/styles";
 import { useQuery } from "react-query";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
@@ -36,16 +37,22 @@ const statusColors: Record<string, string> = {
   REFUNDED: "!bg-state-info/10 !text-state-info",
 };
 
+const WINDOW_OPTIONS = [7, 14, 30, 90];
+
 function Home() {
   const navigate = useNavigate();
+  const [windowDays, setWindowDays] = useState(7);
   const muiTheme = useTheme();
   const axis = muiTheme.palette.text.disabled;
   const grid = muiTheme.palette.divider;
   const { data: user } = useSelector((state: AppState) => state.user);
 
-  const { data: stats } = useQuery(["admin:dashboard"], OrderApi.getDashboardStats, {
-    retry: false,
-  });
+  const { data: stats } = useQuery(
+    ["admin:dashboard", windowDays],
+    () => OrderApi.getDashboardStats(windowDays),
+    { retry: false }
+  );
+  const activeWindow = stats?.windowDays ?? windowDays;
 
   const { data: products } = useQuery(["admin:products", "stats"], () =>
     ProductApi.getProductsByPagination({
@@ -90,7 +97,7 @@ function Home() {
       tint: "bg-brand-soft text-brand",
     },
     {
-      label: "Revenue · last 7 days",
+      label: `Revenue · last ${activeWindow} day${activeWindow === 1 ? "" : "s"}`,
       value: formatPrice(stats?.revenueLast7Days ?? 0),
       sub: `${stats?.totalOrders ?? 0} orders all-time`,
       icon: <TrendingUpOutlinedIcon />,
@@ -143,14 +150,38 @@ function Home() {
 
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
         <Box className="border-t border-ink py-6">
-          <Typography className="mb-4 !font-display !text-2xl !text-ink">
-            Revenue · last 7 days
-          </Typography>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <Typography className="!font-display !text-2xl !text-ink">
+              Revenue · last {activeWindow} day{activeWindow === 1 ? "" : "s"}
+            </Typography>
+            <div className="flex items-center gap-1">
+              {WINDOW_OPTIONS.map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => setWindowDays(option)}
+                  className={`rounded-sm px-2.5 py-1 text-xs font-bold transition ${
+                    activeWindow === option
+                      ? "bg-contrast text-oncontrast"
+                      : "text-ink-soft hover:bg-sunken hover:text-ink"
+                  }`}
+                >
+                  {option}d
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={stats?.dailyRevenue ?? []}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={grid} />
-                <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke={axis} />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fontSize: 12 }}
+                  stroke={axis}
+                  interval="preserveStartEnd"
+                  minTickGap={24}
+                />
                 <YAxis
                   tick={{ fontSize: 12 }}
                   stroke={axis}
@@ -193,6 +224,38 @@ function Home() {
               </Typography>
             )}
           </div>
+          <Divider className="my-4" />
+          <Typography className="mb-2 !font-display !text-lg !text-ink">
+            Top categories · {activeWindow}d
+          </Typography>
+          {(stats?.topCategories ?? []).length === 0 ? (
+            <Typography variant="body2" className="text-ink-soft">
+              Category revenue appears here as orders come in.
+            </Typography>
+          ) : (
+            <div className="space-y-2">
+              {(stats?.topCategories ?? []).map((category) => (
+                <Box
+                  key={category.categoryId}
+                  className="flex items-center justify-between gap-3"
+                >
+                  <Typography className="truncate text-sm font-medium text-ink">
+                    {category.categoryName}
+                  </Typography>
+                  <Box className="flex shrink-0 items-center gap-2">
+                    <Chip
+                      size="small"
+                      label={`${category.unitsSold} sold`}
+                      className="!bg-sunken !text-ink-soft"
+                    />
+                    <Typography className="price-text text-sm">
+                      {formatPrice(category.revenue)}
+                    </Typography>
+                  </Box>
+                </Box>
+              ))}
+            </div>
+          )}
           <Divider className="my-4" />
           <Box
             className="flex cursor-pointer items-center justify-between p-3 transition hover:bg-brand-tint"

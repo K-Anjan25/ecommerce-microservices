@@ -83,6 +83,30 @@ export interface ProductSearchSuggestion {
   imageUrl?: string;
 }
 
+export interface ProductVariantForm {
+  id?: string;
+  name: string;
+  sku?: string;
+  /** Kept as strings in form state; coerced on submit. */
+  price?: string;
+  quantityInStock?: string;
+  attributes?: string;
+}
+
+export interface ProductVariantPayload {
+  id?: string;
+  name: string;
+  sku?: string;
+  price?: number;
+  quantityInStock?: number;
+  attributes?: string;
+}
+
+/** Wire format for POST/PUT /v1/products. */
+export interface ProductPayload extends Omit<ProductForm, "variants"> {
+  variants: ProductVariantPayload[];
+}
+
 export interface ProductForm {
   name: string;
   unitPrice: number | undefined;
@@ -90,4 +114,12 @@ export interface ProductForm {
   description: string;
   quantityInStock?: number | undefined;
   imageUrl: string;
+  brand?: string;
+  originalPrice?: number | undefined;
+  badge?: string;
+  featured?: boolean;
+  /** Gallery beyond the cover image; sent as `images[]` (sort order = index). */
+  images: string[];
+  /** Send always: `[]` clears variants, rows with `id` keep their identity. */
+  variants: ProductVariantForm[];
 }

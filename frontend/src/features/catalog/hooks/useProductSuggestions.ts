@@ -1,34 +1,30 @@
-import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "react-query";
 import { ProductApi } from "../../../api/productApi";
 import { ProductSearchSuggestion } from "../../../types/product";
 
-/** Debounced suggestions with stale-response protection for every catalog search surface. */
+const MIN_QUERY_LENGTH = 2;
+
+/**
+ * Debounced suggestions shared through the react-query cache.
+ *
+ * Several CommerceSearch instances are mounted at once (desktop header +
+ * mobile drawer share the navbar value), so requests are deduplicated and
+ * cached per term instead of every keystroke firing one request per input.
+ */
 export function useProductSuggestions(query: string) {
-  const [suggestions, setSuggestions] = useState<ProductSearchSuggestion[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
+  const term = query.trim();
+  const enabled = term.length >= MIN_QUERY_LENGTH;
 
-  useEffect(() => {
-    const term = query.trim();
-    if (term.length < 2) {
-      setSuggestions([]);
-      setIsLoading(false);
-      return;
-    }
+  const { data, isFetching } = useQuery<ProductSearchSuggestion[]>(
+    ["product-suggestions", term],
+    () => ProductApi.suggestProducts(term),
+    { enabled, staleTime: 30_000, retry: false }
+  );
 
-    let live = true;
-    setIsLoading(true);
-    const timer = window.setTimeout(() => {
-      ProductApi.suggestProducts(term)
-        .then((items) => live && setSuggestions(items.slice(0, 6)))
-        .catch(() => live && setSuggestions([]))
-        .finally(() => live && setIsLoading(false));
-    }, 180);
-
-    return () => {
-      live = false;
-      window.clearTimeout(timer);
-    };
-  }, [query]);
-
-  return { suggestions, isLoading, clear: () => setSuggestions([]) };
+  return {
+    suggestions: enabled ? data ?? [] : [],
+    isLoading: enabled && isFetching,
+    clear: () => queryClient.removeQueries(["product-suggestions", term], { exact: true }),
+  };
 }

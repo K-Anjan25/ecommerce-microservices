@@ -61,6 +61,7 @@ const PRIMARY = [
 const SECONDARY = [
   { path: "/orders", label: "Orders" },
   { path: "/returns", label: "Returns" },
+  { path: "/wishlist", label: "Wishlist" },
   { path: "/referral", label: "Referral" },
   { path: "/addresses", label: "Addresses" },
   { path: "/compare", label: "Compare" },
@@ -81,9 +82,12 @@ const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [bagOpen, setBagOpen] = useState(false);
   const [navSearch, setNavSearch] = useState("");
-  const [announce, setAnnounce] = useState(
-    () => sessionStorage.getItem(ANNOUNCE_KEY) !== "1"
-  );
+  // sessionStorage is browser-only; SSR renders the announcement and the
+  // client effect reconciles the dismissed state after mount.
+  const [announce, setAnnounce] = useState(true);
+  useEffect(() => {
+    if (sessionStorage.getItem(ANNOUNCE_KEY) === "1") setAnnounce(false);
+  }, []);
   const searchRef = useRef<HTMLInputElement>(null);
 
   const isAdmin = user?.roles?.includes("ROLE_ADMIN");
@@ -131,13 +135,18 @@ const Navbar = () => {
   const submitNavSearch = (rawTerm: string) => {
     const term = rawTerm.trim();
     if (!term) return;
-    navigate("/", { state: { search: term } });
+    // q lives in the URL so results are shareable/bookmarkable; the state
+    // hand-off additionally scrolls the catalog to the results.
+    navigate({ pathname: "/", search: `?q=${encodeURIComponent(term)}` }, { state: { search: term } });
     setDrawerOpen(false);
     searchRef.current?.blur();
   };
 
   const pickCategory = (name: string) => {
-    navigate("/", { state: { category: name } });
+    navigate(
+      { pathname: "/", search: `?category=${encodeURIComponent(name)}` },
+      { state: { category: name } }
+    );
   };
 
   const dismissAnnounce = () => {
@@ -173,7 +182,7 @@ const Navbar = () => {
     const keys: Record<string, Parameters<typeof t>[0]> = {
       "/": "nav.shop", "/flash-sales": "nav.deals", "/gift-cards": "nav.gifts",
       "/loyalty": "nav.rewards", "/orders": "nav.orders", "/returns": "nav.returns",
-      "/addresses": "nav.addresses", "/compare": "nav.compare", "/account": "nav.account",
+      "/addresses": "nav.addresses", "/compare": "nav.compare", "/wishlist": "nav.wishlist", "/account": "nav.account",
     };
     return keys[path] ? t(keys[path]) : fallback;
   };

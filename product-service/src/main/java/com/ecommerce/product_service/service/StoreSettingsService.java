@@ -23,6 +23,10 @@ public class StoreSettingsService {
     @Transactional
     public StoreSettingsDto update(StoreSettingsDto request) {
         StoreSettings settings = repository.findById(SINGLETON_ID).orElseGet(this::defaults);
+        settings.setStoreName(clean(request.getStoreName()));
+        settings.setStoreTagline(clean(request.getStoreTagline()));
+        settings.setSupportEmail(clean(request.getSupportEmail()));
+        settings.setInvoiceFooterNote(clean(request.getInvoiceFooterNote()));
         settings.setAnnouncementEnabled(request.isAnnouncementEnabled());
         settings.setAnnouncementText(clean(request.getAnnouncementText()));
         settings.setAnnouncementTextHi(clean(request.getAnnouncementTextHi()));
@@ -67,6 +71,7 @@ public class StoreSettingsService {
                 .primaryCtaLabelHi("कलेक्शन देखें")
                 .secondaryCtaLabel("Explore the edit")
                 .secondaryCtaLabelHi("एडिट देखें")
+                .storeName("Cartly")
                 .freeShippingThreshold(BigDecimal.valueOf(999))
                 .build();
     }
@@ -91,6 +96,10 @@ public class StoreSettingsService {
                 .primaryCtaLabelHi(settings.getPrimaryCtaLabelHi())
                 .secondaryCtaLabel(settings.getSecondaryCtaLabel())
                 .secondaryCtaLabelHi(settings.getSecondaryCtaLabelHi())
+                .storeName(settings.getStoreName())
+                .storeTagline(settings.getStoreTagline())
+                .supportEmail(settings.getSupportEmail())
+                .invoiceFooterNote(settings.getInvoiceFooterNote())
                 .freeShippingThreshold(settings.getFreeShippingThreshold())
                 .build();
     }

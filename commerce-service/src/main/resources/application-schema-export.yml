@@ -1,0 +1,14 @@
+# Dumps the full Hibernate schema to target/schema.sql WITHOUT touching any
+# database. Activate with SPRING_PROFILES_ACTIVE=schema-export (used by
+# tools/generate-schema-baseline.sh to produce the V2 Flyway baseline).
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      javax.persistence.schema-generation.scripts.action: create
+      javax.persistence.schema-generation.scripts.create-target: target/schema.sql
+      javax.persistence.schema-generation.scripts.create-source: metadata
+  flyway:
+    enabled: false
