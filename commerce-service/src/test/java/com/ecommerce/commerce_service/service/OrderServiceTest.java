@@ -142,7 +142,7 @@ class OrderServiceTest {
 
         when(orderMapper.orderRequestToOrder(request)).thenReturn(testOrder);
         when(productCatalogClient.findByIds(productId.toString())).thenReturn(List.of(
-                new ProductSummaryDto(productId, "Test product", BigDecimal.TEN, null, false, List.of())));
+                new ProductSummaryDto(productId, "Test product", BigDecimal.TEN, null, false, List.of(), null)));
         when(commerceInventoryService.isInStock(anyList()))
                 .thenReturn(InventoryCheckResponse.builder().isInStock(true).build());
         when(orderRepository.save(testOrder)).thenReturn(testOrder);
@@ -167,7 +167,7 @@ class OrderServiceTest {
 
         when(orderMapper.orderRequestToOrder(request)).thenReturn(testOrder);
         when(productCatalogClient.findByIds(productId.toString())).thenReturn(List.of(
-                new ProductSummaryDto(productId, "Test product", BigDecimal.TEN, null, false, List.of())));
+                new ProductSummaryDto(productId, "Test product", BigDecimal.TEN, null, false, List.of(), null)));
         when(commerceInventoryService.isInStock(anyList()))
                 .thenReturn(InventoryCheckResponse.builder()
                         .isInStock(false)
@@ -188,7 +188,7 @@ class OrderServiceTest {
         when(request.getGiftCardCode()).thenReturn("GC-1234");
         when(orderMapper.orderRequestToOrder(request)).thenReturn(testOrder);
         when(productCatalogClient.findByIds(productId.toString())).thenReturn(List.of(
-                new ProductSummaryDto(productId, "Test product", BigDecimal.TEN, null, false, List.of())));
+                new ProductSummaryDto(productId, "Test product", BigDecimal.TEN, null, false, List.of(), null)));
         when(commerceInventoryService.isInStock(anyList()))
                 .thenReturn(InventoryCheckResponse.builder().isInStock(true).build());
         when(loyaltyPointService.redeemForOrder(any(), anyInt(), any(), anyString()))
