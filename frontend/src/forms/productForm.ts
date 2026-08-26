@@ -1,5 +1,24 @@
 import * as yup from "yup";
-import { ProductForm } from "../types/product";
+import { ProductForm, ProductVariantForm } from "../types/product";
+
+export const emptyVariant: ProductVariantForm = {
+  name: "",
+  sku: "",
+  price: "",
+  quantityInStock: "",
+  attributes: "",
+};
+
+/** Fetched `ProductVariant` (numeric fields) → form-state strings. */
+export const toVariantForm = (variant: any): ProductVariantForm => ({
+  id: variant.id,
+  name: variant.name ?? "",
+  sku: variant.sku ?? "",
+  price: variant.price != null ? String(variant.price) : "",
+  quantityInStock:
+    variant.quantityInStock != null ? String(variant.quantityInStock) : "",
+  attributes: variant.attributes ?? "",
+});
 
 const validationSchema = (isEdit: boolean) =>
   yup.object({
@@ -7,12 +26,13 @@ const validationSchema = (isEdit: boolean) =>
     name: yup.string().required("name is required"),
     categoryId: yup.number().required("category is required"),
     imageUrl: yup.string().required("image is required"),
-    quantityInStock: yup.number().when([], {
-      is: () => !isEdit,
+    quantityInStock: yup.number().when("variants", {
+      is: (variants?: ProductVariantForm[]) =>
+        !isEdit && (!variants || variants.length === 0),
       then: yup
         .number()
         .min(0, "Stock cannot be negative")
-        .required("quantityInStock is required"),
+        .required("Stock is required when the product has no variants"),
       otherwise: yup.number().notRequired(),
     }),
     unitPrice: yup
@@ -32,6 +52,20 @@ const validationSchema = (isEdit: boolean) =>
       .nullable(),
     brand: yup.string().max(60).nullable(),
     badge: yup.string().max(30).nullable(),
+    images: yup.array().of(yup.string().required()),
+    variants: yup.array().of(
+      yup.object({
+        name: yup.string().trim().required("Variant name is required"),
+        sku: yup.string().max(60).nullable(),
+        price: yup.number().min(0, "Cannot be negative").nullable(),
+        quantityInStock: yup
+          .number()
+          .integer("Whole numbers only")
+          .min(0, "Cannot be negative")
+          .nullable(),
+        attributes: yup.string().max(300, "Keep it under 300 characters").nullable(),
+      })
+    ),
   });
 
 const initialValues = (isEdit: boolean = true): ProductForm => {
@@ -45,6 +79,8 @@ const initialValues = (isEdit: boolean = true): ProductForm => {
     originalPrice: undefined,
     badge: "",
     featured: false,
+    images: [],
+    variants: [],
     ...(!isEdit && { quantityInStock: undefined }),
   };
 };

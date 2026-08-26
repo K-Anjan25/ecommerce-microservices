@@ -7,6 +7,7 @@ import {
   ProductAdmin,
   ProductParam,
   ProductForm,
+  ProductPayload,
   ProductSearchResponse,
   ProductSearchSuggestion,
 } from "../types/product";
@@ -114,7 +115,7 @@ const getFlashSales = async () => {
 };
 
 // Admin only endpoints - Requires ROLE_ADMIN authentication
-const saveProduct = async (product: ProductForm) => {
+const saveProduct = async (product: ProductPayload) => {
   // Requires ROLE_ADMIN
   const { data } = await api.post(`/v1/products`, {
     ...product,
@@ -124,7 +125,7 @@ const saveProduct = async (product: ProductForm) => {
 };
 
 const updateProduct = async (updateProduct: {
-  data: ProductForm;
+  data: ProductPayload;
   id: string;
 }) => {
   // Requires ROLE_ADMIN

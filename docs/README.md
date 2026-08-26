@@ -74,13 +74,17 @@ canonical here.
 
 ## Next development phases
 
-1. **P11 — Catalog depth in UI**: multi-image manager + variant editor in the
-   admin product form (APIs already support `images[]` and `variants[]`).
-2. **P12 — Production certification**: Flyway baseline/migrate/rollback drill,
+1. **P12 — Production certification**: Flyway baseline/migrate/rollback drill,
    live Stripe/Razorpay keys, webhook return-path tests, reconciliation ops
    runbook + alerting.
-3. **P13 — Scale & resilience drills**: sustained load test, backup/restore and
+2. **P13 — Scale & resilience drills**: sustained load test, backup/restore and
    reconciliation drills in a deployed environment.
-4. **P14 — Growth features**: product analytics dashboards (views/conversion),
+3. **P14 — Growth features**: product analytics dashboards (views/conversion),
    recommendation rails, bulk catalog import/export, invoice branding.
-5. **P15 — Optional SSR/pre-render expansion** for SEO + localized merchant HTML.
+4. **P15 — Optional SSR/pre-render expansion** for SEO + localized merchant HTML.
+
+Recently delivered (August 2026): themed `DateField` + business-timezone
+convention; admin console completion (flash sales, shipping rates, tax rules,
+gift-card issuance, coupon edit); customer wishlist; multi-image gallery and
+variant editor in the admin product form with id-preserving variant saves
+(carts/orders keep valid `variantId` references).
