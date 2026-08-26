@@ -92,17 +92,20 @@ canonical here.
 
 ## Next development phases
 
-1. **P12 — Production certification**: Flyway baseline/migrate/rollback drill,
-   live Stripe/Razorpay keys, webhook return-path tests, reconciliation ops
-   runbook + alerting.
+1. **P12 — Production certification** (in progress; tooling ready):
+   schema-baseline generation (`tools/generate-schema-baseline.sh` → review →
+   `V2__baseline_schema.sql`), staging rollout checklist above; remaining work
+   needs a real environment (Flyway drill, live provider keys, webhook return
+   path).
 2. **P13 — Scale & resilience drills**: sustained load test, backup/restore and
    reconciliation drills in a deployed environment.
 3. **P14 — Growth features**: product analytics dashboards (views/conversion),
-   recommendation rails, bulk catalog import/export, invoice branding.
+   recommendation rails, invoice branding. Bulk catalog CSV import/export is
+   delivered (admin Products page).
 4. **P15 — Optional SSR/pre-render expansion** for SEO + localized merchant HTML.
 
 Recently delivered (August 2026): themed `DateField` + business-timezone
 convention; admin console completion (flash sales, shipping rates, tax rules,
 gift-card issuance, coupon edit); customer wishlist; multi-image gallery and
-variant editor in the admin product form with id-preserving variant saves
-(carts/orders keep valid `variantId` references).
+variant editor in the admin product form with id-preserving variant saves;
+bulk catalog CSV import/export with per-row backend validation reporting.
