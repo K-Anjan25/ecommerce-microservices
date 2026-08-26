@@ -7,7 +7,6 @@ import lombok.Setter;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -29,8 +28,8 @@ public class CreateGiftCardPurchaseRequest {
     @Email
     private String recipientEmail;
 
+    /** Must be today or later; validated by the service (which allows today). */
     @NotNull
-    @Future
     private LocalDate expiryDate;
 
     @NotNull
