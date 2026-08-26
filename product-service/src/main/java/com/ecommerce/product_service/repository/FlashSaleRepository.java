@@ -11,4 +11,5 @@ public interface FlashSaleRepository extends JpaRepository<FlashSale, Long> {
     List<FlashSale> findByActiveTrueAndStartsAtBeforeAndEndsAtAfterOrderByStartsAtDesc(
             java.time.LocalDateTime now, java.time.LocalDateTime now2);
     Optional<FlashSale> findByProductId(UUID productId);
+    List<FlashSale> findAllByOrderByStartsAtDesc();
 }

@@ -18,6 +18,7 @@ import { ProductRow } from "../../../types/table";
 import { formatDate } from "../../../utils/date";
 import { formatPrice } from "../../../utils/cart";
 import { showSuccess } from "../../../utils/showSuccess";
+import ProductCsvTools from "./ProductCsvTools";
 
 const STOCK_FILTERS = ["ALL", "IN_STOCK", "LOW_STOCK", "OUT_OF_STOCK"] as const;
 type StockFilter = (typeof STOCK_FILTERS)[number];
@@ -103,13 +104,16 @@ function Products() {
         title="Products"
         subtitle="Create, edit and remove products from your store."
         actions={
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => navigate("/admin/addEditProduct")}
-          >
-            Create product
-          </Button>
+          <>
+            <ProductCsvTools />
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={() => navigate("/admin/addEditProduct")}
+            >
+              Create product
+            </Button>
+          </>
         }
       />
 

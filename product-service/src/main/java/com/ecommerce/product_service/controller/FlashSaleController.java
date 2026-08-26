@@ -26,6 +26,20 @@ public class FlashSaleController {
         return new ResponseEntity<>(flashSaleService.createFlashSale(flashSaleDto), HttpStatus.CREATED);
     }
 
+    /** Admin console: scheduled, live, ended and inactive sales. */
+    @GetMapping("/admin/all")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    public ResponseEntity<List<FlashSaleDto>> getAllFlashSales(){
+        return ResponseEntity.ok(flashSaleService.getAllFlashSales());
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    public ResponseEntity<Void> deleteFlashSale(@PathVariable Long id){
+        flashSaleService.deleteFlashSale(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping
     public ResponseEntity<List<FlashSaleDto>> getActiveFlashSales(){
         return ResponseEntity.ok(flashSaleService.getActiveFlashSales());

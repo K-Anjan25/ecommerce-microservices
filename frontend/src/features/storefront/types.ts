@@ -1,4 +1,9 @@
 export interface StoreSettings {
+  /** Merchant identity used on invoices and customer emails. */
+  storeName: string;
+  storeTagline: string;
+  supportEmail: string;
+  invoiceFooterNote: string;
   announcementEnabled: boolean;
   announcementText: string;
   announcementTextHi: string;
@@ -21,6 +26,10 @@ export interface StoreSettings {
 }
 
 export const DEFAULT_STORE_SETTINGS: StoreSettings = {
+  storeName: "Cartly",
+  storeTagline: "",
+  supportEmail: "",
+  invoiceFooterNote: "",
   announcementEnabled: true,
   announcementText: "Free shipping over ₹999",
   announcementTextHi: "₹999 से ऊपर मुफ़्त डिलीवरी",

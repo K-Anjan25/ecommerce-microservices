@@ -26,6 +26,8 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root">
+      <!--ssr-outlet-->
+      <!--fallback-start-->
       <!-- Static public fallback for crawlers and JavaScript-disabled clients.
            React replaces this shell after hydration. -->
       <main aria-label="Cartly storefront" style="max-width: 72rem; margin: 0 auto; padding: 4rem 1.5rem;">
@@ -34,6 +36,7 @@
         <p style="max-width: 34rem; line-height: 1.7;">Thoughtful objects, honest materials and everyday essentials selected to last.</p>
         <p><a href="/products">Shop the collection</a></p>
       </main>
+      <!--fallback-end-->
     </div>
     <script type="module" src="/src/index.tsx"></script>
   </body>

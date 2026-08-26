@@ -21,6 +21,15 @@
     font-family: "Noto Sans Devanagari", Inter, system-ui, sans-serif;
   }
 
+  /* Consistent search fields: the native WebKit clear (✕) button cannot be
+     themed and clashes in dark mode, so hide it — CommerceSearch and the
+     filter fields own their clear affordances. */
+  input[type="search"]::-webkit-search-cancel-button,
+  input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
   /* Consistent numeric controls: hide the native browser spin buttons on every
      number input so all numeric fields share the NumberStepperInput look. */
   input[type="number"] {

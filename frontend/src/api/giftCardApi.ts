@@ -5,6 +5,7 @@ import {
   GiftCardPurchaseRequest,
   GiftCardPurchaseRefundResponse,
   GiftCardPurchaseResponse,
+  IssueGiftCardRequest,
 } from "../types/giftCard";
 
 const getMyGiftCards = async () => {
@@ -31,4 +32,17 @@ const refundPurchase = async (purchaseId: string) => {
   return data;
 };
 
-export const GiftCardApi = { getMyGiftCards, purchaseGiftCard, listPurchases, refundPurchase };
+// Administrative manual issuance (ROLE_ADMIN/SUPER_ADMIN). The returned card
+// is ACTIVE immediately — hand the code to the recipient over a trusted channel.
+const issueGiftCard = async (request: IssueGiftCardRequest) => {
+  const { data } = await api.post<GiftCard>("/v1/gift-cards/issue", request);
+  return data;
+};
+
+export const GiftCardApi = {
+  getMyGiftCards,
+  purchaseGiftCard,
+  listPurchases,
+  refundPurchase,
+  issueGiftCard,
+};

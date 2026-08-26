@@ -1,4 +1,4 @@
-import { Routes, Route, BrowserRouter as Router } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import DashboardLayout from "./components/DashboardLayout";
 import NotFound from "./pages/NotFound";
 import Products from "./pages/Products";
@@ -17,10 +17,22 @@ import ForgetPassword from "./pages/Login/ForgetPassword";
 import Profile from "./pages/Profile";
 import Account from "./pages/Account";
 
+/** SPA scroll restoration: a fresh navigation starts at the top (back/forward
+ *  keep the browser's own positions for history entries). */
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [pathname]);
+  return null;
+}
+
 function App() {
   const dispatch = useDispatch<any>();
   const { data, loading } = useSelector((state: AppState) => state.user);
-  const [initialLoading, setInitialLoading] = useState(true);
+  // The session bootstrap runs in an effect (browser only); on the server
+  // there is no session to restore, so routes render immediately.
+  const [initialLoading, setInitialLoading] = useState(() => typeof window !== "undefined");
 
   useEffect(() => {
     let mounted = true;
@@ -69,6 +81,9 @@ function App() {
   const AdminAuditLog = React.lazy(() => import("./pages/Admin/AuditLog"));
   const AdminPaymentReconciliation = React.lazy(() => import("./pages/Admin/PaymentReconciliation"));
   const AdminEmailRetries = React.lazy(() => import("./pages/Admin/EmailRetries"));
+  const AdminFlashSales = React.lazy(() => import("./pages/Admin/FlashSales"));
+  const AdminShippingRates = React.lazy(() => import("./pages/Admin/ShippingRates"));
+  const AdminTaxRules = React.lazy(() => import("./pages/Admin/TaxRules"));
   const AddEditProducts = React.lazy(
     () => import("./pages/Admin/Products/AddEditProduct")
   );
@@ -78,6 +93,7 @@ function App() {
   const Orders = React.lazy(() => import("./pages/Orders"));
   const Addresses = React.lazy(() => import("./pages/Addresses"));
   const Compare = React.lazy(() => import("./pages/Compare"));
+  const Wishlist = React.lazy(() => import("./pages/Wishlist"));
   const GiftCards = React.lazy(() => import("./pages/GiftCards"));
   const FlashSales = React.lazy(() => import("./pages/FlashSales"));
   const Referral = React.lazy(() => import("./pages/Referral"));
@@ -87,7 +103,8 @@ function App() {
   const UserOrderDetail = React.lazy(() => import("./pages/Orders/OrderDetail"));
 
   return (
-    <Router>
+    <>
+      <ScrollToTop />
       <Suspense fallback={<Loader />}>
         <Routes>
           <Route path="/" element={<DashboardLayout />}>
@@ -106,6 +123,7 @@ function App() {
               <Route path="orderDetail/:orderId" element={<UserOrderDetail />} />
               <Route path="addresses" element={<Addresses />} />
               <Route path="compare" element={<Compare />} />
+              <Route path="wishlist" element={<Wishlist />} />
               <Route path="gift-cards" element={<GiftCards />} />
               <Route path="flash-sales" element={<FlashSales />} />
               <Route path="referral" element={<Referral />} />
@@ -146,6 +164,9 @@ function App() {
                   <Route path="categories" element={<AdminCategories />} />
                   <Route path="users" element={<AdminUsers />} />
                   <Route path="coupons" element={<AdminCoupons />} />
+                  <Route path="flash-sales" element={<AdminFlashSales />} />
+                  <Route path="shipping-rates" element={<AdminShippingRates />} />
+                  <Route path="tax-rules" element={<AdminTaxRules />} />
                   <Route path="gift-card-purchases" element={<AdminGiftCardPurchases />} />
                   <Route path="storefront" element={<AdminStoreSettings />} />
                   <Route path="audit-log" element={<AdminAuditLog />} />
@@ -162,7 +183,7 @@ function App() {
           <Route path="/unauthorized" element={<Unauthorized />} />
         </Routes>
       </Suspense>
-    </Router>
+    </>
   );
 }
 

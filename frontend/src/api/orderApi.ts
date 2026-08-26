@@ -73,8 +73,10 @@ const getInvoice = async (orderId: string) => {
   return res.data;
 };
 
-const getDashboardStats = async () => {
-  const { data } = await api.get<DashboardStats>("/v1/orders/stats/dashboard");
+const getDashboardStats = async (days = 7) => {
+  const { data } = await api.get<DashboardStats>("/v1/orders/stats/dashboard", {
+    params: { days },
+  });
   return data;
 };
 

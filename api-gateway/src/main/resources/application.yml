@@ -158,6 +158,8 @@ spring:
           uri: ${PRODUCT_SERVICE_URI:http://localhost:8080}
           predicates:
             - Path=/v1/flash-sales/**
+          filters:
+            - AuthFilter
 
   main:
     web-application-type: reactive

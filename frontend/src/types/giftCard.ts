@@ -55,3 +55,12 @@ export interface GiftCardPurchaseAdmin {
   issuedAt?: string;
   refundedAt?: string;
 }
+
+/** Admin manual issuance (`POST /v1/gift-cards/issue`). */
+export interface IssueGiftCardRequest {
+  amount: number;
+  recipientEmail?: string;
+  /** `YYYY-MM-DD` — must be today or later. */
+  expiryDate: string;
+  reason: string;
+}

@@ -74,6 +74,8 @@ export interface DashboardStats {
   ordersToday: number;
   ordersByStatus: Record<string, number>;
   dailyRevenue: { date: string; revenue: number; orders: number }[];
+  topCategories?: { categoryId: number; categoryName: string; unitsSold: number; revenue: number }[];
+  windowDays?: number;
   topProducts: { productId: string; unitsSold: number; revenue: number }[];
 }
 

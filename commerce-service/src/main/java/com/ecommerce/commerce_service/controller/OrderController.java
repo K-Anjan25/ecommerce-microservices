@@ -131,8 +131,9 @@ public class OrderController {
     /** Phase 9 analytics for the admin dashboard (admin-only). */
     @GetMapping("/stats/dashboard")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER')")
-    public ResponseEntity<com.ecommerce.commerce_service.dto.stats.DashboardStatsDto> getDashboardStats() {
-        return ResponseEntity.ok(orderService.getDashboardStats());
+    public ResponseEntity<com.ecommerce.commerce_service.dto.stats.DashboardStatsDto> getDashboardStats(
+            @org.springframework.web.bind.annotation.RequestParam(defaultValue = "7") int days) {
+        return ResponseEntity.ok(orderService.getDashboardStats(days));
     }
 
     @GetMapping("/bought-together/{productId}")

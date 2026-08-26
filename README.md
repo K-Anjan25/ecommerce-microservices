@@ -2,11 +2,11 @@
 
 A full-stack e-commerce platform: **Spring Boot** microservices + **React + TypeScript** frontend, sized to run on a Docker Desktop host with a **2 GB memory budget**.
 
-> Design docs (architecture, requirements, system design, UML/flows, restructure plan): see [`docs/`](docs/).
+> Platform brief (architecture, status, conventions, roadmap): see [`docs/README.md`](docs/README.md).
 
 ## Architecture
 
-4 Java services + 2 infra containers. Eureka, Elasticsearch, MongoDB, Zipkin and 6 extra services were consolidated/removed to fit the budget (see `docs/05`).
+4 Java services + 2 infra containers. Eureka, Elasticsearch, MongoDB, Zipkin and 6 extra services were consolidated/removed to fit the budget (see `docs/README.md`).
 
 ```
                  ┌────────────────────────────┐
@@ -92,6 +92,7 @@ See `.env.example`. Never commit real `.env` values.
 | `JWT_SECRET` | user-service (token signing) |
 | `CORS_ALLOWED_ORIGIN` | API gateway (exact production storefront origin) |
 | `APP_FRONTEND_URL` | user/product services (password reset and alert links) |
+| `APP_TIMEZONE` | all Spring services (business clock for zone-less dates; default `Asia/Kolkata`) |
 | `INTERNAL_SERVICE_SECRET` | commerce/product services (stock-call authentication) |
 | `EMAIL_USERNAME`, `EMAIL_PASSWORD`, `EMAIL_FROM` | user-service (SMTP) |
 | `EMAIL_OUTBOX_ENCRYPTION_KEY` | user-service (AES-256 encrypted email retry envelope) |
@@ -106,7 +107,7 @@ React 18 + TypeScript, Redux, Material UI, Tailwind CSS — **Cartly editorial c
 - **Provider checkout**: copy `frontend/.env.example` to `frontend/.env` and set public `VITE_RAZORPAY_KEY_ID` and/or `VITE_STRIPE_PUBLISHABLE_KEY`; provider secrets stay server-side
 - **Admin**: `/admin/*` (requires `ROLE_ADMIN` / `ROLE_SUPER_ADMIN`)
 - **Design kit**: wireframes, tokens and the Figma handoff live in [`design/`](design/);
-  the engineering record is [`docs/08-frontend-redesign.md`](docs/08-frontend-redesign.md).
+  the engineering record is [`docs/README.md`](docs/README.md).
 
 ### WordPress theme — separate repository
 
@@ -115,7 +116,7 @@ theme: **[`cartly-wp-theme`](https://github.com/K-Anjan25/cartly-wp-theme)**. Sa
 card, rendered by PHP instead of React.
 
 It lives in its own repo because it has a different audience and release
-cadence — see [`docs/09-frontend-strategy.md`](docs/09-frontend-strategy.md).
+cadence — see [`docs/README.md`](docs/README.md).
 `design/tokens.json` stays canonical **here**; the theme pulls it and its CI
 fails if the two drift.
 
@@ -140,29 +141,7 @@ Per-container caps (`docker-compose.yml`): postgres 384m, rabbitmq 128m, gateway
 
 ## Docs
 
-- `docs/01-system-architecture.md` — target architecture + memory budget + market-grade stack
-- `docs/02-requirements.md` — FR/NFR matrix with status
-- `docs/03-system-design.md` — components, sequence flows, data model
-- `docs/04-uml-and-flows.md` — UML diagrams + state machines
-- `docs/05-restructure-plan.md` — how the old 10-service stack was consolidated
-- `docs/06-roadmap.md` — phased roadmap (6 → 10) and guardrails
-- `docs/07-handoff-opencode.md` — running session log / handoff notes
-- `docs/08-frontend-redesign.md` — Cartly 2.0 frontend redesign
-- `docs/09-frontend-strategy.md` — React platform + standalone WooCommerce theme decision
-- `docs/10-brand-and-storefront-benchmark.md` — brand scorecard and storefront benchmark
-- `docs/11-woocommerce-pattern-research-and-frontend-architecture.md` — Cartly 3.0 WooCommerce pattern research, token corrections and feature architecture
-- `docs/34-current-platform-status.md` — current roadmap and production-boundary status
-- `docs/40-payment-reconciliation-queue.md` — stale provider payment queue and reconciliation rules
-- `docs/41-email-retry-outbox.md` — encrypted transactional email retry boundary
-- `docs/42-razorpay-browser-handoff.md` — Razorpay browser checkout handoff
-- `docs/43-stripe-payment-element.md` — Stripe Payment Element handoff
-- `docs/44-gift-card-purchase-refunds.md` — unused-value refund policy and operations
-- `docs/45-production-configuration-and-migrations.md` — production configuration gate and migration rollout
-- `docs/46-localized-storefront-content.md` — English/Hindi CMS content and fallback behavior
-- `docs/47-operations-health-signals.md` — queue pressure signals for production alerting
-- `docs/48-seo-crawler-policy.md` — crawler policy for public and private routes
-- `docs/49-late-provider-capture-safety.md` — late-capture refund and order-state policy
-- `docs/50-production-smoke-checks.md` — safe post-deployment read-only smoke checks
-- `docs/51-final-release-certification.md` — combined release gate and staging certification runbook
-- `design/README.md` — design tokens, wireframes and the Figma handoff
-- [`cartly-wp-theme`](https://github.com/K-Anjan25/cartly-wp-theme) — the design system as a WordPress/WooCommerce theme (separate repo)
+Everything lives in one brief: [`docs/README.md`](docs/README.md) —
+architecture, status, conventions, operations scripts and the phased roadmap.
+The earlier numbered design documents (01–52) were condensed into it; read them
+back from git history if needed.
