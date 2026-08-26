@@ -100,9 +100,30 @@ canonical here.
 2. **P13 — Scale & resilience drills**: sustained load test, backup/restore and
    reconciliation drills in a deployed environment.
 3. **P14 — Growth features**: product analytics dashboards (views/conversion),
-   recommendation rails, invoice branding. Bulk catalog CSV import/export is
-   delivered (admin Products page).
-4. **P15 — Optional SSR/pre-render expansion** for SEO + localized merchant HTML.
+   recommendation rails. Bulk catalog CSV import/export, invoice branding and
+   the analytics window selector are delivered.
+
+**Optional SSR is delivered** (`P15 ✅`, opt-in — the default SPA is
+unchanged): `frontend/server/ssr-server.mjs` server-renders the public
+pages (home/collection grid, bestsellers, product detail with real
+title/og/JSON-LD-adjacent meta) and ships the react-query cache in a
+CSP-safe JSON tag for instant hydration. Run with:
+
+```bash
+cd frontend
+npm run build:ssr                # client build + SSR server bundle
+npm run start:ssr                # NODE_ENV=production, port 3001
+npm run dev:ssr                  # vite HMR for client + SSR via the built bundle
+# env: PORT, GATEWAY_URL (api-gateway for /v1|/user|/file|/api proxy),
+#      SSR_SITE_ORIGIN (canonical/og origin)
+```
+
+SSR renders through the prebuilt server bundle in both modes (vite's dev
+module runner cannot interop CJS default exports); after editing
+SSR-relevant code run `npm run build:ssr` (or `build:ssr:watch` in a second
+terminal). If rendering fails the server falls back to the static shell —
+the client app takes over as usual. `server/mock-gateway.cjs` is a local
+fixture for trying SSR without the Java backend.
 
 Recently delivered (August 2026): themed `DateField` + business-timezone
 convention; admin console completion (flash sales, shipping rates, tax rules,
@@ -112,4 +133,5 @@ bulk catalog CSV import/export with per-row backend validation reporting;
 invoice branding; analytics window selector + top categories; catalog search
 hardening (pg_trgm auto-provisioned via V3 migration + boot guard, deduped
 suggestion requests through the react-query cache, shareable `/?q=` and
-`/?category=` catalog URLs, SPA scroll restoration).
+`/?category=` catalog URLs, SPA scroll restoration); optional SSR for the
+storefront.

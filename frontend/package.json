@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/cache": "^11.14.0",
+    "@emotion/css": "^11.13.5",
     "@emotion/react": "^11.10.5",
+    "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.10.5",
     "@mui/icons-material": "^5.11.0",
     "@mui/lab": "^5.0.0-alpha.118",
@@ -31,6 +34,10 @@
   },
   "scripts": {
     "start": "vite",
+    "dev:ssr": "NODE_ENV=development node server/ssr-server.mjs",
+    "build:ssr": "vite build --outDir dist/client && vite build --ssr src/ssr/entry-server.tsx --outDir dist/server",
+    "build:ssr:watch": "vite build --ssr src/ssr/entry-server.tsx --outDir dist/server --watch",
+    "start:ssr": "NODE_ENV=production node server/ssr-server.mjs",
     "check:contrast": "node ../tools/check-color-contrast.mjs",
     "audit:security": "npm audit --audit-level=high",
     "build": "npm run check:contrast && tsc --noEmit && vite build && npm run generate:seo-assets",

@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation, BrowserRouter as Router } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import DashboardLayout from "./components/DashboardLayout";
 import NotFound from "./pages/NotFound";
 import Products from "./pages/Products";
@@ -30,7 +30,9 @@ function ScrollToTop() {
 function App() {
   const dispatch = useDispatch<any>();
   const { data, loading } = useSelector((state: AppState) => state.user);
-  const [initialLoading, setInitialLoading] = useState(true);
+  // The session bootstrap runs in an effect (browser only); on the server
+  // there is no session to restore, so routes render immediately.
+  const [initialLoading, setInitialLoading] = useState(() => typeof window !== "undefined");
 
   useEffect(() => {
     let mounted = true;
@@ -101,7 +103,7 @@ function App() {
   const UserOrderDetail = React.lazy(() => import("./pages/Orders/OrderDetail"));
 
   return (
-    <Router>
+    <>
       <ScrollToTop />
       <Suspense fallback={<Loader />}>
         <Routes>
@@ -181,7 +183,7 @@ function App() {
           <Route path="/unauthorized" element={<Unauthorized />} />
         </Routes>
       </Suspense>
-    </Router>
+    </>
   );
 }
 

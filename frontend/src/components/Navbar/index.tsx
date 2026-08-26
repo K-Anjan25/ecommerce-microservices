@@ -82,9 +82,12 @@ const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [bagOpen, setBagOpen] = useState(false);
   const [navSearch, setNavSearch] = useState("");
-  const [announce, setAnnounce] = useState(
-    () => sessionStorage.getItem(ANNOUNCE_KEY) !== "1"
-  );
+  // sessionStorage is browser-only; SSR renders the announcement and the
+  // client effect reconciles the dismissed state after mount.
+  const [announce, setAnnounce] = useState(true);
+  useEffect(() => {
+    if (sessionStorage.getItem(ANNOUNCE_KEY) === "1") setAnnounce(false);
+  }, []);
   const searchRef = useRef<HTMLInputElement>(null);
 
   const isAdmin = user?.roles?.includes("ROLE_ADMIN");

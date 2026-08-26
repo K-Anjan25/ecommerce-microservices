@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState, useRef } from "react";
 import { useInfiniteQuery, useQuery } from "react-query";
 import { useInView } from "react-intersection-observer";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { currentOrigin } from "../../utils/origin";
 import { Drawer, Checkbox, FormControlLabel, TextField, Rating, FormControl, Select, MenuItem } from "@mui/material";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import CloseIcon from "@mui/icons-material/Close";
@@ -154,7 +155,7 @@ function Products() {
         "@context": "https://schema.org",
         "@type": "WebSite",
         name: "Cartly",
-        url: window.location.origin,
+        url: currentOrigin(),
         description: storeSettings.heroDescription,
       },
     }),

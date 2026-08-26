@@ -37,7 +37,9 @@ type I18nValue = { language: Language; locale: string; setLanguage: (language: L
 const I18nContext = createContext<I18nValue | null>(null);
 
 export function I18nProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguage] = useState<Language>(() => localStorage.getItem(STORAGE_KEY) === "hi" ? "hi" : "en");
+  const [language, setLanguage] = useState<Language>(
+    () => (typeof window !== "undefined" && localStorage.getItem(STORAGE_KEY) === "hi") ? "hi" : "en"
+  );
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, language);
     document.documentElement.lang = language;
