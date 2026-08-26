@@ -24,6 +24,14 @@ public class FlashSaleService {
     public FlashSaleDto createFlashSale(FlashSaleDto flashSaleDto) {
         Product product = productRepository.findById(flashSaleDto.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
+        if (flashSaleDto.getStartsAt() == null || flashSaleDto.getEndsAt() == null
+                || !flashSaleDto.getEndsAt().isAfter(flashSaleDto.getStartsAt())) {
+            throw new IllegalArgumentException("Flash sale must end after it starts");
+        }
+        flashSaleRepository.findByProductId(flashSaleDto.getProductId()).ifPresent(existing -> {
+            throw new IllegalArgumentException(
+                    "Product already has a flash sale; delete it before creating a new one");
+        });
         FlashSale flashSale = FlashSale.builder()
                 .product(product)
                 .flashPrice(flashSaleDto.getFlashPrice())
@@ -33,6 +41,22 @@ public class FlashSaleService {
                 .build();
         FlashSale saved = flashSaleRepository.save(flashSale);
         return toDto(saved);
+    }
+
+    /** Admin console: every flash sale regardless of window or status. */
+    public List<FlashSaleDto> getAllFlashSales() {
+        return flashSaleRepository.findAllByOrderByStartsAtDesc()
+                .stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public void deleteFlashSale(Long id) {
+        if (!flashSaleRepository.existsById(id)) {
+            throw new IllegalArgumentException("Flash sale not found: " + id);
+        }
+        flashSaleRepository.deleteById(id);
     }
 
     public List<FlashSaleDto> getActiveFlashSales() {

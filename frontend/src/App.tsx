@@ -69,6 +69,9 @@ function App() {
   const AdminAuditLog = React.lazy(() => import("./pages/Admin/AuditLog"));
   const AdminPaymentReconciliation = React.lazy(() => import("./pages/Admin/PaymentReconciliation"));
   const AdminEmailRetries = React.lazy(() => import("./pages/Admin/EmailRetries"));
+  const AdminFlashSales = React.lazy(() => import("./pages/Admin/FlashSales"));
+  const AdminShippingRates = React.lazy(() => import("./pages/Admin/ShippingRates"));
+  const AdminTaxRules = React.lazy(() => import("./pages/Admin/TaxRules"));
   const AddEditProducts = React.lazy(
     () => import("./pages/Admin/Products/AddEditProduct")
   );
@@ -78,6 +81,7 @@ function App() {
   const Orders = React.lazy(() => import("./pages/Orders"));
   const Addresses = React.lazy(() => import("./pages/Addresses"));
   const Compare = React.lazy(() => import("./pages/Compare"));
+  const Wishlist = React.lazy(() => import("./pages/Wishlist"));
   const GiftCards = React.lazy(() => import("./pages/GiftCards"));
   const FlashSales = React.lazy(() => import("./pages/FlashSales"));
   const Referral = React.lazy(() => import("./pages/Referral"));
@@ -106,6 +110,7 @@ function App() {
               <Route path="orderDetail/:orderId" element={<UserOrderDetail />} />
               <Route path="addresses" element={<Addresses />} />
               <Route path="compare" element={<Compare />} />
+              <Route path="wishlist" element={<Wishlist />} />
               <Route path="gift-cards" element={<GiftCards />} />
               <Route path="flash-sales" element={<FlashSales />} />
               <Route path="referral" element={<Referral />} />
@@ -146,6 +151,9 @@ function App() {
                   <Route path="categories" element={<AdminCategories />} />
                   <Route path="users" element={<AdminUsers />} />
                   <Route path="coupons" element={<AdminCoupons />} />
+                  <Route path="flash-sales" element={<AdminFlashSales />} />
+                  <Route path="shipping-rates" element={<AdminShippingRates />} />
+                  <Route path="tax-rules" element={<AdminTaxRules />} />
                   <Route path="gift-card-purchases" element={<AdminGiftCardPurchases />} />
                   <Route path="storefront" element={<AdminStoreSettings />} />
                   <Route path="audit-log" element={<AdminAuditLog />} />

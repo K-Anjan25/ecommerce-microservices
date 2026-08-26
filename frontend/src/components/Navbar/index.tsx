@@ -61,6 +61,7 @@ const PRIMARY = [
 const SECONDARY = [
   { path: "/orders", label: "Orders" },
   { path: "/returns", label: "Returns" },
+  { path: "/wishlist", label: "Wishlist" },
   { path: "/referral", label: "Referral" },
   { path: "/addresses", label: "Addresses" },
   { path: "/compare", label: "Compare" },
@@ -173,7 +174,7 @@ const Navbar = () => {
     const keys: Record<string, Parameters<typeof t>[0]> = {
       "/": "nav.shop", "/flash-sales": "nav.deals", "/gift-cards": "nav.gifts",
       "/loyalty": "nav.rewards", "/orders": "nav.orders", "/returns": "nav.returns",
-      "/addresses": "nav.addresses", "/compare": "nav.compare", "/account": "nav.account",
+      "/addresses": "nav.addresses", "/compare": "nav.compare", "/wishlist": "nav.wishlist", "/account": "nav.account",
     };
     return keys[path] ? t(keys[path]) : fallback;
   };

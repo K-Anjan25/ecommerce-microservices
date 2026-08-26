@@ -9,10 +9,12 @@ import { AppState } from "../../store";
 import { useNavigate } from "react-router-dom";
 
 import { GiftCardApi } from "../../api/giftCardApi";
+import DateField from "../../components/DateField";
 import EmptyState from "../../components/EmptyState";
 import FeatureHero from "../../components/FeatureHero";
 import { GiftCardPurchaseRequest, GiftCardStatus } from "../../types/giftCard";
 import { formatPrice } from "../../utils/cart";
+import { formatCalendarDate, todayInputValue } from "../../utils/date";
 import { showError } from "../../utils/showError";
 import { showSuccess } from "../../utils/showSuccess";
 
@@ -124,14 +126,14 @@ function GiftCards() {
             onChange={(event) => setRecipientEmail(event.target.value)}
             fullWidth
           />
-          <TextField
+          <DateField
             label="Expiry date"
-            type="date"
+            mode="date"
             value={expiryDate}
-            onChange={(event) => setExpiryDate(event.target.value)}
-            InputLabelProps={{ shrink: true }}
+            onChange={setExpiryDate}
+            min={todayInputValue()}
+            helperText="Card stays redeemable through the whole expiry day."
             required
-            fullWidth
           />
           <div className="sm:col-span-2 flex flex-wrap items-center justify-between gap-3">
             <p className="text-xs text-ink-muted">Payment method: Stripe cards and supported wallets</p>
@@ -185,7 +187,7 @@ function GiftCards() {
                     <ContentCopyIcon sx={{ fontSize: 15 }} />
                   </button>
                   <div className="mt-4 flex justify-between text-xs text-ink-muted">
-                    <span>Expires</span><span className="font-semibold text-ink-soft">{card.expiryDate}</span>
+                    <span>Expires</span><span className="font-semibold text-ink-soft">{formatCalendarDate(card.expiryDate)}</span>
                   </div>
                 </li>
               );

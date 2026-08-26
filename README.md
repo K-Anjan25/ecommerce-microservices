@@ -92,6 +92,7 @@ See `.env.example`. Never commit real `.env` values.
 | `JWT_SECRET` | user-service (token signing) |
 | `CORS_ALLOWED_ORIGIN` | API gateway (exact production storefront origin) |
 | `APP_FRONTEND_URL` | user/product services (password reset and alert links) |
+| `APP_TIMEZONE` | all Spring services (business clock for zone-less dates; default `Asia/Kolkata`) |
 | `INTERNAL_SERVICE_SECRET` | commerce/product services (stock-call authentication) |
 | `EMAIL_USERNAME`, `EMAIL_PASSWORD`, `EMAIL_FROM` | user-service (SMTP) |
 | `EMAIL_OUTBOX_ENCRYPTION_KEY` | user-service (AES-256 encrypted email retry envelope) |
