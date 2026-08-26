@@ -1,6 +1,8 @@
 package com.ecommerce.commerce_service.service;
 
 import com.ecommerce.commerce_service.client.ProductCatalogClient;
+import com.ecommerce.commerce_service.client.StoreSettingsClient;
+import com.ecommerce.commerce_service.dto.store.StoreBrandDto;
 import com.ecommerce.commerce_service.dto.catalog.ProductSummaryDto;
 import com.ecommerce.commerce_service.exception.OrderNotFoundException;
 import com.ecommerce.commerce_service.model.Order;
@@ -46,6 +48,7 @@ public class InvoiceService {
 
     private final OrderRepository orderRepository;
     private final ProductCatalogClient productCatalogClient;
+    private final StoreSettingsClient storeSettingsClient;
     private final RabbitMQMessageProducer rabbitMQMessageProducer;
 
     @Value("${rabbitmq.exchanges.notification}")
@@ -66,13 +69,14 @@ public class InvoiceService {
             return;
         }
         try {
+            StoreBrandDto brand = brand();
             byte[] pdf = generateInvoicePdf(order);
             rabbitMQMessageProducer.publish(
                     new EmailRequest(
                             "Thank you for your order! The invoice for order " + order.getId()
                                     + " is attached.",
                             order.getCustomerEmail(),
-                            "CARTLY - Invoice for order #" + order.getId(),
+                            storeName(brand).toUpperCase() + " - Invoice for order #" + order.getId(),
                             "invoice-" + order.getId() + ".pdf",
                             Base64.getEncoder().encodeToString(pdf)),
                     notificationExchange,
@@ -85,6 +89,8 @@ public class InvoiceService {
 
     public byte[] generateInvoicePdf(Order order) {
         Map<UUID, String> productNames = productNames(order);
+        StoreBrandDto brand = brand();
+        String storeName = storeName(brand);
 
         Document document = new Document(PageSize.A4);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -97,7 +103,10 @@ public class InvoiceService {
             Font normalFont = new Font(Font.HELVETICA, 10, Font.NORMAL);
             Font smallFont = new Font(Font.HELVETICA, 9, Font.ITALIC);
 
-            document.add(new Paragraph("CARTLY", titleFont));
+            document.add(new Paragraph(storeName, titleFont));
+            if (brand != null && brand.getStoreTagline() != null && !brand.getStoreTagline().isBlank()) {
+                document.add(new Paragraph(brand.getStoreTagline(), smallFont));
+            }
             document.add(new Paragraph("Tax Invoice", new Font(Font.HELVETICA, 12, Font.ITALIC)));
             document.add(Chunk.NEWLINE);
 
@@ -122,7 +131,14 @@ public class InvoiceService {
             document.add(Chunk.NEWLINE);
             document.add(buildTotalsTable(order));
             document.add(Chunk.NEWLINE);
-            document.add(new Paragraph("This is a system generated invoice.", smallFont));
+            if (brand != null && brand.getSupportEmail() != null && !brand.getSupportEmail().isBlank()) {
+                document.add(new Paragraph("Questions? Contact " + brand.getSupportEmail(), smallFont));
+            }
+            String footerNote = brand == null || brand.getInvoiceFooterNote() == null
+                    || brand.getInvoiceFooterNote().isBlank()
+                    ? "This is a system generated invoice."
+                    : brand.getInvoiceFooterNote();
+            document.add(new Paragraph(footerNote, smallFont));
         } catch (Exception e) {
             throw new IllegalStateException("Failed to generate invoice for order " + order.getId(), e);
         } finally {
@@ -131,6 +147,27 @@ public class InvoiceService {
             }
         }
         return out.toByteArray();
+    }
+
+    /**
+     * Branding is optional by design: any problem reaching product-service or
+     * reading the settings falls back to the platform defaults so invoicing
+     * never depends on a branding lookup.
+     */
+    private StoreBrandDto brand() {
+        try {
+            return storeSettingsClient.getBrand();
+        } catch (Exception e) {
+            log.warn("Store branding unavailable, falling back to defaults: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    private String storeName(StoreBrandDto brand) {
+        if (brand != null && brand.getStoreName() != null && !brand.getStoreName().isBlank()) {
+            return brand.getStoreName().trim();
+        }
+        return "Cartly";
     }
 
     private PdfPTable buildItemsTable(Order order, Map<UUID, String> productNames) {

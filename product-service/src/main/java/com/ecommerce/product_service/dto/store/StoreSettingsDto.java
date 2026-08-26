@@ -74,6 +74,19 @@ public class StoreSettingsDto {
     @Size(max = 40)
     private String secondaryCtaLabelHi;
 
+    @Size(max = 60)
+    private String storeName;
+
+    @Size(max = 160)
+    private String storeTagline;
+
+    @Size(max = 120)
+    @javax.validation.constraints.Email
+    private String supportEmail;
+
+    @Size(max = 240)
+    private String invoiceFooterNote;
+
     @DecimalMin("0.00")
     private BigDecimal freeShippingThreshold;
 }
