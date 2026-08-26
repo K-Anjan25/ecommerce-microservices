@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, Paper } from "@mui/material";
+import { Box, Button, Checkbox, FormControlLabel, IconButton, Paper } from "@mui/material";
 import { useFormik } from "formik";
 import { useEffect } from "react";
 import { useMutation, useQuery } from "react-query";
@@ -11,6 +11,7 @@ import SelectInput from "../../../../components/SelectInput";
 import TextInput from "../../../../components/TextInput";
 import productForm from "../../../../forms/productForm";
 import { ProductAdmin, ProductForm } from "../../../../types/product";
+import { showError } from "../../../../utils/showError";
 import { showSuccess } from "../../../../utils/showSuccess";
 import { ChangeEvent } from "react";
 import { FileApi } from "../../../../api/file";
@@ -80,6 +81,8 @@ function AddEditProduct() {
       showSuccess("Product has been updated successfully");
       navigate(`/admin/products`);
     },
+    onError: (error: any) =>
+      showError(error.response?.data?.message ?? "Could not update the product"),
   });
 
   const createMutation = useMutation(ProductApi.saveProduct, {
@@ -87,6 +90,8 @@ function AddEditProduct() {
       showSuccess("Product has been created successfully");
       navigate(`/admin/products`);
     },
+    onError: (error: any) =>
+      showError(error.response?.data?.message ?? "Could not create the product"),
   });
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -95,13 +100,24 @@ function AddEditProduct() {
     }
     const fileData = new FormData();
     fileData.append("file", e.target.files[0]);
-    const res = await FileApi.saveFile(fileData);
-    form.setFieldValue("imageUrl", res);
+    try {
+      const res = await FileApi.saveFile(fileData);
+      form.setFieldValue("imageUrl", res);
+    } catch (error: any) {
+      showError(
+        error.response?.data?.message ??
+          "Image upload failed — is the API gateway running and reachable?"
+      );
+    }
   };
 
   const handleRemoveFile = async () => {
-    await FileApi.removeFile(form.values.imageUrl.split("/").pop() ?? "");
-    form.setFieldValue("imageUrl", "");
+    try {
+      await FileApi.removeFile(form.values.imageUrl.split("/").pop() ?? "");
+      form.setFieldValue("imageUrl", "");
+    } catch (error: any) {
+      showError(error.response?.data?.message ?? "Could not remove the image");
+    }
   };
 
   if (isLoading) return <Loader />;
@@ -122,19 +138,38 @@ function AddEditProduct() {
       <Paper className="max-w-2xl p-6 sm:p-8">
         <form onSubmit={form.handleSubmit} className="space-y-6">
           <TextInput name="name" label="Product Name" form={form} />
-          <TextInput
-            name="unitPrice"
-            label="Unit Price"
-            form={form}
-            type="number"
-          />
           <SelectInput
             name="categoryId"
             label="Select Category"
             form={form}
             data={categories}
           />
-          <TextInput name="description" label="Description" form={form} />
+          <TextInput name="description" label="Description" form={form} multiline minRows={3} />
+          <div className="grid grid-cols-2 gap-4">
+            <TextInput name="unitPrice" label="Unit Price" form={form} type="number" />
+            <TextInput
+              name="originalPrice"
+              label="Was-Price (optional)"
+              form={form}
+              type="number"
+              helperText="Shows the −% sale badge when above the unit price."
+            />
+            <TextInput name="brand" label="Brand (optional)" form={form} />
+            <TextInput name="badge" label="Badge (optional)" form={form} helperText="e.g. NEW, BESTSELLER" />
+          </div>
+          <FormControlLabel
+            control={
+              <Checkbox
+                name="featured"
+                checked={Boolean(form.values.featured)}
+                onChange={(event) =>
+                  form.setFieldValue("featured", event.target.checked)
+                }
+              />
+            }
+            label="Feature on the homepage"
+            className="!text-sm !text-ink-soft"
+          />
 
           {MODE === "add" && (
             <TextInput

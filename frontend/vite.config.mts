@@ -13,6 +13,7 @@ export default defineConfig({
     proxy: {
       "/v1": { target: "http://localhost:8889", agent: false },
       "/user": { target: "http://localhost:8889", agent: false },
+      "/file": { target: "http://localhost:8889", agent: false },
       "/api": { target: "http://localhost:8889", agent: false },
     },
   },

@@ -90,4 +90,8 @@ export interface ProductForm {
   description: string;
   quantityInStock?: number | undefined;
   imageUrl: string;
+  brand?: string;
+  originalPrice?: number | undefined;
+  badge?: string;
+  featured?: boolean;
 }

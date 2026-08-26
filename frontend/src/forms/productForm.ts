@@ -19,6 +19,19 @@ const validationSchema = (isEdit: boolean) =>
       .number()
       .min(0, "unitPrice should be of minimum 0")
       .required("unitPrice is required"),
+    originalPrice: yup
+      .number()
+      .min(0)
+      .test(
+        "above-unit-price",
+        "Sale anchor must be above the unit price",
+        function (value) {
+          return value == null || this.parent.unitPrice == null || value > this.parent.unitPrice;
+        }
+      )
+      .nullable(),
+    brand: yup.string().max(60).nullable(),
+    badge: yup.string().max(30).nullable(),
   });
 
 const initialValues = (isEdit: boolean = true): ProductForm => {
@@ -28,6 +41,10 @@ const initialValues = (isEdit: boolean = true): ProductForm => {
     name: "",
     unitPrice: undefined,
     imageUrl: "",
+    brand: "",
+    originalPrice: undefined,
+    badge: "",
+    featured: false,
     ...(!isEdit && { quantityInStock: undefined }),
   };
 };
