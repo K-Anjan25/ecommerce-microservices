@@ -108,4 +108,8 @@ Recently delivered (August 2026): themed `DateField` + business-timezone
 convention; admin console completion (flash sales, shipping rates, tax rules,
 gift-card issuance, coupon edit); customer wishlist; multi-image gallery and
 variant editor in the admin product form with id-preserving variant saves;
-bulk catalog CSV import/export with per-row backend validation reporting.
+bulk catalog CSV import/export with per-row backend validation reporting;
+invoice branding; analytics window selector + top categories; catalog search
+hardening (pg_trgm auto-provisioned via V3 migration + boot guard, deduped
+suggestion requests through the react-query cache, shareable `/?q=` and
+`/?category=` catalog URLs, SPA scroll restoration).

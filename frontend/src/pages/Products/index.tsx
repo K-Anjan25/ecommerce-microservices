@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState, useRef } from "react";
 import { useInfiniteQuery, useQuery } from "react-query";
 import { useInView } from "react-intersection-observer";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Drawer, Checkbox, FormControlLabel, TextField, Rating, FormControl, Select, MenuItem } from "@mui/material";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import CloseIcon from "@mui/icons-material/Close";
@@ -49,6 +49,7 @@ const TRUST = [
 function Products() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { t } = useI18n();
   const { ref, inView } = useInView();
   const resultsRef = useRef<HTMLDivElement>(null);
@@ -97,22 +98,46 @@ function Products() {
     if (inView) fetchNextPage();
   }, [inView, fetchNextPage]);
 
-  /* Shell hand-offs: global search, category selection and mobile “Search” tab. */
+  /* Shell hand-offs: global search, category selection and mobile “Search” tab.
+   * The catalog state also mirrors ?q= and ?category= so results stay
+   * shareable and survive a refresh. */
   useEffect(() => {
     const state = location.state as
       | { search?: string; category?: string; focusSearch?: boolean }
       | null;
-    if (typeof state?.search === "string" && state.search.trim()) {
-      setSearchTerm(state.search);
+    const q = searchParams.get("q");
+    const categoryParam = searchParams.get("category");
+
+    const nextSearch = q && q.trim() ? q : state?.search;
+    if (typeof nextSearch === "string" && nextSearch.trim()) {
+      setSearchTerm(nextSearch.trim());
       resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-    if (typeof state?.category === "string") {
-      setFilter(state.category);
+    const nextCategory = categoryParam ?? state?.category;
+    if (typeof nextCategory === "string" && nextCategory.trim()) {
+      setFilter(nextCategory);
       resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-    // Mobile search is handled by the shell drawer; this page only consumes submitted terms.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.key]);
+  }, [location.key, searchParams]);
+
+  /** Category selection helper that keeps ?category= honest. */
+  const applyCategory = (name: string) => {
+    setFilter(name);
+    const next = new URLSearchParams(searchParams);
+    if (name) next.set("category", name);
+    else next.delete("category");
+    setSearchParams(next, { replace: true });
+  };
+
+  /** Search-term helper that keeps ?q= honest. */
+  const applySearchTerm = (term: string) => {
+    setSearchTerm(term);
+    const next = new URLSearchParams(searchParams);
+    if (term) next.set("q", term);
+    else next.delete("q");
+    setSearchParams(next, { replace: true });
+  };
 
   useEffect(() => {
     CategoryApi.getCategories().then(setCategories).catch(() => setCategories([]));
@@ -143,7 +168,7 @@ function Products() {
   });
 
   const activeFilters = [
-    filter && { key: "category", label: filter, clear: () => setFilter("") },
+    filter && { key: "category", label: filter, clear: () => applyCategory("") },
     ...selectedBrands.map((b) => ({
       key: `brand-${b}`,
       label: b,
@@ -165,9 +190,7 @@ function Products() {
     searchTerm && {
       key: "term",
       label: `“${searchTerm}”`,
-      clear: () => {
-        setSearchTerm("");
-      },
+      clear: () => applySearchTerm(""),
     },
   ].filter(Boolean) as { key: string; label: string; clear: () => void }[];
 
@@ -178,8 +201,8 @@ function Products() {
     setMinPrice("");
     setMaxPrice("");
     setMinRating("");
-    setFilter("");
-    setSearchTerm("");
+    applyCategory("");
+    applySearchTerm("");
   };
 
   const toggleBrand = (brand: string) =>
@@ -212,7 +235,7 @@ function Products() {
         <p className="eyebrow mb-3">Category</p>
         <div className="flex flex-wrap gap-2">
           <button
-            onClick={() => setFilter("")}
+            onClick={() => applyCategory("")}
             className={`chip ${!filter ? "chip-active" : ""}`}
           >
             All
@@ -220,7 +243,7 @@ function Products() {
           {categories.map((c) => (
             <button
               key={c.id}
-              onClick={() => setFilter(c.name)}
+              onClick={() => applyCategory(c.name)}
               className={`chip ${filter === c.name ? "chip-active" : ""}`}
             >
               {c.name}
@@ -422,7 +445,7 @@ function Products() {
               <h2 className="section-title mt-1">Shop by category</h2>
             </div>
             <button
-              onClick={() => setFilter("")}
+              onClick={() => applyCategory("")}
               className="text-sm font-semibold text-brand hover:underline"
             >
               See all →
@@ -440,7 +463,7 @@ function Products() {
                 <button
                   key={c.id}
                   onClick={() => {
-                    setFilter(c.name);
+                    applyCategory(c.name);
                     resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
                   }}
                   className={`group w-36 shrink-0 text-center transition sm:w-auto ${

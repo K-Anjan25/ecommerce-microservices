@@ -1,4 +1,4 @@
-import { Routes, Route, BrowserRouter as Router } from "react-router-dom";
+import { Routes, Route, useLocation, BrowserRouter as Router } from "react-router-dom";
 import DashboardLayout from "./components/DashboardLayout";
 import NotFound from "./pages/NotFound";
 import Products from "./pages/Products";
@@ -16,6 +16,16 @@ import Home from "./pages/Admin/Home";
 import ForgetPassword from "./pages/Login/ForgetPassword";
 import Profile from "./pages/Profile";
 import Account from "./pages/Account";
+
+/** SPA scroll restoration: a fresh navigation starts at the top (back/forward
+ *  keep the browser's own positions for history entries). */
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [pathname]);
+  return null;
+}
 
 function App() {
   const dispatch = useDispatch<any>();
@@ -92,6 +102,7 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <Suspense fallback={<Loader />}>
         <Routes>
           <Route path="/" element={<DashboardLayout />}>

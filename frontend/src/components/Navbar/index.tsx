@@ -132,13 +132,18 @@ const Navbar = () => {
   const submitNavSearch = (rawTerm: string) => {
     const term = rawTerm.trim();
     if (!term) return;
-    navigate("/", { state: { search: term } });
+    // q lives in the URL so results are shareable/bookmarkable; the state
+    // hand-off additionally scrolls the catalog to the results.
+    navigate({ pathname: "/", search: `?q=${encodeURIComponent(term)}` }, { state: { search: term } });
     setDrawerOpen(false);
     searchRef.current?.blur();
   };
 
   const pickCategory = (name: string) => {
-    navigate("/", { state: { category: name } });
+    navigate(
+      { pathname: "/", search: `?category=${encodeURIComponent(name)}` },
+      { state: { category: name } }
+    );
   };
 
   const dismissAnnounce = () => {
