@@ -33,15 +33,12 @@ export function NumberStepperInput({
     e.preventDefault();
     if (disabled) return;
     if (numericValue === null || isNaN(numericValue)) {
-      onChange("");
+      onChange(String(min));
       return;
     }
-    const nextVal = numericValue - step;
-    if (nextVal <= min) {
-      onChange(min === 0 ? "" : String(min));
-    } else {
-      onChange(String(nextVal));
-    }
+    // Snap to the nearest step below, never dropping under min.
+    const nextVal = Math.max(min, numericValue - step);
+    onChange(String(nextVal));
   };
 
   const handleIncrement = (e: React.MouseEvent) => {
@@ -49,19 +46,12 @@ export function NumberStepperInput({
     if (disabled) return;
     if (numericValue === null || isNaN(numericValue)) {
       const startVal = Math.max(min, step);
-      if (max !== undefined && startVal > max) {
-        onChange(String(max));
-      } else {
-        onChange(String(startVal));
-      }
+      onChange(String(max !== undefined ? Math.min(max, startVal) : startVal));
       return;
     }
-    const nextVal = numericValue + step;
-    if (max !== undefined && nextVal > max) {
-      onChange(String(max));
-    } else {
-      onChange(String(nextVal));
-    }
+    // Snap to the nearest step above, never exceeding max.
+    const nextVal = max !== undefined ? Math.min(max, numericValue + step) : numericValue + step;
+    onChange(String(nextVal));
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

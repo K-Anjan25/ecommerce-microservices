@@ -19,7 +19,12 @@ import { showSuccess } from "../../utils/showSuccess";
 function defaultExpiryDate() {
   const date = new Date();
   date.setFullYear(date.getFullYear() + 1);
-  return date.toISOString().slice(0, 10);
+  // Build the yyyy-mm-dd from LOCAL time (not UTC) so the calendar default
+  // never shifts a day for timezones east of UTC (e.g. Asia/Calcutta, UTC+5:30).
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 function GiftCards() {
