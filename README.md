@@ -1,12 +1,11 @@
 # Cartly — E-Commerce Microservices
 
-A full-stack e-commerce platform: **Spring Boot** microservices + **React + TypeScript** frontend, sized to run on a Docker Desktop host with a **2 GB memory budget**.
-
+A full-stack e-commerce platform: **Spring Boot** microservices + **React + TypeScript** frontend
 > Platform brief (architecture, status, conventions, roadmap): see [`docs/README.md`](docs/README.md).
 
 ## Architecture
 
-4 Java services + 2 infra containers. Eureka, Elasticsearch, MongoDB, Zipkin and 6 extra services were consolidated/removed to fit the budget (see `docs/README.md`).
+4 Java services + 2 infra containers. Eureka, Elasticsearch, MongoDB and Zipkin. 
 
 ```
                  ┌────────────────────────────┐
@@ -51,14 +50,14 @@ A full-stack e-commerce platform: **Spring Boot** microservices + **React + Type
 ## Prerequisites
 
 - Java 17 (build only — Maven is invoked via the Maven wrapper command in `common/` or a local Maven 3.9+)
-- Docker Desktop with **2 GB memory** allocated (Docker Compose v2)
+- Docker Desktop 
 - Node.js 16+ (frontend)
 
 ## Quick Start
 
 ```bash
 # 1. Configure secrets (required: JWT_SECRET; optional: email + payment keys)
-cp .env.example .env      # then edit
+cp .env.example .env      
 
 # 2. Build + start the whole stack (postgres, rabbitmq, 4 services)
 docker compose up -d --build
@@ -109,23 +108,6 @@ React 18 + TypeScript, Redux, Material UI, Tailwind CSS — **Cartly editorial c
 - **Design kit**: wireframes, tokens and the Figma handoff live in [`design/`](design/);
   the engineering record is [`docs/README.md`](docs/README.md).
 
-### WordPress theme — separate repository
-
-The same design system also ships as an installable WordPress + WooCommerce
-theme: **[`cartly-wp-theme`](https://github.com/K-Anjan25/cartly-wp-theme)**. Same tokens, same shell, same product
-card, rendered by PHP instead of React.
-
-It lives in its own repo because it has a different audience and release
-cadence — see [`docs/README.md`](docs/README.md).
-`design/tokens.json` stays canonical **here**; the theme pulls it and its CI
-fails if the two drift.
-
-### Reviewing the UI without the backend
-
-```bash
-node design/preview-mock-server.mjs   # dev-only fake gateway on :8889
-cd frontend && npm start              # http://localhost:3000
-```
 
 ## Testing
 
@@ -134,14 +116,3 @@ mvn test                                   # all modules (unit tests, no infra n
 mvn -pl product-service test               # per service
 cd frontend && npm run build               # frontend type-check, build, sitemap + robots generation
 ```
-
-## Resource Budget
-
-Per-container caps (`docker-compose.yml`): postgres 384m, rabbitmq 128m, gateway 192m, user 192m, product 256m, commerce 256m → **≈ 1.4 GB ceiling**, leaving headroom in the 2 GB budget. Every JVM is pinned with `-XX:+UseSerialGC -XX:MaxRAM=… -Xmx… -Xms… -Xss512k -XX:ActiveProcessorCount=1 -XX:MaxRAMPercentage=50` and `server.tomcat.threads.max=10` so no container can OOM the host.
-
-## Docs
-
-Everything lives in one brief: [`docs/README.md`](docs/README.md) —
-architecture, status, conventions, operations scripts and the phased roadmap.
-The earlier numbered design documents (01–52) were condensed into it; read them
-back from git history if needed.
