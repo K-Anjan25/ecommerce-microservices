@@ -3,7 +3,7 @@ export { default as BrandMark } from "./BrandMark";
 export const BRAND = {
   name: "Cartly",
   wordmark: "CARTLY",
-  tagline: "Curated for everyday",
-  promise: "Considered objects for home and life.",
-  voice: ["clear", "considered", "assured", "warm"] as const,
+  tagline: "One modern multi-category marketplace",
+  promise: "High quality products across electronics, fashion, home, and more.",
+  voice: ["bold", "direct", "energetic", "reliable"] as const,
 } as const;

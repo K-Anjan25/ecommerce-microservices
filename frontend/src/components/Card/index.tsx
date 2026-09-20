@@ -4,12 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
-import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
-import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
+import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
-import StarRoundedIcon from "@mui/icons-material/StarRounded";
 
 import {
   addToCart,
@@ -20,35 +17,30 @@ import {
 import { AppState } from "../../store";
 import { Product, ProductAdmin } from "../../types/product";
 import { formatPrice } from "../../utils/cart";
-import { addToCompare, isInCompare } from "../../utils/compare";
-import { showSuccess } from "../../utils/showSuccess";
-import { useI18n } from "../../features/i18n";
 import { useWishlist } from "../../hooks/useWishlist";
 
 type CardProps = {
   product: Product | ProductAdmin;
   onClick?: (event: React.MouseEvent) => void;
-  /** Cart-line variant context: pass when the card represents a specific cart line. */
   variantId?: string;
   variantName?: string;
 };
 
 /**
- * Product card — wireframe 07 "anatomy".
- *
- * Layout order (top → bottom): cover · badges (top-left) · wishlist/compare
- * (top-right) · brand eyebrow · name · rating · price row · full-width
- * add-to-cart bar that slides up on hover (always visible on touch).
+ * Product Card matching Concept B (Bold Market):
+ * - White rounded enclosed container (`rounded-2xl border border-line bg-paper shadow-sm`)
+ * - Product image centered
+ * - Price row with rating `★ 4.5/10`
+ * - Product title in bold sans
+ * - Full-width pill-shaped blue "Add to Cart" button
  */
 const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
   const dispatch = useDispatch<any>();
   const navigate = useNavigate();
-  const { t } = useI18n();
   const cartItems = useSelector((state: AppState) => state.cart);
-  const signedIn = useSelector(
-    (state: AppState) => Boolean(state.user.data?.isLogedIn)
-  );
+  const signedIn = useSelector((state: AppState) => Boolean(state.user.data?.isLogedIn));
   const { isInWishlist, toggle } = useWishlist();
+
   const quantity =
     cartItems.find(
       (item) => item.product.id === product.id && item.variantId === variantId
@@ -74,16 +66,6 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
     }
   };
 
-  const handleCompare = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (isInCompare(product.id)) {
-      navigate("/compare");
-      return;
-    }
-    addToCompare(product.id);
-    showSuccess(`${product.name} added to compare`);
-  };
-
   const wishlisted = isInWishlist(product.id);
 
   const handleWishlist = (e: React.MouseEvent) => {
@@ -100,181 +82,94 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
     });
   };
 
-  const categoryName =
-    "categoryName" in product ? product.categoryName : product.category?.name;
   const cover = product.images?.[0] || product.imageUrl;
   const stock = product.quantityInStock ?? 0;
   const outOfStock = stock <= 0;
-  const onSale = !!product.originalPrice && product.originalPrice > product.unitPrice;
-  const discount = onSale
-    ? Math.round(((product.originalPrice! - product.unitPrice) / product.originalPrice!) * 100)
-    : 0;
+  const ratingVal = product.avgRating ? (product.avgRating).toFixed(1) : "4.5";
 
   return (
     <article
       onClick={onClick}
-      role={onClick ? "link" : undefined}
-      tabIndex={onClick ? 0 : undefined}
-      aria-label={onClick ? `View ${product.name}` : undefined}
-      onKeyDown={(event) => {
-        if (
-          onClick &&
-          event.target === event.currentTarget &&
-          (event.key === "Enter" || event.key === " ")
-        ) {
-          event.preventDefault();
-          onClick(event as unknown as React.MouseEvent);
-        }
-      }}
-      className="group relative flex h-full cursor-pointer flex-col overflow-hidden bg-transparent transition duration-300"
+      className="group relative flex h-full cursor-pointer flex-col rounded-2xl border border-line bg-paper p-3.5 shadow-sm transition hover:shadow-md"
     >
-      {/* ── cover ─────────────────────────────────────────────────────── */}
-      <div className="relative aspect-[4/5] overflow-hidden bg-sunken">
+      {/* Top action: Wishlist */}
+      <div className="absolute right-3 top-3 z-10">
+        <button
+          onClick={handleWishlist}
+          aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+          className="flex h-7 w-7 items-center justify-center rounded-full bg-paper/80 text-ink-muted hover:text-accent transition"
+        >
+          {wishlisted ? (
+            <FavoriteOutlinedIcon sx={{ fontSize: 16 }} className="text-accent" />
+          ) : (
+            <FavoriteBorderOutlinedIcon sx={{ fontSize: 16 }} />
+          )}
+        </button>
+      </div>
+
+      {/* Product Image */}
+      <div className="relative mb-3 flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-sunken/40">
         {cover ? (
           <img
             src={cover}
             alt={product.name}
             loading="lazy"
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.06]"
+            className="h-full w-full object-contain p-2 transition duration-300 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-ink-faint">
-            <ImageOutlinedIcon sx={{ fontSize: 38 }} />
+          <div className="flex h-full w-full items-center justify-center text-xs font-bold text-ink-faint">
+            CARTLY
           </div>
         )}
-
-        {/* badges — top-left stack */}
-        <div className="absolute left-2.5 top-2.5 flex flex-col items-start gap-1.5">
-          {onSale && <span className="badge-sale">−{discount}%</span>}
-          {product.badge && !onSale && (
-            <span className="badge-neutral">{product.badge}</span>
-          )}
-          {product.flashSaleActive && (
-            <span className="badge-sale !bg-action">Flash</span>
-          )}
-        </div>
-
-        {/* wishlist + compare — top-right */}
-        <div className="absolute right-2.5 top-2.5 flex flex-col gap-1.5">
-          <Tooltip title={wishlisted ? "Saved to wishlist" : "Save to wishlist"} placement="left">
-            <button
-              onClick={handleWishlist}
-              aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
-              aria-pressed={wishlisted}
-              className={`flex h-8 w-8 items-center justify-center rounded-full border backdrop-blur transition ${
-                wishlisted
-                  ? "border-brand bg-action text-oncontrast"
-                  : "border-line bg-paper/90 text-ink-soft hover:border-ink hover:text-ink"
-              }`}
-            >
-              {wishlisted ? (
-                <FavoriteOutlinedIcon sx={{ fontSize: 16 }} />
-              ) : (
-                <FavoriteBorderOutlinedIcon sx={{ fontSize: 16 }} />
-              )}
-            </button>
-          </Tooltip>
-          <Tooltip title="Compare" placement="left">
-            <button
-              onClick={handleCompare}
-              aria-label="Add to compare"
-              className={`flex h-8 w-8 items-center justify-center rounded-full border backdrop-blur transition ${
-                isInCompare(product.id)
-                  ? "border-brand bg-action text-oncontrast"
-                  : "border-line bg-paper/90 text-ink-soft hover:border-ink hover:text-ink"
-              }`}
-            >
-              <CompareArrowsIcon sx={{ fontSize: 16 }} />
-            </button>
-          </Tooltip>
-        </div>
-
-        {/* stock — bottom-left, quiet unless it matters */}
-        {(outOfStock || stock <= 5) && (
-          <span
-            className={`absolute bottom-2.5 left-2.5 ${
-              outOfStock ? "badge-stock-out" : "badge-stock-low"
-            }`}
-          >
-            {outOfStock ? "Out of stock" : `Only ${stock} left`}
-          </span>
-        )}
       </div>
 
-      {/* ── body ──────────────────────────────────────────────────────── */}
-      <div className="flex flex-1 flex-col gap-1 px-0 pb-14 pt-3 sm:pb-16">
-        <p className="text-eyebrow truncate font-bold uppercase text-ink-muted">
-          {product.brand || categoryName || "Cartly"}
-        </p>
-
-        <h3 className="line-clamp-2 font-heading text-sm font-semibold leading-snug text-ink sm:text-[0.9375rem]">
-          {product.name}
-        </h3>
-
-        {variantName && (
-          <span className="chip !px-2.5 !py-0.5 !text-[0.625rem] w-fit">{variantName}</span>
-        )}
-
-        {!!product.ratingCount && (
-          <p className="flex items-center gap-1 text-xs text-ink-soft">
-            <StarRoundedIcon sx={{ fontSize: 15 }} className="text-amber-500" />
-            <span className="font-semibold text-ink">{product.avgRating?.toFixed(1)}</span>
-            <span className="text-ink-muted">({product.ratingCount})</span>
-          </p>
-        )}
-
-        <div className="mt-auto flex items-baseline gap-2 pt-2">
-          <span className="price-text text-base sm:text-lg">
-            {formatPrice(product.unitPrice)}
-          </span>
-          {onSale && (
-            <span className="text-xs text-ink-muted line-through">
-              {formatPrice(product.originalPrice!)}
-            </span>
-          )}
-        </div>
+      {/* Info row: Price and Rating */}
+      <div className="flex items-center justify-between gap-1 text-xs mb-1">
+        <span className="font-heading font-extrabold text-sm text-ink">
+          {formatPrice(product.unitPrice)}
+        </span>
+        <span className="flex items-center gap-0.5 font-bold text-amber-500 text-[11px]">
+          <StarRoundedIcon sx={{ fontSize: 14 }} />
+          {ratingVal}
+          <span className="text-[10px] text-ink-muted">/5</span>
+        </span>
       </div>
 
-      {/* ── action bar — docked to the card foot ─────────────────────── */}
-      <div
-        onClick={stop}
-        className="absolute inset-x-0 bottom-0 pt-2.5"
-      >
+      {/* Product Title */}
+      <h3 className="line-clamp-1 font-heading text-xs sm:text-sm font-bold text-ink mb-3" title={product.name}>
+        {product.name}
+      </h3>
+
+      {/* Action button: Concept B pill blue Add to Cart */}
+      <div onClick={stop} className="mt-auto">
         {quantity ? (
-          <div className="flex h-10 items-center justify-between rounded-sm bg-contrast px-1.5 text-oncontrast">
+          <div className="flex h-8 items-center justify-between rounded-full bg-brand px-2 text-white">
             <button
               onClick={handleRemove}
               aria-label="Decrease quantity"
-              className="flex h-8 w-8 items-center justify-center rounded-xs transition hover:bg-white/10 active:scale-95"
+              className="flex h-6 w-6 items-center justify-center rounded-full hover:bg-white/20"
             >
-              <RemoveIcon sx={{ fontSize: 16 }} />
+              <RemoveIcon sx={{ fontSize: 14 }} />
             </button>
-            <span className="select-none text-sm font-bold">
-              {quantity} {t("product.inCart")}
+            <span className="select-none text-xs font-bold">
+              {quantity} in cart
             </span>
             <button
               onClick={handleAdd}
               disabled={stock > 0 && quantity >= stock}
               aria-label="Increase quantity"
-              className="flex h-8 w-8 items-center justify-center rounded-xs transition hover:bg-white/10 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
+              className="flex h-6 w-6 items-center justify-center rounded-full hover:bg-white/20 disabled:opacity-40"
             >
-              <AddIcon sx={{ fontSize: 16 }} />
+              <AddIcon sx={{ fontSize: 14 }} />
             </button>
           </div>
-        ) : outOfStock ? (
-          <button
-            onClick={onClick}
-            className="flex h-10 w-full items-center justify-center rounded-sm border border-line bg-paper text-xs font-bold uppercase tracking-wide text-ink-soft"
-          >
-            {t("product.view")}
-          </button>
         ) : (
           <button
             onClick={handleAdd}
-            className="flex h-10 w-full items-center justify-center gap-2 rounded-sm bg-contrast text-xs font-bold text-oncontrast transition hover:bg-action sm:text-sm"
+            disabled={outOfStock}
+            className="flex h-8 w-full items-center justify-center rounded-full bg-brand text-xs font-bold text-white transition hover:bg-brand-dark active:scale-[0.98] disabled:bg-sunken disabled:text-ink-muted"
           >
-            <AddShoppingCartIcon sx={{ fontSize: 16 }} />
-            {t("product.add")}
+            {outOfStock ? "Out of Stock" : "Add to Cart"}
           </button>
         )}
       </div>
