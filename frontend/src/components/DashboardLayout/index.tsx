@@ -4,36 +4,14 @@ import Navbar from "../Navbar";
 import MobileTabBar from "../MobileTabBar";
 import { BrandMark } from "../../brand";
 import { CheckoutHeader } from "../../features/checkout";
-import { useI18n } from "../../features/i18n";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
-const FOOTER_LINKS: { title: string; items: { label: string; to: string }[] }[] = [
-  {
-    title: "Shop",
-    items: [
-      { label: "All products", to: "/" },
-      { label: "Flash sales", to: "/flash-sales" },
-      { label: "Gift cards", to: "/gift-cards" },
-      { label: "Compare", to: "/compare" },
-    ],
-  },
-  {
-    title: "Account",
-    items: [
-      { label: "My orders", to: "/orders" },
-      { label: "Addresses", to: "/addresses" },
-      { label: "Loyalty points", to: "/loyalty" },
-      { label: "Referral", to: "/referral" },
-    ],
-  },
-  {
-    title: "Support",
-    items: [
-      { label: "Returns", to: "/returns" },
-      { label: "Track an order", to: "/orders" },
-      { label: "Profile", to: "/account" },
-      { label: "Sign in", to: "/login" },
-    ],
-  },
+const FOOTER_LINKS = [
+  { label: "Help", to: "/" },
+  { label: "Account", to: "/account" },
+  { label: "Services", to: "/" },
+  { label: "Contact", to: "/" },
+  { label: "Terms", to: "/" },
 ];
 
 function DashboardLayout() {
@@ -41,75 +19,78 @@ function DashboardLayout() {
   const location = useLocation();
   const isShop = location.pathname === "/";
   const isCheckout = ["/checkout", "/stripe-payment", "/stripe-payment-return", "/order-confirmation"].includes(location.pathname);
-  const { t } = useI18n();
 
   return (
-    <div className="flex min-h-screen flex-col bg-canvas">
-      <a
-        href="#main-content"
-        className="fixed left-3 top-3 z-[100] -translate-y-20 bg-action px-4 py-2 text-sm font-semibold text-oncontrast transition focus:translate-y-0"
-      >
-        {t("common.skip")}
-      </a>
+    <div className="flex min-h-screen flex-col bg-canvas text-ink">
       {isCheckout ? <CheckoutHeader /> : <Navbar />}
 
       <main
         id="main-content"
         tabIndex={-1}
         key={location.pathname}
-        className={`animate-fade-up flex-1 ${isCheckout ? "page-shell pb-10 pt-6 sm:pt-8" : `pb-24 lg:pb-12 ${isShop ? "pt-6" : "page-shell pt-6 sm:pt-8"}`}`}
+        className={`animate-fade-up flex-1 ${isCheckout ? "page-shell pb-10 pt-6 sm:pt-8" : `pb-20 lg:pb-12 ${isShop ? "pt-6" : "page-shell pt-6 sm:pt-8"}`}`}
       >
         <Outlet />
       </main>
 
-      {/* Checkout deliberately removes catalog navigation and promotional exits. */}
+      {/* Concept B clean white footer with inline payment icons and newsletter signup */}
       {!isCheckout && (
-      <footer className="mt-auto bg-contrast text-oncontrast">
-        <div className="page-shell grid gap-10 py-14 md:grid-cols-[1.4fr_repeat(3,1fr)]">
-          <div>
-            <BrandMark inverse />
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-oncontrast/60">
-              A considered collection for home and life. Thoughtful objects, honest pricing,
-              secure checkout and support that stays with you after delivery.
-            </p>
-            <div className="mt-5 flex flex-wrap gap-2">
-              {["Visa", "Mastercard", "UPI", "Razorpay", "COD"].map((p) => (
-                <span
-                  key={p}
-                  className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[0.625rem] font-semibold text-oncontrast/70"
+        <footer className="mt-auto border-t border-line bg-paper py-8">
+          <div className="page-shell flex flex-col md:flex-row items-center justify-between gap-6">
+            {/* Left: Navigation links and copyright */}
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-6 gap-y-2 text-xs font-semibold text-ink-soft">
+              {FOOTER_LINKS.map((link) => (
+                <button
+                  key={link.label}
+                  onClick={() => navigate(link.to)}
+                  className="transition hover:text-brand"
                 >
-                  {p}
-                </span>
+                  {link.label}
+                </button>
               ))}
+              <span className="text-ink-muted">© 2026 Cartly Inc.</span>
+            </div>
+
+            {/* Right: Payment badges and Email signup */}
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              {/* Payment brand mock chips */}
+              <div className="flex items-center gap-1.5">
+                <span className="flex h-6 w-9 items-center justify-center rounded bg-[#1A1F71] text-[9px] font-black text-white">
+                  VISA
+                </span>
+                <span className="flex h-6 w-9 items-center justify-center rounded bg-[#EB001B] text-[8px] font-black text-white">
+                  MC
+                </span>
+                <span className="flex h-6 w-9 items-center justify-center rounded bg-[#0070BA] text-[8px] font-bold text-white">
+                  DISC
+                </span>
+              </div>
+
+              {/* Email signup pill input matching Concept B */}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  alert("Thank you for signing up!");
+                }}
+                className="relative flex items-center"
+              >
+                <input
+                  type="email"
+                  placeholder="Email signup"
+                  required
+                  className="h-9 w-48 sm:w-56 rounded-full border border-line bg-canvas pl-4 pr-10 text-xs text-ink outline-none transition focus:border-brand"
+                />
+                <button
+                  type="submit"
+                  aria-label="Submit newsletter"
+                  className="absolute right-1 flex h-7 w-7 items-center justify-center rounded-full bg-brand text-white transition hover:bg-brand-dark"
+                >
+                  <ArrowForwardIcon sx={{ fontSize: 14 }} />
+                </button>
+              </form>
             </div>
           </div>
-
-          {FOOTER_LINKS.map((col) => (
-            <div key={col.title}>
-              <p className="text-eyebrow font-bold uppercase text-oncontrast">{col.title}</p>
-              <ul className="mt-4 space-y-2.5">
-                {col.items.map((item) => (
-                  <li key={item.label}>
-                    <button
-                      onClick={() => navigate(item.to)}
-                      className="text-sm text-oncontrast/70 transition hover:text-accent"
-                    >
-                      {item.label}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        <div className="border-t border-white/10">
-          <div className="page-shell flex flex-col items-center justify-between gap-2 py-5 text-xs text-oncontrast/60 sm:flex-row">
-            <span>© {new Date().getFullYear()} Cartly. All rights reserved.</span>
-            <span>Curated for everyday · Hyderabad, India</span>
-          </div>
-        </div>
-      </footer>
+        </footer>
       )}
 
       {!isCheckout && <MobileTabBar />}

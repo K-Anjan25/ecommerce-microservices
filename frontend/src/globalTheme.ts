@@ -1,63 +1,58 @@
 import { createTheme } from "@mui/material/styles";
 
 /**
- * Cartly Editorial — MUI theme, generated from design/tokens.json and kept in
+ * Cartly Bold Market — MUI theme, generated from design/tokens.json and kept in
  * lock-step with tailwind.config.js / src/tokens.css.
- *
- * Tailwind resolves colours through CSS variables, so it flips for free when
- * `.dark` is set. MUI needs real values, so the palette is built per mode by
- * `createAppTheme(mode)`; `theme` remains exported for anything still importing
- * the light theme directly.
  */
 
 type Mode = "light" | "dark";
 
 const LIGHT = {
-  brand: "#A4472D",
-  brandHover: "#8E3823",
-  action: "#A4472D",
-  actionHover: "#8E3823",
-  brandLight: "#C27056",
-  brandDark: "#6F2A1A",
-  accent: "#C8A96B",
-  accentDark: "#A68446",
-  accentLight: "#E0CCA1",
-  paper: "#FBF9F4",
-  canvas: "#F4F0E8",
-  sunken: "#E9E2D7",
-  line: "#DAD0C3",
-  ink: "#221A16",
-  inkSoft: "#6B5E56",
-  inkMuted: "#74675F",
-  inkFaint: "#BBAFA4",
-  contrast: "#221A16",
+  brand: "#0052CC",
+  brandHover: "#0747A6",
+  action: "#0052CC",
+  actionHover: "#0747A6",
+  brandLight: "#3B82F6",
+  brandDark: "#091E42",
+  accent: "#FF5722",
+  accentDark: "#E64A19",
+  accentLight: "#FFAB91",
+  paper: "#FFFFFF",
+  canvas: "#F5F6F8",
+  sunken: "#EBECF0",
+  line: "#E2E8F0",
+  ink: "#0F172A",
+  inkSoft: "#475569",
+  inkMuted: "#5F6368",
+  inkFaint: "#CBD5E1",
+  contrast: "#0F172A",
   success: "#0E9F6E",
   warning: "#F0A020",
   danger: "#E0334B",
-  info: "#2F80ED",
-  shadow: "0 2px 10px rgba(11,11,15,0.06)",
-  shadowPop: "0 20px 48px rgba(11,11,15,0.14)",
+  info: "#0052CC",
+  shadow: "0 2px 8px rgba(15,23,42,0.06)",
+  shadowPop: "0 20px 40px rgba(15,23,42,0.12)",
 };
 
 const DARK: typeof LIGHT = {
-  brand: "#E3A58F",
-  brandHover: "#F0BEAC",
-  action: "#A4472D",
-  actionHover: "#C25638",
-  brandLight: "#F0BEAC",
-  brandDark: "#A4472D",
-  accent: "#C8A96B",
-  accentDark: "#A68446",
-  accentLight: "#E0CCA1",
-  paper: "#211B18",
-  canvas: "#171210",
-  sunken: "#2D2520",
-  line: "#463A33",
-  ink: "#F7F1E9",
-  inkSoft: "#BEAEA4",
-  inkMuted: "#B6A9A1",
-  inkFaint: "#705E54",
-  contrast: "#2B221E",
+  brand: "#60A5FA",
+  brandHover: "#93C5FD",
+  action: "#0052CC",
+  actionHover: "#1D4ED8",
+  brandLight: "#BFDBFE",
+  brandDark: "#1D4ED8",
+  accent: "#FF7043",
+  accentDark: "#FF5722",
+  accentLight: "#FFAB91",
+  paper: "#1E2430",
+  canvas: "#111827",
+  sunken: "#273142",
+  line: "#374151",
+  ink: "#F9FAFB",
+  inkSoft: "#D1D5DB",
+  inkMuted: "#9CA3AF",
+  inkFaint: "#6B7280",
+  contrast: "#1F2937",
   success: "#34D399",
   warning: "#FBBF24",
   danger: "#FB7185",
@@ -73,14 +68,14 @@ export const brand = {
   main: LIGHT.brand,
   hover: LIGHT.brandHover,
   light: LIGHT.brandLight,
-  soft: "#F3E2D9",
-  tint: "#FAF1EC",
+  soft: "#EFF6FF",
+  tint: "#F5F9FF",
 };
 export const accent = {
   main: LIGHT.accent,
   dark: LIGHT.accentDark,
   light: LIGHT.accentLight,
-  soft: "#F7F0DE",
+  soft: "#FBE9E7",
 };
 export const ink = {
   primary: LIGHT.ink,
@@ -106,13 +101,13 @@ export function createAppTheme(mode: Mode = "light") {
         main: c.action,
         light: c.brandLight,
         dark: c.actionHover,
-        contrastText: "#FBF9F4",
+        contrastText: "#FFFFFF",
       },
       secondary: {
         main: c.accent,
         light: c.accentLight,
         dark: c.accentDark,
-        contrastText: "#221A16",
+        contrastText: "#FFFFFF",
       },
       background: { default: c.canvas, paper: c.paper },
       text: { primary: c.ink, secondary: c.inkSoft, disabled: c.inkMuted },
@@ -122,29 +117,29 @@ export function createAppTheme(mode: Mode = "light") {
       warning: { main: c.warning },
       info: { main: c.info },
       action: {
-        hover: mode === "dark" ? "rgba(255,255,255,0.06)" : "rgba(11,11,15,0.035)",
-        selected: mode === "dark" ? "rgba(255,255,255,0.10)" : "rgba(11,11,15,0.06)",
+        hover: mode === "dark" ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.04)",
+        selected: mode === "dark" ? "rgba(255,255,255,0.10)" : "rgba(0,82,204,0.08)",
       },
     },
     typography: {
       fontFamily: "'Inter', system-ui, 'Helvetica Neue', Arial, sans-serif",
-      h1: { fontFamily: "'Inter Tight', Inter, sans-serif", fontWeight: 700, letterSpacing: "-0.03em" },
-      h2: { fontFamily: "'Inter Tight', Inter, sans-serif", fontWeight: 700, letterSpacing: "-0.03em" },
+      h1: { fontFamily: "'Inter Tight', Inter, sans-serif", fontWeight: 800, letterSpacing: "-0.03em" },
+      h2: { fontFamily: "'Inter Tight', Inter, sans-serif", fontWeight: 700, letterSpacing: "-0.025em" },
       h3: { fontFamily: "'Inter Tight', Inter, sans-serif", fontWeight: 700, letterSpacing: "-0.02em" },
       h4: { fontFamily: "'Inter Tight', Inter, sans-serif", fontWeight: 700, letterSpacing: "-0.02em" },
       h5: { fontFamily: "'Inter Tight', Inter, sans-serif", fontWeight: 700, letterSpacing: "-0.01em" },
       h6: { fontFamily: "'Inter Tight', Inter, sans-serif", fontWeight: 700 },
       subtitle1: { fontWeight: 600 },
-      button: { fontWeight: 600, textTransform: "none" },
-      overline: { fontWeight: 700, letterSpacing: "0.16em" },
+      button: { fontWeight: 700, textTransform: "none" },
+      overline: { fontWeight: 700, letterSpacing: "0.14em" },
     },
-    shape: { borderRadius: 10 },
+    shape: { borderRadius: 12 },
     shadows: [
       "none",
-      mode === "dark" ? "0 1px 2px rgba(0,0,0,0.4)" : "0 1px 2px rgba(11,11,15,0.05)",
+      mode === "dark" ? "0 1px 2px rgba(0,0,0,0.4)" : "0 1px 3px rgba(15,23,42,0.06)",
       c.shadow,
-      mode === "dark" ? "0 8px 24px rgba(0,0,0,0.55)" : "0 8px 24px rgba(11,11,15,0.08)",
-      mode === "dark" ? "0 12px 32px rgba(0,0,0,0.6)" : "0 12px 32px rgba(11,11,15,0.10)",
+      mode === "dark" ? "0 8px 24px rgba(0,0,0,0.55)" : "0 8px 20px rgba(15,23,42,0.08)",
+      mode === "dark" ? "0 12px 32px rgba(0,0,0,0.6)" : "0 12px 28px rgba(15,23,42,0.10)",
       c.shadowPop,
       ...Array(19).fill(c.shadow),
     ] as any,
@@ -156,21 +151,18 @@ export function createAppTheme(mode: Mode = "light") {
         defaultProps: { disableElevation: true },
         styleOverrides: {
           root: {
-            borderRadius: 10,
-            fontWeight: 600,
+            borderRadius: 999,
+            fontWeight: 700,
             textTransform: "none",
-            paddingLeft: 18,
-            paddingRight: 18,
+            paddingLeft: 20,
+            paddingRight: 20,
           },
           containedPrimary: {
-            boxShadow:
-              mode === "dark"
-                ? "0 6px 16px rgba(194,86,56,0.24)"
-                : "0 6px 16px rgba(164,71,45,0.22)",
+            boxShadow: "0 4px 14px rgba(0,82,204,0.3)",
             "&:hover": { backgroundColor: c.actionHover },
           },
           containedSecondary: {
-            color: "#221A16",
+            color: "#FFFFFF",
             "&:hover": { backgroundColor: c.accentDark },
           },
           outlinedPrimary: {
@@ -186,10 +178,10 @@ export function createAppTheme(mode: Mode = "light") {
         styleOverrides: {
           root: {
             "& .MuiOutlinedInput-root": {
-              borderRadius: 10,
+              borderRadius: 12,
               backgroundColor: c.paper,
               "& fieldset": { borderColor: c.line },
-              "&:hover fieldset": { borderColor: c.inkFaint },
+              "&:hover fieldset": { borderColor: c.brand },
             },
           },
         },
@@ -197,11 +189,11 @@ export function createAppTheme(mode: Mode = "light") {
       MuiOutlinedInput: {
         styleOverrides: {
           root: {
-            borderRadius: 10,
+            borderRadius: 12,
             backgroundColor: c.paper,
             color: c.ink,
             "& fieldset": { borderColor: c.line },
-            "&:hover fieldset": { borderColor: c.inkFaint },
+            "&:hover fieldset": { borderColor: c.brand },
             "&.Mui-focused fieldset": { borderColor: c.action },
           },
         },
@@ -228,10 +220,10 @@ export function createAppTheme(mode: Mode = "light") {
         defaultProps: { size: "small" },
         styleOverrides: {
           select: {
-            borderRadius: 10,
+            borderRadius: 12,
             color: c.ink,
             "&:focus": {
-              borderRadius: 10,
+              borderRadius: 12,
               backgroundColor: "transparent",
             },
           },
@@ -248,11 +240,11 @@ export function createAppTheme(mode: Mode = "light") {
             paddingTop: 8,
             paddingBottom: 8,
             "&.Mui-selected": {
-              backgroundColor: mode === "dark" ? "rgba(227,165,143,0.16)" : "rgba(164,71,45,0.08)",
+              backgroundColor: mode === "dark" ? "rgba(96,165,250,0.18)" : "rgba(0,82,204,0.08)",
               fontWeight: 600,
               color: c.brand,
               "&:hover": {
-                backgroundColor: mode === "dark" ? "rgba(227,165,143,0.22)" : "rgba(164,71,45,0.12)",
+                backgroundColor: mode === "dark" ? "rgba(96,165,250,0.25)" : "rgba(0,82,204,0.12)",
               },
             },
             "&:hover": {
@@ -263,7 +255,7 @@ export function createAppTheme(mode: Mode = "light") {
       },
       MuiCard: {
         styleOverrides: {
-          root: { borderRadius: 10, border: `1px solid ${c.line}`, boxShadow: "none" },
+          root: { borderRadius: 16, border: `1px solid ${c.line}`, boxShadow: c.shadow },
         },
       },
       MuiPaper: {
@@ -274,7 +266,7 @@ export function createAppTheme(mode: Mode = "light") {
       },
       MuiDialog: {
         styleOverrides: {
-          paper: { borderRadius: 12, boxShadow: c.shadowPop, backgroundColor: c.paper },
+          paper: { borderRadius: 16, boxShadow: c.shadowPop, backgroundColor: c.paper },
         },
       },
       MuiAppBar: { styleOverrides: { root: { boxShadow: "none", backgroundImage: "none" } } },
@@ -289,7 +281,7 @@ export function createAppTheme(mode: Mode = "light") {
           head: {
             fontWeight: 700,
             fontSize: 11,
-            letterSpacing: "0.1em",
+            letterSpacing: "0.08em",
             textTransform: "uppercase",
             color: c.inkMuted,
             backgroundColor: c.canvas,
@@ -298,13 +290,13 @@ export function createAppTheme(mode: Mode = "light") {
           root: { borderBottomColor: c.line },
         },
       },
-      MuiTableContainer: { styleOverrides: { root: { borderRadius: 10 } } },
+      MuiTableContainer: { styleOverrides: { root: { borderRadius: 14 } } },
       MuiTablePagination: { styleOverrides: { root: { color: c.inkSoft } } },
-      MuiAlert: { styleOverrides: { root: { borderRadius: 10 } } },
+      MuiAlert: { styleOverrides: { root: { borderRadius: 12 } } },
       MuiTooltip: {
         styleOverrides: {
           tooltip: {
-            backgroundColor: mode === "dark" ? "#463A33" : "#221A16",
+            backgroundColor: mode === "dark" ? "#374151" : "#0F172A",
             fontSize: 11,
             borderRadius: 8,
             padding: "6px 10px",

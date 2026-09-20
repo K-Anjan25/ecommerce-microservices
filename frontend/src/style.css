@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 /* ==========================================================================
-   Cartly Editorial — base
+   Cartly Bold Market — base
    ========================================================================== */
 @layer base {
   html {
@@ -21,17 +21,12 @@
     font-family: "Noto Sans Devanagari", Inter, system-ui, sans-serif;
   }
 
-  /* Consistent search fields: the native WebKit clear (✕) button cannot be
-     themed and clashes in dark mode, so hide it — CommerceSearch and the
-     filter fields own their clear affordances. */
   input[type="search"]::-webkit-search-cancel-button,
   input[type="search"]::-webkit-search-decoration {
     -webkit-appearance: none;
     appearance: none;
   }
 
-  /* Consistent numeric controls: hide the native browser spin buttons on every
-     number input so all numeric fields share the NumberStepperInput look. */
   input[type="number"] {
     -moz-appearance: textfield;
     appearance: textfield;
@@ -59,7 +54,7 @@
   :focus-visible {
     outline: 2px solid rgb(var(--c-brand) / 0.55);
     outline-offset: 2px;
-    border-radius: 6px;
+    border-radius: 8px;
   }
 
   ::-webkit-scrollbar {
@@ -103,22 +98,17 @@
   }
 }
 
-/* Hide scrollbar on horizontal rails without losing scroll */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* ==========================================================================
-   Notification pops (react-toastify engine, Cartly Editorial shell)
+   Notification pops
    ========================================================================== */
 @keyframes toast-progress {
   from { transform: scaleX(1); }
   to { transform: scaleX(0); }
 }
 
-/* Slim state-coloured progress line inside a branded toast. Duration comes from
-   the `--toast-duration` custom property (set per toast), so hovering a toast
-   can pause it via `animation-play-state` to match react-toastify's
-   pause-on-hover countdown. */
 .cartly-progress {
   animation: toast-progress var(--toast-duration, 2200ms) linear forwards;
 }
@@ -126,8 +116,6 @@
   animation-play-state: paused;
 }
 
-/* Neutralise the stock react-toastify look; the branded card inside owns all
-   surface styling (paper, hairline border, shadow, radius, close button). */
 .Toastify__toast.cartly-toast {
   background: transparent;
   box-shadow: none;
@@ -160,7 +148,7 @@
 }
 
 /* ==========================================================================
-   Components
+   Components — Concept B Bold Market
    ========================================================================== */
 @layer components {
   /* ---- layout ---- */
@@ -181,7 +169,7 @@
   }
 
   .page-title {
-    @apply font-display text-3xl font-normal tracking-tight text-ink sm:text-[2.35rem];
+    @apply font-heading text-3xl font-extrabold tracking-tight text-ink sm:text-4xl;
   }
 
   .page-subtitle {
@@ -189,15 +177,14 @@
   }
 
   .section-title {
-    @apply font-display text-3xl font-normal tracking-tight text-ink sm:text-[2.4rem];
+    @apply font-heading text-2xl font-bold tracking-tight text-ink sm:text-3xl;
   }
 
   /* ---- surfaces ---- */
   .panel {
-    @apply rounded-sm border border-line bg-paper shadow-none;
+    @apply rounded-2xl border border-line bg-paper shadow-card;
   }
 
-  /* A surface that is dark in BOTH modes — hero, footer, admin rail. */
   .surface-contrast {
     @apply bg-contrast text-oncontrast;
   }
@@ -206,17 +193,17 @@
     @apply border-line;
   }
 
-  /* ---- actions ---- */
+  /* ---- actions — Concept B rounded pill styling ---- */
   .primary-button {
-    @apply inline-flex items-center justify-center gap-2 rounded-sm bg-action px-4 py-2.5 text-sm font-semibold text-oncontrast transition hover:bg-action-hover disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-action px-5 py-2.5 text-sm font-bold text-oncontrast shadow-sm transition hover:bg-action-hover disabled:cursor-not-allowed disabled:opacity-60;
   }
 
   .dark-button {
-    @apply inline-flex items-center justify-center gap-2 rounded-sm bg-contrast px-4 py-2.5 text-sm font-semibold text-oncontrast transition hover:bg-contrast-lift disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-contrast px-5 py-2.5 text-sm font-bold text-oncontrast transition hover:bg-contrast-lift disabled:cursor-not-allowed disabled:opacity-60;
   }
 
   .secondary-button {
-    @apply inline-flex items-center justify-center gap-2 rounded-sm border border-line bg-paper px-4 py-2.5 text-sm font-semibold text-ink transition hover:border-brand hover:bg-brand-tint hover:text-brand disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-line bg-paper px-5 py-2.5 text-sm font-bold text-ink transition hover:border-brand hover:bg-brand-soft hover:text-brand disabled:cursor-not-allowed disabled:opacity-60;
   }
 
   .icon-button {
@@ -225,23 +212,23 @@
 
   /* ---- chips ---- */
   .chip {
-    @apply inline-flex shrink-0 items-center gap-1.5 rounded-full border border-line bg-paper px-3.5 py-1.5 text-xs font-semibold text-ink-soft transition hover:border-ink-faint hover:text-ink;
+    @apply inline-flex shrink-0 items-center gap-1.5 rounded-full border border-line bg-paper px-4 py-1.5 text-xs font-semibold text-ink-soft transition hover:border-brand hover:text-brand;
   }
 
   .chip-active {
-    @apply border-brand bg-brand-soft text-brand hover:border-brand hover:text-brand;
+    @apply border-brand bg-brand text-oncontrast hover:border-brand hover:text-oncontrast;
   }
 
   .chip-ink {
-    @apply border-ink bg-contrast text-oncontrast hover:text-oncontrast;
+    @apply border-contrast bg-contrast text-oncontrast hover:text-oncontrast;
   }
 
   .badge-sale {
-    @apply inline-flex items-center rounded-full bg-state-danger px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-wide text-oncontrast;
+    @apply inline-flex items-center rounded-full bg-accent px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-wide text-oncontrast;
   }
 
   .badge-neutral {
-    @apply inline-flex items-center rounded-full bg-contrast px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-wide text-oncontrast;
+    @apply inline-flex items-center rounded-full bg-sunken px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-wide text-ink-800;
   }
 
   .badge-stock-in {
@@ -262,15 +249,15 @@
   }
 
   .price-text {
-    @apply font-heading font-bold text-ink;
+    @apply font-heading font-extrabold text-ink;
   }
 
   .input-control {
-    @apply h-11 w-full rounded-sm border border-line bg-paper px-3 text-sm text-ink outline-none transition placeholder:text-ink-muted focus:border-brand focus:ring-2 focus:ring-brand/15 disabled:cursor-not-allowed disabled:bg-sunken;
+    @apply h-11 w-full rounded-xl border border-line bg-paper px-3.5 text-sm text-ink outline-none transition placeholder:text-ink-muted focus:border-brand focus:ring-2 focus:ring-brand/15 disabled:cursor-not-allowed disabled:bg-sunken;
   }
 
   select.input-control {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B5E56' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23475569' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
     background-position: right 0.75rem center;
     background-repeat: no-repeat;
     background-size: 1rem 1rem;
@@ -282,7 +269,7 @@
   }
 
   .dark select.input-control {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23BEAEA4' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23D1D5DB' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
   }
 
   select.input-control option {
@@ -300,6 +287,6 @@
   }
 
   .product-grid {
-    @apply grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 xl:grid-cols-4;
+    @apply grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 xl:grid-cols-5;
   }
 }

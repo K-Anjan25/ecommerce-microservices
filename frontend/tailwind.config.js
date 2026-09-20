@@ -1,15 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 /**
- * Cartly Editorial — generated from design/tokens.json.
+ * Cartly Bold Market — generated from design/tokens.json.
  *
  * Colours resolve through CSS custom properties declared in `src/tokens.css`
- * (`:root` = light, `.dark` = dark), so adding dark mode required zero page
- * edits: every existing `bg-paper` / `text-ink-soft` flips automatically.
- * The `rgb(var(--x) / <alpha-value>)` form keeps opacity modifiers working
- * (`border-line/60`, `bg-paper/90`).
- *
- * Token NAMES are unchanged from 1.x on purpose. `ink` is a FOREGROUND token
- * and `contrast` is the intentionally-dark SURFACE token — see tokens.css.
+ * (`:root` = light, `.dark` = dark).
  */
 const v = (name) => `rgb(var(${name}) / <alpha-value>)`;
 
@@ -66,7 +60,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
-        display: ["'Instrument Serif'", "Georgia", "serif"],
+        display: ["'Inter Tight'", "Inter", "system-ui", "sans-serif"],
         heading: ["'Inter Tight'", "Inter", "system-ui", "sans-serif"],
         mono: ["'IBM Plex Mono'", "ui-monospace", "monospace"],
       },
@@ -78,20 +72,21 @@ module.exports = {
         sm: "0.625rem",
         md: "0.875rem",
         lg: "1.25rem",
-        xl2: "1.75rem",
+        xl: "1.5rem",
+        xl2: "2rem",
       },
       boxShadow: {
-        xs: "0 1px 2px rgba(11,11,15,0.05)",
+        xs: "0 1px 3px rgba(15,23,42,0.06)",
         card: "var(--shadow-card)",
         lift: "var(--shadow-lift)",
         pop: "var(--shadow-pop)",
-        brand: "0 10px 24px rgba(164,71,45,0.24)",
+        brand: "0 10px 24px rgba(0,82,204,0.24)",
       },
       maxWidth: {
-        container: "80rem",
+        container: "85rem",
       },
       spacing: {
-        header: "4.25rem",
+        header: "4.5rem",
         bottomnav: "3.875rem",
       },
       keyframes: {

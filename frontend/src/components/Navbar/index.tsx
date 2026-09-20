@@ -15,6 +15,9 @@ import { styled } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import MenuIcon from "@mui/icons-material/Menu";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -30,7 +33,7 @@ import { calculateCountOfCartItems } from "../../utils/cart";
 import { setToLocalStorage } from "../../utils/localStorage";
 import { showError } from "../../utils/showError";
 import { useColorSchemeContext } from "../../context/colorScheme";
-import { BrandMark, BRAND } from "../../brand";
+import { BrandMark } from "../../brand";
 import { CommerceSearch } from "../../features/catalog";
 import { useStoreSettings } from "../../features/storefront";
 import { MiniCartDrawer } from "../../features/cart";
@@ -38,10 +41,10 @@ import { useI18n } from "../../features/i18n";
 
 const CartBadge = styled(Badge)({
   "& .MuiBadge-badge": {
-    right: -1,
-    top: 1,
-    color: "#FBF9F4",
-    backgroundColor: "#A4472D",
+    right: -4,
+    top: -2,
+    color: "#FFFFFF",
+    backgroundColor: "#FF5722",
     fontWeight: 800,
     fontSize: 10,
     minWidth: 18,
@@ -49,22 +52,11 @@ const CartBadge = styled(Badge)({
   },
 });
 
-/** Primary destinations. Kept short on purpose — the long tail lives in the
- *  account menu and the mobile drawer. */
 const PRIMARY = [
-  { path: "/", label: "Shop", exact: true },
   { path: "/flash-sales", label: "Deals" },
-  { path: "/gift-cards", label: "Gift Cards" },
-  { path: "/loyalty", label: "Rewards" },
-];
-
-const SECONDARY = [
-  { path: "/orders", label: "Orders" },
-  { path: "/returns", label: "Returns" },
-  { path: "/wishlist", label: "Wishlist" },
-  { path: "/referral", label: "Referral" },
-  { path: "/addresses", label: "Addresses" },
-  { path: "/compare", label: "Compare" },
+  { path: "/new-arrivals", label: "New Arrivals" },
+  { path: "/gift-cards", label: "Gift Ideas" },
+  { path: "/about", label: "About Us" },
 ];
 
 const ANNOUNCE_KEY = "cartly-announce-dismissed";
@@ -79,12 +71,12 @@ const Navbar = () => {
   const { language, toggleLanguage, t } = useI18n();
 
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+  const [anchorElCategory, setAnchorElCategory] = useState<null | HTMLElement>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [bagOpen, setBagOpen] = useState(false);
   const [navSearch, setNavSearch] = useState("");
-  // sessionStorage is browser-only; SSR renders the announcement and the
-  // client effect reconciles the dismissed state after mount.
   const [announce, setAnnounce] = useState(true);
+
   useEffect(() => {
     if (sessionStorage.getItem(ANNOUNCE_KEY) === "1") setAnnounce(false);
   }, []);
@@ -109,13 +101,6 @@ const Navbar = () => {
   }, [location.pathname]);
 
   useEffect(() => {
-    const state = location.state as { focusSearch?: boolean } | null;
-    if (state?.focusSearch) setDrawerOpen(true);
-  }, [location.key, location.state]);
-
-  /* ⌘K / Ctrl+K focuses the header search — the search is now the primary
-     entry point into the catalog, so it deserves a shortcut. */
-  useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
@@ -129,20 +114,20 @@ const Navbar = () => {
   const go = (path: string) => {
     setDrawerOpen(false);
     setAnchorElUser(null);
+    setAnchorElCategory(null);
     navigate(path);
   };
 
   const submitNavSearch = (rawTerm: string) => {
     const term = rawTerm.trim();
     if (!term) return;
-    // q lives in the URL so results are shareable/bookmarkable; the state
-    // hand-off additionally scrolls the catalog to the results.
     navigate({ pathname: "/", search: `?q=${encodeURIComponent(term)}` }, { state: { search: term } });
     setDrawerOpen(false);
     searchRef.current?.blur();
   };
 
   const pickCategory = (name: string) => {
+    setAnchorElCategory(null);
     navigate(
       { pathname: "/", search: `?category=${encodeURIComponent(name)}` },
       { state: { category: name } }
@@ -175,167 +160,126 @@ const Navbar = () => {
     setAnchorElUser(null);
   };
 
-  const isActive = (path: string, exact = false) =>
-    exact ? location.pathname === path : location.pathname.startsWith(path);
-
-  const navLabel = (path: string, fallback: string) => {
-    const keys: Record<string, Parameters<typeof t>[0]> = {
-      "/": "nav.shop", "/flash-sales": "nav.deals", "/gift-cards": "nav.gifts",
-      "/loyalty": "nav.rewards", "/orders": "nav.orders", "/returns": "nav.returns",
-      "/addresses": "nav.addresses", "/compare": "nav.compare", "/wishlist": "nav.wishlist", "/account": "nav.account",
-    };
-    return keys[path] ? t(keys[path]) : fallback;
-  };
-
   const initials =
     (user.firstName?.at(0)?.toUpperCase() ?? "") +
     (user.lastName?.at(0)?.toUpperCase() ?? "");
 
   return (
     <>
-      {/* ── announcement ─────────────────────────────────────────────── */}
-      {announce && storeSettings.announcementEnabled && (
-        <div className="relative bg-contrast text-oncontrast">
-          <div className="page-shell flex h-9 items-center justify-center gap-3">
-            <p className="truncate pr-6 text-[0.6875rem] font-semibold tracking-wide sm:text-xs">
-              {storeSettings.announcementText}
-              {storeSettings.announcementLinkText && (
-                <>
-                  <span className="mx-2 text-oncontrast/50">·</span>
-                  <a className="text-accent hover:underline" href={storeSettings.announcementLinkUrl || "/flash-sales"}>
-                    {storeSettings.announcementLinkText}
-                  </a>
-                </>
-              )}
-            </p>
+      {/* ── header (Concept B: top nav + search + user actions) ───────────────────── */}
+      <header className="sticky top-0 z-50 border-b border-line bg-paper/95 backdrop-blur-md">
+        {/* Row 1: Nav destinations on desktop */}
+        <div className="hidden border-b border-line/60 bg-paper py-1.5 md:block">
+          <div className="page-shell flex items-center justify-end gap-6 text-xs font-semibold text-ink-soft">
             <button
-              aria-label="Dismiss announcement"
-              onClick={dismissAnnounce}
-              className="absolute right-3 text-oncontrast/60 transition hover:text-oncontrast sm:right-6"
+              onClick={(e) => setAnchorElCategory(e.currentTarget)}
+              className="flex items-center gap-1 hover:text-brand"
             >
-              <CloseIcon sx={{ fontSize: 14 }} />
+              Categories <KeyboardArrowDownIcon sx={{ fontSize: 16 }} />
             </button>
-          </div>
-        </div>
-      )}
+            <Menu
+              anchorEl={anchorElCategory}
+              open={Boolean(anchorElCategory)}
+              onClose={() => setAnchorElCategory(null)}
+              slotProps={{ paper: { className: "!mt-1 !rounded-xl !border !border-line !shadow-lift" } }}
+            >
+              <MenuItem onClick={() => pickCategory("")}>All Categories</MenuItem>
+              {categories.map((c) => (
+                <MenuItem key={c.id} onClick={() => pickCategory(c.name)}>
+                  {c.name}
+                </MenuItem>
+              ))}
+            </Menu>
 
-      {/* ── header ───────────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 border-b border-line bg-paper/90 backdrop-blur-md">
-        <div className="page-shell flex h-[4.5rem] items-center gap-4">
-          <button
-            aria-label="Open menu"
-            className="icon-button -ml-2 lg:hidden"
-            onClick={() => setDrawerOpen(true)}
-          >
-            <MenuIcon />
-          </button>
-
-          <button
-            onClick={() => navigate("/")}
-            className="shrink-0"
-            aria-label="Cartly home"
-          >
-            <BrandMark compact={false} />
-          </button>
-
-          <nav className="ml-5 hidden items-center gap-5 xl:flex" aria-label="Primary navigation">
             {PRIMARY.map((item) => (
               <button
                 key={item.path}
                 onClick={() => navigate(item.path)}
-                className={`border-b py-2 text-xs font-semibold uppercase tracking-[0.08em] transition ${
-                  isActive(item.path, item.exact)
-                    ? "border-ink text-ink"
-                    : "border-transparent text-ink-soft hover:border-ink/40 hover:text-ink"
-                }`}
+                className="transition hover:text-brand"
               >
-                {navLabel(item.path, item.label)}
+                {item.label}
               </button>
             ))}
-          </nav>
 
-          <CommerceSearch
-            value={navSearch}
-            onChange={setNavSearch}
-            onSubmit={submitNavSearch}
-            onProductSelect={(product) => navigate(`/products/${product.id}`)}
-            autoFocusRef={searchRef}
-            className="mx-auto hidden w-full max-w-sm md:block"
-          />
-
-          <div className="ml-auto flex items-center gap-1">
-            <Tooltip title={language === "en" ? "हिन्दी" : "English"}>
-              <button
-                aria-label={language === "en" ? "हिन्दी में देखें" : "View in English"}
-                onClick={toggleLanguage}
-                className="icon-button gap-1 !w-auto px-2 text-xs font-bold"
-              >
-                <LanguageOutlinedIcon sx={{ fontSize: 18 }} />
-                {language === "en" ? "हि" : "EN"}
-              </button>
-            </Tooltip>
-            <Tooltip title={isDark ? "Switch to light" : "Switch to dark"}>
-              <button
-                aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-                aria-pressed={isDark}
-                onClick={toggleScheme}
-                className="icon-button"
-              >
-                {isDark ? (
-                  <LightModeOutlinedIcon sx={{ fontSize: 20 }} />
-                ) : (
-                  <DarkModeOutlinedIcon sx={{ fontSize: 20 }} />
-                )}
-              </button>
-            </Tooltip>
-
-            <Tooltip title="Compare">
-              <button
-                aria-label="Compare products"
-                onClick={() => navigate("/compare")}
-                className="icon-button hidden sm:inline-flex"
-              >
-                <CompareArrowsIcon sx={{ fontSize: 20 }} />
-              </button>
-            </Tooltip>
-
-            {user.isLogedIn && (
-              <Tooltip title="Orders">
+            <div className="ml-4 flex items-center gap-2 border-l border-line pl-4">
+              <Tooltip title={language === "en" ? "हिन्दी" : "English"}>
                 <button
-                  aria-label="My orders"
-                  onClick={() => navigate("/orders")}
-                  className="icon-button hidden sm:inline-flex"
+                  aria-label="Language"
+                  onClick={toggleLanguage}
+                  className="inline-flex items-center gap-1 hover:text-brand text-xs font-bold"
                 >
-                  <ReceiptLongOutlinedIcon sx={{ fontSize: 20 }} />
+                  <LanguageOutlinedIcon sx={{ fontSize: 16 }} />
+                  {language === "en" ? "EN" : "HI"}
                 </button>
               </Tooltip>
-            )}
+              <Tooltip title={isDark ? "Light mode" : "Dark mode"}>
+                <button
+                  aria-label="Toggle theme"
+                  onClick={toggleScheme}
+                  className="hover:text-brand"
+                >
+                  {isDark ? (
+                    <LightModeOutlinedIcon sx={{ fontSize: 16 }} />
+                  ) : (
+                    <DarkModeOutlinedIcon sx={{ fontSize: 16 }} />
+                  )}
+                </button>
+              </Tooltip>
+            </div>
+          </div>
+        </div>
 
+        {/* Row 2: Logo, Search bar, and Actions (Concept B layout) */}
+        <div className="page-shell flex h-16 sm:h-[4.5rem] items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
             <button
-              aria-label={`Cart, ${cartCount} items`}
-              onClick={() => setBagOpen(true)}
-              className="icon-button"
+              aria-label="Open menu"
+              className="icon-button -ml-2 lg:hidden"
+              onClick={() => setDrawerOpen(true)}
             >
-              <CartBadge badgeContent={cartCount}>
-                <ShoppingCartOutlinedIcon sx={{ fontSize: 21 }} />
-              </CartBadge>
+              <MenuIcon />
             </button>
 
+            <button
+              onClick={() => navigate("/")}
+              className="shrink-0"
+              aria-label="Cartly home"
+            >
+              <BrandMark compact={false} />
+            </button>
+          </div>
+
+          {/* Central search input matching Concept B */}
+          <div className="mx-4 flex-1 max-w-xl hidden sm:block">
+            <CommerceSearch
+              value={navSearch}
+              onChange={setNavSearch}
+              onSubmit={submitNavSearch}
+              onProductSelect={(product) => navigate(`/products/${product.id}`)}
+              autoFocusRef={searchRef}
+              placeholder="Search for products, brands & more..."
+            />
+          </div>
+
+          {/* Right Action Icons: My Account, Cart, Wishlist */}
+          <div className="flex items-center gap-2 sm:gap-4">
+            {/* Account */}
             {user.isLogedIn ? (
               <>
                 <button
                   onClick={(event) => setAnchorElUser(event.currentTarget)}
                   aria-label="Account menu"
-                  className="ml-1 rounded-full ring-offset-2 transition hover:ring-2 hover:ring-brand/30"
+                  className="flex flex-col items-center text-xs font-medium text-ink transition hover:text-brand"
                 >
                   <Avatar
                     alt={(user.firstName ?? "") + (user.lastName ?? "")}
                     src={user.profileImageURL ?? ""}
-                    sx={{ width: 34, height: 34, fontSize: 13, fontWeight: 700 }}
-                    className="!bg-action !text-oncontrast"
+                    sx={{ width: 26, height: 26, fontSize: 11, fontWeight: 700 }}
+                    className="!bg-brand !text-white"
                   >
                     {initials}
                   </Avatar>
+                  <span className="hidden sm:inline-block mt-0.5 text-[0.6875rem]">My Account</span>
                 </button>
                 <Menu
                   anchorEl={anchorElUser}
@@ -343,7 +287,7 @@ const Navbar = () => {
                   transformOrigin={{ vertical: "top", horizontal: "right" }}
                   open={Boolean(anchorElUser)}
                   onClose={() => setAnchorElUser(null)}
-                  slotProps={{ paper: { className: "!mt-2 !min-w-[220px] !rounded-sm !border !border-line" } }}
+                  slotProps={{ paper: { className: "!mt-2 !min-w-[200px] !rounded-xl !border !border-line !shadow-lift" } }}
                 >
                   <div className="px-4 pb-2 pt-1">
                     <p className="truncate text-sm font-bold text-ink">
@@ -354,11 +298,8 @@ const Navbar = () => {
                   <Divider />
                   <MenuItem onClick={() => handleCloseUserMenu("Account")}>Account</MenuItem>
                   <MenuItem onClick={() => handleCloseUserMenu("Profile")}>Profile</MenuItem>
-                  {SECONDARY.map((s) => (
-                    <MenuItem key={s.path} onClick={() => handleCloseUserMenu(s.path)}>
-                      {navLabel(s.path, s.label)}
-                    </MenuItem>
-                  ))}
+                  <MenuItem onClick={() => handleCloseUserMenu("/orders")}>Orders</MenuItem>
+                  <MenuItem onClick={() => handleCloseUserMenu("/addresses")}>Addresses</MenuItem>
                   {isStaff && [
                     <Divider key="d" />,
                     <MenuItem key="admin" onClick={() => handleCloseUserMenu("Admin")}>
@@ -368,158 +309,147 @@ const Navbar = () => {
                   <Divider />
                   <MenuItem
                     onClick={() => handleCloseUserMenu("Logout")}
-                    className="!text-state-danger"
+                    className="!text-state-danger font-semibold"
                   >
                     Logout
                   </MenuItem>
                 </Menu>
               </>
             ) : (
-              <div className="ml-2 hidden items-center gap-2 sm:flex">
-                <button onClick={() => navigate("/login")} className="secondary-button !py-2">
-                  {t("nav.login")}
-                </button>
-                <button onClick={() => navigate("/register")} className="dark-button !py-2">
-                  {t("nav.register")}
-                </button>
-              </div>
+              <button
+                onClick={() => navigate("/login")}
+                className="flex flex-col items-center text-ink transition hover:text-brand"
+                aria-label="My Account"
+              >
+                <PersonOutlineIcon sx={{ fontSize: 24 }} />
+                <span className="hidden sm:inline-block text-[0.6875rem] font-medium">My Account</span>
+              </button>
             )}
+
+            {/* Cart with badge */}
+            <button
+              aria-label={`Cart, ${cartCount} items`}
+              onClick={() => setBagOpen(true)}
+              className="flex flex-col items-center text-ink transition hover:text-brand"
+            >
+              <CartBadge badgeContent={cartCount}>
+                <ShoppingCartOutlinedIcon sx={{ fontSize: 24 }} />
+              </CartBadge>
+              <span className="hidden sm:inline-block text-[0.6875rem] font-medium mt-0.5">
+                Cart {cartCount > 0 ? `(${cartCount})` : ""}
+              </span>
+            </button>
+
+            {/* Wishlist */}
+            <button
+              aria-label="Wishlist"
+              onClick={() => navigate(user.isLogedIn ? "/wishlist" : "/login")}
+              className="flex flex-col items-center text-ink transition hover:text-brand"
+            >
+              <FavoriteBorderIcon sx={{ fontSize: 24 }} />
+              <span className="hidden sm:inline-block text-[0.6875rem] font-medium mt-0.5">Wishlist</span>
+            </button>
           </div>
+        </div>
+
+        {/* Mobile Search row */}
+        <div className="px-4 pb-3 sm:hidden">
+          <CommerceSearch
+            value={navSearch}
+            onChange={setNavSearch}
+            onSubmit={submitNavSearch}
+            onProductSelect={(product) => navigate(`/products/${product.id}`)}
+            placeholder="Search for products, brands & more..."
+            prominent
+          />
         </div>
       </header>
 
-      {/* ── mobile drawer ────────────────────────────────────────────── */}
+      {/* ── Concept B Flash Sale Banner (Bright Orange) ───────────────── */}
+      {announce && (
+        <div className="relative bg-accent text-white py-2 px-4 shadow-sm">
+          <div className="page-shell flex items-center justify-center text-center">
+            <p className="text-xs sm:text-sm font-bold tracking-wide">
+              {storeSettings.announcementText || "FLASH SALE! Up to 40% OFF Electronics & Home! Ends Midnight!"}
+            </p>
+            <button
+              aria-label="Dismiss announcement"
+              onClick={dismissAnnounce}
+              className="absolute right-4 text-white/80 transition hover:text-white"
+            >
+              <CloseIcon sx={{ fontSize: 16 }} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Mobile drawer ────────────────────────────────────────────── */}
       <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
         <div className="flex h-full w-[19rem] flex-col bg-paper">
-          <div className="flex items-center justify-between px-5 py-4">
-            <span className="font-display text-2xl tracking-[0.04em] text-ink">
-              {BRAND.wordmark}
-            </span>
+          <div className="flex items-center justify-between px-5 py-4 border-b border-line">
+            <BrandMark />
             <button aria-label="Close menu" className="icon-button" onClick={() => setDrawerOpen(false)}>
               <CloseIcon />
             </button>
           </div>
 
-          <div className="px-5 pb-4">
-            <CommerceSearch
-              value={navSearch}
-              onChange={setNavSearch}
-              onSubmit={submitNavSearch}
-              onProductSelect={(product) => {
-                setDrawerOpen(false);
-                navigate(`/products/${product.id}`);
-              }}
-              prominent
-            />
-          </div>
-
-          <Divider />
-
-          <nav className="flex-1 overflow-y-auto px-3 py-3">
-            <p className="eyebrow px-3 pb-2">Shop</p>
-            {PRIMARY.map((item) => (
-              <button
-                key={item.path}
-                onClick={() => go(item.path)}
-                className={`flex w-full items-center justify-between rounded-sm px-3 py-2.5 text-sm font-semibold transition ${
-                  isActive(item.path, item.exact)
-                    ? "bg-brand-soft text-brand"
-                    : "text-ink-soft hover:bg-sunken hover:text-ink"
-                }`}
-              >
-                {navLabel(item.path, item.label)}
-                <ChevronRightIcon sx={{ fontSize: 16 }} />
-              </button>
-            ))}
-
-            <p className="eyebrow px-3 pb-2 pt-4">Your account</p>
-            {SECONDARY.map((item) => (
-              <button
-                key={item.path}
-                onClick={() => go(item.path)}
-                className={`flex w-full items-center justify-between rounded-sm px-3 py-2.5 text-sm font-semibold transition ${
-                  isActive(item.path)
-                    ? "bg-brand-soft text-brand"
-                    : "text-ink-soft hover:bg-sunken hover:text-ink"
-                }`}
-              >
-                {navLabel(item.path, item.label)}
-                <ChevronRightIcon sx={{ fontSize: 16 }} />
-              </button>
-            ))}
+          <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+            <div>
+              <p className="eyebrow pb-2">Destinations</p>
+              <div className="space-y-1">
+                <button
+                  onClick={() => go("/")}
+                  className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold hover:bg-brand-soft hover:text-brand"
+                >
+                  All Products <ChevronRightIcon sx={{ fontSize: 16 }} />
+                </button>
+                {PRIMARY.map((item) => (
+                  <button
+                    key={item.path}
+                    onClick={() => go(item.path)}
+                    className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold hover:bg-brand-soft hover:text-brand"
+                  >
+                    {item.label} <ChevronRightIcon sx={{ fontSize: 16 }} />
+                  </button>
+                ))}
+              </div>
+            </div>
 
             {categories.length > 0 && (
-              <>
-                <p className="eyebrow px-3 pb-2 pt-4">Categories</p>
-                <div className="flex flex-wrap gap-2 px-3">
-                  {categories.slice(0, 12).map((c) => (
+              <div>
+                <p className="eyebrow pb-2">Categories</p>
+                <div className="flex flex-wrap gap-2">
+                  {categories.map((c) => (
                     <button
                       key={c.id}
                       onClick={() => {
                         setDrawerOpen(false);
                         pickCategory(c.name);
                       }}
-                      className="chip"
+                      className="chip text-xs"
                     >
                       {c.name}
                     </button>
                   ))}
                 </div>
-              </>
-            )}
-
-            {user.isLogedIn && isStaff && (
-              <button
-                onClick={() => {
-                  setToLocalStorage("admin-nav", 0);
-                  go("/admin");
-                }}
-                className="mt-4 flex w-full items-center gap-2 rounded-sm bg-contrast px-3 py-2.5 text-sm font-semibold text-oncontrast"
-              >
-                <DashboardIcon sx={{ fontSize: 18 }} /> Admin console
-              </button>
+              </div>
             )}
           </nav>
 
-          <div className="space-y-2 border-t border-line p-4">
-            <button
-              onClick={toggleLanguage}
-              className="flex w-full items-center justify-between rounded-sm px-3 py-2.5 text-sm font-semibold text-ink-soft transition hover:bg-sunken hover:text-ink"
-            >
-              <span className="flex items-center gap-2"><LanguageOutlinedIcon sx={{ fontSize: 18 }} />Language</span>
-              <span>{language === "en" ? "हिन्दी" : "English"}</span>
-            </button>
-            <button
-              onClick={toggleScheme}
-              aria-pressed={isDark}
-              className="flex w-full items-center justify-between rounded-sm px-3 py-2.5 text-sm font-semibold text-ink-soft transition hover:bg-sunken hover:text-ink"
-            >
-              <span className="flex items-center gap-2">
-                {isDark ? (
-                  <LightModeOutlinedIcon sx={{ fontSize: 18 }} />
-                ) : (
-                  <DarkModeOutlinedIcon sx={{ fontSize: 18 }} />
-                )}
-                {isDark ? "Light mode" : "Dark mode"}
-              </span>
-              <span className="chip !px-2 !py-0.5 !text-[0.625rem]">
-                {isDark ? "Dark" : "Light"}
-              </span>
-            </button>
-
+          <div className="border-t border-line p-4 space-y-2">
             {user.isLogedIn ? (
               <button onClick={() => dispatch(logout())} className="secondary-button w-full">
-                {t("nav.logout")}
+                Logout
               </button>
             ) : (
-              <>
-                <button onClick={() => go("/login")} className="secondary-button w-full">
-                  {t("nav.login")}
+              <div className="grid grid-cols-2 gap-2">
+                <button onClick={() => go("/login")} className="secondary-button">
+                  Sign In
                 </button>
-                <button onClick={() => go("/register")} className="dark-button w-full">
-                  {t("nav.register")}
+                <button onClick={() => go("/register")} className="primary-button">
+                  Register
                 </button>
-              </>
+              </div>
             )}
           </div>
         </div>
