@@ -45,6 +45,11 @@ const CONCEPT_B_CATEGORIES = [
     image: "/images/store/tile-home.jpg",
   },
   {
+    name: "Electronics",
+    subtitle: "Audio",
+    image: "/images/store/demo-speaker.jpg",
+  },
+  {
     name: "Beauty",
     subtitle: "Skincare",
     image: "/images/store/tile-beauty.jpg",
@@ -445,12 +450,12 @@ function Products() {
         </div>
       </section>
 
-      {/* ═══ CONCEPT B CATEGORY TILES ══════════════════════════════════════ */}
+      {/* ═══ CONCEPT B CATEGORY TILES — second row of six, per the concept ═══ */}
       <section className="page-shell">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
           {CONCEPT_B_CATEGORIES.slice(3, 9).map((cat) => (
             <div
-              key={cat.name}
+              key={`${cat.name}-${cat.subtitle}`}
               className="flex flex-col justify-between rounded-2xl bg-paper p-4 border border-line shadow-sm hover:shadow-md transition"
             >
               <div>
