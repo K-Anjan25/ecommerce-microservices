@@ -224,15 +224,17 @@ const REGISTERED_PHONES = new Set(["+919876543210"]);
 
 /* Mirrors commerce-service ShippingZoneSeeder (Zone 1). */
 const INTERNATIONAL_ZONE = {
+  id: "zone-1",
   name: "International — Zone 1",
-  countries: ["US", "CA", "GB", "DE", "FR", "NL", "BE", "ES", "SE", "CH", "AE", "SG", "AU", "NZ", "JP", "KR"],
+  countries: "US,CA,GB,DE,FR,NL,BE,ES,SE,CH,AE,SG,AU,NZ,JP,KR",
   cost: 2499,
   freeAbove: 25000,
-  daysMin: 7,
-  daysMax: 14,
+  estimatedDaysMin: 7,
+  estimatedDaysMax: 14,
   carrier: "DHL Express",
   dutyRate: 0.15,
   dutyName: "Import duty & VAT",
+  active: true,
 };
 
 /* Collect and parse a JSON request body. */
@@ -366,7 +368,7 @@ createServer((req, res) => {
     return readBody(req, (body) => {
       const country = String(body.country ?? "").trim().toUpperCase();
       const subtotal = Number(body.subtotal ?? 0);
-      const inZone = INTERNATIONAL_ZONE.countries.includes(country);
+      const inZone = INTERNATIONAL_ZONE.countries.split(",").includes(country);
       if (!inZone) {
         return json(res, { available: false, cost: 0, estimatedDaysMin: 0, estimatedDaysMax: 0, carrier: "N/A", dutyRate: 0, dutyName: "Import duty & VAT" });
       }
@@ -376,8 +378,8 @@ createServer((req, res) => {
         zoneName: INTERNATIONAL_ZONE.name,
         cost: freeShipping ? 0 : INTERNATIONAL_ZONE.cost,
         freeAbove: INTERNATIONAL_ZONE.freeAbove,
-        estimatedDaysMin: INTERNATIONAL_ZONE.daysMin,
-        estimatedDaysMax: INTERNATIONAL_ZONE.daysMax,
+        estimatedDaysMin: INTERNATIONAL_ZONE.estimatedDaysMin,
+        estimatedDaysMax: INTERNATIONAL_ZONE.estimatedDaysMax,
         carrier: INTERNATIONAL_ZONE.carrier,
         dutyRate: INTERNATIONAL_ZONE.dutyRate,
         dutyName: INTERNATIONAL_ZONE.dutyName,

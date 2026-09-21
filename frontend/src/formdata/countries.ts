@@ -46,6 +46,19 @@ export const COUNTRIES: Country[] = [
   { dial: "+1", code: "US", name: "United States" },
 ];
 
+/** Two-letter code → regional-indicator flag emoji, e.g. "US" → 🇺🇸. */
+export const flagEmoji = (code?: string): string => {
+  const upper = (code ?? "IN").toUpperCase();
+  if (!/^[A-Z]{2}$/.test(upper)) return "";
+  return String.fromCodePoint(
+    ...upper.split("").map((ch) => 127397 + ch.charCodeAt(0))
+  );
+};
+
+/** "🇺🇸 United States" for pickers and address lines. */
+export const countryLabel = (code?: string): string =>
+  `${flagEmoji(code)} ${countryName(code)}`;
+
 export const countryName = (code?: string): string =>
   COUNTRIES.find((c) => c.code === (code ?? "IN"))?.name ?? "India";
 

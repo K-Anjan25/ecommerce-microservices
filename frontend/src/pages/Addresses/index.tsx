@@ -20,13 +20,15 @@ import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 
 import { AddressApi } from "../../api/addressApi";
+import { ShippingApi } from "../../api/shippingApi";
 import PageHeader from "../../components/PageHeader";
 import EmptyState from "../../components/EmptyState";
 import { showSuccess } from "../../utils/showSuccess";
 import { showError } from "../../utils/showError";
 import { SavedAddress } from "../../types/address";
 import statesAndDistrict from "../../formdata.json";
-import { COUNTRIES, countryName, isIndia } from "../../formdata/countries";
+import { COUNTRIES, countryLabel, countryName, flagEmoji, isIndia } from "../../formdata/countries";
+import { getTerritory, isValidPhone, isValidPostal } from "../../formdata/territories";
 
 const EMPTY = { country: "IN", state: "", district: "", addressDetail: "", pincode: "", phoneNumber: "", defaultAddress: false };
 
@@ -39,6 +41,22 @@ function Addresses() {
     "savedAddresses",
     AddressApi.getSavedAddresses
   );
+
+  // Active international zones — drives the "deliverable" badge on the form.
+  const { data: zones } = useQuery("shippingZones", ShippingApi.getZones, { retry: false });
+
+  const territory = getTerritory(form.country);
+  const zoneCountries = useMemo(
+    () =>
+      new Set(
+        (zones ?? [])
+          .filter((z) => z.active)
+          .flatMap((z) => (Array.isArray(z.countries) ? z.countries : z.countries.split(",")))
+          .map((c) => c.trim().toUpperCase())
+      ),
+    [zones]
+  );
+  const deliverableHere = isIndia(form.country) || zoneCountries.has(form.country);
 
   /* The full state/district dataset — the same one checkout uses. This page
      previously hardcoded five states, so an address in e.g. Telangana could
@@ -75,16 +93,20 @@ function Addresses() {
   });
 
   const handleSubmit = () => {
-    if (!form.state || !form.district || !form.addressDetail.trim()) {
-      showError("State, city and address detail are all required");
+    if (!territory.regionHidden && !form.state.trim()) {
+      showError(`${territory.regionLabel} is required`);
       return;
     }
-    if (isIndia(form.country) && form.pincode && !/^\d{6}$/.test(form.pincode)) {
-      showError("Enter a valid 6-digit pincode");
+    if (!form.district.trim() || !form.addressDetail.trim()) {
+      showError("City and address detail are both required");
       return;
     }
-    if (!isIndia(form.country) && form.pincode && !/^[A-Za-z0-9][A-Za-z0-9 -]{1,9}$/.test(form.pincode)) {
-      showError("Enter a valid postal code");
+    if (form.pincode.trim() && !isValidPostal(form.country, form.pincode)) {
+      showError(`Enter a valid ${territory.postalLabel.replace(" (optional)", "").toLowerCase()}`);
+      return;
+    }
+    if (form.phoneNumber.trim() && !isValidPhone(form.country, form.phoneNumber)) {
+      showError(`Enter a valid ${territory.phoneExample.toLowerCase()}`);
       return;
     }
     createMutation.mutate(form);
@@ -149,7 +171,7 @@ function Addresses() {
                   </p>
                   <p className="mt-1 text-sm text-ink-soft">
                     {addr.district}, {addr.state}
-                    {!isIndia(addr.country) && <> · {countryName(addr.country)}</>}
+                    <span className="ml-1.5">· {countryLabel(addr.country)}</span>
                   </p>
                   {addr.pincode && <p className="text-sm text-ink-muted">{addr.pincode}</p>}
                 </div>
@@ -179,11 +201,19 @@ function Addresses() {
                 id="addr-country"
                 label="Country"
                 value={form.country || "IN"}
-                onChange={(e) => setForm({ ...form, country: e.target.value, state: "", district: "", pincode: "" })}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    country: e.target.value,
+                    state: getTerritory(e.target.value).defaultRegion ?? "",
+                    district: "",
+                    pincode: "",
+                  })
+                }
               >
                 {COUNTRIES.map((c) => (
                   <MenuItem key={c.code} value={c.code}>
-                    {c.name}
+                    {flagEmoji(c.code)}&nbsp;&nbsp;{c.name}
                   </MenuItem>
                 ))}
               </Select>
@@ -225,52 +255,94 @@ function Addresses() {
                   </Select>
                 </FormControl>
               </>
+            ) : territory.regionHidden ? (
+              <div>
+                <label htmlFor="addr-district" className="eyebrow mb-1.5 block">
+                  {territory.cityLabel}
+                </label>
+                <input
+                  id="addr-district"
+                  type="text"
+                  className="input-control"
+                  placeholder={territory.cityExample}
+                  value={form.district}
+                  onChange={(e) => setForm({ ...form, district: e.target.value })}
+                />
+              </div>
             ) : (
               <>
-                <div>
-                  <label htmlFor="addr-state" className="eyebrow mb-1.5 block">
-                    State / Province
-                  </label>
-                  <input
-                    id="addr-state"
-                    type="text"
-                    className="input-control"
-                    placeholder="e.g. California"
-                    value={form.state}
-                    onChange={(e) => setForm({ ...form, state: e.target.value })}
-                  />
-                </div>
+                {territory.regions ? (
+                  <FormControl fullWidth size="small">
+                    <InputLabel id="addr-state-label">{territory.regionLabel}</InputLabel>
+                    <Select
+                      labelId="addr-state-label"
+                      id="addr-state"
+                      label={territory.regionLabel}
+                      value={form.state}
+                      onChange={(e) => setForm({ ...form, state: e.target.value })}
+                    >
+                      {territory.regions.map((r) => (
+                        <MenuItem key={r} value={r}>
+                          {r}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                ) : (
+                  <div>
+                    <label htmlFor="addr-state" className="eyebrow mb-1.5 block">
+                      {territory.regionLabel}
+                    </label>
+                    <input
+                      id="addr-state"
+                      type="text"
+                      className="input-control"
+                      placeholder={territory.cityExample}
+                      value={form.state}
+                      onChange={(e) => setForm({ ...form, state: e.target.value })}
+                    />
+                  </div>
+                )}
                 <div>
                   <label htmlFor="addr-district" className="eyebrow mb-1.5 block">
-                    City
+                    {territory.cityLabel}
                   </label>
                   <input
                     id="addr-district"
                     type="text"
                     className="input-control"
-                    placeholder="e.g. San Jose"
+                    placeholder={territory.cityExample}
                     value={form.district}
                     onChange={(e) => setForm({ ...form, district: e.target.value })}
                   />
                 </div>
-                <p className="text-xs leading-relaxed text-ink-muted">
-                  We don&apos;t deliver to {countryName(form.country)} yet — save the
-                  address now and it&apos;ll be ready the moment international shipping
-                  opens.
-                </p>
               </>
             )}
+
+            <p
+              className={`rounded-xl border px-4 py-3 text-xs font-semibold leading-relaxed ${
+                deliverableHere
+                  ? "border-state-success/40 bg-state-success/10 text-state-success"
+                  : "border-accent/40 bg-accent-soft text-state-warning-on"
+              }`}
+            >
+              {deliverableHere && !isIndia(form.country)
+                ? `✓ We deliver to ${countryName(form.country)} — quotes appear at checkout.`
+                : deliverableHere
+                ? "✓ Domestic delivery with pincode rates, GST invoicing and COD."
+                : `Delivery to ${countryName(form.country)} is coming soon — you can save the address now.`}
+            </p>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label htmlFor="addr-pincode" className="eyebrow mb-1.5 block">
-                  {isIndia(form.country) ? "Pincode" : "Postal code"}
+                  {territory.postalLabel}
                 </label>
                 <input
                   id="addr-pincode"
                   type="text"
                   className="input-control"
-                  placeholder={isIndia(form.country) ? "6-digit pincode" : "e.g. 95014"}
+                  placeholder={territory.postalExample}
                   value={form.pincode}
                   onChange={(e) => setForm({ ...form, pincode: e.target.value })}
                 />
@@ -283,7 +355,7 @@ function Addresses() {
                   id="addr-phone"
                   type="tel"
                   className="input-control"
-                  placeholder={isIndia(form.country) ? "10-digit mobile" : "+1 555 000 1234"}
+                  placeholder={territory.phoneExample}
                   value={form.phoneNumber}
                   onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })}
                 />

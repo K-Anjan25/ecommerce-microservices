@@ -41,6 +41,8 @@ import {
 import { showError } from "../../utils/showError";
 import { showSuccess } from "../../utils/showSuccess";
 import statesAndDistrict from "../../formdata.json";
+import { getTerritory } from "../../formdata/territories";
+import { countryLabel, flagEmoji } from "../../formdata/countries";
 import { COUNTRIES, countryName, isIndia } from "../../formdata/countries";
 import { useI18n } from "../../features/i18n";
 
@@ -501,6 +503,9 @@ function Checkout() {
     id: state.state_name,
   }));
 
+  // Country-specific address structure (divisions, labels, postal format).
+  const territory = getTerritory(addressCountry);
+
   const getDistricts = (stateName: string) =>
     statesAndDistrict
       .find((state: any) => state.state_name === stateName)
@@ -519,6 +524,21 @@ function Checkout() {
     if (savedFormData) form.setValues(JSON.parse(savedFormData));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Switching destination country resets the divisions: each country has its
+  // own territory list, labels and postal format, so stale values from the
+  // previous country would never validate.
+  const firstCountryRender = useRef(true);
+  useEffect(() => {
+    if (firstCountryRender.current) {
+      firstCountryRender.current = false;
+      return;
+    }
+    form.setFieldValue("state", getTerritory(addressCountry).defaultRegion ?? "");
+    form.setFieldValue("district", "");
+    form.setFieldValue("pincode", "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addressCountry]);
 
   useEffect(() => {
     sessionStorage.setItem("checkout_form", JSON.stringify(form.values));
@@ -656,10 +676,15 @@ function Checkout() {
                   className="flex w-full items-center justify-between gap-3 border border-line bg-canvas px-4 py-3 text-left transition hover:border-brand hover:bg-brand-tint"
                 >
                   <span className="min-w-0">
-                    <span className="block text-sm font-bold text-ink">Use saved address</span>
+                    <span className="block text-sm font-bold text-ink">
+                      Use saved address{" "}
+                      <span className="ml-1 font-normal text-ink-muted">
+                        {flagEmoji(defaultAddress.country)} {countryLabel(defaultAddress.country)}
+                      </span>
+                    </span>
                     <span className="block truncate text-xs text-ink-soft">
                       {defaultAddress.addressDetail}, {defaultAddress.district},{" "}
-                      {defaultAddress.state}
+                      {defaultAddress.state} {defaultAddress.pincode ? `· ${defaultAddress.pincode}` : ""}
                     </span>
                   </span>
                   <span className="shrink-0 text-xs font-bold text-brand">Apply</span>
@@ -670,7 +695,7 @@ function Checkout() {
                 name="country"
                 label="Country"
                 form={form}
-                data={COUNTRIES.map((c) => ({ name: c.name, id: c.code }))}
+                data={COUNTRIES.map((c) => ({ name: `${flagEmoji(c.code)} ${c.name}`, id: c.code }))}
               />
 
               {!domesticDelivery &&
@@ -692,30 +717,64 @@ function Checkout() {
                   </p>
                 ))}
 
+              {/* Divisions follow the destination country: Indian states cascade
+                  into districts, listed territories pick from the country's own
+                  first-level divisions, everything else is free text. */}
               {domesticDelivery ? (
                 <div className="grid gap-3 sm:grid-cols-2">
                   <SelectInput name="state" label="State" form={form} data={states} />
                   <SelectInput name="district" label="District" form={form} data={districts} />
                 </div>
+              ) : territory.regionHidden ? (
+                <TextInput
+                  name="district"
+                  label={territory.cityLabel}
+                  form={form}
+                  placeholder={territory.cityExample}
+                />
               ) : (
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <TextInput name="state" label="State / Province" form={form} />
-                  <TextInput name="district" label="City" form={form} />
+                  {territory.regions ? (
+                    <SelectInput
+                      name="state"
+                      label={territory.regionLabel}
+                      form={form}
+                      data={territory.regions.map((r) => ({ name: r, id: r }))}
+                    />
+                  ) : (
+                    <TextInput
+                      name="state"
+                      label={territory.regionLabel}
+                      form={form}
+                      placeholder={territory.cityExample}
+                    />
+                  )}
+                  <TextInput
+                    name="district"
+                    label={territory.cityLabel}
+                    form={form}
+                    placeholder={territory.cityExample}
+                  />
                 </div>
               )}
               <div className="grid gap-3 sm:grid-cols-2">
                 <TextInput
                   name="pincode"
-                  label={domesticDelivery ? "Delivery pincode" : "Postal code"}
+                  label={territory.postalLabel}
+                  placeholder={territory.postalExample}
                   form={form}
-                  inputProps={domesticDelivery ? { maxLength: 6, inputMode: "numeric" } : { maxLength: 10 }}
+                  inputProps={{
+                    maxLength: territory.postalMax ?? 10,
+                    inputMode: territory.postalNumeric ? "numeric" : "text",
+                  }}
                 />
                 <TextInput
                   name="phoneNumber"
                   label="Phone number (optional)"
                   form={form}
                   type="tel"
-                  inputProps={domesticDelivery ? { maxLength: 10, inputMode: "numeric" } : { maxLength: 15 }}
+                  placeholder={territory.phoneExample}
+                  inputProps={{ maxLength: 15, inputMode: "tel" }}
                 />
               </div>
               <TextInput

@@ -1,6 +1,6 @@
 import * as yup from "yup";
 import { OrderForm } from "../types/order";
-import { isIndia, POSTAL_CODE_RE } from "../formdata/countries";
+import { getTerritory, isValidPhone, isValidPostal } from "../formdata/territories";
 
 interface OrderFormOptions {
   /** Guest checkout: customerEmail is collected and required. */
@@ -14,27 +14,47 @@ const createOrderForm = (options: OrderFormOptions = {}) => {
 
   const validationSchema = yup.object({
     country: yup.string().required("country is required"),
-    state: yup.string().required("state is required"),
-    district: yup.string().required("district is required"),
+    // First-level division: required except for city-states (Singapore),
+    // where the field isn't rendered and the default is stored instead.
+    state: yup
+      .string()
+      .test("state", "region is required", function (value) {
+        if (getTerritory(this.parent.country).regionHidden) return true;
+        return Boolean(value && value.trim());
+      }),
+    district: yup.string().required("city is required"),
     addressDetail: yup.string().required("addressDetail is required"),
     pincode: requirePincode
-      ? yup
-          .string()
-          .when("country", {
-            is: (country: string) => isIndia(country),
-            then: (schema) =>
-              schema.matches(/^\d{6}$/, "Enter a valid 6-digit pincode").required("pincode is required"),
-            otherwise: (schema) =>
-              schema.matches(POSTAL_CODE_RE, "Enter a valid postal code").required("postal code is required"),
-          })
+      ? yup.string().test("postal", "", function (value) {
+          const territory = getTerritory(this.parent.country);
+          const trimmed = (value ?? "").trim();
+          if (!trimmed) {
+            // Countries without universal post codes don't require it.
+            return territory.postalRegex
+              ? this.createError({
+                  message: `Enter a valid ${territory.postalLabel.toLowerCase()}`,
+                })
+              : true;
+          }
+          if (!isValidPostal(this.parent.country, trimmed)) {
+            return this.createError({
+              message: `Enter a valid ${territory.postalLabel.replace(" (optional)", "").toLowerCase()}`,
+            });
+          }
+          return true;
+        })
       : yup.string(),
     phoneNumber: yup
       .string()
-      .when("country", {
-        is: (country: string) => isIndia(country),
-        then: (schema) => schema.matches(/^$|^[6-9]\d{9}$/, "Enter a valid 10-digit mobile number"),
-        otherwise: (schema) =>
-          schema.matches(/^$|^[+]?[\d\s-]{7,15}$/, "Enter a valid contact number"),
+      .test("phone", "", function (value) {
+        const trimmed = (value ?? "").trim();
+        if (!trimmed) return true; // phone stays optional
+        if (!isValidPhone(this.parent.country, trimmed)) {
+          return this.createError({
+            message: `Enter a valid ${getTerritory(this.parent.country).phoneExample.toLowerCase()}`,
+          });
+        }
+        return true;
       })
       .nullable(),
     // Only require an email for guest checkout — the field is not rendered

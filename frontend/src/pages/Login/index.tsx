@@ -14,7 +14,7 @@ import { showError } from "../../utils/showError";
 import { setToken } from "../../utils/token";
 import { UserApi, PhoneOtpSent } from "../../api/userApi";
 import { Login } from "../../types/user";
-import { COUNTRIES } from "../../formdata/countries";
+import { COUNTRIES, flagEmoji } from "../../formdata/countries";
 import { isValidLocalNumber, toE164 } from "../../utils/phone";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -156,6 +156,7 @@ function Login() {
     >
       {COUNTRIES.map((c) => (
         <MenuItem key={c.code} value={c.dial}>
+          {flagEmoji(c.code)}&nbsp;
           <span className="text-sm font-semibold">{c.dial}</span>
           <span className="ml-2 text-xs text-ink-muted">{c.code}</span>
         </MenuItem>
@@ -256,7 +257,10 @@ function Login() {
         <div className="mt-8 space-y-5">
           <Typography className="text-sm text-ink-soft">
             Enter the 6-digit code we sent to{" "}
-            <span className="font-bold text-ink">{phone}</span>.{" "}
+            <span className="font-bold text-ink">
+              {flagEmoji(COUNTRIES.find((c) => c.dial === dial)?.code)} {phone}
+            </span>
+            .{" "}
             <button type="button" onClick={resetPhoneFlow} className="font-semibold text-brand hover:underline">
               Change number
             </button>

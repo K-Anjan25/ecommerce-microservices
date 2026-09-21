@@ -16,6 +16,27 @@ export interface IntlQuote {
   dutyName: string;
 }
 
+// Shape returned by the backend (countries is a CSV string there).
+export interface ShippingZone {
+  id?: string;
+  name: string;
+  countries: string;
+  cost: number;
+  freeAbove?: number;
+  estimatedDaysMin: number;
+  estimatedDaysMax: number;
+  carrier: string;
+  dutyRate: number;
+  dutyName: string;
+  active: boolean;
+}
+
+// GET /v1/shipping/zones — every configured zone (active and inactive).
+const getZones = async () => {
+  const { data } = await api.get<ShippingZone[]>("/v1/shipping/zones");
+  return data ?? [];
+};
+
 const quoteInternational = async (country: string, subtotal: number) => {
   const { data } = await api.post<IntlQuote>("/v1/shipping/zones/quote", {
     country,
@@ -70,6 +91,7 @@ const deleteRate = async (id: string) => {
 export const ShippingApi = {
   calculateShipping,
   quoteInternational,
+  getZones,
   getTaxRule,
   getRates,
   createRate,

@@ -11,7 +11,7 @@ import { RegisterForm } from "../../types/user";
 import { api } from "../../api/client";
 import { useState } from "react";
 import { showError } from "../../utils/showError";
-import { COUNTRIES } from "../../formdata/countries";
+import { COUNTRIES, flagEmoji } from "../../formdata/countries";
 import { isValidLocalNumber, toE164 } from "../../utils/phone";
 
 function Register() {
@@ -73,6 +73,7 @@ function Register() {
             >
               {COUNTRIES.map((c) => (
                 <MenuItem key={c.code} value={c.dial}>
+                  {flagEmoji(c.code)}&nbsp;
                   <span className="text-sm font-semibold">{c.dial}</span>
                   <span className="ml-2 text-xs text-ink-muted">{c.code}</span>
                 </MenuItem>
