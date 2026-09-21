@@ -126,7 +126,7 @@ const PRODUCTS = NAMES.map((name, i) => {
 });
 
 /* ── orders (so the order screens can be reviewed too) ──────────────────── */
-const ORDER_STATUSES = ["APPROVED", "PAID", "PENDING"];
+const ORDER_STATUSES = ["SHIPPED", "APPROVED", "PAID", "PENDING"];
 const ORDERS = ORDER_STATUSES.map((status, i) => {
   const items = PRODUCTS.slice(i * 2, i * 2 + 2 + i).map((p) => ({
     productId: p.id,
@@ -158,6 +158,9 @@ const ORDERS = ORDER_STATUSES.map((status, i) => {
     shippingMethod: i === 1 ? "EXPRESS" : "STANDARD",
     giftWrap: i === 0,
     giftWrapFee: i === 0 ? 50 : 0,
+    ...(status === "SHIPPED"
+      ? { awb: "DLV-8492135770", carrierName: "Delhivery" }
+      : {}),
   };
 });
 
@@ -169,10 +172,12 @@ const COMMENTS = [
     createdDate: new Date(Date.now() - 3 * 86400000).toISOString(),
     text: "Beautifully made and it arrived exactly as pictured. The materials feel far better than the price suggests.",
     rating: 5,
+    verifiedPurchase: true,
   },
   {
     id: "cmt-2",
     productId: "p-1",
+    verifiedPurchase: false,
     creator: "Sana K.",
     createdDate: new Date(Date.now() - 9 * 86400000).toISOString(),
     text: "Lovely finish and quick dispatch. Would happily buy from this collection again.",
@@ -221,6 +226,38 @@ const SUPPORT_TICKETS = [];
 /* In-memory phone OTP state for the preview session. */
 const PHONE_OTPS = new Map(); // phone → { code, expiresAt }
 const REGISTERED_PHONES = new Set(["+919876543210"]);
+
+/* Saved addresses for the preview session (mutable across POSTs). */
+const ADDRESSES = [
+  {
+    id: "addr-1",
+    state: "Telangana",
+    district: "Hyderabad",
+    addressDetail: "12 Rose Lane, Uppal",
+    country: "IN",
+    pincode: "500039",
+    phoneNumber: "9876543210",
+    defaultAddress: true,
+  },
+  {
+    id: "addr-2",
+    state: "Karnataka",
+    district: "Bengaluru Urban",
+    addressDetail: "8 Curie Road, Indiranagar",
+    country: "IN",
+    pincode: "560038",
+    defaultAddress: false,
+  },
+  {
+    id: "addr-3",
+    state: "California",
+    district: "San Jose",
+    addressDetail: "221 Bounty St, Apt 5",
+    country: "US",
+    pincode: "95014",
+    defaultAddress: false,
+  },
+];
 
 /* Mirrors commerce-service ShippingZoneSeeder (Zone 1). */
 const INTERNATIONAL_ZONE = {
@@ -553,6 +590,7 @@ createServer((req, res) => {
           createdDate: new Date().toISOString(),
           text: body.text,
           rating: body.rating ?? undefined,
+          verifiedPurchase: true,
         };
         COMMENTS.unshift(comment);
         json(res, comment, 201);
@@ -698,6 +736,20 @@ createServer((req, res) => {
   if (p === "/v1/orders/my") return json(res, ORDERS);
   if (p === "/v1/orders")
     return json(res, { data: ORDERS, totalSize: ORDERS.length, totalPage: 1 });
+  if (/^\/v1\/orders\/[^/]+\/shipment$/.test(p) && req.method === "PUT") {
+    return readBody(req, (body) => {
+      const oid = p.split("/")[3];
+      const found = ORDERS.find((o) => o.id === oid);
+      if (!found) return json(res, { message: "not found" }, 404);
+      if (!body.awb || !String(body.awb).trim()) {
+        return json(res, { message: "AWB / tracking number is required" }, 400);
+      }
+      found.awb = String(body.awb).trim();
+      if (body.carrierName) found.carrierName = String(body.carrierName).trim();
+      found.orderStatus = "SHIPPED";
+      json(res, found);
+    });
+  }
   if (/^\/v1\/orders\/[^/]+\/status$/.test(p) && req.method === "PUT") {
     const oid = p.split("/")[3];
     const status = q.get("status");
@@ -711,10 +763,27 @@ createServer((req, res) => {
   if (/^\/v1\/orders\/[^/]+\/track$/.test(p) && req.method === "GET") {
     const oid = p.split("/")[3];
     const found = ORDERS.find((o) => o.id === oid);
-    return json(res, [
-      { id: "trk-1", orderId: oid, status: "PENDING", note: "Order placed", changedAt: found?.createdDate ?? new Date().toISOString() },
-      ...(found?.orderStatus !== "PENDING" ? [{ id: "trk-2", orderId: oid, status: found?.orderStatus ?? "PAID", note: `Order ${found?.orderStatus?.toLowerCase()}`, changedAt: new Date().toISOString() }] : []),
-    ]);
+    const LIFECYCLE = [
+      ["PENDING", "Order placed"],
+      ["PAID", "Payment captured"],
+      ["APPROVED", "Confirmed for fulfillment"],
+      ["SHIPPED", found?.awb ? `Shipped via ${found.carrierName} · AWB ${found.awb}` : "Shipped"],
+      ["OUT_FOR_DELIVERY", "Arriving today"],
+      ["DELIVERED", "Delivered"],
+    ];
+    const reached = found ? LIFECYCLE.findIndex(([s]) => s === found.orderStatus) : 0;
+    const step = Math.max(reached, 0);
+    const history = LIFECYCLE.slice(0, step + 1).map(([status, note], i) => ({
+      id: `trk-${i + 1}`,
+      orderId: oid,
+      status,
+      note,
+      changedAt: new Date(
+        (found?.createdDate ? new Date(found.createdDate).getTime() : Date.now())
+        + i * 20 * 3600 * 1000
+      ).toISOString(),
+    }));
+    return json(res, history);
   }
   if (/^\/v1\/orders\/[^/]+\/invoice$/.test(p))
     return json(res, { message: "mock: invoices are not generated in the preview" }, 501);
@@ -752,48 +821,30 @@ createServer((req, res) => {
   if (p.startsWith("/user/referral/validate/"))
     return json(res, p.split("/").pop() === "CARTLY7X4K2");
 
-  if (p === "/v1/addresses")
-    return json(res, [
-      {
-        id: "addr-1",
-        state: "Telangana",
-        district: "Hyderabad",
-        addressDetail: "12 Rose Lane, Uppal",
-        country: "IN",
-        pincode: "500039",
-        phoneNumber: "9876543210",
-        defaultAddress: true,
-      },
-      {
-        id: "addr-2",
-        state: "Karnataka",
-        district: "Bengaluru Urban",
-        addressDetail: "8 Curie Road, Indiranagar",
-        country: "IN",
-        pincode: "560038",
-        defaultAddress: false,
-      },
-      {
-        id: "addr-3",
-        state: "California",
-        district: "San Jose",
-        addressDetail: "221 Bounty St, Apt 5",
-        country: "US",
-        pincode: "95014",
-        defaultAddress: false,
-      },
-    ]);
-  if (p === "/v1/addresses/default")
-    return json(res, {
-      id: "addr-1",
-      state: "Telangana",
-      district: "Hyderabad",
-      addressDetail: "12 Rose Lane, Uppal",
-      country: "IN",
-      pincode: "500039",
-      phoneNumber: "9876543210",
-      defaultAddress: true,
+  if (p === "/v1/addresses" && req.method === "POST") {
+    return readBody(req, (body) => {
+      const created = {
+        id: `addr-${Date.now()}`,
+        state: body.state ?? "",
+        district: body.district ?? "",
+        addressDetail: body.addressDetail ?? "",
+        country: body.country ?? "IN",
+        pincode: body.pincode ?? "",
+        phoneNumber: body.phoneNumber ?? "",
+        defaultAddress: Boolean(body.defaultAddress),
+      };
+      if (created.defaultAddress) {
+        ADDRESSES.forEach((a) => (a.defaultAddress = false));
+      }
+      ADDRESSES.unshift(created);
+      json(res, created, 201);
     });
+  }
+  if (p === "/v1/addresses")
+    return json(res, ADDRESSES);
+
+  if (p === "/v1/addresses/default")
+    return json(res, ADDRESSES.find((a) => a.defaultAddress) ?? ADDRESSES[0]);
 
   if (p === "/v1/coupons") return json(res, []);
 

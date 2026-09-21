@@ -13,6 +13,7 @@ public class CommentMapper {
                 .text(comment.getText())
                 .creator(comment.getCreator())
                 .rating(comment.getRating())
+                .verifiedPurchase(comment.isVerifiedPurchase())
                 .build();
     }
 }

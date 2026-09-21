@@ -9,6 +9,9 @@ export interface Order {
   address: OrderAdress;
   items: OrderItem[];
   orderStatus: OrderStatus;
+  /** Carrier waybill / tracking number once shipped. */
+  awb?: string;
+  carrierName?: string;
   createdDate: string;
   totalAmount: number;
   discountAmount?: number;
@@ -58,6 +61,9 @@ enum OrderStatus {
   PENDING = "PENDING",
   PAID = "PAID",
   APPROVED = "APPROVED",
+  SHIPPED = "SHIPPED",
+  OUT_FOR_DELIVERY = "OUT_FOR_DELIVERY",
+  DELIVERED = "DELIVERED",
   CANCELLING = "CANCELLING",
   CANCELLED = "CANCELLED",
   REFUNDED = "REFUNDED",

@@ -71,6 +71,14 @@ public class Order extends AdvanceBaseModal {
     @Column(precision = 19, scale = 2)
     private BigDecimal giftCardAmount;
 
+    /** Carrier waybill / tracking number once the order ships. */
+    @Column(length = 40)
+    private String awb;
+
+    /** Courier carrying the shipment, e.g. DHL Express / Delhivery. */
+    @Column(name = "carrier_name", length = 60)
+    private String carrierName;
+
     @Column(precision = 19, scale = 2)
     private BigDecimal giftCardRefundedAmount;
 

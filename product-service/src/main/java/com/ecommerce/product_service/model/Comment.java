@@ -27,4 +27,12 @@ public class Comment extends AdvanceBaseModal {
     private Product product;
 
     private String creator;
+
+    /** Author's user id (server-derived from the gateway identity header). */
+    @Column(name = "user_id")
+    private java.util.UUID userId;
+
+    /** True when commerce-service confirms an active order for this user+product. */
+    @Column(name = "verified_purchase", nullable = false)
+    private boolean verifiedPurchase = false;
 }

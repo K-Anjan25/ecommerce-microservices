@@ -34,7 +34,15 @@ import { formatPrice } from "../../../utils/cart";
 import { formatDate } from "../../../utils/date";
 
 /** Happy-path progression shown as a timeline; cancelled/refunded fall back. */
-const FLOW = ["PENDING", "PAID", "APPROVED"];
+const FLOW = ["PENDING", "PAID", "APPROVED", "SHIPPED", "OUT_FOR_DELIVERY", "DELIVERED"];
+const FLOW_LABELS: Record<string, string> = {
+  PENDING: "Placed",
+  PAID: "Paid",
+  APPROVED: "Confirmed",
+  SHIPPED: "Shipped",
+  OUT_FOR_DELIVERY: "Out for delivery",
+  DELIVERED: "Delivered",
+};
 
 function UserOrderDetail() {
   const { orderId } = useParams();
@@ -171,6 +179,7 @@ function UserOrderDetail() {
 
   const currentStep = FLOW.indexOf(order.orderStatus);
   const terminal = ["CANCELLED", "REFUNDED"].includes(order.orderStatus);
+  const shipped = Boolean(order.awb);
 
   return (
     <div className="page-shell space-y-6">
@@ -215,6 +224,19 @@ function UserOrderDetail() {
           <p className="eyebrow">Status</p>
           <StatusPill value={order.orderStatus} />
         </div>
+        {shipped && (
+          <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-1 rounded-xl border border-line bg-canvas px-4 py-3">
+            <span className="text-sm font-bold text-ink">
+              {order.carrierName ?? "Courier"} shipment
+            </span>
+            <span className="text-xs text-ink-soft">
+              AWB / tracking number:{" "}
+              <span className="font-heading font-extrabold tracking-wide text-ink">
+                {order.awb}
+              </span>
+            </span>
+          </div>
+        )}
         {terminal ? (
           <p className="text-sm text-ink-soft">
             This order was {order.orderStatus.toLowerCase()}. Any refund is issued to the
@@ -222,7 +244,7 @@ function UserOrderDetail() {
           </p>
         ) : (
           <ol className="flex items-center gap-2">
-            {["Placed", "Paid", "Approved", "Delivered"].map((label, i) => {
+            {FLOW.map((status) => FLOW_LABELS[status]).map((label, i) => {
               const done = i <= currentStep;
               return (
                 <li key={label} className="flex flex-1 items-center gap-2">
@@ -238,7 +260,7 @@ function UserOrderDetail() {
                       {label}
                     </span>
                   </span>
-                  {i < 3 && (
+                  {i < FLOW.length - 1 && (
                     <span
                       className={`mb-5 h-px flex-1 ${i < currentStep ? "bg-action" : "bg-line"}`}
                     />

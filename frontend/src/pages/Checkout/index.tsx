@@ -42,6 +42,8 @@ import { showError } from "../../utils/showError";
 import { showSuccess } from "../../utils/showSuccess";
 import statesAndDistrict from "../../formdata.json";
 import { getTerritory } from "../../formdata/territories";
+import AddressFormDialog from "../../components/AddressFormDialog";
+import AddIcon from "@mui/icons-material/Add";
 import Flag from "../../components/Flag";
 import { CITY_OPTIONS, CITY_OTHER } from "../../formdata/cities";
 import { COUNTRIES, countryName, isIndia } from "../../formdata/countries";
@@ -199,6 +201,12 @@ function Checkout() {
   const subtotal = Number(calculateTotalPriceOfCartItems(items));
   const itemCount = calculateCountOfCartItems(items);
 
+  const { data: savedAddresses } = useQuery("savedAddresses", AddressApi.getSavedAddresses, {
+    enabled: isLoggedIn,
+    retry: false,
+  });
+  const [addressDialogOpen, setAddressDialogOpen] = useState(false);
+  const [appliedAddressId, setAppliedAddressId] = useState<string | null>(null);
   const { data: defaultAddress } = useQuery("defaultAddress", AddressApi.getDefaultAddress, {
     enabled: isLoggedIn,
     retry: false,
@@ -209,6 +217,7 @@ function Checkout() {
   });
 
   const applyAddress = (address: SavedAddress) => {
+    setAppliedAddressId(address.id);
     const country = address.country ?? "IN";
     form.setValues({
       ...form.values,
@@ -733,26 +742,57 @@ function Checkout() {
                 />
               )}
 
-              {defaultAddress && (
+              {/* Amazon-style address picker: every saved address, add new. */}
+              {isLoggedIn && (savedAddresses?.length ?? 0) > 0 && (
+                <div className="space-y-2">
+                  {savedAddresses!.map((addr) => (
+                    <button
+                      key={addr.id}
+                      type="button"
+                      onClick={() => applyAddress(addr)}
+                      className={`flex w-full items-center justify-between gap-3 border px-4 py-3 text-left transition ${
+                        appliedAddressId === addr.id
+                          ? "border-brand bg-brand-tint"
+                          : "border-line bg-canvas hover:border-brand"
+                      }`}
+                    >
+                      <span className="flex min-w-0 items-center gap-3">
+                        <Flag code={addr.country} size={18} />
+                        <span className="min-w-0">
+                          <span className="block text-sm font-bold text-ink">
+                            {addr.addressDetail}
+                            {addr.defaultAddress && (
+                              <span className="ml-2 rounded-full bg-brand px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-wide text-white">
+                                Default
+                              </span>
+                            )}
+                          </span>
+                          <span className="block truncate text-xs text-ink-soft">
+                            {addr.district}, {addr.state}
+                            {addr.pincode ? ` · ${addr.pincode}` : ""}
+                          </span>
+                        </span>
+                      </span>
+                      <span
+                        className={`shrink-0 text-xs font-bold ${
+                          appliedAddressId === addr.id ? "text-brand" : "text-ink-muted"
+                        }`}
+                      >
+                        {appliedAddressId === addr.id ? "✓ Applied" : "Apply"}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {isLoggedIn && (
                 <button
                   type="button"
-                  onClick={() => applyAddress(defaultAddress)}
-                  className="flex w-full items-center justify-between gap-3 border border-line bg-canvas px-4 py-3 text-left transition hover:border-brand hover:bg-brand-tint"
+                  onClick={() => setAddressDialogOpen(true)}
+                  className="flex w-full items-center justify-center gap-1.5 border border-dashed border-line px-4 py-3 text-sm font-bold text-brand transition hover:border-brand hover:bg-brand-tint"
                 >
-                  <span className="min-w-0">
-                    <span className="flex items-center gap-1.5 text-sm font-bold text-ink">
-                      Use saved address
-                      <Flag code={defaultAddress.country} size={15} />
-                      <span className="font-normal text-ink-muted">
-                        {countryName(defaultAddress.country)}
-                      </span>
-                    </span>
-                    <span className="block truncate text-xs text-ink-soft">
-                      {defaultAddress.addressDetail}, {defaultAddress.district},{" "}
-                      {defaultAddress.state} {defaultAddress.pincode ? `· ${defaultAddress.pincode}` : ""}
-                    </span>
-                  </span>
-                  <span className="shrink-0 text-xs font-bold text-brand">Apply</span>
+                  <AddIcon sx={{ fontSize: 16 }} />
+                  Add a new address
                 </button>
               )}
 
@@ -1074,6 +1114,13 @@ function Checkout() {
         </aside>
       </div>
 
+      <AddressFormDialog
+        open={addressDialogOpen}
+        onClose={() => setAddressDialogOpen(false)}
+        onSaved={(created) => {
+          applyAddress(created);
+        }}
+      />
       {/* ══ mobile sticky pay bar ═════════════════════════════════════ */}
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper/95 p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-md lg:hidden">
         <div className="mx-auto flex max-w-container items-center gap-3">

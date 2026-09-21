@@ -20,7 +20,14 @@ function Comment({ comment }: CommentProps) {
         </Avatar>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-            <p className="font-semibold text-ink">{comment?.creator}</p>
+            <p className="flex flex-wrap items-center gap-2 font-semibold text-ink">
+              {comment?.creator}
+              {comment?.verifiedPurchase && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-state-success-soft px-2 py-0.5 text-[0.625rem] font-bold uppercase tracking-wide text-state-success-on">
+                  ✓ Verified purchase
+                </span>
+              )}
+            </p>
             <p className="text-xs text-ink-muted">
               {formatDate(comment?.createdDate)}
             </p>
