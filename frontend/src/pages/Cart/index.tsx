@@ -245,7 +245,7 @@ function Cart() {
         {/* ── sticky summary ─────────────────────────────────────── */}
         <aside className="lg:sticky lg:top-24 lg:h-fit">
           <div className="border-t border-ink py-5">
-            <h2 className="font-display text-2xl font-normal">Order summary</h2>
+            <h2 className="font-heading text-xl font-extrabold tracking-tight">Order summary</h2>
 
             <dl className="mt-4 space-y-2.5 text-sm">
               <div className="flex justify-between">
@@ -266,7 +266,7 @@ function Cart() {
 
             <div className="mt-4 flex items-baseline justify-between border-t border-line pt-4">
               <span className="font-medium">Total so far</span>
-              <span className="font-display text-2xl">{formatPrice(subtotal)}</span>
+              <span className="font-heading text-2xl font-extrabold">{formatPrice(subtotal)}</span>
             </div>
 
             <button onClick={() => navigate("/checkout")} className="primary-button mt-5 w-full !py-3">

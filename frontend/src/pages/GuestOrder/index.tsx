@@ -88,7 +88,7 @@ function GuestOrder() {
         <p className="eyebrow">Private guest tracking</p>
         <div className="mt-2 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
-            <h1 className="font-display text-4xl font-normal text-ink sm:text-5xl">Order #{order.id.slice(0, 8)}</h1>
+            <h1 className="font-heading text-3xl font-black tracking-tight text-ink sm:text-4xl">Order #{order.id.slice(0, 8)}</h1>
             <p className="mt-2 text-sm text-ink-muted">Placed {formatDate(order.createdDate)}</p>
           </div>
           <div className="flex items-center gap-3">
@@ -112,7 +112,7 @@ function GuestOrder() {
           <section className="border-t border-line">
             <div className="flex items-center gap-2 py-5">
               <Inventory2OutlinedIcon sx={{ fontSize: 18 }} className="text-ink-muted" />
-              <h2 className="font-display text-2xl">Items</h2>
+              <h2 className="font-heading text-2xl font-extrabold">Items</h2>
             </div>
             <ul className="divide-y divide-line border-y border-line">
               {order.items.map((item) => (
@@ -126,7 +126,7 @@ function GuestOrder() {
 
           {tracking.length > 0 && (
             <section className="border-t border-line py-5">
-              <h2 className="mb-4 font-display text-2xl">Order activity &amp; timeline</h2>
+              <h2 className="mb-4 font-heading text-2xl font-extrabold">Order activity &amp; timeline</h2>
               <ol className="relative ml-2 space-y-3 border-l border-line pl-4">
                 {tracking.map((evt: any, idx: number) => (
                   <li key={evt.id || idx} className="relative">
@@ -147,7 +147,7 @@ function GuestOrder() {
 
         <aside className="space-y-7">
           <section className="border-t border-ink py-5">
-            <h2 className="font-display text-2xl">Order total</h2>
+            <h2 className="font-heading text-2xl font-extrabold">Order total</h2>
             <dl className="mt-4 space-y-2.5 text-sm">
               <div className="flex justify-between"><dt className="text-ink-muted">Shipping</dt><dd>{order.shippingAmount ? formatPrice(order.shippingAmount) : "Free"}</dd></div>
               <div className="flex justify-between"><dt className="text-ink-muted">Tax</dt><dd>{formatPrice(order.taxAmount ?? 0)}</dd></div>
@@ -156,7 +156,7 @@ function GuestOrder() {
             </dl>
           </section>
           <section className="border-t border-line py-5">
-            <h2 className="flex items-center gap-2 font-display text-xl"><PlaceOutlinedIcon sx={{ fontSize: 17 }} />Delivery address</h2>
+            <h2 className="flex items-center gap-2 font-heading text-lg font-bold"><PlaceOutlinedIcon sx={{ fontSize: 17 }} />Delivery address</h2>
             <p className="mt-3 text-sm leading-relaxed text-ink-soft">
               {order.address.addressDetail}<br />{order.address.district}, {order.address.state}
             </p>

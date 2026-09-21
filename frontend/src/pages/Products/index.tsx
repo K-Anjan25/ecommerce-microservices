@@ -390,18 +390,22 @@ function Products() {
           <div className="relative overflow-hidden rounded-2xl bg-paper p-6 sm:p-8 shadow-sm border border-line lg:col-span-2 xl:col-span-2">
             <div className="grid h-full items-center gap-4 sm:grid-cols-[1.1fr_0.9fr]">
               <div>
+                {storeSettings.heroEyebrow && (
+                  <p className="eyebrow !text-accent mb-2">{storeSettings.heroEyebrow}</p>
+                )}
                 <h1 className="font-heading text-3xl sm:text-5xl font-black tracking-tight text-ink leading-tight">
-                  EXPLORE. SHOP.
+                  {storeSettings.heroTitle || "EXPLORE. SHOP."}
                 </h1>
                 <p className="mt-3 max-w-sm text-xs sm:text-sm font-medium text-ink-soft leading-relaxed">
-                  One modern multi-category marketplace for high quality tech, home &amp; everyday essentials.
+                  {storeSettings.heroDescription ||
+                    "One modern multi-category marketplace for high quality tech, home & everyday essentials."}
                 </p>
                 <div className="mt-6">
                   <button
                     onClick={() => resultsRef.current?.scrollIntoView({ behavior: "smooth" })}
                     className="rounded-full bg-brand px-6 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-brand-dark"
                   >
-                    Shop Now
+                    {storeSettings.primaryCtaLabel || "Shop Now"}
                   </button>
                 </div>
               </div>

@@ -64,7 +64,7 @@ function Account() {
         <div className="mb-8 flex items-start gap-3 border-b border-line pb-6">
           <LockResetOutlinedIcon className="mt-0.5 !text-brand" />
           <div>
-            <p className="font-display text-2xl text-ink">Change password</p>
+            <p className="font-heading text-2xl font-extrabold text-ink">Change password</p>
             <p className="mt-1 text-sm text-ink-soft">
               You will need to sign in again after changing your password.
             </p>

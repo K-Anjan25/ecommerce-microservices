@@ -26,7 +26,7 @@ function Product() {
 
   const metadata = React.useMemo(() => {
     const cover = product?.images?.[0] || product?.imageUrl;
-    const description = product?.description?.slice(0, 160) || "Discover considered products selected by Cartly.";
+    const description = product?.description?.slice(0, 160) || "Discover top-quality products across every category on Cartly.";
     const rating = product?.ratingCount
       ? { "@type": "AggregateRating", ratingValue: product.avgRating ?? 0, reviewCount: product.ratingCount }
       : undefined;

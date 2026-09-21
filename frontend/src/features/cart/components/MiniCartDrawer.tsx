@@ -45,7 +45,7 @@ export default function MiniCartDrawer({ open, onClose }: Props) {
       <div className="flex h-full flex-col">
         <header className="flex h-[4.5rem] items-center justify-between border-b border-line px-5 sm:px-7">
           <div>
-            <p className="font-display text-2xl text-ink">{t("cart.label")}</p>
+            <p className="font-heading text-xl font-extrabold tracking-tight text-ink">{t("cart.label")}</p>
             <p className="text-[0.6875rem] uppercase tracking-[0.12em] text-ink-muted">
               {count} item{count === 1 ? "" : "s"}
             </p>
@@ -58,9 +58,9 @@ export default function MiniCartDrawer({ open, onClose }: Props) {
         {items.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center px-8 text-center">
             <ShoppingBagOutlinedIcon sx={{ fontSize: 40 }} className="text-ink-faint" />
-            <p className="mt-5 font-display text-3xl text-ink">{t("cart.empty")}</p>
+            <p className="mt-5 font-heading text-2xl font-extrabold tracking-tight text-ink">{t("cart.empty")}</p>
             <p className="mt-2 max-w-xs text-sm leading-relaxed text-ink-muted">
-              Discover considered pieces selected for everyday life.
+              Discover top picks across tech, home, fashion and more.
             </p>
             <button onClick={() => go("/")} className="primary-button mt-6">
               {t("cart.explore")}
@@ -91,7 +91,7 @@ export default function MiniCartDrawer({ open, onClose }: Props) {
                         <span className="block text-[0.625rem] font-semibold uppercase tracking-[0.12em] text-ink-muted">
                           {item.product.brand || "Cartly"}
                         </span>
-                        <span className="mt-1 block line-clamp-2 font-display text-xl leading-tight text-ink">
+                        <span className="mt-1 block line-clamp-2 font-heading text-lg font-bold leading-tight text-ink">
                           {item.product.name}
                         </span>
                       </button>
@@ -124,7 +124,7 @@ export default function MiniCartDrawer({ open, onClose }: Props) {
                             <AddIcon sx={{ fontSize: 14 }} />
                           </button>
                         </div>
-                        <span className="font-display text-lg text-ink">
+                        <span className="font-heading text-lg font-bold text-ink">
                           {formatPrice(unitPrice * item.quantity)}
                         </span>
                       </div>
@@ -137,7 +137,7 @@ export default function MiniCartDrawer({ open, onClose }: Props) {
             <footer className="border-t border-ink bg-paper px-5 py-5 sm:px-7">
               <div className="flex items-baseline justify-between">
                 <span className="text-sm text-ink-soft">{t("cart.subtotal")}</span>
-                <span className="font-display text-3xl text-ink">{formatPrice(subtotal)}</span>
+                <span className="font-heading text-2xl font-extrabold tracking-tight text-ink">{formatPrice(subtotal)}</span>
               </div>
               <p className="mt-1 text-xs text-ink-muted">Shipping, tax and discounts are confirmed at checkout.</p>
               <button onClick={() => go("/checkout")} className="primary-button mt-5 w-full !py-3">

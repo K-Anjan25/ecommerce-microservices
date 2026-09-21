@@ -135,7 +135,7 @@ function Addresses() {
                       Default
                     </span>
                   )}
-                  <p className="font-display text-xl leading-snug text-ink">
+                  <p className="font-heading text-lg font-bold leading-snug text-ink">
                     {addr.addressDetail}
                   </p>
                   <p className="mt-1 text-sm text-ink-soft">
@@ -158,7 +158,7 @@ function Addresses() {
       )}
 
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="xs" fullWidth>
-        <DialogTitle className="!font-display !text-2xl !font-normal">Add a new address</DialogTitle>
+        <DialogTitle className="!font-heading !text-xl !font-extrabold !tracking-tight">Add a new address</DialogTitle>
         <DialogContent dividers>
           <div className="space-y-4 py-1">
             <FormControl fullWidth size="small">

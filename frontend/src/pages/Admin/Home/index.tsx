@@ -138,7 +138,7 @@ function Home() {
               {kpi.icon}
             </Box>
             <Typography className="text-sm text-ink-soft">{kpi.label}</Typography>
-            <Typography className="mt-1 !font-display !text-3xl !text-ink">
+            <Typography className="mt-1 !font-heading !text-3xl !text-ink">
               {kpi.value}
             </Typography>
             <Typography variant="caption" className="text-ink-soft">
@@ -151,7 +151,7 @@ function Home() {
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
         <Box className="border-t border-ink py-6">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <Typography className="!font-display !text-2xl !text-ink">
+            <Typography className="!font-heading !text-2xl !text-ink">
               Revenue · last {activeWindow} day{activeWindow === 1 ? "" : "s"}
             </Typography>
             <div className="flex items-center gap-1">
@@ -207,7 +207,7 @@ function Home() {
         </Box>
 
         <Box className="border-t border-ink py-6">
-          <Typography className="mb-4 !font-display !text-2xl !text-ink">
+          <Typography className="mb-4 !font-heading !text-2xl !text-ink">
             Orders by status
           </Typography>
           <div className="flex flex-wrap gap-2">
@@ -225,7 +225,7 @@ function Home() {
             )}
           </div>
           <Divider className="my-4" />
-          <Typography className="mb-2 !font-display !text-lg !text-ink">
+          <Typography className="mb-2 !font-heading !text-lg !text-ink">
             Top categories · {activeWindow}d
           </Typography>
           {(stats?.topCategories ?? []).length === 0 ? (
@@ -281,7 +281,7 @@ function Home() {
       </div>
 
       <Box className="border-t border-ink py-6">
-        <Typography className="mb-4 !font-display !text-2xl !text-ink">
+        <Typography className="mb-4 !font-heading !text-2xl !text-ink">
           Top products by revenue
         </Typography>
         {(stats?.topProducts ?? []).length === 0 ? (

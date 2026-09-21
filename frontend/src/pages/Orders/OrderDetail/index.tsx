@@ -274,7 +274,7 @@ function UserOrderDetail() {
         <div className="space-y-4">
           <section className="border-t border-ink">
             <div className="border-b border-line py-4">
-              <h2 className="font-display text-2xl font-normal">
+              <h2 className="font-heading text-xl font-extrabold tracking-tight">
                 Items · {order.items.length}
               </h2>
             </div>
@@ -308,7 +308,7 @@ function UserOrderDetail() {
 
                     <div className="flex min-w-0 flex-1 flex-wrap items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="truncate font-display text-xl text-ink">
+                        <p className="truncate font-heading text-lg font-bold text-ink">
                           {nameOf(item.productId)}
                         </p>
                         <p className="mt-0.5 text-xs text-ink-muted">
@@ -348,7 +348,7 @@ function UserOrderDetail() {
 
           {productReturns.length > 0 && (
             <section className="border-t border-ink py-5">
-              <h2 className="mb-4 font-display text-2xl font-normal">Returns on this order</h2>
+              <h2 className="mb-4 font-heading text-xl font-extrabold tracking-tight">Returns on this order</h2>
               <ul className="space-y-2.5">
                 {productReturns.map((r: ReturnRequest) => (
                   <li
@@ -375,7 +375,7 @@ function UserOrderDetail() {
         {/* ── summary + address ─────────────────────────────────────── */}
         <aside className="space-y-4 lg:sticky lg:top-24 lg:h-fit">
           <section className="border-t border-ink py-5">
-            <h2 className="mb-4 font-display text-2xl font-normal">Payment summary</h2>
+            <h2 className="mb-4 font-heading text-xl font-extrabold tracking-tight">Payment summary</h2>
             <dl className="space-y-2.5 text-sm">
               {!!subtotal && (
                 <div className="flex justify-between">
@@ -424,14 +424,14 @@ function UserOrderDetail() {
             </dl>
             <div className="mt-4 flex items-baseline justify-between border-t border-line pt-4">
               <span className="font-medium">Amount charged</span>
-              <span className="font-display text-2xl">
+              <span className="font-heading text-2xl font-extrabold">
                 {formatPrice(order.totalAmount)}
               </span>
             </div>
           </section>
 
           <section className="border-t border-line py-5">
-            <h2 className="mb-3 flex items-center gap-2 font-display text-xl">
+            <h2 className="mb-3 flex items-center gap-2 font-heading text-lg font-bold">
               <PlaceOutlinedIcon sx={{ fontSize: 17 }} className="text-ink-muted" />
               Delivery address
             </h2>
@@ -453,7 +453,7 @@ function UserOrderDetail() {
 
       {/* ── return dialog ───────────────────────────────────────────── */}
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="xs" fullWidth>
-        <DialogTitle className="!font-display !text-2xl !font-normal">Request a return</DialogTitle>
+        <DialogTitle className="!font-heading !text-xl !font-extrabold !tracking-tight">Request a return</DialogTitle>
         <DialogContent dividers>
           <div className="space-y-4 py-1">
             <FormControl fullWidth size="small">

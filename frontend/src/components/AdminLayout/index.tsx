@@ -186,7 +186,7 @@ function AdminLayout() {
             <MenuIcon />
           </button>
           <div className="min-w-0">
-            <p className="truncate font-display text-2xl text-ink">{current.label}</p>
+            <p className="truncate font-heading text-xl font-extrabold tracking-tight text-ink">{current.label}</p>
             <p className="truncate text-xs text-ink-muted">
               Admin console · {new Date().toLocaleDateString("en-IN", { dateStyle: "medium" })}
             </p>

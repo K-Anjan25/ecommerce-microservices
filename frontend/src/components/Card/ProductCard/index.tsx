@@ -266,7 +266,7 @@ const ProductCard = ({ product }: CardProps) => {
                 <p className="eyebrow">
                   {product?.brand || product?.category?.name || "Cartly"}
                 </p>
-                <h1 className="mt-2 font-display text-4xl font-normal leading-[1.02] tracking-[-0.025em] text-ink sm:text-5xl">
+                <h1 className="mt-2 font-heading text-3xl font-extrabold leading-[1.05] tracking-tight text-ink sm:text-4xl">
                   {product?.name}
                 </h1>
                 {!!product?.ratingCount && (
@@ -284,7 +284,7 @@ const ProductCard = ({ product }: CardProps) => {
               <div>
                 <div className="flex flex-wrap items-baseline gap-3">
                   <span
-                    className={`font-display text-3xl font-normal tracking-tight sm:text-4xl ${
+                    className={`font-heading text-2xl font-extrabold tracking-tight sm:text-3xl ${
                       isFlashSaleActive ? "text-state-danger" : "text-ink"
                     }`}
                   >
@@ -350,7 +350,7 @@ const ProductCard = ({ product }: CardProps) => {
                     >
                       <RemoveIcon sx={{ fontSize: 18 }} />
                     </button>
-                    <span className="min-w-[2.25rem] select-none text-center font-display text-base font-bold text-ink">
+                    <span className="min-w-[2.25rem] select-none text-center font-heading text-base font-bold text-ink">
                       {quantity}
                     </span>
                     <button

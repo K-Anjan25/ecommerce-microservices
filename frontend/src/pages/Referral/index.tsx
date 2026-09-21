@@ -96,7 +96,7 @@ function Referral() {
       />
 
       <section className="border-t border-ink py-7 sm:py-8">
-        <h2 className="font-display text-2xl font-normal">Got a code from a friend?</h2>
+        <h2 className="font-heading text-xl font-extrabold tracking-tight">Got a code from a friend?</h2>
         <p className="mt-1 text-sm text-ink-soft">
           Check it here before you sign up, so you know it will be accepted.
         </p>

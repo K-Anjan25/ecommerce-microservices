@@ -146,7 +146,7 @@ function GiftCards() {
 
       <section className="border-t border-ink">
         <div className="flex items-baseline justify-between gap-4 border-b border-line py-4">
-          <h2 className="font-display text-3xl font-normal text-ink">Your cards</h2>
+          <h2 className="font-heading text-2xl font-extrabold tracking-tight text-ink">Your cards</h2>
           {!isLoading && <span className="text-xs text-ink-muted">{cards.length} issued</span>}
         </div>
 
@@ -169,7 +169,7 @@ function GiftCards() {
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="eyebrow">Cartly gift card</p>
-                      <p className="mt-2 font-display text-3xl text-ink">{formatPrice(card.balance)}</p>
+                      <p className="mt-2 font-heading text-3xl font-extrabold text-ink">{formatPrice(card.balance)}</p>
                       <p className="mt-1 text-xs text-ink-muted">of {formatPrice(card.initialBalance)} issued</p>
                     </div>
                     <span className={active ? "badge-stock-in" : "badge-stock-out"}>{card.status}</span>

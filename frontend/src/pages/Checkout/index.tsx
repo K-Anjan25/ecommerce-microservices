@@ -114,11 +114,11 @@ function Section({
   return (
     <section className="border-t border-line py-7 sm:py-8">
       <div className="mb-5 flex items-start gap-3">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center border border-ink font-display text-base text-ink">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center border border-ink font-heading text-base text-ink">
           {step}
         </span>
         <div className="min-w-0">
-          <h2 className="flex items-center gap-2 font-display text-2xl font-normal text-ink">
+          <h2 className="flex items-center gap-2 font-heading text-xl font-extrabold tracking-tight text-ink">
             <Icon sx={{ fontSize: 17 }} className="text-ink-muted" />
             {title}
           </h2>
@@ -582,7 +582,7 @@ function Checkout() {
 
       <div className="mb-6">
         <p className="eyebrow">Step 2 of 3</p>
-        <h1 className="mt-2 font-display text-5xl font-normal tracking-[-0.03em] text-ink">{t("checkout.title")}</h1>
+        <h1 className="mt-2 font-heading text-3xl font-black tracking-tight sm:text-4xl text-ink">{t("checkout.title")}</h1>
         <p className="page-subtitle">
           {itemCount} item{itemCount === 1 ? "" : "s"} · everything below is confirmed before
           payment is taken.
@@ -807,11 +807,11 @@ function Checkout() {
               className="flex w-full items-center justify-between gap-3 py-5 text-left"
             >
               <span className="flex items-center gap-3">
-                <span className="flex h-8 w-8 items-center justify-center border border-line font-display text-sm text-ink">
+                <span className="flex h-8 w-8 items-center justify-center border border-line font-heading text-sm text-ink">
                   {itemCount}
                 </span>
                 <span>
-                  <span className="block font-display text-xl text-ink">
+                  <span className="block font-heading text-lg font-bold text-ink">
                     Review items
                   </span>
                   <span className="text-xs text-ink-muted">
@@ -851,12 +851,12 @@ function Checkout() {
         {/* ══ right: sticky summary ═══════════════════════════════════ */}
         <aside className="lg:sticky lg:top-24 lg:h-fit">
           <div className="border-t border-ink py-5">
-            <h2 className="mb-5 font-display text-2xl font-normal">Order summary</h2>
+            <h2 className="mb-5 font-heading text-xl font-extrabold tracking-tight">Order summary</h2>
             {summaryRows}
             <Divider className="!my-4" />
             <div className="flex items-baseline justify-between">
               <span className="font-medium">{t("checkout.total")}</span>
-              <span className="font-display text-3xl">{formatPrice(total)}</span>
+              <span className="font-heading text-3xl font-extrabold">{formatPrice(total)}</span>
             </div>
             <LoadingButton
               form={FORM_ID}
@@ -892,7 +892,7 @@ function Checkout() {
         <div className="mx-auto flex max-w-container items-center gap-3">
           <div className="min-w-0">
             <p className="text-[0.625rem] uppercase tracking-wide text-ink-muted">{t("checkout.total")}</p>
-            <p className="font-display text-xl leading-none">
+            <p className="font-heading text-lg font-bold leading-none">
               {formatPrice(total)}
             </p>
           </div>

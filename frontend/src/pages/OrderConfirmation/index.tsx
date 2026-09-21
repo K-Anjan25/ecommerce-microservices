@@ -80,7 +80,7 @@ function OrderConfirmation() {
           </span>
           <div className="min-w-0 flex-1">
             <p className="eyebrow">Order received</p>
-            <h1 className="mt-2 font-display text-4xl font-normal text-ink sm:text-5xl">{title}</h1>
+            <h1 className="mt-2 font-heading text-3xl font-black tracking-tight text-ink sm:text-4xl">{title}</h1>
             <p className="mt-4 max-w-2xl text-sm leading-relaxed text-ink-soft">{copy}</p>
           </div>
         </div>
