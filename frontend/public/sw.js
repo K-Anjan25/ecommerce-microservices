@@ -1,4 +1,4 @@
-const CACHE = "cartly-editorial-v1";
+const CACHE = "cartly-store-v2";
 const PRECACHE = ["/offline.html", "/manifest.json", "/logo192.png", "/logo512.png"];
 
 self.addEventListener("install", (event) => {

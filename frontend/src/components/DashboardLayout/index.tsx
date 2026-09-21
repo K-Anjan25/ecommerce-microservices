@@ -2,7 +2,7 @@ import React from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../Navbar";
 import MobileTabBar from "../MobileTabBar";
-import { BrandMark } from "../../brand";
+import { BrandMark, PaymentMarks } from "../../brand";
 import { CheckoutHeader } from "../../features/checkout";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
@@ -53,20 +53,10 @@ function DashboardLayout() {
 
             {/* Right: Payment badges and Email signup */}
             <div className="flex flex-wrap items-center justify-center gap-4">
-              {/* Payment brand mock chips */}
-              <div className="flex items-center gap-1.5">
-                <span className="flex h-6 w-9 items-center justify-center rounded bg-[#1A1F71] text-[9px] font-black text-white">
-                  VISA
-                </span>
-                <span className="flex h-6 w-9 items-center justify-center rounded bg-[#EB001B] text-[8px] font-black text-white">
-                  MC
-                </span>
-                <span className="flex h-6 w-9 items-center justify-center rounded bg-[#0070BA] text-[8px] font-bold text-white">
-                  DISC
-                </span>
-              </div>
+              {/* Accepted card artwork (Visa · Mastercard · Discover) */}
+              <PaymentMarks />
 
-              {/* Email signup pill input matching Concept B */}
+              {/* Email signup field matching the Concept B footer */}
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -78,7 +68,7 @@ function DashboardLayout() {
                   type="email"
                   placeholder="Email signup"
                   required
-                  className="h-9 w-48 sm:w-56 rounded-full border border-line bg-canvas pl-4 pr-10 text-xs text-ink outline-none transition focus:border-brand"
+                  className="h-9 w-48 sm:w-56 rounded-lg border border-line bg-paper pl-4 pr-10 text-xs text-ink outline-none transition placeholder:text-ink-muted focus:border-brand focus:ring-2 focus:ring-brand/15"
                 />
                 <button
                   type="submit"

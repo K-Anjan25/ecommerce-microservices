@@ -12,23 +12,54 @@ import { createServer } from "node:http";
 const PORT = Number(process.env.MOCK_PORT ?? 8889);
 
 const CATEGORIES = [
-  "Electronics", "Home", "Fashion", "Beauty", "Sports", "Grocery", "Toys", "Books",
+  "Electronics", "Home", "Fashion", "Beauty", "Kitchen", "Sports", "Grocery", "Toys & Games", "Books",
 ].map((name, i) => ({ id: i + 1, name, slug: name.toLowerCase(), parentId: null, sortOrder: i }));
 
 const BRANDS = ["Acme", "Northwind", "Lumen", "Kite", "Orbit", "Cobalt"];
 
 let STORE_SETTINGS = {
   announcementEnabled: true,
-  announcementText: "Free shipping over ₹999",
+  announcementText: "*FLASH SALE! Up to 40% OFF Electronics & Home! Ends Midnight!*",
   announcementLinkText: "Flash sale live",
   announcementLinkUrl: "/flash-sales",
-  heroEyebrow: "The seasonal edit",
-  heroTitle: "Curated finds",
-  heroEmphasis: "for home & life.",
-  heroDescription: "Thoughtful objects, honest materials and everyday essentials selected to last.",
-  primaryCtaLabel: "Shop the collection",
-  secondaryCtaLabel: "Explore the edit",
+  heroEyebrow: "Fresh drops every week",
+  heroTitle: "Explore. Shop.",
+  heroEmphasis: "Everyday essentials, delivered fast.",
+  heroDescription: "One modern multi-category marketplace for high quality tech, home & everyday essentials.",
+  primaryCtaLabel: "Shop Now",
+  secondaryCtaLabel: "See today's deals",
   freeShippingThreshold: 999,
+};
+
+/* Local Concept B product photography — keyword-matched per demo product. */
+const STORE_IMAGES = {
+  electronics: "/images/store/tile-electronics.jpg",
+  beauty: "/images/store/tile-beauty.jpg",
+  kitchen: "/images/store/tile-kitchen.jpg",
+  fashion: "/images/store/tile-fashion.jpg",
+  home: "/images/store/tile-home.jpg",
+  sports: "/images/store/tile-sports.jpg",
+  grocery: "/images/store/tile-grocery.jpg",
+  toys: "/images/store/tile-toys.jpg",
+  gadgets: "/images/store/hero-gadgets.jpg",
+};
+
+const IMAGE_KEYWORDS = [
+  [/(headphone|earbud|speaker|keyboard|watch|laptop|phone|camera|drone|console)/i, "electronics"],
+  [/(serum|lip|spf|balm|skincare|cream|lotion|shampoo|makeup)/i, "beauty"],
+  [/(skillet|carafe|kettle|board|tamper|espresso|blender|storage|mug|pour|cook|knife|pan)/i, "kitchen"],
+  [/(sweater|shirt|jacket|denim|apparel|scarf|clothing|wear)/i, "fashion"],
+  [/(blanket|lamp|table|vase|decor|throw|candle|rug|curtain)/i, "home"],
+  [/(mat|band|roller|yoga|bottle|gym|fitness|trail|runner|sneaker|shoe|duffel|backpack|bike|gear)/i, "sports"],
+  [/(coffee|tea|snack|produce|organic|grocery|oil|spice)/i, "grocery"],
+  [/(lego|brick|toy|puzzle|game|plush|play)/i, "toys"],
+];
+
+const imageForName = (name, index) => {
+  const hit = IMAGE_KEYWORDS.find(([re]) => re.test(name));
+  if (hit) return STORE_IMAGES[hit[1]];
+  const pool = Object.values(STORE_IMAGES);
+  return pool[index % pool.length];
 };
 
 const NAMES = [
@@ -52,8 +83,8 @@ const PRODUCTS = NAMES.map((name, i) => {
     originalPrice: onSale ? Math.round(unitPrice * 1.45) : undefined,
     description:
       "Considered materials, honest pricing and a warranty that means something. Ships in recyclable packaging within 24 hours.",
-    imageUrl: `https://picsum.photos/seed/cartly${i + 7}/800/600`,
-    images: [`https://picsum.photos/seed/cartly${i + 7}/800/600`],
+    imageUrl: imageForName(name, i),
+    images: [imageForName(name, i)],
     brand: BRANDS[i % BRANDS.length],
     badge: i % 8 === 0 ? "NEW" : undefined,
     featured: i < 4,

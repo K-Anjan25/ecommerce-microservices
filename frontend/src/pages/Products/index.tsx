@@ -27,61 +27,47 @@ const SORTS = [
   { value: "PRICE_DESC", label: "Price: high → low" },
 ];
 
-/** Concept B category tile details */
+/** Concept B category tiles — names match real store categories so filters work. */
 const CONCEPT_B_CATEGORIES = [
   {
     name: "Electronics",
     subtitle: "MacBook",
-    image: "/images/editorial/category-electronics.jpg",
-    filterKey: "electronics",
+    image: "/images/store/tile-electronics.jpg",
   },
   {
     name: "Fashion",
     subtitle: "Apparel",
-    image: "/images/editorial/category-fashion.jpg",
-    filterKey: "fashion",
+    image: "/images/store/tile-fashion.jpg",
   },
   {
     name: "Home",
     subtitle: "Decor",
-    image: "/images/editorial/category-home.jpg",
-    filterKey: "home",
-  },
-  {
-    name: "Electronics",
-    subtitle: "Audio",
-    image: "/images/editorial/category-sports.jpg",
-    filterKey: "electronics",
+    image: "/images/store/tile-home.jpg",
   },
   {
     name: "Beauty",
     subtitle: "Skincare",
-    image: "/images/editorial/category-beauty.jpg",
-    filterKey: "beauty",
+    image: "/images/store/tile-beauty.jpg",
   },
   {
     name: "Kitchen",
     subtitle: "Appliances",
-    image: "/images/editorial/hero.jpg",
-    filterKey: "home",
+    image: "/images/store/tile-kitchen.jpg",
   },
   {
     name: "Toys & Games",
-    subtitle: "Lego",
-    image: "/images/editorial/category-sports.jpg",
-    filterKey: "sports",
+    subtitle: "Bricks & play",
+    image: "/images/store/tile-toys.jpg",
   },
   {
     name: "Sports",
     subtitle: "Gear",
-    image: "/images/editorial/category-sports.jpg",
-    filterKey: "sports",
+    image: "/images/store/tile-sports.jpg",
   },
   {
     name: "Grocery",
     subtitle: "Fresh produce",
-    image: "/images/editorial/category-grocery.jpg",
-    filterKey: "grocery",
+    image: "/images/store/tile-grocery.jpg",
   },
 ];
 
@@ -93,7 +79,20 @@ function Products() {
   const { ref, inView } = useInView();
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  const [sortBy, setSortBy] = useState("DATE_DESC");
+  const [sortBy, setSortByState] = useState(() => {
+    const sp =
+      typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("sort")
+        : null;
+    return SORTS.some((s) => s.value === sp) ? (sp as string) : "DATE_DESC";
+  });
+  const setSortBy = (value: string) => {
+    setSortByState(value);
+    const next = new URLSearchParams(searchParams);
+    if (value === "DATE_DESC") next.delete("sort");
+    else next.set("sort", value);
+    setSearchParams(next, { replace: true });
+  };
   const [filter, setFilter] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
 
@@ -144,6 +143,11 @@ function Products() {
     const q = searchParams.get("q");
     const categoryParam = searchParams.get("category");
 
+    const nextSort = searchParams.get("sort");
+    if (nextSort && SORTS.some((s) => s.value === nextSort)) {
+      setSortByState(nextSort);
+    }
+
     const nextSearch = q && q.trim() ? q : state?.search;
     if (typeof nextSearch === "string" && nextSearch.trim()) {
       setSearchTerm(nextSearch.trim());
@@ -182,7 +186,7 @@ function Products() {
       title: "Cartly — One modern multi-category marketplace",
       description: "High quality products across electronics, fashion, home, and more.",
       canonicalPath: "/",
-      image: "/images/editorial/category-electronics.jpg",
+      image: "/images/store/hero-gadgets.jpg",
       jsonLd: {
         "@context": "https://schema.org",
         "@type": "WebSite",
@@ -376,127 +380,88 @@ function Products() {
     <div className="space-y-8 pb-10">
       {/* ═══ CONCEPT B HERO & SHOWCASE GRID ════════════════════════════════ */}
       <section className="page-shell">
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
-          {/* Main Hero Card (span 2 cols) */}
-          <div className="relative flex flex-col justify-between overflow-hidden rounded-2xl bg-paper p-6 sm:p-8 shadow-sm border border-line lg:col-span-2">
-            <div>
-              <h1 className="font-heading text-3xl sm:text-5xl font-black tracking-tight text-ink leading-tight">
-                EXPLORE. SHOP.
-              </h1>
-              <p className="mt-3 max-w-sm text-xs sm:text-sm font-medium text-ink-soft leading-relaxed">
-                One modern multi-category marketplace for high quality geometric design &amp; everyday essentials.
-              </p>
-              <div className="mt-6">
-                <button
-                  onClick={() => resultsRef.current?.scrollIntoView({ behavior: "smooth" })}
-                  className="rounded-full bg-brand px-6 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-brand-dark"
-                >
-                  Shop Now
-                </button>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
+          {/* Main Hero Card (span 2 cols) — headline left, product cluster right */}
+          <div className="relative overflow-hidden rounded-2xl bg-paper p-6 sm:p-8 shadow-sm border border-line lg:col-span-2 xl:col-span-2">
+            <div className="grid h-full items-center gap-4 sm:grid-cols-[1.1fr_0.9fr]">
+              <div>
+                <h1 className="font-heading text-3xl sm:text-5xl font-black tracking-tight text-ink leading-tight">
+                  EXPLORE. SHOP.
+                </h1>
+                <p className="mt-3 max-w-sm text-xs sm:text-sm font-medium text-ink-soft leading-relaxed">
+                  One modern multi-category marketplace for high quality tech, home &amp; everyday essentials.
+                </p>
+                <div className="mt-6">
+                  <button
+                    onClick={() => resultsRef.current?.scrollIntoView({ behavior: "smooth" })}
+                    className="rounded-full bg-brand px-6 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-brand-dark"
+                  >
+                    Shop Now
+                  </button>
+                </div>
               </div>
-            </div>
-
-            {/* Hero product imagery mock items matching Concept B */}
-            <div className="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-line/40">
               <img
-                src="/images/editorial/category-electronics.jpg"
-                alt="Headphones"
-                className="h-16 w-16 sm:h-20 sm:w-20 rounded-xl object-cover shadow-xs"
-              />
-              <img
-                src="/images/editorial/category-sports.jpg"
-                alt="Smart gadget"
-                className="h-16 w-16 sm:h-20 sm:w-20 rounded-xl object-cover shadow-xs"
-              />
-              <img
-                src="/images/editorial/hero.jpg"
-                alt="Blender"
-                className="h-16 w-16 sm:h-20 sm:w-20 rounded-xl object-cover shadow-xs"
+                src="/images/store/hero-gadgets.jpg"
+                alt="Headphones, smart speaker and blender"
+                className="hidden w-full self-center rounded-xl object-contain sm:block"
+                loading="eager"
               />
             </div>
           </div>
 
-          {/* Feature Tile 1: Electronics */}
-          <div className="relative flex flex-col justify-between overflow-hidden rounded-2xl bg-paper p-5 shadow-sm border border-line">
-            <div>
-              <h3 className="font-heading text-base font-bold text-ink">Electronics</h3>
-              <p className="text-xs text-ink-muted">MacBook</p>
-            </div>
-            <div className="my-3 flex items-center justify-center">
-              <img
-                src="/images/editorial/category-electronics.jpg"
-                alt="Electronics"
-                className="h-28 w-full object-contain"
-              />
-            </div>
-            <button
-              onClick={() => applyCategory("Electronics")}
-              className="text-xs font-bold text-ink hover:text-brand transition text-left"
+          {/* Feature tiles: Electronics · Fashion · Home */}
+          {[
+            { name: "Electronics", subtitle: "MacBook", image: "/images/store/tile-electronics.jpg", alt: "Laptop with headphones" },
+            { name: "Fashion", subtitle: "Apparel", image: "/images/store/tile-fashion.jpg", alt: "Rack of apparel" },
+            { name: "Home", subtitle: "Decor", image: "/images/store/tile-home.jpg", alt: "Lamp and vase" },
+          ].map((tile) => (
+            <div
+              key={tile.name}
+              className="relative flex flex-col justify-between overflow-hidden rounded-2xl bg-paper p-5 shadow-sm border border-line"
             >
-              Shop →
-            </button>
-          </div>
-
-          {/* Feature Tile 2: Fashion & Home */}
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-1">
-            <div className="relative flex flex-col justify-between overflow-hidden rounded-2xl bg-paper p-5 shadow-sm border border-line">
               <div>
-                <h3 className="font-heading text-base font-bold text-ink">Fashion</h3>
-                <p className="text-xs text-ink-muted">Apparel</p>
+                <h3 className="font-heading text-base font-bold text-ink">{tile.name}</h3>
+                <p className="text-xs text-ink-muted">{tile.subtitle}</p>
               </div>
-              <div className="my-2 flex items-center justify-center">
+              <div className="my-3 flex h-28 items-center justify-center overflow-hidden rounded-lg">
                 <img
-                  src="/images/editorial/category-fashion.jpg"
-                  alt="Fashion"
-                  className="h-20 w-full object-contain"
+                  src={tile.image}
+                  alt={tile.alt}
+                  loading="lazy"
+                  className="h-full w-full object-cover"
                 />
               </div>
               <button
-                onClick={() => applyCategory("Fashion")}
-                className="text-xs font-bold text-ink hover:text-brand transition text-left"
+                onClick={() => {
+                  applyCategory(tile.name);
+                  resultsRef.current?.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="text-xs font-bold text-ink underline-offset-2 hover:text-brand hover:underline transition text-left"
               >
                 Shop →
               </button>
             </div>
-            <div className="relative flex flex-col justify-between overflow-hidden rounded-2xl bg-paper p-5 shadow-sm border border-line">
-              <div>
-                <h3 className="font-heading text-base font-bold text-ink">Home</h3>
-                <p className="text-xs text-ink-muted">Decor</p>
-              </div>
-              <div className="my-2 flex items-center justify-center">
-                <img
-                  src="/images/editorial/category-home.jpg"
-                  alt="Home"
-                  className="h-20 w-full object-contain"
-                />
-              </div>
-              <button
-                onClick={() => applyCategory("Home")}
-                className="text-xs font-bold text-ink hover:text-brand transition text-left"
-              >
-                Shop →
-              </button>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
-      {/* ═══ CONCEPT B CATEGORY TILES (2x4 Grid) ═══════════════════════════ */}
+      {/* ═══ CONCEPT B CATEGORY TILES ══════════════════════════════════════ */}
       <section className="page-shell">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-          {CONCEPT_B_CATEGORIES.slice(3, 9).map((cat, index) => (
+          {CONCEPT_B_CATEGORIES.slice(3, 9).map((cat) => (
             <div
-              key={`${cat.name}-${index}`}
+              key={cat.name}
               className="flex flex-col justify-between rounded-2xl bg-paper p-4 border border-line shadow-sm hover:shadow-md transition"
             >
               <div>
                 <h4 className="font-heading text-sm font-bold text-ink">{cat.name}</h4>
                 <p className="text-[11px] text-ink-muted">{cat.subtitle}</p>
               </div>
-              <div className="my-3 flex h-24 items-center justify-center overflow-hidden rounded-lg bg-sunken/30">
+              <div className="my-3 flex h-24 items-center justify-center overflow-hidden rounded-lg">
                 <img
                   src={cat.image}
                   alt={cat.name}
+                  loading="lazy"
                   className="h-full w-full object-cover"
                 />
               </div>
@@ -505,7 +470,7 @@ function Products() {
                   applyCategory(cat.name);
                   resultsRef.current?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="text-xs font-bold text-ink hover:text-brand transition text-left"
+                className="text-xs font-bold text-ink underline-offset-2 hover:text-brand hover:underline transition text-left"
               >
                 Shop →
               </button>

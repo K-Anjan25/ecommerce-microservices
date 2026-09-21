@@ -17,7 +17,7 @@ type Props = {
   prominent?: boolean;
 };
 
-/** Shared Concept B search bar with blue search button and pill enclosure. */
+/** Shared Concept B search bar: rounded-xl field with inset blue search button. */
 export default function CommerceSearch({
   value,
   onChange,
@@ -102,14 +102,14 @@ export default function CommerceSearch({
           aria-controls={open ? listId : undefined}
           aria-expanded={open}
           aria-activedescendant={active >= 0 ? `${listId}-${active}` : undefined}
-          className={`w-full rounded-md border border-line bg-paper px-4 pr-12 text-sm text-ink outline-none transition placeholder:text-ink-muted hover:border-brand/40 focus:border-brand focus:ring-2 focus:ring-brand/20 ${
+          className={`w-full rounded-xl border border-line bg-paper px-4 pr-14 text-sm text-ink outline-none transition placeholder:text-ink-muted hover:border-brand/40 focus:border-brand focus:ring-2 focus:ring-brand/20 ${
             prominent ? "h-11 text-base" : "h-10 text-sm"
           }`}
         />
         <button
           type="submit"
           aria-label="Search"
-          className="absolute right-0 top-0 bottom-0 flex w-11 items-center justify-center rounded-r-md bg-brand text-white transition hover:bg-brand-dark"
+          className="absolute right-1 top-1 bottom-1 flex w-10 items-center justify-center rounded-lg bg-brand text-white transition hover:bg-brand-dark"
         >
           <SearchIcon sx={{ fontSize: 20 }} />
         </button>

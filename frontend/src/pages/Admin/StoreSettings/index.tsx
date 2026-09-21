@@ -181,16 +181,16 @@ export default function StoreSettingsPage() {
             <p className="eyebrow mb-3">Live content preview</p>
             <div className="overflow-hidden border border-line bg-paper">
               {form.announcementEnabled && (
-                <div className="flex min-h-9 items-center justify-center gap-2 bg-contrast px-4 text-center text-[0.6875rem] font-semibold text-oncontrast">
+                <div className="flex min-h-9 items-center justify-center gap-2 bg-accent px-4 text-center text-[0.6875rem] font-bold text-oncontrast">
                   {form.announcementText || "Announcement text"}
                   {form.announcementLinkText && (
-                    <span className="text-accent">· {form.announcementLinkText}</span>
+                    <span className="underline underline-offset-2">· {form.announcementLinkText}</span>
                   )}
                 </div>
               )}
               <div className="grid sm:grid-cols-[0.9fr_1.1fr]">
                 <img
-                  src="/images/editorial/hero.jpg"
+                  src="/images/store/hero-gadgets.jpg"
                   alt=""
                   className="h-full min-h-[17rem] w-full object-cover"
                 />

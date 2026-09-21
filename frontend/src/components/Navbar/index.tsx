@@ -54,7 +54,7 @@ const CartBadge = styled(Badge)({
 
 const PRIMARY = [
   { path: "/flash-sales", label: "Deals" },
-  { path: "/new-arrivals", label: "New Arrivals" },
+  { path: "/?sort=DATE_DESC", label: "New Arrivals" },
   { path: "/gift-cards", label: "Gift Ideas" },
   { path: "/about", label: "About Us" },
 ];
@@ -201,7 +201,7 @@ const Navbar = () => {
               </button>
             ))}
 
-            <div className="ml-4 flex items-center gap-2 border-l border-line pl-4">
+            <div className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center gap-2 border-l border-line pl-4 sm:right-6 lg:right-8">
               <Tooltip title={language === "en" ? "हिन्दी" : "English"}>
                 <button
                   aria-label="Language"
