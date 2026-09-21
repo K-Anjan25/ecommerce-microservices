@@ -149,10 +149,10 @@ export default function StripePaymentPage() {
               appearance: {
                 theme: "stripe",
                 variables: {
-                  colorPrimary: "#A4472D",
-                  colorText: "#221A16",
-                  colorBackground: "#FBF9F4",
-                  borderRadius: "0px",
+                  colorPrimary: "#0052CC",
+                  colorText: "#0F172A",
+                  colorBackground: "#FFFFFF",
+                  borderRadius: "10px",
                 },
               },
             }}

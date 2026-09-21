@@ -19,7 +19,7 @@ export function applyScheme(scheme: ColorScheme) {
   root.style.colorScheme = scheme;
   document
     .querySelector('meta[name="theme-color"]')
-    ?.setAttribute("content", scheme === "dark" ? "#171210" : "#221A16");
+    ?.setAttribute("content", scheme === "dark" ? "#091E42" : "#0052CC");
 }
 
 /**

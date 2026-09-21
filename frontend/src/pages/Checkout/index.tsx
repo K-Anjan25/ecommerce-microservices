@@ -362,7 +362,7 @@ function Checkout() {
             goToConfirmation(payment, order);
           },
         },
-        theme: { color: "#A4472D" },
+        theme: { color: "#0052CC" },
       });
       checkout.on("payment.failed", () => {
         showError("Razorpay did not complete this payment; close the window to review the pending order");

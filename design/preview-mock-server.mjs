@@ -88,7 +88,7 @@ const PRODUCTS = NAMES.map((name, i) => {
     unitPrice,
     originalPrice: onSale ? Math.round(unitPrice * 1.45) : undefined,
     description:
-      "Considered materials, honest pricing and a warranty that means something. Ships in recyclable packaging within 24 hours.",
+      "Top-quality build, honest pricing and a warranty that means something. Ships in protective packaging within 24 hours.",
     imageUrl: imageForName(name, i),
     images: [imageForName(name, i)],
     brand: BRANDS[i % BRANDS.length],

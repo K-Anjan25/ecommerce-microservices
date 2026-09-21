@@ -135,7 +135,7 @@ export default function CommerceSearch({
                   active === index ? "bg-brand-soft" : "hover:bg-sunken"
                 }`}
               >
-                <span className="flex h-11 w-14 shrink-0 items-center justify-center overflow-hidden rounded-md bg-sunken">
+                <span className="flex h-11 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-sunken">
                   {suggestion.imageUrl ? (
                     <img src={suggestion.imageUrl} alt="" className="h-full w-full object-cover" />
                   ) : (
