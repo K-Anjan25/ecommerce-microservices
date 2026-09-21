@@ -26,7 +26,12 @@ jobs:
           cache: maven
 
       - name: Build & test
-        run: mvn -B -ntp clean package
+        run: set -o pipefail; mvn -B -ntp clean package 2>&1 | tee maven-output.log
+
+      - name: Surface build errors as annotations
+        if: failure()
+        run: |
+          grep -E "\[ERROR\]|BUILD FAILURE|Tests run.*Failures" maven-output.log | head -40 | while IFS= read -r line; do echo "::error::${line:0:350}"; done
 
       - name: Upload jars
         if: matrix.java == '17'
