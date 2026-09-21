@@ -44,18 +44,38 @@ const STORE_IMAGES = {
   gadgets: "/images/store/hero-gadgets.jpg",
   speaker: "/images/store/demo-speaker.jpg",
   textile: "/images/store/demo-textile.jpg",
+  productHeadphones: "/images/store/product-headphones.jpg",
+  productEarbuds: "/images/store/product-earbuds.jpg",
+  productKeyboard: "/images/store/product-keyboard.jpg",
+  productWatch: "/images/store/product-watch.jpg",
+  productSerum: "/images/store/product-serum.jpg",
+  productSkillet: "/images/store/product-skillet.jpg",
+  productSneaker: "/images/store/product-sneaker.jpg",
+  productYogamat: "/images/store/product-yogamat.jpg",
+  productDuffel: "/images/store/product-duffel.jpg",
+  productLamp: "/images/store/product-lamp.jpg",
 };
 
 /* Priority exact-match rules first, then broad category rules. */
 const IMAGE_KEYWORDS = [
+  // dedicated product shots
+  [/headphone/i, "productHeadphones"],
+  [/earbud/i, "productEarbuds"],
+  [/keyboard/i, "productKeyboard"],
+  [/watch/i, "productWatch"],
+  [/(serum|lip|spf|balm|skincare|cream|lotion|shampoo|makeup)/i, "productSerum"],
+  [/(skillet|carafe|kettle|board|tamper|espresso|blender|storage|mug|pour|cook|knife|pan)/i, "productSkillet"],
+  [/(runner|sneaker|shoe)/i, "productSneaker"],
+  [/(yoga|mat\b|foam roller)/i, "productYogamat"],
+  [/(duffel|backpack|bag\b|luggage)/i, "productDuffel"],
+  [/(lamp\b|desk lamp)/i, "productLamp"],
   [/speaker/i, "speaker"],
   [/(blanket|linen|bedding|towel|textile|duvet)/i, "textile"],
-  [/(headphone|earbud|keyboard|watch|laptop|phone|camera|drone|console)/i, "electronics"],
-  [/(serum|lip|spf|balm|skincare|cream|lotion|shampoo|makeup)/i, "beauty"],
-  [/(skillet|carafe|kettle|board|tamper|espresso|blender|storage|mug|pour|cook|knife|pan)/i, "kitchen"],
+  // category tiles as fallback
+  [/(laptop|phone|camera|drone|console|electronics)/i, "electronics"],
   [/(sweater|shirt|jacket|denim|apparel|scarf|clothing|wear)/i, "fashion"],
   [/(lamp|table|vase|decor|candle|rug|curtain)/i, "home"],
-  [/(mat|band|roller|yoga|bottle|gym|fitness|trail|runner|sneaker|shoe|duffel|backpack|bike|gear)/i, "sports"],
+  [/(band|bottle|gym|fitness|trail|bike|gear)/i, "sports"],
   [/(coffee|tea|snack|produce|organic|grocery|oil|spice)/i, "grocery"],
   [/(lego|brick|toy|puzzle|game|plush|play)/i, "toys"],
 ];
@@ -293,6 +313,25 @@ createServer((req, res) => {
       ticket.status = next;
       ticket.updatedAt = new Date().toISOString();
       json(res, ticket);
+    });
+    return;
+  }
+
+  /* ── newsletter signup (footer form) — public and idempotent ────────── */
+  const NEWSLETTER = new Set();
+  if (p === "/v1/newsletter/subscribe" && req.method === "POST") {
+    let raw = "";
+    req.on("data", (chunk) => { raw += chunk; });
+    req.on("end", () => {
+      let body = {};
+      try { body = JSON.parse(raw); } catch { /* handled below */ }
+      const email = String(body.email ?? "").trim().toLowerCase();
+      if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+        return json(res, { email: "Enter a valid email address" }, 400);
+      }
+      const already = NEWSLETTER.has(email);
+      NEWSLETTER.add(email);
+      json(res, { status: already ? "ALREADY_SUBSCRIBED" : "SUBSCRIBED", email }, already ? 200 : 201);
     });
     return;
   }

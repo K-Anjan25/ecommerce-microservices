@@ -151,7 +151,7 @@ function OptionCard({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`flex flex-1 items-start gap-3 border p-4 text-left transition ${
+      className={`flex flex-1 items-start gap-3 border p-5 text-left transition ${
         active
           ? "border-brand bg-brand-tint"
           : "border-line bg-paper hover:border-ink-faint"
@@ -591,7 +591,7 @@ function Checkout() {
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         {/* ══ left: the flow ══════════════════════════════════════════ */}
-        <form id={FORM_ID} onSubmit={form.handleSubmit} className="space-y-4">
+        <form id={FORM_ID} onSubmit={form.handleSubmit} className="space-y-5">
           <Section
             step={1}
             title="Delivery address"
@@ -729,9 +729,9 @@ function Checkout() {
             subtitle="Coupons, gift wrap and loyalty in one place"
             icon={RedeemOutlinedIcon}
           >
-            <div className="space-y-4">
+            <div className="space-y-5">
               {isLoggedIn ? (
-                <div className="space-y-4">
+                <div className="space-y-5">
                   {coupon ? (
                     <div className="flex items-center justify-between gap-3 border border-state-success/30 bg-state-success-soft px-4 py-3">
                       <span className="min-w-0">

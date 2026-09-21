@@ -14,6 +14,9 @@ Project-owned art-direction placeholders for the shipped **Bold Market (Concept 
 - `tile-grocery.jpg` — Grocery / Fresh produce tile
 - `demo-speaker.jpg` — cobalt fabric smart speaker (speaker demo products)
 - `demo-textile.jpg` — folded linen throws with cobalt accent (blankets/bedding)
+- `product-*.jpg` — dedicated single-product shots (headphones, earbuds,
+  keyboard, watch, serum, skillet, sneaker, yoga mat, duffel, desk lamp)
+  mapped to matching demo catalog products by keyword
 
 These are **design placeholders, not merchant product photography**. The demo
 catalog in `design/preview-mock-server.mjs` maps them to products by keyword.

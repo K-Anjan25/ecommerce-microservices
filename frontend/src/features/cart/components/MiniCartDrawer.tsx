@@ -2,7 +2,7 @@ import { Drawer } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -21,7 +21,7 @@ import { useI18n } from "../../i18n";
 
 type Props = { open: boolean; onClose: () => void };
 
-/** Quiet bag preview inspired by WooCommerce's Mini-Cart block. */
+/** Quiet cart preview matching the header cart icon. */
 export default function MiniCartDrawer({ open, onClose }: Props) {
   const items = useSelector((state: AppState) => state.cart);
   const dispatch = useDispatch<any>();
@@ -43,21 +43,21 @@ export default function MiniCartDrawer({ open, onClose }: Props) {
       PaperProps={{ className: "!w-full !max-w-[27rem] !bg-paper" }}
     >
       <div className="flex h-full flex-col">
-        <header className="flex h-[4.5rem] items-center justify-between border-b border-line px-5 sm:px-7">
+        <header className="flex h-[4.5rem] items-center justify-between border-b border-line px-6 sm:px-8">
           <div>
             <p className="font-heading text-xl font-extrabold tracking-tight text-ink">{t("cart.label")}</p>
             <p className="text-[0.6875rem] uppercase tracking-[0.12em] text-ink-muted">
               {count} item{count === 1 ? "" : "s"}
             </p>
           </div>
-          <button onClick={onClose} className="icon-button" aria-label="Close bag">
+          <button onClick={onClose} className="icon-button" aria-label="Close cart">
             <CloseIcon />
           </button>
         </header>
 
         {items.length === 0 ? (
-          <div className="flex flex-1 flex-col items-center justify-center px-8 text-center">
-            <ShoppingBagOutlinedIcon sx={{ fontSize: 40 }} className="text-ink-faint" />
+          <div className="flex flex-1 flex-col items-center justify-center px-10 text-center">
+            <ShoppingCartOutlinedIcon sx={{ fontSize: 40 }} className="text-ink-faint" />
             <p className="mt-5 font-heading text-2xl font-extrabold tracking-tight text-ink">{t("cart.empty")}</p>
             <p className="mt-2 max-w-xs text-sm leading-relaxed text-ink-muted">
               Discover top picks across tech, home, fashion and more.
@@ -68,7 +68,7 @@ export default function MiniCartDrawer({ open, onClose }: Props) {
           </div>
         ) : (
           <>
-            <ul className="flex-1 overflow-y-auto px-5 sm:px-7">
+            <ul className="flex-1 overflow-y-auto px-6 sm:px-8">
               {items.map((item) => {
                 const image = item.product.images?.[0] || item.product.imageUrl;
                 const variant = item.variantId || undefined;

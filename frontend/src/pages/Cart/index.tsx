@@ -180,10 +180,10 @@ function Cart() {
   }
 
   return (
-    <div className="page-shell pb-8">
+    <div className="page-shell pb-12">
       <CheckoutSteps current="cart" />
 
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="eyebrow">Step 1 of 3</p>
           <h1 className="page-title mt-1">{t("cart.title")}</h1>
@@ -197,11 +197,11 @@ function Cart() {
         </button>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_23rem]">
         {/* ── line items ─────────────────────────────────────────── */}
-        <div className="space-y-4">
+        <div className="space-y-6">
           {/* free-shipping nudge */}
-          <div className="border-y border-line py-4">
+          <div className="border-y border-line py-5">
             <div className="flex items-center gap-2 text-sm">
               <LocalShippingOutlinedIcon sx={{ fontSize: 18 }} className="text-brand" />
               {freeShippingGap > 0 ? (

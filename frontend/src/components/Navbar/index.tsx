@@ -73,7 +73,7 @@ const Navbar = () => {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [anchorElCategory, setAnchorElCategory] = useState<null | HTMLElement>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [bagOpen, setBagOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const [navSearch, setNavSearch] = useState("");
   const [announce, setAnnounce] = useState(true);
 
@@ -329,7 +329,7 @@ const Navbar = () => {
             {/* Cart with badge */}
             <button
               aria-label={`Cart, ${cartCount} items`}
-              onClick={() => setBagOpen(true)}
+              onClick={() => setCartOpen(true)}
               className="flex flex-col items-center text-ink transition hover:text-brand"
             >
               <CartBadge badgeContent={cartCount}>
@@ -455,7 +455,7 @@ const Navbar = () => {
         </div>
       </Drawer>
 
-      <MiniCartDrawer open={bagOpen} onClose={() => setBagOpen(false)} />
+      <MiniCartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
     </>
   );
 };

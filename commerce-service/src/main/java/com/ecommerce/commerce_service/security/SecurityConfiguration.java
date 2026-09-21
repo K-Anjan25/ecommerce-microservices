@@ -36,6 +36,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/v1/payments/test").permitAll()
                 // Support: guests can raise tickets; reads/status stay staff-only.
                 .antMatchers(HttpMethod.POST, "/v1/support/tickets").permitAll()
+                // Newsletter signup is public and idempotent.
+                .antMatchers(HttpMethod.POST, "/v1/newsletter/subscribe").permitAll()
                 .antMatchers(HttpMethod.GET, "/actuator/health", "/actuator/health/**", "/actuator/info").permitAll()
                 .anyRequest()
                 .authenticated()

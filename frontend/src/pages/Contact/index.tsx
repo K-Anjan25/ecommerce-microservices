@@ -27,11 +27,19 @@ function Contact() {
     return (SUPPORT_TOPICS as readonly string[]).includes(candidate) ? candidate : "";
   }, [location]);
 
+  /** Deep-link from the Help center 👎 votes: prefill what they were looking for. */
+  const prefilledMessage = useMemo(() => {
+    const about = new URLSearchParams(location.search).get("about");
+    return about
+      ? `I was looking for “${about}” in the Help center but didn't find the answer I needed.\n\n`
+      : "";
+  }, [location]);
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [topic, setTopic] = useState(preselectedTopic);
   const [orderNumber, setOrderNumber] = useState("");
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(prefilledMessage);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState("");

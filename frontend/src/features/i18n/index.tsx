@@ -10,8 +10,8 @@ const messages = {
     "nav.account": "Account", "nav.login": "Login", "nav.register": "Create account", "nav.logout": "Logout",
     "search.placeholder": "Search products, brands and categories", "search.action": "Search", "search.products": "Products",
     "search.hint": "Use ↑ ↓ to browse · Enter to search · Esc to close",
-    "cart.label": "Your bag", "cart.empty": "Your bag is empty", "cart.explore": "Explore the collection",
-    "cart.subtotal": "Subtotal", "cart.checkout": "Checkout", "cart.review": "Review bag", "cart.title": "Your cart", "cart.continue": "Continue shopping",
+    "cart.label": "Your cart", "cart.empty": "Your cart is empty", "cart.explore": "Explore the collection",
+    "cart.subtotal": "Subtotal", "cart.checkout": "Checkout", "cart.review": "Review cart", "cart.title": "Your cart", "cart.continue": "Continue shopping",
     "product.add": "Add to cart", "product.addMore": "Add one more", "product.view": "View product", "product.inCart": "in cart",
     "common.refine": "Refine", "common.clear": "Clear all", "common.loading": "Loading…", "common.skip": "Skip to content",
     "checkout.title": "Checkout", "checkout.total": "Total", "checkout.pay": "Pay now",
@@ -23,12 +23,12 @@ const messages = {
     "nav.account": "खाता", "nav.login": "लॉग इन", "nav.register": "खाता बनाएँ", "nav.logout": "लॉग आउट",
     "search.placeholder": "उत्पाद, ब्रांड और श्रेणियाँ खोजें", "search.action": "खोजें", "search.products": "उत्पाद",
     "search.hint": "चुनने के लिए ↑ ↓ · खोजने के लिए Enter · बंद करने के लिए Esc",
-    "cart.label": "आपका बैग", "cart.empty": "आपका बैग खाली है", "cart.explore": "कलेक्शन देखें",
-    "cart.subtotal": "उप-योग", "cart.checkout": "चेकआउट", "cart.review": "बैग की समीक्षा करें", "cart.title": "आपका कार्ट", "cart.continue": "खरीदारी जारी रखें",
-    "product.add": "बैग में जोड़ें", "product.addMore": "एक और जोड़ें", "product.view": "उत्पाद देखें", "product.inCart": "बैग में",
+    "cart.label": "आपका कार्ट", "cart.empty": "आपका कार्ट खाली है", "cart.explore": "कलेक्शन देखें",
+    "cart.subtotal": "उप-योग", "cart.checkout": "चेकआउट", "cart.review": "कार्ट की समीक्षा करें", "cart.title": "आपका कार्ट", "cart.continue": "खरीदारी जारी रखें",
+    "product.add": "कार्ट में जोड़ें", "product.addMore": "एक और जोड़ें", "product.view": "उत्पाद देखें", "product.inCart": "कार्ट में",
     "common.refine": "फ़िल्टर", "common.clear": "सभी हटाएँ", "common.loading": "लोड हो रहा है…", "common.skip": "मुख्य सामग्री पर जाएँ",
     "checkout.title": "चेकआउट", "checkout.total": "कुल", "checkout.pay": "अभी भुगतान करें",
-    "mobile.you": "आप", "mobile.search": "खोजें", "mobile.cart": "बैग"
+    "mobile.you": "आप", "mobile.search": "खोजें", "mobile.cart": "कार्ट"
   }
 } as const;
 

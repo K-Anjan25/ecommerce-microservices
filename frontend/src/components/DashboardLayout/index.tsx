@@ -3,6 +3,7 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../Navbar";
 import MobileTabBar from "../MobileTabBar";
 import { BrandMark, PaymentMarks } from "../../brand";
+import { api } from "../../api/client";
 import { CheckoutHeader } from "../../features/checkout";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
@@ -18,6 +19,7 @@ function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [subscribed, setSubscribed] = useState(false);
+  const [subscribeError, setSubscribeError] = useState("");
   const isShop = location.pathname === "/";
   const isCheckout = ["/checkout", "/stripe-payment", "/stripe-payment-return", "/order-confirmation"].includes(location.pathname);
 
@@ -57,25 +59,37 @@ function DashboardLayout() {
               {/* Accepted card artwork (Visa · Mastercard · Discover) */}
               <PaymentMarks />
 
-              {/* Email signup field matching the Concept B footer */}
+              {/* Email signup field — POSTs to /v1/newsletter/subscribe */}
               {subscribed ? (
                 <span className="flex items-center gap-2 rounded-lg border border-state-success/30 bg-state-success-soft px-4 py-2 text-xs font-bold text-state-success-on">
                   ✓ You&apos;re on the list — watch your inbox for deals.
                 </span>
               ) : (
                 <form
-                  onSubmit={(e) => {
+                  onSubmit={async (e) => {
                     e.preventDefault();
-                    setSubscribed(true);
+                    const email = new FormData(e.currentTarget).get("email") as string;
+                    setSubscribeError("");
+                    try {
+                      await api.post("/v1/newsletter/subscribe", { email });
+                      setSubscribed(true);
+                    } catch {
+                      setSubscribeError("Couldn't sign you up right now — please try again.");
+                    }
                   }}
                   className="relative flex items-center"
+                  noValidate
                 >
                   <input
+                    name="email"
                     type="email"
-                    placeholder="Email signup"
+                    placeholder={subscribeError ? "Try a valid email" : "Email signup"}
                     required
                     aria-label="Email for newsletter signup"
-                    className="h-9 w-48 sm:w-56 rounded-lg border border-line bg-paper pl-4 pr-10 text-xs text-ink outline-none transition placeholder:text-ink-muted focus:border-brand focus:ring-2 focus:ring-brand/15"
+                    aria-invalid={Boolean(subscribeError)}
+                    className={`h-9 w-48 sm:w-56 rounded-lg border bg-paper pl-4 pr-10 text-xs text-ink outline-none transition placeholder:text-ink-muted focus:border-brand focus:ring-2 focus:ring-brand/15 ${
+                      subscribeError ? "border-state-danger" : "border-line"
+                    }`}
                   />
                   <button
                     type="submit"

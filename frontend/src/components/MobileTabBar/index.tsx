@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import SearchIcon from "@mui/icons-material/Search";
-import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 
@@ -33,7 +33,7 @@ function MobileTabBar() {
     },
     {
       label: t("mobile.cart"),
-      icon: ShoppingBagOutlinedIcon,
+      icon: ShoppingCartOutlinedIcon,
       to: "/cart",
       badge: cartCount,
       match: (p: string) => p.startsWith("/cart"),

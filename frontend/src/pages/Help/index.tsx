@@ -1,6 +1,9 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
+import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
+import ThumbDownOutlinedIcon from "@mui/icons-material/ThumbDownOutlined";
+import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import ReplayOutlinedIcon from "@mui/icons-material/ReplayOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
@@ -114,12 +117,37 @@ const FAQS: Faq[] = [
 
 const GROUPS = ["All", ...Array.from(new Set(FAQS.map((f) => f.group)))];
 
+/** Where a 👎 on a topic should land in the contact form. */
+const GROUP_TO_TOPIC: Record<string, string> = {
+  "Orders & delivery": "Order issue",
+  "Payments": "Payments & billing",
+  "Returns & refunds": "Returns & refunds",
+  "Account": "Account & sign-in",
+};
+
 /** Help center: searchable FAQs plus quick actions wired to real platform routes. */
 function Help() {
   const navigate = useNavigate();
   const { settings } = useStoreSettings();
   const [query, setQuery] = useState("");
   const [group, setGroup] = useState("All");
+  const [votes, setVotes] = useState<Record<string, "up" | "down">>(() => {
+    try {
+      return JSON.parse(localStorage.getItem("cartly-help-votes") || "{}");
+    } catch {
+      return {};
+    }
+  });
+
+  const recordVote = (question: string, value: "up" | "down") => {
+    const next = { ...votes, [question]: value };
+    setVotes(next);
+    try {
+      localStorage.setItem("cartly-help-votes", JSON.stringify(next));
+    } catch {
+      /* storage unavailable — vote still shows for this visit */
+    }
+  };
 
   usePageMetadata({
     title: "Help center — Cartly",
@@ -240,6 +268,46 @@ function Help() {
                 <p className="mt-3 border-t border-line pt-3 text-sm leading-relaxed text-ink-soft [&_strong]:text-ink">
                   {faq.a}
                 </p>
+                <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-line pt-3">
+                  {votes[faq.q] ? (
+                    <p className="text-xs font-semibold text-state-success-on">
+                      Thanks — feedback recorded{votes[faq.q] === "down" ? ". A ticket helps us fix gaps fast:" : "!"}
+                      {votes[faq.q] === "down" && (
+                        <button
+                          onClick={() =>
+                            navigate(
+                              `/contact?topic=${encodeURIComponent(GROUP_TO_TOPIC[faq.group] ?? "Other")}&about=${encodeURIComponent(faq.q)}`
+                            )
+                          }
+                          className="ml-2 inline-flex items-center gap-1 rounded-full border border-line px-3 py-1 font-bold text-brand transition hover:border-brand hover:bg-brand-soft"
+                        >
+                          <SupportAgentOutlinedIcon sx={{ fontSize: 13 }} />
+                          Raise a ticket
+                        </button>
+                      )}
+                    </p>
+                  ) : (
+                    <>
+                      <span className="text-xs font-semibold text-ink-muted">Was this helpful?</span>
+                      <span className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => recordVote(faq.q, "up")}
+                          aria-label="Yes, this was helpful"
+                          className="flex h-7 w-7 items-center justify-center rounded-full border border-line text-ink-soft transition hover:border-brand hover:bg-brand-soft hover:text-brand"
+                        >
+                          <ThumbUpOutlinedIcon sx={{ fontSize: 14 }} />
+                        </button>
+                        <button
+                          onClick={() => recordVote(faq.q, "down")}
+                          aria-label="No, this wasn't helpful"
+                          className="flex h-7 w-7 items-center justify-center rounded-full border border-line text-ink-soft transition hover:border-state-danger hover:bg-state-danger-soft hover:text-state-danger"
+                        >
+                          <ThumbDownOutlinedIcon sx={{ fontSize: 14 }} />
+                        </button>
+                      </span>
+                    </>
+                  )}
+                </div>
               </details>
             ))}
           </div>
