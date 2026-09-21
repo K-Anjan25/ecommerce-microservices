@@ -12,6 +12,8 @@ Project-owned art-direction placeholders for the shipped **Bold Market (Concept 
 - `tile-toys.jpg` — Toys & Games tile
 - `tile-sports.jpg` — Sports / Gear tile
 - `tile-grocery.jpg` — Grocery / Fresh produce tile
+- `demo-speaker.jpg` — cobalt fabric smart speaker (speaker demo products)
+- `demo-textile.jpg` — folded linen throws with cobalt accent (blankets/bedding)
 
 These are **design placeholders, not merchant product photography**. The demo
 catalog in `design/preview-mock-server.mjs` maps them to products by keyword.

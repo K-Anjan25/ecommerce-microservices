@@ -436,7 +436,7 @@ function Products() {
                   applyCategory(tile.name);
                   resultsRef.current?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="text-xs font-bold text-ink underline-offset-2 hover:text-brand hover:underline transition text-left"
+                className="text-xs font-bold text-ink underline underline-offset-2 transition hover:text-brand text-left"
               >
                 Shop →
               </button>
@@ -470,7 +470,7 @@ function Products() {
                   applyCategory(cat.name);
                   resultsRef.current?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="text-xs font-bold text-ink underline-offset-2 hover:text-brand hover:underline transition text-left"
+                className="text-xs font-bold text-ink underline underline-offset-2 transition hover:text-brand text-left"
               >
                 Shop →
               </button>

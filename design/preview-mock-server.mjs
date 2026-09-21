@@ -42,14 +42,19 @@ const STORE_IMAGES = {
   grocery: "/images/store/tile-grocery.jpg",
   toys: "/images/store/tile-toys.jpg",
   gadgets: "/images/store/hero-gadgets.jpg",
+  speaker: "/images/store/demo-speaker.jpg",
+  textile: "/images/store/demo-textile.jpg",
 };
 
+/* Priority exact-match rules first, then broad category rules. */
 const IMAGE_KEYWORDS = [
-  [/(headphone|earbud|speaker|keyboard|watch|laptop|phone|camera|drone|console)/i, "electronics"],
+  [/speaker/i, "speaker"],
+  [/(blanket|linen|bedding|towel|textile|duvet)/i, "textile"],
+  [/(headphone|earbud|keyboard|watch|laptop|phone|camera|drone|console)/i, "electronics"],
   [/(serum|lip|spf|balm|skincare|cream|lotion|shampoo|makeup)/i, "beauty"],
   [/(skillet|carafe|kettle|board|tamper|espresso|blender|storage|mug|pour|cook|knife|pan)/i, "kitchen"],
   [/(sweater|shirt|jacket|denim|apparel|scarf|clothing|wear)/i, "fashion"],
-  [/(blanket|lamp|table|vase|decor|throw|candle|rug|curtain)/i, "home"],
+  [/(lamp|table|vase|decor|candle|rug|curtain)/i, "home"],
   [/(mat|band|roller|yoga|bottle|gym|fitness|trail|runner|sneaker|shoe|duffel|backpack|bike|gear)/i, "sports"],
   [/(coffee|tea|snack|produce|organic|grocery|oil|spice)/i, "grocery"],
   [/(lego|brick|toy|puzzle|game|plush|play)/i, "toys"],
@@ -69,6 +74,7 @@ const NAMES = [
   "Espresso Tamper", "Wool Runners", "Noise-Free Earbuds", "Walnut Side Table",
   "Matte Lip Balm", "Resistance Band Set", "Bamboo Cutting Board", "Analog Watch 38",
   "Canvas Backpack", "Glass Storage Set", "Sun Shield SPF50", "Foam Roller",
+  "Smart Speaker Mini",
 ];
 
 const PRODUCTS = NAMES.map((name, i) => {
