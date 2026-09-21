@@ -698,24 +698,18 @@ function Checkout() {
                 data={COUNTRIES.map((c) => ({ name: `${flagEmoji(c.code)} ${c.name}`, id: c.code }))}
               />
 
-              {!domesticDelivery &&
-                (hasIntlQuote ? (
-                  <p className="rounded-xl border border-state-success/40 bg-state-success/10 px-4 py-3 text-xs font-semibold leading-relaxed text-state-success">
-                    ✓ Delivers to {countryName(addressCountry)} via {intlQuote?.carrier} in{" "}
-                    {intlQuote?.estimatedDaysMin}–{intlQuote?.estimatedDaysMax} days. Import
-                    duties ({Math.round((intlQuote?.dutyRate ?? 0) * 100)}%
-                    {" "}{intlQuote?.dutyName?.toLowerCase()}) are estimated in the summary.
-                    You are charged in Indian Rupees (₹).
-                  </p>
-                ) : (
-                  <p className="rounded-xl border border-accent/40 bg-accent-soft px-4 py-3 text-xs font-semibold leading-relaxed text-state-warning-on">
-                    {!isLoggedIn
-                      ? `Sign in to check live delivery to ${countryName(addressCountry)} — we ship to 16 countries with DHL Express.`
-                      : intlFetching
-                      ? "Checking international delivery…"
-                      : `We don't ship to ${countryName(addressCountry)} yet — we're adding countries as fast as our courier partners do.`}
-                  </p>
-                ))}
+              {/* Amazon-style: no success banner for serviceable countries —
+                  carrier, ETA and duty already surface in the summary. Only
+                  warn when the destination can't be served. */}
+              {!domesticDelivery && !hasIntlQuote && (
+                <p className="rounded-xl border border-accent/40 bg-accent-soft px-4 py-3 text-xs font-semibold leading-relaxed text-state-warning-on">
+                  {!isLoggedIn
+                    ? `Sign in to check live delivery to ${countryName(addressCountry)} — we ship to 16 countries with DHL Express.`
+                    : intlFetching
+                    ? "Checking international delivery…"
+                    : `We don't ship to ${countryName(addressCountry)} yet — we're adding countries as fast as our courier partners do.`}
+                </p>
+              )}
 
               {/* Divisions follow the destination country: Indian states cascade
                   into districts, listed territories pick from the country's own

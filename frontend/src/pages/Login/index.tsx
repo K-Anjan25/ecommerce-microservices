@@ -151,14 +151,13 @@ function Login() {
       value={dial}
       onChange={(e) => setDial(e.target.value)}
       aria-label="Country code"
-      sx={{ width: 128, flexShrink: 0 }}
+      sx={{ width: 104, flexShrink: 0 }}
       className="[&_.MuiOutlinedInput-root]:!rounded-xl"
     >
       {COUNTRIES.map((c) => (
         <MenuItem key={c.code} value={c.dial}>
-          {flagEmoji(c.code)}&nbsp;
-          <span className="text-sm font-semibold">{c.dial}</span>
-          <span className="ml-2 text-xs text-ink-muted">{c.code}</span>
+          <span className="text-base leading-none">{flagEmoji(c.code)}</span>
+          <span className="ml-2 text-sm font-semibold">{c.dial}</span>
         </MenuItem>
       ))}
     </TextField>
