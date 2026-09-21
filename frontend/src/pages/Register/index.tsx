@@ -1,4 +1,5 @@
 import { Typography } from "@mui/material";
+import { MenuItem, TextField } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useFormik } from "formik";
 import AuthLayout from "../../components/AuthLayout";
@@ -10,20 +11,30 @@ import { RegisterForm } from "../../types/user";
 import { api } from "../../api/client";
 import { useState } from "react";
 import { showError } from "../../utils/showError";
+import { COUNTRIES } from "../../formdata/countries";
+import { isValidLocalNumber, toE164 } from "../../utils/phone";
 
 function Register() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  // Optional phone (E.164 with country code) — enables passwordless phone sign-in.
+  const [dial, setDial] = useState("+91");
+  const [localNumber, setLocalNumber] = useState("");
 
   const form = useFormik({
     ...registerForm,
     onSubmit: (values) => {
       const { passwordConfirm, ...registerValues } = values;
-      register(registerValues);
+      const phoneNumber = localNumber.trim() ? toE164(dial, localNumber) : undefined;
+      if (phoneNumber && !isValidLocalNumber(dial, localNumber)) {
+        showError(dial === "+91" ? "Enter a valid 10-digit mobile number" : "Enter a valid phone number");
+        return;
+      }
+      register({ ...registerValues, phoneNumber });
     },
   });
 
-  const register = async (creds: RegisterForm) => {
+  const register = async (creds: RegisterForm & { phoneNumber?: string }) => {
     setLoading(true);
     try {
       await api.post("/user/register", creds);
@@ -50,6 +61,38 @@ function Register() {
           <TextInput name="lastName" label="Last Name" form={form} />
         </div>
         <TextInput name="email" label="Email" form={form} />
+        <div>
+          <div className="flex gap-2">
+            <TextField
+              select
+              value={dial}
+              onChange={(e) => setDial(e.target.value)}
+              aria-label="Country code"
+              sx={{ width: 128, flexShrink: 0 }}
+              className="[&_.MuiOutlinedInput-root]:!rounded-xl"
+            >
+              {COUNTRIES.map((c) => (
+                <MenuItem key={c.code} value={c.dial}>
+                  <span className="text-sm font-semibold">{c.dial}</span>
+                  <span className="ml-2 text-xs text-ink-muted">{c.code}</span>
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              label="Phone number (optional)"
+              value={localNumber}
+              onChange={(e) => setLocalNumber(e.target.value.replace(/[^\d\s-]/g, ""))}
+              placeholder={dial === "+91" ? "98765 43210" : "201 555 0123"}
+              inputProps={{ inputMode: "numeric", maxLength: 14, autoComplete: "tel-national" }}
+              fullWidth
+              className="[&_.MuiOutlinedInput-root]:!rounded-xl"
+            />
+          </div>
+          <p className="mt-1.5 text-xs text-ink-muted">
+            Include the country code (chosen at left). Phone numbers can sign in with a
+            one-time code — no password needed.
+          </p>
+        </div>
         <TextInput
           name="password"
           label="Password"

@@ -1,8 +1,12 @@
 package com.ecommerce.commerce_service.controller;
 
+import com.ecommerce.commerce_service.dto.shippingRate.InternationalQuoteRequest;
+import com.ecommerce.commerce_service.dto.shippingRate.InternationalQuoteResponse;
 import com.ecommerce.commerce_service.dto.shippingRate.ShippingCalculationRequest;
 import com.ecommerce.commerce_service.dto.shippingRate.ShippingRateDto;
+import com.ecommerce.commerce_service.dto.shippingRate.ShippingZoneDto;
 import com.ecommerce.commerce_service.service.ShippingRateService;
+import com.ecommerce.commerce_service.service.ShippingZoneService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

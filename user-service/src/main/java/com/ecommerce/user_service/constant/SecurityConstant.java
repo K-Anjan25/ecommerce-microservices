@@ -12,6 +12,7 @@ public class SecurityConstant {
     public static final String OPTIONS_HTTP_METHOD = "OPTIONS";
     public static final String[] PUBLIC_URLS = {"/user/login", "/user/register",
             "/user/password-reset/request", "/user/password-reset/confirm", "/user/image/**",
-            "/user/token/refresh", "/actuator/health", "/actuator/health/**", "/actuator/info"};
+            "/user/token/refresh", "/user/otp/request", "/user/otp/verify", "/user/phone/register",
+            "/actuator/health", "/actuator/health/**", "/actuator/info"};
     public static final String[] PUBLIC_URLS_WITH_ONLY_MAIN = {"/user/image"};
 }

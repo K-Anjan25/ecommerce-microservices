@@ -57,7 +57,7 @@ const FAQS: Faq[] = [
     group: "Orders & delivery",
     q: "Do you ship internationally?",
     keywords: "international abroad overseas country outside india export worldwide shipping",
-    a: <>Not yet — we currently deliver across India only. You can already save international addresses in your address book, and checkout will open to those destinations as soon as international shipping rates go live. All prices are charged in Indian Rupees.</>,
+    a: <>Yes — we ship to 16 countries across North America, Europe, the Middle East, Asia-Pacific and Oceania (including the US, UK, UAE, Singapore, Australia and Japan) via DHL Express in 7–14 days. Shipping is ₹2,499, free on orders over ₹25,000, and import duties &amp; VAT (estimated at checkout) are shown before you pay. You can pick your display currency in the header; every order is securely charged in Indian Rupees (₹). India orders keep GST invoicing, pincode rates and COD.</>,
   },
   {
     group: "Orders & delivery",

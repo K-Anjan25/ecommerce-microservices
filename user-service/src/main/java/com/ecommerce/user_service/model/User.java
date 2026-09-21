@@ -36,6 +36,10 @@ public class User {
     private boolean isNotLocked;
     private String referralCode;
     private String referredBy;
+
+    /** E.164 phone (with country code, e.g. +919876543210); null when unset. */
+    @Column(name = "phone_number", length = 20, unique = true)
+    private String phoneNumber;
     @Column(nullable = false, columnDefinition = "INTEGER DEFAULT 0")
     private int tokenVersion;
 }

@@ -9,6 +9,11 @@ import com.ecommerce.user_service.exception.HttpResponse;
 import com.ecommerce.user_service.model.User;
 import com.ecommerce.user_service.model.UserPrincipal;
 import com.ecommerce.user_service.service.PasswordResetService;
+import com.ecommerce.user_service.dto.PhoneOtpSentResponse;
+import com.ecommerce.user_service.service.PhoneOtpService;
+import com.ecommerce.user_service.dto.PhoneOtpRequest;
+import com.ecommerce.user_service.dto.PhoneOtpVerifyRequest;
+import com.ecommerce.user_service.dto.PhoneRegisterRequest;
 import com.ecommerce.user_service.service.UserService;
 import com.ecommerce.user_service.util.AuthenticationHelper;
 import lombok.RequiredArgsConstructor;
@@ -44,10 +49,32 @@ public class UserController {
     private final AuthenticationHelper authenticationHelper;
     private final AuditLogService auditLogService;
     private final PasswordResetService passwordResetService;
+    private final PhoneOtpService phoneOtpService;
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterUserRequest user)  {
         userService.register(user);
         return ResponseEntity.ok(REGISTER_RES);
+    }
+
+    /** Phone sign-in step 1: text a one-time code to the phone. */
+    @PostMapping("/otp/request")
+    public ResponseEntity<PhoneOtpSentResponse> requestPhoneOtp(
+            @Valid @RequestBody PhoneOtpRequest request) {
+        return ResponseEntity.ok(phoneOtpService.request(request.getPhone()));
+    }
+
+    /** Phone sign-in step 2: exchange the code for the standard token pair. */
+    @PostMapping("/otp/verify")
+    public ResponseEntity<LoginResponse> verifyPhoneOtp(
+            @Valid @RequestBody PhoneOtpVerifyRequest request) {
+        return ResponseEntity.ok(phoneOtpService.verify(request.getPhone(), request.getCode()));
+    }
+
+    /** Phone sign-up: complete account creation for a verified number. */
+    @PostMapping("/phone/register")
+    public ResponseEntity<LoginResponse> registerPhone(
+            @Valid @RequestBody PhoneRegisterRequest request) {
+        return ResponseEntity.ok(phoneOtpService.completeSignUp(request));
     }
 
     @PostMapping("/login")

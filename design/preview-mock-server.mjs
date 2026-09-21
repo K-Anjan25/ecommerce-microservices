@@ -218,6 +218,34 @@ const json = (res, body, status = 200) => {
 /* Support tickets raised from the contact form during this preview session. */
 const SUPPORT_TICKETS = [];
 
+/* In-memory phone OTP state for the preview session. */
+const PHONE_OTPS = new Map(); // phone → { code, expiresAt }
+const REGISTERED_PHONES = new Set(["+919876543210"]);
+
+/* Mirrors commerce-service ShippingZoneSeeder (Zone 1). */
+const INTERNATIONAL_ZONE = {
+  name: "International — Zone 1",
+  countries: ["US", "CA", "GB", "DE", "FR", "NL", "BE", "ES", "SE", "CH", "AE", "SG", "AU", "NZ", "JP", "KR"],
+  cost: 2499,
+  freeAbove: 25000,
+  daysMin: 7,
+  daysMax: 14,
+  carrier: "DHL Express",
+  dutyRate: 0.15,
+  dutyName: "Import duty & VAT",
+};
+
+/* Collect and parse a JSON request body. */
+const readBody = (req, cb) => {
+  let raw = "";
+  req.on("data", (chunk) => { raw += chunk; });
+  req.on("end", () => {
+    let body = {};
+    try { body = JSON.parse(raw); } catch { /* empty object */ }
+    cb(body);
+  });
+};
+
 createServer((req, res) => {
   const url = new URL(req.url, "http://x");
   const p = url.pathname;
@@ -227,6 +255,71 @@ createServer((req, res) => {
 
   if (["/user/password-reset/request", "/user/password-reset/confirm"].includes(p) && req.method === "POST") {
     return json(res, { message: "Mock password reset accepted" });
+  }
+
+  /* ── phone sign-in / sign-up (OTP flows) ─────────────────────────────── */
+
+  if (p === "/user/otp/request" && req.method === "POST") {
+    return readBody(req, (body) => {
+      const phone = String(body.phone ?? "").trim();
+      if (!/^\+\d{7,15}$/.test(phone)) {
+        return json(res, { message: "Phone must include the country code, e.g. +919876543210" }, 400);
+      }
+      const code = String(Math.floor(100000 + Math.random() * 900000));
+      PHONE_OTPS.set(phone, { code, expiresAt: Date.now() + 5 * 60 * 1000 });
+      // No SMS provider in preview: the code is echoed back and logged.
+      console.log(`[mock] OTP for ${phone}: ${code}`);
+      json(res, { expiresInSeconds: 300, devCode: code });
+    });
+  }
+
+  if (p === "/user/otp/verify" && req.method === "POST") {
+    return readBody(req, (body) => {
+      const phone = String(body.phone ?? "").trim();
+      const code = String(body.code ?? "").trim();
+      const record = PHONE_OTPS.get(phone);
+      if (!record) return json(res, { message: "Request a code first" }, 400);
+      if (record.expiresAt < Date.now()) return json(res, { message: "This code has expired — request a new one" }, 400);
+      if (record.code !== code) return json(res, { message: "Incorrect code — please try again" }, 400);
+      if (!REGISTERED_PHONES.has(phone)) {
+        return json(res, { message: "NO_ACCOUNT" }, 400);
+      }
+      PHONE_OTPS.delete(phone);
+      json(res, {
+        accessToken: "mock-access-token",
+        refreshToken: "mock-refresh-token",
+        userId: "user-1",
+        email: "admin@cartly.com",
+        firstName: "Admin",
+        lastName: "User",
+        roles: ["ROLE_ADMIN"],
+      });
+    });
+  }
+
+  if (p === "/user/phone/register" && req.method === "POST") {
+    return readBody(req, (body) => {
+      const phone = String(body.phone ?? "").trim();
+      const code = String(body.code ?? "").trim();
+      const record = PHONE_OTPS.get(phone);
+      if (!record || record.code !== code || record.expiresAt < Date.now()) {
+        return json(res, { message: "Verify the code sent to this phone before creating the account" }, 400);
+      }
+      const first = String(body.firstName ?? "").trim();
+      const last = String(body.lastName ?? "").trim();
+      if (!first || !last) return json(res, { message: "Enter your first and last name" }, 400);
+      REGISTERED_PHONES.add(phone);
+      PHONE_OTPS.delete(phone);
+      json(res, {
+        accessToken: "mock-access-token",
+        refreshToken: "mock-refresh-token",
+        userId: "user-1",
+        email: body.email ?? null,
+        firstName: first,
+        lastName: last,
+        roles: ["ROLE_USER"],
+      });
+    });
   }
 
   if (p === "/user/login" && req.method === "POST") {
@@ -261,6 +354,35 @@ createServer((req, res) => {
 
   if (p === "/v1/shipping/calculate" && req.method === "POST") {
     return json(res, { active: true, cost: 50 });
+  }
+
+  /* ── international shipping zones ─────────────────────────────────────── */
+
+  if (p === "/v1/shipping/zones" && req.method === "GET") {
+    return json(res, [INTERNATIONAL_ZONE]);
+  }
+
+  if (p === "/v1/shipping/zones/quote" && req.method === "POST") {
+    return readBody(req, (body) => {
+      const country = String(body.country ?? "").trim().toUpperCase();
+      const subtotal = Number(body.subtotal ?? 0);
+      const inZone = INTERNATIONAL_ZONE.countries.includes(country);
+      if (!inZone) {
+        return json(res, { available: false, cost: 0, estimatedDaysMin: 0, estimatedDaysMax: 0, carrier: "N/A", dutyRate: 0, dutyName: "Import duty & VAT" });
+      }
+      const freeShipping = subtotal >= INTERNATIONAL_ZONE.freeAbove;
+      json(res, {
+        available: true,
+        zoneName: INTERNATIONAL_ZONE.name,
+        cost: freeShipping ? 0 : INTERNATIONAL_ZONE.cost,
+        freeAbove: INTERNATIONAL_ZONE.freeAbove,
+        estimatedDaysMin: INTERNATIONAL_ZONE.daysMin,
+        estimatedDaysMax: INTERNATIONAL_ZONE.daysMax,
+        carrier: INTERNATIONAL_ZONE.carrier,
+        dutyRate: INTERNATIONAL_ZONE.dutyRate,
+        dutyName: INTERNATIONAL_ZONE.dutyName,
+      });
+    });
   }
 
   if (p.startsWith("/v1/tax/rule")) {

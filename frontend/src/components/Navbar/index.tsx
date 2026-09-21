@@ -38,6 +38,7 @@ import { CommerceSearch } from "../../features/catalog";
 import { useStoreSettings } from "../../features/storefront";
 import { MiniCartDrawer } from "../../features/cart";
 import { useI18n } from "../../features/i18n";
+import { DISPLAY_CURRENCIES, getDisplayCurrency, setDisplayCurrency } from "../../utils/currency";
 
 const CartBadge = styled(Badge)({
   "& .MuiBadge-badge": {
@@ -69,6 +70,8 @@ const Navbar = () => {
   const carts = useSelector((state: AppState) => state.cart);
   const { isDark, toggle: toggleScheme } = useColorSchemeContext();
   const { language, toggleLanguage, t } = useI18n();
+  const [currency, setCurrency] = useState(getDisplayCurrency);
+  const [anchorElCurrency, setAnchorElCurrency] = useState<null | HTMLElement>(null);
 
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [anchorElCategory, setAnchorElCategory] = useState<null | HTMLElement>(null);
@@ -212,6 +215,49 @@ const Navbar = () => {
                   {language === "en" ? "EN" : "HI"}
                 </button>
               </Tooltip>
+              <Tooltip title="Currency — display only, you are always charged in ₹ INR">
+                <button
+                  aria-label="Currency"
+                  onClick={(event) => setAnchorElCurrency(event.currentTarget)}
+                  className="inline-flex items-center gap-1 hover:text-brand text-xs font-bold"
+                >
+                  {currency.code}
+                </button>
+              </Tooltip>
+              <Menu
+                anchorEl={anchorElCurrency}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                transformOrigin={{ vertical: "top", horizontal: "right" }}
+                open={Boolean(anchorElCurrency)}
+                onClose={() => setAnchorElCurrency(null)}
+                slotProps={{ paper: { className: "!mt-2 !min-w-[150px] !rounded-xl !border !border-line !shadow-lift" } }}
+              >
+                <div className="px-4 pb-2 pt-2">
+                  <p className="text-[0.6875rem] font-bold uppercase tracking-wide text-ink-muted">
+                    Display currency
+                  </p>
+                  <p className="text-[0.625rem] text-ink-muted">Charged in ₹ INR</p>
+                </div>
+                <Divider />
+                {DISPLAY_CURRENCIES.map((c) => (
+                  <MenuItem
+                    key={c.code}
+                    selected={c.code === currency.code}
+                    onClick={() => {
+                      setAnchorElCurrency(null);
+                      if (c.code !== currency.code) {
+                        setCurrency(c);
+                        setDisplayCurrency(c.code);
+                        // Display currency is read on render; a reload applies
+                        // it across every page instantly.
+                        window.location.reload();
+                      }
+                    }}
+                  >
+                    {c.label}
+                  </MenuItem>
+                ))}
+              </Menu>
               <Tooltip title={isDark ? "Light mode" : "Dark mode"}>
                 <button
                   aria-label="Toggle theme"
@@ -293,7 +339,9 @@ const Navbar = () => {
                     <p className="truncate text-sm font-bold text-ink">
                       {user.firstName} {user.lastName}
                     </p>
-                    <p className="truncate text-xs text-ink-muted">{user.email}</p>
+                    <p className="truncate text-xs text-ink-muted">
+                      {user.email || (user as { phoneNumber?: string }).phoneNumber || "Signed in"}
+                    </p>
                   </div>
                   <Divider />
                   <MenuItem onClick={() => handleCloseUserMenu("Account")}>Account</MenuItem>

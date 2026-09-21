@@ -1,3 +1,4 @@
+import { formatPrice as formatDisplayPrice } from "./currency";
 import { Cart } from "../types/cart";
 
 export const calculateCountOfCartItems = (items: Cart[]) => {
@@ -23,9 +24,11 @@ export const calculateTotalPriceOfOneProduct = (
   return Math.round(unitPrice * quantity * 100) / 100;
 };
 
+/**
+ * Money formatter for the whole storefront. Amounts are stored and charged in
+ * INR; the display currency (utils/currency) converts for international
+ * visitors and always renders INR values verbatim when INR is selected.
+ */
 export const formatPrice = (value: number) => {
-  return `₹ ${Number(value).toLocaleString("en-IN", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}`;
+  return formatDisplayPrice(Number(value));
 };

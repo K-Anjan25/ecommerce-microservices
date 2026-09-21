@@ -3,6 +3,7 @@ import { LoadingButton } from "@mui/lab";
 import { useFormik } from "formik";
 import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "react-query";
+import { formatPrice } from "../../utils/currency";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
@@ -35,7 +36,7 @@ import { SavedAddress } from "../../types/address";
 import {
   calculateCountOfCartItems,
   calculateTotalPriceOfCartItems,
-  formatPrice,
+
 } from "../../utils/cart";
 import { showError } from "../../utils/showError";
 import { showSuccess } from "../../utils/showSuccess";
@@ -269,6 +270,14 @@ function Checkout() {
     { enabled: isLoggedIn && pincodeValid, retry: false }
   );
 
+  // International quote for zone countries (server names the zone, carrier,
+  // ETA and import-duty rate; available=false ⇒ we don't ship there yet).
+  const { data: intlQuote, isFetching: intlFetching } = useQuery(
+    ["intlQuote", addressCountry, subtotal],
+    () => ShippingApi.quoteInternational(addressCountry, subtotal),
+    { enabled: isLoggedIn && !domesticDelivery, retry: false }
+  );
+
   const { data: taxRule } = useQuery(
     ["taxRule", form.values.state],
     () => ShippingApi.getTaxRule(form.values.state),
@@ -276,25 +285,39 @@ function Checkout() {
   );
 
   const hasShippingQuote = Boolean(shippingQuote?.active);
-  const shippingCost = hasShippingQuote
-    ? Number(shippingQuote?.cost ?? 0)
-    : subtotal >= 500
-    ? 0
-    : shippingMethod === ShippingMethod.EXPRESS
-    ? 100
-    : 50;
+  const hasIntlQuote = Boolean(intlQuote?.available);
+  const shippingCost = domesticDelivery
+    ? hasShippingQuote
+      ? Number(shippingQuote?.cost ?? 0)
+      : subtotal >= 500
+      ? 0
+      : shippingMethod === ShippingMethod.EXPRESS
+      ? 100
+      : 50
+    : hasIntlQuote
+    ? intlQuote?.freeAbove && subtotal >= intlQuote.freeAbove
+      ? 0
+      : Number(intlQuote?.cost ?? 0)
+    : 0;
   const giftWrapFee = giftWrap ? 50 : 0;
   const discount = coupon?.discount ?? 0;
   const maxLoyaltyPoints = Math.max(0, Math.floor((subtotal - discount) * 10));
   const appliedLoyaltyPoints = Math.min(loyaltyPoints, loyaltyBalance, maxLoyaltyPoints);
   const loyaltyDiscount = appliedLoyaltyPoints / 10;
-  const taxRate = taxRule?.rate ?? 0.18;
-  const taxLabel = taxRule ? `${taxRule.taxName} ${Math.round(taxRate * 100)}%` : "18% GST";
+  const taxRate = domesticDelivery ? taxRule?.rate ?? 0.18 : intlQuote?.dutyRate ?? 0;
+  const taxLabel = domesticDelivery
+    ? taxRule
+      ? `${taxRule.taxName} ${Math.round(taxRate * 100)}%`
+      : "18% GST"
+    : `${intlQuote?.dutyName ?? "Import duty & VAT"} ${Math.round(taxRate * 100)}%`;
   // Mirrors the backend: tax applies to subtotal + shipping - discount + gift wrap.
   const tax = Number(
     ((subtotal + shippingCost - discount - loyaltyDiscount + giftWrapFee) * taxRate).toFixed(2)
   );
   const total = subtotal + shippingCost - discount - loyaltyDiscount + giftWrapFee + tax;
+  // Pay unlocks once the destination is servable: a valid Indian pincode, or a
+  // live international quote for the selected country.
+  const canPay = domesticDelivery ? pincodeValid : hasIntlQuote;
 
   // A cart change invalidates the applied coupon (discount depends on subtotal).
   useEffect(() => {
@@ -551,10 +574,15 @@ function Checkout() {
       <div className="flex justify-between">
         <dt className="text-ink-soft">
           Shipping
-          {hasShippingQuote && (
+          {(domesticDelivery ? hasShippingQuote : hasIntlQuote) && (
             <span className="block text-[0.6875rem] text-ink-muted">
-              {shippingQuote?.carrier} · {shippingQuote?.estimatedDaysMin}–
-              {shippingQuote?.estimatedDaysMax} days
+              {domesticDelivery ? shippingQuote?.carrier : intlQuote?.carrier} ·{" "}
+              {(domesticDelivery ? shippingQuote?.estimatedDaysMin : intlQuote?.estimatedDaysMin) ??
+                ""}–
+              {(domesticDelivery
+                ? shippingQuote?.estimatedDaysMax
+                : intlQuote?.estimatedDaysMax) ?? ""}{" "}
+              days
             </span>
           )}
         </dt>
@@ -569,6 +597,11 @@ function Checkout() {
       {isLoggedIn && pincodeValid && !shippingFetching && !hasShippingQuote && (
         <p className="text-[0.6875rem] text-ink-muted">
           No courier rate found for this pincode — flat rate applies.
+        </p>
+      )}
+      {!domesticDelivery && hasIntlQuote && intlQuote?.freeAbove && (
+        <p className="text-[0.6875rem] text-ink-muted">
+          Free international shipping on orders over {formatPrice(intlQuote.freeAbove, { forceINR: true })}.
         </p>
       )}
       <div className="flex justify-between">
@@ -640,13 +673,24 @@ function Checkout() {
                 data={COUNTRIES.map((c) => ({ name: c.name, id: c.code }))}
               />
 
-              {!domesticDelivery && (
-                <p className="rounded-xl border border-accent/40 bg-accent-soft px-4 py-3 text-xs font-semibold leading-relaxed text-state-warning-on">
-                  We currently deliver across India only. {countryName(addressCountry)}{" "}
-                  addresses can be saved, but checkout opens the moment
-                  international shipping does.
-                </p>
-              )}
+              {!domesticDelivery &&
+                (hasIntlQuote ? (
+                  <p className="rounded-xl border border-state-success/40 bg-state-success/10 px-4 py-3 text-xs font-semibold leading-relaxed text-state-success">
+                    ✓ Delivers to {countryName(addressCountry)} via {intlQuote?.carrier} in{" "}
+                    {intlQuote?.estimatedDaysMin}–{intlQuote?.estimatedDaysMax} days. Import
+                    duties ({Math.round((intlQuote?.dutyRate ?? 0) * 100)}%
+                    {" "}{intlQuote?.dutyName?.toLowerCase()}) are estimated in the summary.
+                    You are charged in Indian Rupees (₹).
+                  </p>
+                ) : (
+                  <p className="rounded-xl border border-accent/40 bg-accent-soft px-4 py-3 text-xs font-semibold leading-relaxed text-state-warning-on">
+                    {!isLoggedIn
+                      ? `Sign in to check live delivery to ${countryName(addressCountry)} — we ship to 16 countries with DHL Express.`
+                      : intlFetching
+                      ? "Checking international delivery…"
+                      : `We don't ship to ${countryName(addressCountry)} yet — we're adding countries as fast as our courier partners do.`}
+                  </p>
+                ))}
 
               {domesticDelivery ? (
                 <div className="grid gap-3 sm:grid-cols-2">
@@ -688,7 +732,11 @@ function Checkout() {
             step={2}
             title="Delivery method"
             subtitle={
-              pincodeValid && hasShippingQuote
+              !domesticDelivery
+                ? hasIntlQuote
+                  ? `${intlQuote?.carrier} · quoted for ${countryName(addressCountry)}`
+                  : "International delivery"
+                : pincodeValid && hasShippingQuote
                 ? "Rate quoted for your pincode"
                 : "Flat rate — free over ₹500"
             }
@@ -895,7 +943,7 @@ function Checkout() {
               variant="contained"
               size="large"
               loading={busy}
-              disabled={!domesticDelivery}
+              disabled={!canPay}
               className="!mt-5 !hidden !py-3 lg:!flex"
             >
               {paymentProvider === "CASH" ? "Place order (Cash on delivery)" : `Pay ${formatPrice(total)}`}
@@ -932,7 +980,7 @@ function Checkout() {
             type="submit"
             variant="contained"
             loading={busy}
-            disabled={!domesticDelivery}
+            disabled={!canPay}
             className="!ml-auto !flex-1 !py-3"
           >
             {paymentProvider === "CASH" ? "Place order (COD)" : t("checkout.pay")}

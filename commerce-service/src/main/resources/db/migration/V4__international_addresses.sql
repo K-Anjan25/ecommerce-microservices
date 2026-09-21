@@ -9,5 +9,5 @@ ALTER TABLE IF EXISTS saved_addresses
     ADD COLUMN IF NOT EXISTS pincode varchar(20),
     ADD COLUMN IF NOT EXISTS phone_number varchar(20);
 
-ALTER TABLE IF EXISTS order_address
+ALTER TABLE IF EXISTS order_addresses
     ADD COLUMN IF NOT EXISTS country varchar(2) DEFAULT 'IN';

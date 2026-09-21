@@ -65,6 +65,7 @@ public class OrderService {
     private final RabbitMQMessageProducer rabbitMQMessageProducer;
     private final OrderItemRepository orderItemRepository;
     private final ShippingRateService shippingRateService;
+    private final ShippingZoneService shippingZoneService;
     private final TaxRuleService taxRuleService;
     private final CheckoutTokenService checkoutTokenService;
     private final ProductCatalogClient productCatalogClient;
@@ -111,7 +112,10 @@ public class OrderService {
                 .map(item -> item.getPrice() == null ? BigDecimal.ZERO : item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        BigDecimal shipping = calculateShipping(subtotal, createOrderRequest.getShippingMethod(), createOrderRequest.getPincode());
+        String destinationCountry = order.getAddress() == null || order.getAddress().getCountry() == null
+                ? "IN" : order.getAddress().getCountry();
+        BigDecimal shipping = calculateShipping(subtotal, createOrderRequest.getShippingMethod(),
+                createOrderRequest.getPincode(), destinationCountry);
         BigDecimal discount = BigDecimal.ZERO;
 
         if (createOrderRequest.getCouponCode() != null && !createOrderRequest.getCouponCode().isBlank()) {
@@ -134,7 +138,8 @@ public class OrderService {
 
         BigDecimal taxableAmount = subtotal.add(shipping).add(giftWrapFee)
                 .subtract(discount).subtract(loyaltyDiscount).max(BigDecimal.ZERO);
-        BigDecimal tax = calculateTax(taxableAmount, createOrderRequest.getState()).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal tax = calculateTax(taxableAmount, createOrderRequest.getState(), destinationCountry)
+                .setScale(2, RoundingMode.HALF_UP);
         BigDecimal totalBeforeGiftCard = taxableAmount.add(tax).setScale(2, RoundingMode.HALF_UP);
         BigDecimal giftCardAmount = BigDecimal.ZERO;
 
@@ -243,7 +248,16 @@ public class OrderService {
         });
     }
 
-    private BigDecimal calculateShipping(BigDecimal subtotal, ShippingMethod method, String pincode) {
+    private BigDecimal calculateShipping(BigDecimal subtotal, ShippingMethod method, String pincode, String country) {
+        // International orders price off shipping zones; an unserviceable
+        // destination is rejected outright instead of silently mispricing.
+        if (country != null && !"IN".equals(country)) {
+            var zone = shippingZoneService.requireZone(country);
+            if (zone.getFreeAbove() != null && subtotal.compareTo(zone.getFreeAbove()) >= 0) {
+                return BigDecimal.ZERO;
+            }
+            return zone.getCost();
+        }
         if (pincode != null && !pincode.isBlank()) {
             var rate = shippingRateService.calculateShipping(
                     new com.ecommerce.commerce_service.dto.shippingRate.ShippingCalculationRequest(pincode, subtotal));
@@ -263,7 +277,12 @@ public class OrderService {
         return new BigDecimal("50.00");
     }
 
-    private BigDecimal calculateTax(BigDecimal taxableAmount, String state) {
+    private BigDecimal calculateTax(BigDecimal taxableAmount, String state, String country) {
+        // International: the zone's import duty/VAT rate replaces GST.
+        if (country != null && !"IN".equals(country)) {
+            var zone = shippingZoneService.requireZone(country);
+            return taxableAmount.multiply(zone.getDutyRate());
+        }
         if (state != null && !state.isBlank()) {
             return taxRuleService.getTaxRuleForState(state)
                     .map(rule -> taxableAmount.multiply(rule.getRate()).setScale(2, RoundingMode.HALF_UP))
