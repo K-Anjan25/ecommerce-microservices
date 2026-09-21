@@ -60,7 +60,6 @@ module.exports = {
       },
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
-        display: ["'Inter Tight'", "Inter", "system-ui", "sans-serif"],
         heading: ["'Inter Tight'", "Inter", "system-ui", "sans-serif"],
         mono: ["'IBM Plex Mono'", "ui-monospace", "monospace"],
       },
