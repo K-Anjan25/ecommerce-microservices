@@ -27,7 +27,9 @@ import { showSuccess } from "../../utils/showSuccess";
 import { showError } from "../../utils/showError";
 import { SavedAddress } from "../../types/address";
 import statesAndDistrict from "../../formdata.json";
-import { COUNTRIES, countryLabel, countryName, flagEmoji, isIndia } from "../../formdata/countries";
+import { COUNTRIES, countryName, isIndia } from "../../formdata/countries";
+import Flag from "../../components/Flag";
+import { CITY_OPTIONS, CITY_OTHER } from "../../formdata/cities";
 import { getTerritory, isValidPhone, isValidPostal } from "../../formdata/territories";
 
 const EMPTY = { country: "IN", state: "", district: "", addressDetail: "", pincode: "", phoneNumber: "", defaultAddress: false };
@@ -46,6 +48,8 @@ function Addresses() {
   const { data: zones } = useQuery("shippingZones", ShippingApi.getZones, { retry: false });
 
   const territory = getTerritory(form.country);
+  const cityOptions = CITY_OPTIONS[form.country];
+  const [cityOther, setCityOther] = useState(false);
   const zoneCountries = useMemo(
     () =>
       new Set(
@@ -57,6 +61,60 @@ function Addresses() {
     [zones]
   );
   const deliverableHere = isIndia(form.country) || zoneCountries.has(form.country);
+
+  // City picker: major cities dropdown + "Other" free-text escape hatch.
+  const cityField = cityOptions && !cityOther ? (
+    <FormControl fullWidth size="small">
+      <InputLabel id="addr-district-label">{territory.cityLabel}</InputLabel>
+      <Select
+        labelId="addr-district-label"
+        id="addr-district"
+        label={territory.cityLabel}
+        value={form.district}
+        onChange={(e) => {
+          if (e.target.value === CITY_OTHER) {
+            setCityOther(true);
+            setForm({ ...form, district: "" });
+          } else {
+            setForm({ ...form, district: e.target.value as string });
+          }
+        }}
+      >
+        {cityOptions.map((c) => (
+          <MenuItem key={c} value={c}>
+            {c}
+          </MenuItem>
+        ))}
+        <MenuItem value={CITY_OTHER}>Other (type manually)</MenuItem>
+      </Select>
+    </FormControl>
+  ) : (
+    <div>
+      <label htmlFor="addr-district" className="eyebrow mb-1.5 block">
+        {territory.cityLabel}
+      </label>
+      <input
+        id="addr-district"
+        type="text"
+        className="input-control"
+        placeholder={territory.cityExample}
+        value={form.district}
+        onChange={(e) => setForm({ ...form, district: e.target.value })}
+      />
+      {cityOptions && (
+        <button
+          type="button"
+          onClick={() => {
+            setCityOther(false);
+            setForm({ ...form, district: "" });
+          }}
+          className="mt-1 text-xs font-semibold text-brand hover:underline"
+        >
+          Choose from the list
+        </button>
+      )}
+    </div>
+  );
 
   /* The full state/district dataset — the same one checkout uses. This page
      previously hardcoded five states, so an address in e.g. Telangana could
@@ -169,9 +227,11 @@ function Addresses() {
                   <p className="font-heading text-lg font-bold leading-snug text-ink">
                     {addr.addressDetail}
                   </p>
-                  <p className="mt-1 text-sm text-ink-soft">
+                  <p className="mt-1 flex items-center gap-1.5 text-sm text-ink-soft">
                     {addr.district}, {addr.state}
-                    <span className="ml-1.5">· {countryLabel(addr.country)}</span>
+                    <span className="inline-flex items-center gap-1">
+                      · <Flag code={addr.country} size={14} /> {countryName(addr.country)}
+                    </span>
                   </p>
                   {addr.pincode && <p className="text-sm text-ink-muted">{addr.pincode}</p>}
                 </div>
@@ -201,19 +261,20 @@ function Addresses() {
                 id="addr-country"
                 label="Country"
                 value={form.country || "IN"}
-                onChange={(e) =>
+                onChange={(e) => {
+                  setCityOther(false);
                   setForm({
                     ...form,
                     country: e.target.value,
                     state: getTerritory(e.target.value).defaultRegion ?? "",
                     district: "",
                     pincode: "",
-                  })
-                }
+                  });
+                }}
               >
                 {COUNTRIES.map((c) => (
                   <MenuItem key={c.code} value={c.code}>
-                    {flagEmoji(c.code)}&nbsp;&nbsp;{c.name}
+                    {c.name}
                   </MenuItem>
                 ))}
               </Select>
@@ -256,19 +317,7 @@ function Addresses() {
                 </FormControl>
               </>
             ) : territory.regionHidden ? (
-              <div>
-                <label htmlFor="addr-district" className="eyebrow mb-1.5 block">
-                  {territory.cityLabel}
-                </label>
-                <input
-                  id="addr-district"
-                  type="text"
-                  className="input-control"
-                  placeholder={territory.cityExample}
-                  value={form.district}
-                  onChange={(e) => setForm({ ...form, district: e.target.value })}
-                />
-              </div>
+              cityField
             ) : (
               <>
                 {territory.regions ? (
@@ -303,19 +352,7 @@ function Addresses() {
                     />
                   </div>
                 )}
-                <div>
-                  <label htmlFor="addr-district" className="eyebrow mb-1.5 block">
-                    {territory.cityLabel}
-                  </label>
-                  <input
-                    id="addr-district"
-                    type="text"
-                    className="input-control"
-                    placeholder={territory.cityExample}
-                    value={form.district}
-                    onChange={(e) => setForm({ ...form, district: e.target.value })}
-                  />
-                </div>
+                {cityField}
               </>
             )}
 

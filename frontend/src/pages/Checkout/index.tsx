@@ -1,4 +1,4 @@
-import { Box, Checkbox, Divider, FormControlLabel } from "@mui/material";
+import { Box, Button, Checkbox, Divider, FormControlLabel } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useFormik } from "formik";
 import { useEffect, useRef, useState } from "react";
@@ -42,7 +42,8 @@ import { showError } from "../../utils/showError";
 import { showSuccess } from "../../utils/showSuccess";
 import statesAndDistrict from "../../formdata.json";
 import { getTerritory } from "../../formdata/territories";
-import { countryLabel, flagEmoji } from "../../formdata/countries";
+import Flag from "../../components/Flag";
+import { CITY_OPTIONS, CITY_OTHER } from "../../formdata/cities";
 import { COUNTRIES, countryName, isIndia } from "../../formdata/countries";
 import { useI18n } from "../../features/i18n";
 
@@ -505,6 +506,59 @@ function Checkout() {
 
   // Country-specific address structure (divisions, labels, postal format).
   const territory = getTerritory(addressCountry);
+  const cityOptions = CITY_OPTIONS[addressCountry];
+  // City renders as a dropdown of major cities; "Other" flips it to free text
+  // so towns outside the list still work.
+  const [cityOther, setCityOther] = useState(false);
+
+  // City picker: dropdown of the country's major cities with an "Other"
+  // escape hatch that switches to a free-text field.
+  const cityField = cityOptions && !cityOther ? (
+    <SelectInput
+      name="district"
+      label={territory.cityLabel}
+      form={form}
+      data={[
+        ...cityOptions.map((c) => ({ name: c, id: c })),
+        { name: "Other (type manually)", id: CITY_OTHER },
+      ]}
+      onChange={(event: any) => {
+        const value = event.target.value;
+        if (value === CITY_OTHER) {
+          setCityOther(true);
+          form.setFieldValue("district", "");
+        } else {
+          form.setFieldValue("district", value);
+        }
+      }}
+    />
+  ) : (
+    <TextInput
+      name="district"
+      label={territory.cityLabel}
+      form={form}
+      placeholder={territory.cityExample}
+      helperText={cityOther ? "Not in the list — type any town or city" : undefined}
+      InputProps={
+        cityOther && cityOptions
+          ? {
+              endAdornment: (
+                <Button
+                  size="small"
+                  className="!text-brand"
+                  onClick={() => {
+                    setCityOther(false);
+                    form.setFieldValue("district", "");
+                  }}
+                >
+                  List
+                </Button>
+              ),
+            }
+          : undefined
+      }
+    />
+  );
 
   const getDistricts = (stateName: string) =>
     statesAndDistrict
@@ -537,6 +591,16 @@ function Checkout() {
     form.setFieldValue("state", getTerritory(addressCountry).defaultRegion ?? "");
     form.setFieldValue("district", "");
     form.setFieldValue("pincode", "");
+    setCityOther(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addressCountry]);
+
+  // A restored draft carrying a city outside the dropdown reopens free text.
+  useEffect(() => {
+    const restored = (form.values.district ?? "").trim();
+    if (cityOptions && restored && !cityOptions.includes(restored)) {
+      setCityOther(true);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addressCountry]);
 
@@ -676,10 +740,11 @@ function Checkout() {
                   className="flex w-full items-center justify-between gap-3 border border-line bg-canvas px-4 py-3 text-left transition hover:border-brand hover:bg-brand-tint"
                 >
                   <span className="min-w-0">
-                    <span className="block text-sm font-bold text-ink">
-                      Use saved address{" "}
-                      <span className="ml-1 font-normal text-ink-muted">
-                        {flagEmoji(defaultAddress.country)} {countryLabel(defaultAddress.country)}
+                    <span className="flex items-center gap-1.5 text-sm font-bold text-ink">
+                      Use saved address
+                      <Flag code={defaultAddress.country} size={15} />
+                      <span className="font-normal text-ink-muted">
+                        {countryName(defaultAddress.country)}
                       </span>
                     </span>
                     <span className="block truncate text-xs text-ink-soft">
@@ -695,7 +760,7 @@ function Checkout() {
                 name="country"
                 label="Country"
                 form={form}
-                data={COUNTRIES.map((c) => ({ name: `${flagEmoji(c.code)} ${c.name}`, id: c.code }))}
+                data={COUNTRIES.map((c) => ({ name: c.name, id: c.code }))}
               />
 
               {/* Amazon-style: no success banner for serviceable countries —
@@ -720,12 +785,7 @@ function Checkout() {
                   <SelectInput name="district" label="District" form={form} data={districts} />
                 </div>
               ) : territory.regionHidden ? (
-                <TextInput
-                  name="district"
-                  label={territory.cityLabel}
-                  form={form}
-                  placeholder={territory.cityExample}
-                />
+                cityField
               ) : (
                 <div className="grid gap-3 sm:grid-cols-2">
                   {territory.regions ? (
@@ -743,12 +803,7 @@ function Checkout() {
                       placeholder={territory.cityExample}
                     />
                   )}
-                  <TextInput
-                    name="district"
-                    label={territory.cityLabel}
-                    form={form}
-                    placeholder={territory.cityExample}
-                  />
+                  {cityField}
                 </div>
               )}
               <div className="grid gap-3 sm:grid-cols-2">
