@@ -17,6 +17,7 @@ import com.ecommerce.commerce_service.model.Payment;
 import com.ecommerce.commerce_service.model.PaymentProvider;
 import com.ecommerce.commerce_service.model.PaymentStatus;
 import com.ecommerce.commerce_service.repository.OrderRepository;
+import com.ecommerce.commerce_service.service.ShippingZoneService;
 import com.ecommerce.commerce_service.repository.PaymentRepository;
 import com.ecommerce.commerce_service.repository.OrderStatusHistoryRepository;
 import com.ecommerce.commerce_service.repository.OrderItemRepository;
@@ -73,6 +74,9 @@ class OrderServiceTest {
     private ShippingRateService shippingRateService;
 
     @Mock
+    private ShippingZoneService shippingZoneService;
+
+    @Mock
     private TaxRuleService taxRuleService;
 
     @Mock
@@ -104,8 +108,9 @@ class OrderServiceTest {
     void setUp() {
         orderService = new OrderService(orderRepository, orderMapper, commerceInventoryService,
                 couponService, orderStatusHistoryRepository, rabbitMQMessageProducer, orderItemRepository,
-                shippingRateService, taxRuleService, checkoutTokenService, productCatalogClient,
-                giftCardService, loyaltyPointService, paymentRepository, paymentProviderCancellationService);
+                shippingRateService, shippingZoneService, taxRuleService, checkoutTokenService,
+                productCatalogClient, giftCardService, loyaltyPointService, paymentRepository,
+                paymentProviderCancellationService);
 
         productId = UUID.randomUUID();
         orderId = UUID.randomUUID();
