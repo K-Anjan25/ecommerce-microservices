@@ -52,7 +52,7 @@ public class PhoneOtpService {
     private boolean debugCodeEnabled;
 
     @Transactional
-    public OtpSent request(String phone) {
+    public PhoneOtpSentResponse request(String phone) {
         String normalized = normalize(phone);
         if (!E164.matcher(normalized).matches()) {
             throw new IllegalArgumentException("Phone must include the country code, e.g. +919876543210");
