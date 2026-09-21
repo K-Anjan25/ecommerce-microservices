@@ -26,8 +26,9 @@ import { showSuccess } from "../../utils/showSuccess";
 import { showError } from "../../utils/showError";
 import { SavedAddress } from "../../types/address";
 import statesAndDistrict from "../../formdata.json";
+import { COUNTRIES, countryName, isIndia } from "../../formdata/countries";
 
-const EMPTY = { state: "", district: "", addressDetail: "", defaultAddress: false };
+const EMPTY = { country: "IN", state: "", district: "", addressDetail: "", pincode: "", phoneNumber: "", defaultAddress: false };
 
 function Addresses() {
   const queryClient = useQueryClient();
@@ -75,7 +76,15 @@ function Addresses() {
 
   const handleSubmit = () => {
     if (!form.state || !form.district || !form.addressDetail.trim()) {
-      showError("State, district and address detail are all required");
+      showError("State, city and address detail are all required");
+      return;
+    }
+    if (isIndia(form.country) && form.pincode && !/^\d{6}$/.test(form.pincode)) {
+      showError("Enter a valid 6-digit pincode");
+      return;
+    }
+    if (!isIndia(form.country) && form.pincode && !/^[A-Za-z0-9][A-Za-z0-9 -]{1,9}$/.test(form.pincode)) {
+      showError("Enter a valid postal code");
       return;
     }
     createMutation.mutate(form);
@@ -140,7 +149,9 @@ function Addresses() {
                   </p>
                   <p className="mt-1 text-sm text-ink-soft">
                     {addr.district}, {addr.state}
+                    {!isIndia(addr.country) && <> · {countryName(addr.country)}</>}
                   </p>
+                  {addr.pincode && <p className="text-sm text-ink-muted">{addr.pincode}</p>}
                 </div>
                 <button
                   onClick={() => deleteMutation.mutate(addr.id)}
@@ -162,38 +173,122 @@ function Addresses() {
         <DialogContent dividers>
           <div className="space-y-4 py-1">
             <FormControl fullWidth size="small">
-              <InputLabel id="addr-state-label">State</InputLabel>
+              <InputLabel id="addr-country-label">Country</InputLabel>
               <Select
-                labelId="addr-state-label"
-                id="addr-state"
-                label="State"
-                value={form.state}
-                onChange={(e) => setForm({ ...form, state: e.target.value, district: "" })}
+                labelId="addr-country-label"
+                id="addr-country"
+                label="Country"
+                value={form.country || "IN"}
+                onChange={(e) => setForm({ ...form, country: e.target.value, state: "", district: "", pincode: "" })}
               >
-                {states.map((s) => (
-                  <MenuItem key={s} value={s}>
-                    {s}
+                {COUNTRIES.map((c) => (
+                  <MenuItem key={c.code} value={c.code}>
+                    {c.name}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
 
-            <FormControl fullWidth size="small" disabled={!form.state}>
-              <InputLabel id="addr-district-label">District</InputLabel>
-              <Select
-                labelId="addr-district-label"
-                id="addr-district"
-                label="District"
-                value={form.district}
-                onChange={(e) => setForm({ ...form, district: e.target.value })}
-              >
-                {districts.map((d: string) => (
-                  <MenuItem key={d} value={d}>
-                    {d}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            {isIndia(form.country) ? (
+              <>
+                <FormControl fullWidth size="small">
+                  <InputLabel id="addr-state-label">State</InputLabel>
+                  <Select
+                    labelId="addr-state-label"
+                    id="addr-state"
+                    label="State"
+                    value={form.state}
+                    onChange={(e) => setForm({ ...form, state: e.target.value, district: "" })}
+                  >
+                    {states.map((s) => (
+                      <MenuItem key={s} value={s}>
+                        {s}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <FormControl fullWidth size="small" disabled={!form.state}>
+                  <InputLabel id="addr-district-label">District</InputLabel>
+                  <Select
+                    labelId="addr-district-label"
+                    id="addr-district"
+                    label="District"
+                    value={form.district}
+                    onChange={(e) => setForm({ ...form, district: e.target.value })}
+                  >
+                    {districts.map((d: string) => (
+                      <MenuItem key={d} value={d}>
+                        {d}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </>
+            ) : (
+              <>
+                <div>
+                  <label htmlFor="addr-state" className="eyebrow mb-1.5 block">
+                    State / Province
+                  </label>
+                  <input
+                    id="addr-state"
+                    type="text"
+                    className="input-control"
+                    placeholder="e.g. California"
+                    value={form.state}
+                    onChange={(e) => setForm({ ...form, state: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="addr-district" className="eyebrow mb-1.5 block">
+                    City
+                  </label>
+                  <input
+                    id="addr-district"
+                    type="text"
+                    className="input-control"
+                    placeholder="e.g. San Jose"
+                    value={form.district}
+                    onChange={(e) => setForm({ ...form, district: e.target.value })}
+                  />
+                </div>
+                <p className="text-xs leading-relaxed text-ink-muted">
+                  We don&apos;t deliver to {countryName(form.country)} yet — save the
+                  address now and it&apos;ll be ready the moment international shipping
+                  opens.
+                </p>
+              </>
+            )}
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label htmlFor="addr-pincode" className="eyebrow mb-1.5 block">
+                  {isIndia(form.country) ? "Pincode" : "Postal code"}
+                </label>
+                <input
+                  id="addr-pincode"
+                  type="text"
+                  className="input-control"
+                  placeholder={isIndia(form.country) ? "6-digit pincode" : "e.g. 95014"}
+                  value={form.pincode}
+                  onChange={(e) => setForm({ ...form, pincode: e.target.value })}
+                />
+              </div>
+              <div>
+                <label htmlFor="addr-phone" className="eyebrow mb-1.5 block">
+                  Phone <span className="text-ink-muted">(optional)</span>
+                </label>
+                <input
+                  id="addr-phone"
+                  type="tel"
+                  className="input-control"
+                  placeholder={isIndia(form.country) ? "10-digit mobile" : "+1 555 000 1234"}
+                  value={form.phoneNumber}
+                  onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })}
+                />
+              </div>
+            </div>
 
             <div>
               <label htmlFor="addr-detail" className="eyebrow mb-1.5 block">

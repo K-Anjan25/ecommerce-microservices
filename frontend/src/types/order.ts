@@ -44,6 +44,8 @@ interface OrderAdress {
   district: string;
   addressDetail: string;
   phoneNumber?: string;
+  /** ISO-3166 alpha-2 destination country; "IN" is the home market. */
+  country?: string;
 }
 
 export interface OrderItem {
@@ -80,6 +82,7 @@ export interface DashboardStats {
 }
 
 export interface OrderForm {
+  country: string;
   state: string;
   district: string;
   addressDetail: string;

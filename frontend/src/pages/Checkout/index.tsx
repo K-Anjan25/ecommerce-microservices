@@ -40,6 +40,7 @@ import {
 import { showError } from "../../utils/showError";
 import { showSuccess } from "../../utils/showSuccess";
 import statesAndDistrict from "../../formdata.json";
+import { COUNTRIES, countryName, isIndia } from "../../formdata/countries";
 import { useI18n } from "../../features/i18n";
 
 const FORM_ID = "checkout-form";
@@ -204,11 +205,15 @@ function Checkout() {
   });
 
   const applyAddress = (address: SavedAddress) => {
+    const country = address.country ?? "IN";
     form.setValues({
       ...form.values,
+      country,
       state: address.state,
       district: address.district,
       addressDetail: address.addressDetail,
+      pincode: address.pincode ?? "",
+      phoneNumber: address.phoneNumber ?? "",
     });
     setDistricts(
       statesAndDistrict
@@ -232,6 +237,7 @@ function Checkout() {
           district: values.district,
           addressDetail: values.addressDetail,
           phoneNumber: values.phoneNumber || undefined,
+          country: values.country || "IN",
         },
         items: products,
         shippingMethod,
@@ -253,7 +259,9 @@ function Checkout() {
   // gateway AuthFilter, so they are only queried for logged-in users; guests
   // fall back to the legacy flat estimate below).
   const pincode = (form.values.pincode ?? "").trim();
-  const pincodeValid = /^\d{6}$/.test(pincode);
+  const addressCountry = form.values.country || "IN";
+  const domesticDelivery = isIndia(addressCountry);
+  const pincodeValid = domesticDelivery && /^\d{6}$/.test(pincode);
 
   const { data: shippingQuote, isFetching: shippingFetching } = useQuery(
     ["shippingQuote", pincode, subtotal],
@@ -625,23 +633,45 @@ function Checkout() {
                 </button>
               )}
 
-              <div className="grid gap-3 sm:grid-cols-2">
-                <SelectInput name="state" label="State" form={form} data={states} />
-                <SelectInput name="district" label="District" form={form} data={districts} />
-              </div>
+              <SelectInput
+                name="country"
+                label="Country"
+                form={form}
+                data={COUNTRIES.map((c) => ({ name: c.name, id: c.code }))}
+              />
+
+              {!domesticDelivery && (
+                <p className="rounded-xl border border-accent/40 bg-accent-soft px-4 py-3 text-xs font-semibold leading-relaxed text-state-warning-on">
+                  We currently deliver across India only. {countryName(addressCountry)}{" "}
+                  addresses can be saved, but checkout opens the moment
+                  international shipping does.
+                </p>
+              )}
+
+              {domesticDelivery ? (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <SelectInput name="state" label="State" form={form} data={states} />
+                  <SelectInput name="district" label="District" form={form} data={districts} />
+                </div>
+              ) : (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <TextInput name="state" label="State / Province" form={form} />
+                  <TextInput name="district" label="City" form={form} />
+                </div>
+              )}
               <div className="grid gap-3 sm:grid-cols-2">
                 <TextInput
                   name="pincode"
-                  label="Delivery pincode"
+                  label={domesticDelivery ? "Delivery pincode" : "Postal code"}
                   form={form}
-                  inputProps={{ maxLength: 6, inputMode: "numeric" }}
+                  inputProps={domesticDelivery ? { maxLength: 6, inputMode: "numeric" } : { maxLength: 10 }}
                 />
                 <TextInput
                   name="phoneNumber"
-                  label="Mobile number (optional)"
+                  label="Phone number (optional)"
                   form={form}
                   type="tel"
-                  inputProps={{ maxLength: 10, inputMode: "numeric" }}
+                  inputProps={domesticDelivery ? { maxLength: 10, inputMode: "numeric" } : { maxLength: 15 }}
                 />
               </div>
               <TextInput
@@ -865,6 +895,7 @@ function Checkout() {
               variant="contained"
               size="large"
               loading={busy}
+              disabled={!domesticDelivery}
               className="!mt-5 !hidden !py-3 lg:!flex"
             >
               {paymentProvider === "CASH" ? "Place order (Cash on delivery)" : `Pay ${formatPrice(total)}`}
@@ -901,6 +932,7 @@ function Checkout() {
             type="submit"
             variant="contained"
             loading={busy}
+            disabled={!domesticDelivery}
             className="!ml-auto !flex-1 !py-3"
           >
             {paymentProvider === "CASH" ? "Place order (COD)" : t("checkout.pay")}

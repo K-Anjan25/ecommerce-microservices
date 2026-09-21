@@ -17,4 +17,7 @@ public class CreateOrderAddressRequest {
     private String district;
     @NotNull
     private String addressDetail;
+
+    /** ISO-3166 alpha-2 destination country; blank means India. */
+    private String country;
 }

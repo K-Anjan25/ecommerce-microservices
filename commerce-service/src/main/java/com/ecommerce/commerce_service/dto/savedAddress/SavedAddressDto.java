@@ -16,5 +16,12 @@ public class SavedAddressDto {
     private String state;
     private String district;
     private String addressDetail;
+
+    /** ISO-3166 alpha-2 destination country; India when absent on legacy rows. */
+    @Builder.Default
+    private String country = "IN";
+
+    private String pincode;
+    private String phoneNumber;
     private boolean defaultAddress;
 }

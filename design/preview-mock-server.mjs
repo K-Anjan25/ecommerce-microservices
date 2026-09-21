@@ -635,6 +635,9 @@ createServer((req, res) => {
         state: "Telangana",
         district: "Hyderabad",
         addressDetail: "12 Rose Lane, Uppal",
+        country: "IN",
+        pincode: "500039",
+        phoneNumber: "9876543210",
         defaultAddress: true,
       },
       {
@@ -642,6 +645,17 @@ createServer((req, res) => {
         state: "Karnataka",
         district: "Bengaluru Urban",
         addressDetail: "8 Curie Road, Indiranagar",
+        country: "IN",
+        pincode: "560038",
+        defaultAddress: false,
+      },
+      {
+        id: "addr-3",
+        state: "California",
+        district: "San Jose",
+        addressDetail: "221 Bounty St, Apt 5",
+        country: "US",
+        pincode: "95014",
         defaultAddress: false,
       },
     ]);
@@ -651,6 +665,9 @@ createServer((req, res) => {
       state: "Telangana",
       district: "Hyderabad",
       addressDetail: "12 Rose Lane, Uppal",
+      country: "IN",
+      pincode: "500039",
+      phoneNumber: "9876543210",
       defaultAddress: true,
     });
 

@@ -30,4 +30,8 @@ public class OrderAddress  {
     private String state;
     private String district;
     private String addressDetail;
+
+    /** ISO-3166 alpha-2 destination country; India for legacy orders. */
+    @Column(name = "country", length = 2)
+    private String country = "IN";
 }

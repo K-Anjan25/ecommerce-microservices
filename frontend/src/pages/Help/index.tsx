@@ -55,6 +55,12 @@ const FAQS: Faq[] = [
   },
   {
     group: "Orders & delivery",
+    q: "Do you ship internationally?",
+    keywords: "international abroad overseas country outside india export worldwide shipping",
+    a: <>Not yet — we currently deliver across India only. You can already save international addresses in your address book, and checkout will open to those destinations as soon as international shipping rates go live. All prices are charged in Indian Rupees.</>,
+  },
+  {
+    group: "Orders & delivery",
     q: "When is shipping free?",
     keywords: "free shipping cost threshold charges fee",
     a: <>Standard delivery is free on orders over the free-shipping threshold shown at checkout. Below it, the exact shipping cost for your address is calculated by the server before you pay — you never get surprise charges.</>,

@@ -11,12 +11,23 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SavedAddressMapper {
 
+    /** Normalizes blank/legacy countries to the home market. */
+    static String normalizeCountry(String country) {
+        if (country == null || country.isBlank()) {
+            return "IN";
+        }
+        return country.trim().toUpperCase();
+    }
+
     public SavedAddressDto savedAddressToSavedAddressDto(SavedAddress savedAddress) {
         return SavedAddressDto.builder()
                 .id(savedAddress.getId())
                 .state(savedAddress.getState())
                 .district(savedAddress.getDistrict())
                 .addressDetail(savedAddress.getAddressDetail())
+                .country(normalizeCountry(savedAddress.getCountry()))
+                .pincode(savedAddress.getPincode())
+                .phoneNumber(savedAddress.getPhoneNumber())
                 .defaultAddress(savedAddress.isDefaultAddress())
                 .build();
     }
@@ -27,6 +38,9 @@ public class SavedAddressMapper {
                 .state(createSavedAddressRequest.getState())
                 .district(createSavedAddressRequest.getDistrict())
                 .addressDetail(createSavedAddressRequest.getAddressDetail())
+                .country(normalizeCountry(createSavedAddressRequest.getCountry()))
+                .pincode(createSavedAddressRequest.getPincode())
+                .phoneNumber(createSavedAddressRequest.getPhoneNumber())
                 .defaultAddress(createSavedAddressRequest.isDefaultAddress())
                 .build();
     }
