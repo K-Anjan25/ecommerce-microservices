@@ -53,8 +53,8 @@ function About() {
   return (
     <div className="space-y-8 pb-6">
       {/* Hero */}
-      <section className="overflow-hidden rounded-2xl border border-line bg-contrast p-7 text-oncontrast shadow-sm sm:p-12">
-        <p className="eyebrow !text-accent">About us</p>
+      <section className="overflow-hidden rounded-2xl border border-[#0747A6]/40 bg-gradient-to-br from-[#0052CC] to-[#091E42] p-7 text-oncontrast shadow-lift sm:p-12">
+        <p className="eyebrow !text-[#BFDBFE]">About us</p>
         <h1 className="mt-3 max-w-3xl font-heading text-3xl font-black tracking-tight sm:text-5xl sm:leading-[1.05]">
           One modern marketplace for everything on your list.
         </h1>
@@ -66,7 +66,7 @@ function About() {
         <div className="mt-7 flex flex-wrap gap-3">
           <button
             onClick={() => navigate("/")}
-            className="rounded-full bg-brand px-6 py-2.5 text-sm font-bold text-white transition hover:bg-brand-dark"
+            className="rounded-full bg-white px-6 py-2.5 text-sm font-bold text-[#0747A6] transition hover:bg-brand-soft"
           >
             Start shopping
           </button>

@@ -142,8 +142,8 @@ function Help() {
   return (
     <div className="space-y-10 pb-10">
       {/* Hero */}
-      <section className="overflow-hidden rounded-2xl border border-line bg-contrast p-7 text-oncontrast shadow-sm sm:p-12">
-        <p className="eyebrow !text-accent">Help center</p>
+      <section className="overflow-hidden rounded-2xl border border-[#0747A6]/40 bg-gradient-to-br from-[#0052CC] to-[#091E42] p-7 text-oncontrast shadow-lift sm:p-12">
+        <p className="eyebrow !text-[#BFDBFE]">Help center</p>
         <h1 className="mt-3 max-w-2xl font-heading text-3xl font-black tracking-tight sm:text-5xl sm:leading-[1.05]">
           How can we help?
         </h1>
