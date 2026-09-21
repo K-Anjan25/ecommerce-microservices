@@ -16,7 +16,7 @@ if (!/^https?:$/.test(originUrl.protocol)) {
   throw new Error("VITE_PUBLIC_STOREFRONT_URL must use http or https");
 }
 
-const publicRoutes = ["/", "/products", "/flash-sales", "/about"];
+const publicRoutes = ["/", "/products", "/flash-sales", "/about", "/help", "/services", "/contact", "/terms"];
 const configuredProductPaths = (process.env.VITE_SITEMAP_PRODUCT_URLS || "")
   .split(",")
   .map((path) => path.trim())

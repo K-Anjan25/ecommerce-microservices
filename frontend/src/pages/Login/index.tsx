@@ -44,7 +44,7 @@ function Login() {
         Sign in to continue shopping.
       </Typography>
 
-      <form onSubmit={form.handleSubmit} className="mt-8 space-y-4">
+      <form onSubmit={form.handleSubmit} className="mt-10 space-y-5">
         <TextInput name="email" label="Email" form={form} />
         <TextInput
           name="password"
@@ -79,7 +79,7 @@ function Login() {
         </LoadingButton>
       </form>
 
-      <Typography className="mt-6 text-center text-ink-soft">
+      <Typography className="mt-8 text-center text-ink-soft">
         Don&apos;t have an account?{" "}
         <Link to="/register" className="font-semibold text-brand hover:underline">
           Create one

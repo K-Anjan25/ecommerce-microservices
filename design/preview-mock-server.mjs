@@ -195,6 +195,9 @@ const json = (res, body, status = 200) => {
   res.end(JSON.stringify(body));
 };
 
+/* Support tickets raised from the contact form during this preview session. */
+const SUPPORT_TICKETS = [];
+
 createServer((req, res) => {
   const url = new URL(req.url, "http://x");
   const p = url.pathname;
@@ -244,8 +247,57 @@ createServer((req, res) => {
     return json(res, { taxName: "GST", rate: 0.18 });
   }
 
-  if (p === "/v1/store-settings" && req.method === "GET") return json(res, STORE_SETTINGS);
-  if (p === "/v1/store-settings" && req.method === "PUT") {
+  /* ── support tickets (Help/Contact surface) ─────────────────────────── */
+  if (p === "/v1/support/tickets" && req.method === "POST") {
+    let raw = "";
+    req.on("data", (chunk) => { raw += chunk; });
+    req.on("end", () => {
+      let body = {};
+      try { body = JSON.parse(raw); } catch { /* handled below */ }
+      const fieldErrors = {};
+      if (!body.name || !String(body.name).trim()) fieldErrors.name = "Name is required";
+      if (!body.email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(body.email)) fieldErrors.email = "Enter a valid email address";
+      if (!body.topic) fieldErrors.topic = "Choose a topic";
+      if (!body.message || String(body.message).trim().length < 20) fieldErrors.message = "Please describe the issue in at least 20 characters";
+      if (Object.keys(fieldErrors).length) return json(res, fieldErrors, 400);
+
+      const ticket = {
+        ticketRef: `SUP-${Date.now().toString(36).toUpperCase().slice(-6)}`,
+        name: String(body.name).trim(),
+        email: String(body.email).trim().toLowerCase(),
+        topic: body.topic,
+        orderNumber: body.orderNumber || null,
+        message: String(body.message).trim(),
+        status: "OPEN",
+        createdAt: new Date().toISOString(),
+      };
+      SUPPORT_TICKETS.unshift(ticket);
+      json(res, ticket, 201);
+    });
+    return;
+  }
+
+  if (p === "/v1/support/tickets" && req.method === "GET") return json(res, SUPPORT_TICKETS);
+
+  const statusMatch = p.match(/^\/v1\/support\/tickets\/([^/]+)\/status$/);
+  if (statusMatch && req.method === "POST") {
+    let raw = "";
+    req.on("data", (chunk) => { raw += chunk; });
+    req.on("end", () => {
+      const ticket = SUPPORT_TICKETS.find((t) => t.ticketRef === decodeURIComponent(statusMatch[1]).toUpperCase());
+      if (!ticket) return json(res, { message: "Ticket not found" }, 404);
+      const next = String(JSON.parse(raw || "{}").status || "").toUpperCase();
+      if (!["OPEN", "IN_PROGRESS", "RESOLVED"].includes(next)) {
+        return json(res, { message: "Invalid status" }, 400);
+      }
+      ticket.status = next;
+      ticket.updatedAt = new Date().toISOString();
+      json(res, ticket);
+    });
+    return;
+  }
+
+  if (p === "/v1/store-settings" && req.method === "GET") return json(res, STORE_SETTINGS);  if (p === "/v1/store-settings" && req.method === "PUT") {
     let raw = "";
     req.on("data", (chunk) => { raw += chunk; });
     req.on("end", () => {

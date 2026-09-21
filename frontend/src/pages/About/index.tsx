@@ -53,7 +53,7 @@ function About() {
   return (
     <div className="space-y-8 pb-6">
       {/* Hero */}
-      <section className="overflow-hidden rounded-2xl border border-line bg-contrast p-6 text-oncontrast shadow-sm sm:p-10">
+      <section className="overflow-hidden rounded-2xl border border-line bg-contrast p-7 text-oncontrast shadow-sm sm:p-12">
         <p className="eyebrow !text-accent">About us</p>
         <h1 className="mt-3 max-w-3xl font-heading text-3xl font-black tracking-tight sm:text-5xl sm:leading-[1.05]">
           One modern marketplace for everything on your list.
@@ -80,7 +80,7 @@ function About() {
       </section>
 
       {/* Stats */}
-      <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <section className="grid grid-cols-2 gap-5 lg:grid-cols-4">
         {[
           { value: "8+", label: "Categories" },
           { value: "40%", label: "Flash sale savings" },
@@ -89,7 +89,7 @@ function About() {
         ].map((stat) => (
           <div
             key={stat.label}
-            className="rounded-2xl border border-line bg-paper p-5 shadow-sm"
+            className="rounded-2xl border border-line bg-paper p-6 shadow-sm"
           >
             <p className="font-heading text-2xl font-black tracking-tight text-brand sm:text-3xl">
               {stat.value}
@@ -104,11 +104,11 @@ function About() {
         <h2 className="font-heading text-xl font-black tracking-tight text-ink sm:text-2xl">
           What you can count on
         </h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {PROMISES.map((item) => (
             <div
               key={item.title}
-              className="rounded-2xl border border-line bg-paper p-5 shadow-sm"
+              className="rounded-2xl border border-line bg-paper p-6 shadow-sm"
             >
               <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-soft text-brand">
                 {item.icon}
@@ -121,7 +121,7 @@ function About() {
       </section>
 
       {/* Category shortcuts */}
-      <section className="rounded-2xl border border-line bg-paper p-5 shadow-sm sm:p-6">
+      <section className="rounded-2xl border border-line bg-paper p-6 shadow-sm sm:p-6">
         <h2 className="font-heading text-lg font-bold text-ink">Shop by category</h2>
         <div className="mt-4 flex flex-wrap gap-2">
           {CATEGORIES.map((name) => (

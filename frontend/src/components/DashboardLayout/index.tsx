@@ -7,11 +7,11 @@ import { CheckoutHeader } from "../../features/checkout";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 const FOOTER_LINKS = [
-  { label: "Help", to: "/" },
+  { label: "Help", to: "/help" },
   { label: "Account", to: "/account" },
-  { label: "Services", to: "/" },
-  { label: "Contact", to: "/" },
-  { label: "Terms", to: "/" },
+  { label: "Services", to: "/services" },
+  { label: "Contact", to: "/contact" },
+  { label: "Terms", to: "/terms" },
 ];
 
 function DashboardLayout() {
@@ -35,8 +35,8 @@ function DashboardLayout() {
 
       {/* Concept B clean white footer with inline payment icons and newsletter signup */}
       {!isCheckout && (
-        <footer className="mt-auto border-t border-line bg-paper py-8">
-          <div className="page-shell flex flex-col md:flex-row items-center justify-between gap-6">
+        <footer className="mt-auto border-t border-line bg-paper py-10">
+          <div className="page-shell flex flex-col md:flex-row items-center justify-between gap-8">
             {/* Left: Navigation links and copyright */}
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-6 gap-y-2 text-xs font-semibold text-ink-soft">
               {FOOTER_LINKS.map((link) => (

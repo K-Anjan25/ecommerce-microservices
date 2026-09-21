@@ -90,7 +90,7 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
   return (
     <article
       onClick={onClick}
-      className="group relative flex h-full cursor-pointer flex-col rounded-2xl border border-line bg-paper p-3.5 shadow-sm transition hover:shadow-md"
+      className="group relative flex h-full cursor-pointer flex-col rounded-2xl border border-line bg-paper p-4 shadow-sm transition hover:shadow-md"
     >
       {/* Top action: Wishlist */}
       <div className="absolute right-3 top-3 z-10">

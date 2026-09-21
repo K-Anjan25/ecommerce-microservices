@@ -44,8 +44,8 @@ function Register() {
         Join Cartly to shop and track orders.
       </Typography>
 
-      <form onSubmit={form.handleSubmit} className="mt-8 space-y-4">
-        <div className="grid gap-4 sm:grid-cols-2">
+      <form onSubmit={form.handleSubmit} className="mt-10 space-y-5">
+        <div className="grid gap-5 sm:grid-cols-2">
           <TextInput name="firstName" label="First Name" form={form} />
           <TextInput name="lastName" label="Last Name" form={form} />
         </div>
@@ -72,7 +72,7 @@ function Register() {
         </LoadingButton>
       </form>
 
-      <Typography className="mt-6 text-center text-ink-soft">
+      <Typography className="mt-8 text-center text-ink-soft">
         Already have an account?{" "}
         <Link to="/login" className="font-semibold text-brand hover:underline">
           Sign in

@@ -101,6 +101,10 @@ function App() {
   const LoyaltyPoints = React.lazy(() => import("./pages/LoyaltyPoints"));
   const Product = React.lazy(() => import("./pages/Products/Product"));
   const About = React.lazy(() => import("./pages/About"));
+  const Help = React.lazy(() => import("./pages/Help"));
+  const Services = React.lazy(() => import("./pages/Services"));
+  const Contact = React.lazy(() => import("./pages/Contact"));
+  const Terms = React.lazy(() => import("./pages/Terms"));
   const UserOrderDetail = React.lazy(() => import("./pages/Orders/OrderDetail"));
 
   return (
@@ -116,6 +120,10 @@ function App() {
             <Route path="reset-password" element={<ResetPassword />} />
             <Route path="register" element={<Register />} />
             <Route path="about" element={<About />} />
+            <Route path="help" element={<Help />} />
+            <Route path="services" element={<Services />} />
+            <Route path="contact" element={<Contact />} />
+            <Route path="terms" element={<Terms />} />
             <Route
               element={
                 <RequireAuth allowedRoles={["ROLE_USER"]} roles={data.roles} />

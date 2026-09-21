@@ -43,13 +43,13 @@ function AuthLayout({ children }: { children: React.ReactNode }) {
         </div>
       </Box>
 
-      <Box className="flex min-h-[38rem] items-center justify-center px-6 py-12 sm:px-12 lg:px-16">
+      <Box className="flex min-h-[40rem] items-center justify-center px-6 py-14 sm:px-14 lg:px-20">
         <Box className="w-full max-w-md">
-          <div className="mb-10 border-b border-line pb-6">
+          <div className="mb-12 border-b border-line pb-8">
             <BrandMark />
           </div>
           {children}
-          <p className="mt-10 border-t border-line pt-5 text-xs leading-relaxed text-ink-muted">
+          <p className="mt-12 border-t border-line pt-6 text-xs leading-relaxed text-ink-muted">
             Secure sign-in. We only use your details to manage your account and orders.
           </p>
         </Box>

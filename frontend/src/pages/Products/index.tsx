@@ -382,13 +382,13 @@ function Products() {
   );
 
   return (
-    <div className="space-y-8 pb-10">
+    <div className="space-y-10 pb-12">
       {/* ═══ CONCEPT B HERO & SHOWCASE GRID ════════════════════════════════ */}
       <section className="page-shell">
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-5">
           {/* Main Hero Card (span 2 cols) — headline left, product cluster right */}
-          <div className="relative overflow-hidden rounded-2xl bg-paper p-6 sm:p-8 shadow-sm border border-line lg:col-span-2 xl:col-span-2">
-            <div className="grid h-full items-center gap-4 sm:grid-cols-[1.1fr_0.9fr]">
+          <div className="relative overflow-hidden rounded-2xl bg-paper p-7 sm:p-10 shadow-sm border border-line lg:col-span-2 xl:col-span-2">
+            <div className="grid h-full items-center gap-6 sm:grid-cols-[1.1fr_0.9fr]">
               <div>
                 {storeSettings.heroEyebrow && (
                   <p className="eyebrow !text-accent mb-2">{storeSettings.heroEyebrow}</p>
@@ -426,13 +426,13 @@ function Products() {
           ].map((tile) => (
             <div
               key={tile.name}
-              className="relative flex flex-col justify-between overflow-hidden rounded-2xl bg-paper p-5 shadow-sm border border-line"
+              className="relative flex flex-col justify-between overflow-hidden rounded-2xl bg-paper p-6 shadow-sm border border-line"
             >
               <div>
                 <h3 className="font-heading text-base font-bold text-ink">{tile.name}</h3>
                 <p className="text-xs text-ink-muted">{tile.subtitle}</p>
               </div>
-              <div className="my-3 flex h-28 items-center justify-center overflow-hidden rounded-lg">
+              <div className="my-4 flex h-28 items-center justify-center overflow-hidden rounded-lg">
                 <img
                   src={tile.image}
                   alt={tile.alt}
@@ -456,17 +456,17 @@ function Products() {
 
       {/* ═══ CONCEPT B CATEGORY TILES — second row of six, per the concept ═══ */}
       <section className="page-shell">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-5">
           {CONCEPT_B_CATEGORIES.slice(3, 9).map((cat) => (
             <div
               key={`${cat.name}-${cat.subtitle}`}
-              className="flex flex-col justify-between rounded-2xl bg-paper p-4 border border-line shadow-sm hover:shadow-md transition"
+              className="flex flex-col justify-between rounded-2xl bg-paper p-5 border border-line shadow-sm hover:shadow-md transition"
             >
               <div>
                 <h4 className="font-heading text-sm font-bold text-ink">{cat.name}</h4>
                 <p className="text-[11px] text-ink-muted">{cat.subtitle}</p>
               </div>
-              <div className="my-3 flex h-24 items-center justify-center overflow-hidden rounded-lg">
+              <div className="my-4 flex h-24 items-center justify-center overflow-hidden rounded-lg">
                 <img
                   src={cat.image}
                   alt={cat.name}
@@ -490,7 +490,7 @@ function Products() {
 
       {/* ═══ TRENDING THIS WEEK (Concept B Product Grid) ═══════════════════ */}
       <section className="page-shell">
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-6 flex items-center justify-between">
           <h2 className="font-heading text-xl sm:text-2xl font-black tracking-tight text-ink">
             Trending This Week
           </h2>
@@ -503,7 +503,7 @@ function Products() {
         </div>
 
         {/* Carousel / horizontal cards or 5-col grid */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5 sm:gap-6">
           {(bestsellers && bestsellers.length > 0 ? bestsellers.slice(0, 5) : products.slice(0, 5)).map(
             (product) => (
               <Card
@@ -552,7 +552,7 @@ function Products() {
           {/* Facets desktop */}
           <aside className="hidden lg:block">
             <div className="sticky top-28 rounded-2xl border border-line bg-paper p-5 shadow-sm">
-              <div className="mb-4 flex items-center justify-between border-b border-line pb-3">
+              <div className="mb-6 flex items-center justify-between border-b border-line pb-3">
                 <h3 className="font-heading text-base font-bold text-ink">Filters</h3>
                 {hasActiveSearch && (
                   <button onClick={clearAll} className="text-xs font-bold text-brand hover:underline">
@@ -642,7 +642,7 @@ function Products() {
         onClose={() => setFiltersOpen(false)}
         PaperProps={{ className: "!rounded-t-2xl max-h-[85vh] p-5 !bg-paper" }}
       >
-        <div className="mb-4 flex items-center justify-between border-b border-line pb-3">
+        <div className="mb-6 flex items-center justify-between border-b border-line pb-3">
           <h3 className="font-heading text-lg font-bold">Filters</h3>
           <button onClick={() => setFiltersOpen(false)} className="icon-button">
             <CloseIcon />

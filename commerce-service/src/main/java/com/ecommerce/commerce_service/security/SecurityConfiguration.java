@@ -34,6 +34,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 // gateway only exposes this for headerless POSTs.
                 .antMatchers(HttpMethod.POST, "/v1/payments", "/v1/payments/webhooks/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/v1/payments/test").permitAll()
+                // Support: guests can raise tickets; reads/status stay staff-only.
+                .antMatchers(HttpMethod.POST, "/v1/support/tickets").permitAll()
                 .antMatchers(HttpMethod.GET, "/actuator/health", "/actuator/health/**", "/actuator/info").permitAll()
                 .anyRequest()
                 .authenticated()

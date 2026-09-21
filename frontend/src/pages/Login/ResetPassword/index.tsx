@@ -39,7 +39,7 @@ export default function ResetPassword() {
       <Typography className="mt-2 text-ink-soft">
         This one-time link expires after 30 minutes and cannot be reused.
       </Typography>
-      <form onSubmit={submit} className="mt-8 space-y-4">
+      <form onSubmit={submit} className="mt-10 space-y-5">
         <label className="block">
           <span className="eyebrow mb-1.5 block">New password</span>
           <input

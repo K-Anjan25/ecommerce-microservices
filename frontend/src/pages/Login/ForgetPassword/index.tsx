@@ -36,7 +36,7 @@ function ForgetPassword() {
       </Typography>
 
       <form
-        className="mt-8 space-y-4"
+        className="mt-10 space-y-5"
         onSubmit={(e) => {
           e.preventDefault();
           resetPassword();

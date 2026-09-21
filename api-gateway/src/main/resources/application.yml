@@ -161,6 +161,21 @@ spring:
           filters:
             - AuthFilter
 
+        # Support: guests can raise tickets; reads/status changes are staff-only.
+        - id: support-create
+          uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
+          predicates:
+            - Path=/v1/support/tickets
+            - Method=POST
+
+        - id: support-staff
+          uri: ${COMMERCE_SERVICE_URI:http://localhost:8081}
+          predicates:
+            - Path=/v1/support/**
+            - Method=GET,POST
+          filters:
+            - AuthFilter
+
   main:
     web-application-type: reactive
 
