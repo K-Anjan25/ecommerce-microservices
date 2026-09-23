@@ -120,8 +120,8 @@ public class CategoryService {
     /** Re-orders {@code id} within its sibling group, reindexing sort orders. */
     private void reorder(Long id, Long parentId, int position) {
         List<Category> siblings = categoryRepository.findAll().stream()
-                .filter(c -> (c.getParentId() == null ? -1L : c.getParentId())
-                        .equals(parentId == null ? -1L : parentId))
+                .filter(c -> (c.getParentId() == null ? Long.valueOf(-1L) : c.getParentId())
+                        .equals(parentId == null ? Long.valueOf(-1L) : parentId))
                 .sorted(Comparator
                         .comparingInt((Category c) -> c.getSortOrder() == null ? Integer.MAX_VALUE : c.getSortOrder())
                         .thenComparing(Category::getName, Comparator.nullsLast(String::compareTo)))
