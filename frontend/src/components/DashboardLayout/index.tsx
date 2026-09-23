@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Suspense } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../Navbar";
 import MobileTabBar from "../MobileTabBar";
@@ -33,7 +34,18 @@ function DashboardLayout() {
         key={location.pathname}
         className={`animate-fade-up flex-1 ${isCheckout ? "page-shell pb-10 pt-6 sm:pt-8" : `pb-20 lg:pb-12 ${isShop ? "pt-6" : "page-shell pt-6 sm:pt-8"}`}`}
       >
-        <Outlet />
+        {/* Page-level boundary: navigating between lazy routes must not tear
+            down the navbar/layout (the old single top-level Suspense flashed a
+            full-screen loader on every first visit to a page). */}
+        <Suspense
+          fallback={
+            <div className="flex min-h-[50vh] items-center justify-center">
+              <span className="h-8 w-8 animate-spin rounded-full border-2 border-line border-t-brand" />
+            </div>
+          }
+        >
+          <Outlet />
+        </Suspense>
       </main>
 
       {/* Concept B clean white footer with inline payment icons and newsletter signup */}

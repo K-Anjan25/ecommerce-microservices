@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { userMe } from "./store/actions/userAction";
 import { AppState } from "./store";
 import Loader from "./components/Loader";
+import ErrorBoundary from "./components/ErrorBoundary";
 import AdminLayout from "./components/AdminLayout";
 import Home from "./pages/Admin/Home";
 import ForgetPassword from "./pages/Login/ForgetPassword";
@@ -59,9 +60,13 @@ function App() {
     };
   }, [dispatch]);
 
-  if (loading || initialLoading) {
+  // Only the one-time session bootstrap blocks the router. The shared
+  // `loading` flag (USER_START from login/profile refreshes) must never
+  // unmount the whole app — that was the full-screen flash on navigation.
+  if (initialLoading) {
     return <Loader />;
   }
+  void loading;
 
   const ResetPassword = React.lazy(() => import("./pages/Login/ResetPassword"));
   const Cart = React.lazy(() => import("./pages/Cart"));
@@ -110,6 +115,7 @@ function App() {
   return (
     <>
       <ScrollToTop />
+      <ErrorBoundary>
       <Suspense fallback={<Loader />}>
         <Routes>
           <Route path="/" element={<DashboardLayout />}>
@@ -193,6 +199,7 @@ function App() {
           <Route path="/unauthorized" element={<Unauthorized />} />
         </Routes>
       </Suspense>
+      </ErrorBoundary>
     </>
   );
 }

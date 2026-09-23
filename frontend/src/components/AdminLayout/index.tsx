@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -194,7 +195,15 @@ function AdminLayout() {
         </div>
 
         <main id="admin-main" tabIndex={-1} className="px-4 py-6 sm:px-6 lg:px-8">
+          <Suspense
+          fallback={
+            <div className="flex min-h-[50vh] items-center justify-center">
+              <span className="h-8 w-8 animate-spin rounded-full border-2 border-line border-t-brand" />
+            </div>
+          }
+        >
           <Outlet />
+        </Suspense>
         </main>
       </div>
     </div>
