@@ -16,12 +16,11 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const isWindows = process.platform === "win32";
-const npm = isWindows ? "npm.cmd" : "npm";
 
 const children = [];
 
-const run = (name, args, cwd) => {
-  const child = spawn(isWindows ? args[0] : args[0], args.slice(1), {
+const run = (name, command, args, cwd) => {
+  const child = spawn(command, args, {
     cwd,
     stdio: ["ignore", "inherit", "inherit"],
     shell: isWindows,
@@ -37,10 +36,15 @@ const run = (name, args, cwd) => {
 };
 
 console.log("› starting mock API  → http://localhost:8889");
-run("mock-api", ["node", path.join("design", "preview-mock-server.mjs")], root);
+run("mock-api", process.execPath, [path.join(root, "design", "preview-mock-server.mjs")], root);
+
+// The vite binary directly (not `npm start`) so the frontend package can
+// point its own start script at this combined runner without recursing.
+const viteBin = path.join(root, "frontend", "node_modules", ".bin", isWindows ? "vite.cmd" : "vite");
 
 console.log("› starting storefront → http://localhost:3000");
-run("storefront", [npm, "start"], path.join(root, "frontend"));
+console.log("  (run `npm install` in frontend/ if this fails with 'vite not found')");
+run("storefront", viteBin, [], path.join(root, "frontend"));
 
 const stopAll = () => {
   for (const { name, child } of children) {

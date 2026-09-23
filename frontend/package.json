@@ -34,7 +34,7 @@
     "yup": "^0.32.11"
   },
   "scripts": {
-    "start": "vite",
+    "start": "node ../scripts/dev.mjs",
     "dev:ssr": "NODE_ENV=development node server/ssr-server.mjs",
     "build:ssr": "vite build --outDir dist/client && vite build --ssr src/ssr/entry-server.tsx --outDir dist/server",
     "build:ssr:watch": "vite build --ssr src/ssr/entry-server.tsx --outDir dist/server --watch",
@@ -43,7 +43,9 @@
     "audit:security": "npm audit --audit-level=high",
     "build": "npm run check:contrast && tsc --noEmit && vite build && npm run generate:seo-assets",
     "generate:seo-assets": "node scripts/generate-seo-assets.mjs",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "dev": "node ../scripts/dev.mjs",
+    "vite": "vite"
   },
   "browserslist": {
     "production": [

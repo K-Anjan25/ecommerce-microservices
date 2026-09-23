@@ -11,10 +11,12 @@ export default defineConfig({
     // addition to localhost. Harmless locally.
     allowedHosts: [".e2b.app", ".localhost", "localhost"],
     proxy: {
-      "/v1": { target: "http://localhost:8889", agent: false },
-      "/user": { target: "http://localhost:8889", agent: false },
-      "/file": { target: "http://localhost:8889", agent: false },
-      "/api": { target: "http://localhost:8889", agent: false },
+      // 127.0.0.1 on purpose: on Windows, "localhost" resolves to ::1 first
+      // and an IPv4-only target refuses the connection (ECONNREFUSED ::1).
+      "/v1": { target: "http://127.0.0.1:8889", agent: false },
+      "/user": { target: "http://127.0.0.1:8889", agent: false },
+      "/file": { target: "http://127.0.0.1:8889", agent: false },
+      "/api": { target: "http://127.0.0.1:8889", agent: false },
     },
   },
   build: {
