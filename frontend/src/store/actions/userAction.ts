@@ -57,6 +57,13 @@ export const userMe = () => async (dispatch: UserDispatch) => {
   try {
     return await loadCurrentUser(dispatch);
   } catch (error) {
+    // An unreachable API (no HTTP response at all) must never end a session:
+    // keep the user signed in and let the screens show their own errors.
+    const hasTokens = Boolean(localStorage.getItem("access-token"));
+    if (hasTokens && !isAuthFailure(error)) {
+      dispatch({ type: "USER_NETWORK_ERROR" });
+      return false;
+    }
     if (isAuthFailure(error) && localStorage.getItem("refresh-token")) {
       try {
         await refreshAuthTokens();

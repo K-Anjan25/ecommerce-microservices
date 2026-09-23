@@ -1,0 +1,9 @@
+{
+  "name": "ecommerce-microservices-dev",
+  "private": true,
+  "description": "Dev convenience scripts. Java services build with Maven (see module poms); the storefront preview runs against the Node mock API.",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "mock": "node design/preview-mock-server.mjs"
+  }
+}

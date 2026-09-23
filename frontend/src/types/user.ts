@@ -77,6 +77,10 @@ interface USER_SUCCESS {
   payload: User;
 }
 
+interface USER_NETWORK_ERROR {
+  type: "USER_NETWORK_ERROR";
+}
+
 interface USER_ERROR {
   type: "USER_ERROR";
 }
@@ -101,6 +105,7 @@ export type UserAction =
   | USER_START
   | USER_SUCCESS
   | USER_ERROR
+  | USER_NETWORK_ERROR
   | REFRESHTOKEN_ERROR
   | UPDATE_PROFILE
   | UPDATE_PROFILE_IMAGE;

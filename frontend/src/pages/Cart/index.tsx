@@ -195,7 +195,14 @@ function Cart() {
 
   useEffect(() => {
     const savedFormData = sessionStorage.getItem("cart_form");
-    if (savedFormData) form.setValues(JSON.parse(savedFormData));
+    // (parsed inside try/catch — a corrupt draft must not crash the page)
+    if (savedFormData) {
+      try {
+        form.setValues(JSON.parse(savedFormData));
+      } catch {
+        sessionStorage.removeItem("cart_form");
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

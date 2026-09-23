@@ -33,7 +33,7 @@ applyScheme(resolveInitialScheme());
 const emotionCache = createCache({ key: "mui", prepend: true });
 
 const queryClient = new QueryClient({
-  defaultOptions: { queries: { refetchOnWindowFocus: false } },
+  defaultOptions: { queries: { refetchOnWindowFocus: false, retry: 1 } },
 });
 
 /* Optional SSR hand-off: when the page was server-rendered, the cache ships

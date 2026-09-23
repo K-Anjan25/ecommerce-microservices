@@ -584,7 +584,13 @@ function Checkout() {
 
   useEffect(() => {
     const savedFormData = sessionStorage.getItem("checkout_form");
-    if (savedFormData) form.setValues(JSON.parse(savedFormData));
+    if (savedFormData) {
+      try {
+        form.setValues(JSON.parse(savedFormData));
+      } catch {
+        sessionStorage.removeItem("checkout_form");
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
