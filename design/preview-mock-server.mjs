@@ -849,6 +849,8 @@ createServer((req, res) => {
   if (p === "/v1/coupons") return json(res, []);
 
   return json(res, { message: `mock: no handler for ${req.method} ${p}` }, 404);
-}).listen(PORT, "0.0.0.0", () =>
-  console.log(`mock gateway listening on http://0.0.0.0:${PORT}`)
+}).listen(PORT, () =>
+  // No explicit host: Node binds the dual-stack "::" wildcard, so both
+  // 127.0.0.1 and ::1 resolve (Windows proxies localhost → ::1 first).
+  console.log(`mock gateway listening on http://localhost:${PORT} (dual-stack)`)
 );
