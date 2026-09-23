@@ -25,6 +25,9 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: maven
 
+      - name: Entity column-reference guard (boot-crash class)
+        run: bash tools/check-entity-columns.sh
+
       - name: Build & test
         run: set -o pipefail; mvn -B -ntp clean package 2>&1 | tee maven-output.log
 

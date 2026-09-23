@@ -16,8 +16,11 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "support_ticket", indexes = {
-        @Index(name = "idx_support_ticket_ref", columnList = "ticketRef", unique = true),
-        @Index(name = "idx_support_ticket_status_created", columnList = "status, createdAt")
+        // columnList entries must be the @Column names (snake_case), NOT the
+        // property names — camelCase here crashes Hibernate at boot with
+        // "database column not found" (this exact bug took the service down).
+        @Index(name = "idx_support_ticket_ref", columnList = "ticket_ref", unique = true),
+        @Index(name = "idx_support_ticket_status_created", columnList = "status, created_at")
 })
 @Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
 public class SupportTicket {
