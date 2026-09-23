@@ -31,6 +31,17 @@ jobs:
       - name: Build & test
         run: set -o pipefail; mvn -B -ntp clean package 2>&1 | tee maven-output.log
 
+      # Boot-test failures print full stack traces only here; the logs API is
+      # unreachable from some environments, so ship the reports as artifacts.
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: "**/target/surefire-reports/*"
+          if-no-files-found: ignore
+          retention-days: 7
+
       - name: Surface build errors as annotations
         if: failure()
         run: |
