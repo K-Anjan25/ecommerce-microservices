@@ -11,4 +11,6 @@ public class CreateCategoryRequest {
     private String slug;
     private Long parentId;
     private Integer sortOrder;
+    private String description;
+    private String imageUrl;
 }

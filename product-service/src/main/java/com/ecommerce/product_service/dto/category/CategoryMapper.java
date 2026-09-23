@@ -16,6 +16,8 @@ public class CategoryMapper {
                 .id(category.getId())
                 .name(category.getName())
                 .slug(category.getSlug())
+                .description(category.getDescription())
+                .imageUrl(category.getImageUrl())
                 .parentId(category.getParentId())
                 .sortOrder(category.getSortOrder())
                 .build();

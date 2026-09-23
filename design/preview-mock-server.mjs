@@ -521,6 +521,8 @@ createServer((req, res) => {
         id: Math.max(0, ...CATEGORIES.map((c) => c.id)) + 1,
         name,
         slug: name.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
+        description: body.description ?? null,
+        imageUrl: body.imageUrl ?? null,
         parentId: body.parentId ?? null,
         sortOrder: body.sortOrder ?? CATEGORIES.length,
       };
@@ -539,15 +541,51 @@ createServer((req, res) => {
       if (!name) return json(res, { message: "Category name is required" }, 400);
       category.name = name;
       category.slug = name.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      if (body.description !== undefined) category.description = body.description;
+      if (body.imageUrl !== undefined) category.imageUrl = body.imageUrl;
       if (body.parentId !== undefined) category.parentId = body.parentId;
       if (body.sortOrder !== undefined) category.sortOrder = body.sortOrder;
       return json(res, category);
     });
   }
+  const positionMatch = p.match(/^\/v1\/categories\/(\d+)\/position$/);
+  if (positionMatch && req.method === "PUT") {
+    const id = Number(positionMatch[1]);
+    const category = CATEGORIES.find((c) => c.id === id);
+    if (!category) return json(res, { message: `Category with id ${id} could not be found!` }, 404);
+    return readBody(req, (body) => {
+      const newParentId = body.parentId ?? null;
+      if (newParentId === id) {
+        return json(res, { message: "A category cannot be moved under itself" }, 400);
+      }
+      if (newParentId != null) {
+        let cursor = CATEGORIES.find((c) => c.id === newParentId);
+        if (!cursor) return json(res, { message: "Target parent could not be found!" }, 404);
+        while (cursor?.parentId != null) {
+          if (cursor.parentId === id) {
+            return json(res, { message: "Cannot move a category under one of its own subcategories" }, 400);
+          }
+          cursor = CATEGORIES.find((c) => c.id === cursor.parentId);
+        }
+      }
+      category.parentId = newParentId;
+      const siblings = CATEGORIES
+        .filter((c) => (c.parentId ?? null) === newParentId && c.id !== id)
+        .sort((a, b) => (a.sortOrder ?? 1e9) - (b.sortOrder ?? 1e9) || a.name.localeCompare(b.name));
+      const index = Math.max(0, Math.min(body.position ?? siblings.length, siblings.length));
+      siblings.splice(index, 0, category);
+      siblings.forEach((c, i) => { c.sortOrder = i * 10; });
+      return json(res, category);
+    });
+  }
+
   if (categoryMatch && req.method === "DELETE") {
     const id = Number(categoryMatch[1]);
     const category = CATEGORIES.find((c) => c.id === id);
     if (!category) return json(res, { message: `Category with id ${id} could not be found!` }, 404);
+    if (CATEGORIES.some((c) => c.parentId === id)) {
+      return json(res, { message: "Category still has subcategories. Move or delete them first." }, 409);
+    }
     if (PRODUCTS.some((x) => x.categoryName === category.name)) {
       return json(res, { message: "Category still has product(s) assigned. Move or remove them first." }, 409);
     }

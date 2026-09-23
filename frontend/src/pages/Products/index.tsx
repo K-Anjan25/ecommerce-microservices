@@ -32,47 +32,47 @@ const CONCEPT_B_CATEGORIES = [
   {
     name: "Electronics",
     subtitle: "MacBook",
-    image: "/images/store/tile-electronics.jpg",
+    image: "/images/store/tiles/tile-electronics.png",
   },
   {
     name: "Fashion",
     subtitle: "Apparel",
-    image: "/images/store/tile-fashion.jpg",
+    image: "/images/store/tiles/tile-fashion.png",
   },
   {
     name: "Home",
     subtitle: "Decor",
-    image: "/images/store/tile-home.jpg",
+    image: "/images/store/tiles/tile-home.png",
   },
   {
     name: "Electronics",
     subtitle: "MacBook",
-    image: "/images/store/tile-electronics.jpg",
+    image: "/images/store/tiles/tile-electronics.png",
   },
   {
     name: "Beauty",
     subtitle: "Skincare",
-    image: "/images/store/tile-beauty.jpg",
+    image: "/images/store/tiles/tile-beauty.png",
   },
   {
     name: "Kitchen",
     subtitle: "Appliances",
-    image: "/images/store/tile-kitchen.jpg",
+    image: "/images/store/tiles/tile-kitchen.png",
   },
   {
     name: "Toys & Games",
     subtitle: "Lego",
-    image: "/images/store/tile-toys.jpg",
+    image: "/images/store/tiles/tile-toys.png",
   },
   {
     name: "Sports",
     subtitle: "Gear",
-    image: "/images/store/tile-sports.jpg",
+    image: "/images/store/tiles/tile-sports.png",
   },
   {
     name: "Grocery",
     subtitle: "Fresh produce",
-    image: "/images/store/tile-grocery.jpg",
+    image: "/images/store/tiles/tile-grocery.png",
   },
 ];
 
@@ -191,7 +191,7 @@ function Products() {
       title: "Cartly — One modern multi-category marketplace",
       description: "High quality products across electronics, fashion, home, and more.",
       canonicalPath: "/",
-      image: "/images/store/hero-gadgets.jpg",
+      image: "/images/store/tiles/hero-cluster.png",
       jsonLd: {
         "@context": "https://schema.org",
         "@type": "WebSite",

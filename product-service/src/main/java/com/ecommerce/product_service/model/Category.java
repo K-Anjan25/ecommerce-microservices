@@ -24,6 +24,8 @@ import java.util.List;
 public class Category extends BaseModel {
     private String name;
     private String slug;
+    private String description;
+    private String imageUrl;
     private Long parentId;
     private Integer sortOrder;
     @OneToMany(mappedBy = "category")

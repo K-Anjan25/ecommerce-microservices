@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,6 +46,8 @@ public class CategoryService {
         Category category = Category.builder()
                 .name(name)
                 .slug(slug)
+                .description(createCategoryRequest.getDescription())
+                .imageUrl(createCategoryRequest.getImageUrl())
                 .parentId(createCategoryRequest.getParentId())
                 .sortOrder(createCategoryRequest.getSortOrder())
                 .build();
@@ -77,7 +80,60 @@ public class CategoryService {
         if (request.getSortOrder() != null) {
             category.setSortOrder(request.getSortOrder());
         }
+        if (request.getDescription() != null) {
+            category.setDescription(request.getDescription().isBlank() ? null : request.getDescription().trim());
+        }
+        if (request.getImageUrl() != null) {
+            category.setImageUrl(request.getImageUrl().isBlank() ? null : request.getImageUrl().trim());
+        }
         return categoryMapper.categoryToCategoryDto(categoryRepository.save(category));
+    }
+
+    /**
+     * Move a category under another parent (null = top level) and place it at
+     * {@code position} among its new siblings. Rejects moves into the
+     * category's own subtree, so the tree can never cycle.
+     */
+    @Transactional
+    public CategoryDto moveCategory(Long id, Long newParentId, Integer position) {
+        Category category = getCategoryById(id);
+        if (newParentId != null) {
+            if (newParentId.equals(id)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "A category cannot be moved under itself");
+            }
+            Category cursor = getCategoryById(newParentId);
+            while (cursor.getParentId() != null) {
+                if (cursor.getParentId().equals(id)) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "Cannot move a category under one of its own subcategories");
+                }
+                cursor = getCategoryById(cursor.getParentId());
+            }
+        }
+        category.setParentId(newParentId);
+        categoryMapper.categoryToCategoryDto(categoryRepository.save(category));
+        reorder(id, newParentId, position == null ? Integer.MAX_VALUE : position);
+        return categoryMapper.categoryToCategoryDto(getCategoryById(id));
+    }
+
+    /** Re-orders {@code id} within its sibling group, reindexing sort orders. */
+    private void reorder(Long id, Long parentId, int position) {
+        List<Category> siblings = categoryRepository.findAll().stream()
+                .filter(c -> (c.getParentId() == null ? -1L : c.getParentId())
+                        .equals(parentId == null ? -1L : parentId))
+                .sorted(Comparator
+                        .comparingInt((Category c) -> c.getSortOrder() == null ? Integer.MAX_VALUE : c.getSortOrder())
+                        .thenComparing(Category::getName, Comparator.nullsLast(String::compareTo)))
+                .collect(Collectors.toList());
+        siblings.removeIf(c -> c.getId().equals(id));
+        int index = Math.max(0, Math.min(position, siblings.size()));
+        siblings.add(index, categoryRepository.findById(id).orElseThrow());
+        for (int i = 0; i < siblings.size(); i++) {
+            Category sibling = siblings.get(i);
+            sibling.setSortOrder(i * 10);
+            categoryRepository.save(sibling);
+        }
     }
 
     /**
@@ -87,6 +143,10 @@ public class CategoryService {
     @Transactional
     public void deleteCategory(Long id) {
         Category category = getCategoryById(id);
+        if (categoryRepository.existsByParentId(id)) {
+            throw new CategoryInUseException(
+                    "Category still has subcategories. Move or delete them first.");
+        }
         long inUse = categoryRepository.countProductsInCategory(id);
         if (inUse > 0) {
             throw new CategoryInUseException(

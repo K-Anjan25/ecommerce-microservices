@@ -3,6 +3,7 @@ package com.ecommerce.product_service.controller;
 import com.ecommerce.product_service.dto.category.CategoryDto;
 import com.ecommerce.product_service.dto.category.CategoryMapper;
 import com.ecommerce.product_service.dto.category.CreateCategoryRequest;
+import com.ecommerce.product_service.dto.category.MoveCategoryRequest;
 import com.ecommerce.product_service.dto.category.UpdateCategoryRequest;
 import com.ecommerce.product_service.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +45,12 @@ public class CategoryController {
     public ResponseEntity<CategoryDto> updateCategory(@PathVariable Long id,
                                                       @Valid @RequestBody UpdateCategoryRequest request){
         return ResponseEntity.ok(categoryService.updateCategory(id, request));
+    }
+
+    @PutMapping("/{id}/position")
+    public ResponseEntity<CategoryDto> moveCategory(@PathVariable Long id,
+                                                    @RequestBody MoveCategoryRequest request){
+        return ResponseEntity.ok(categoryService.moveCategory(id, request.getParentId(), request.getPosition()));
     }
 
     @DeleteMapping("/{id}")

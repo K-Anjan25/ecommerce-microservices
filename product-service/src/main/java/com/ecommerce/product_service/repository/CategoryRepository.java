@@ -10,4 +10,6 @@ public interface CategoryRepository extends JpaRepository<Category,Long> {
     /** Products currently assigned to a category — blocks unsafe deletes. */
     @Query("SELECT COUNT(p) FROM products p WHERE p.category.id = :categoryId")
     long countProductsInCategory(@Param("categoryId") Long categoryId);
+
+    boolean existsByParentId(Long parentId);
 }
