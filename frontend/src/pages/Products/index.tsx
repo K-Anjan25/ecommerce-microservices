@@ -383,27 +383,29 @@ function Products() {
 
   return (
     <div className="space-y-10 pb-12">
+      <div className="space-y-5">
       {/* ═══ CONCEPT B HERO & SHOWCASE GRID ════════════════════════════════ */}
       <section className="page-shell">
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-5">
-          {/* Main Hero Card (span 2 cols) — headline left, product cluster right */}
-          <div className="relative overflow-hidden rounded-2xl bg-paper p-7 sm:p-10 shadow-sm border border-line lg:col-span-2 xl:col-span-2">
-            <div className="grid h-full items-center gap-6 sm:grid-cols-[1.1fr_0.9fr]">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Main Hero Card (span 2 cols) — headline left, product cluster right.
+              Compact like the concept: the whole row reads as one short band. */}
+          <div className="relative overflow-hidden rounded-2xl bg-paper p-5 sm:p-6 shadow-sm border border-line sm:col-span-2">
+            <div className="grid h-full items-center gap-4 sm:grid-cols-[1.1fr_0.9fr]">
               <div>
                 {storeSettings.heroEyebrow && (
-                  <p className="eyebrow !text-accent mb-2">{storeSettings.heroEyebrow}</p>
+                  <p className="eyebrow !text-accent mb-1.5">{storeSettings.heroEyebrow}</p>
                 )}
-                <h1 className="font-heading text-3xl sm:text-5xl font-black tracking-tight text-ink leading-tight">
+                <h1 className="font-heading text-2xl sm:text-3xl xl:text-4xl font-black tracking-tight text-ink leading-tight">
                   {storeSettings.heroTitle || "EXPLORE. SHOP."}
                 </h1>
-                <p className="mt-3 max-w-sm text-xs sm:text-sm font-medium text-ink-soft leading-relaxed">
+                <p className="mt-2 max-w-sm text-xs font-medium text-ink-soft leading-relaxed">
                   {storeSettings.heroDescription ||
                     "One modern multi-category marketplace for high quality tech, home & everyday essentials."}
                 </p>
-                <div className="mt-6">
+                <div className="mt-4">
                   <button
                     onClick={() => resultsRef.current?.scrollIntoView({ behavior: "smooth" })}
-                    className="rounded-full bg-brand px-6 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-brand-dark"
+                    className="rounded-full bg-brand px-5 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-brand-dark"
                   >
                     {storeSettings.primaryCtaLabel || "Shop Now"}
                   </button>
@@ -412,30 +414,27 @@ function Products() {
               <img
                 src="/images/store/hero-gadgets.jpg"
                 alt="Headphones, smart speaker and blender"
-                className="hidden w-full self-center rounded-xl object-contain sm:block"
+                className="hidden max-h-32 w-full self-center rounded-xl object-contain sm:block"
                 loading="eager"
               />
             </div>
           </div>
 
-          {/* Feature tiles: Electronics · Fashion · Home */}
-          {[
-            { name: "Electronics", subtitle: "MacBook", image: "/images/store/tile-electronics.jpg", alt: "Laptop with headphones" },
-            { name: "Fashion", subtitle: "Apparel", image: "/images/store/tile-fashion.jpg", alt: "Rack of apparel" },
-            { name: "Home", subtitle: "Decor", image: "/images/store/tile-home.jpg", alt: "Lamp and vase" },
-          ].map((tile) => (
+          {/* Feature tiles: Electronics · Fashion · Home (same short height
+              as the hero — one compact band, per the concept) */}
+          {CONCEPT_B_CATEGORIES.slice(0, 3).map((tile) => (
             <div
-              key={tile.name}
-              className="relative flex flex-col justify-between overflow-hidden rounded-2xl bg-paper p-6 shadow-sm border border-line"
+              key={`feature-${tile.name}-${tile.subtitle}`}
+              className="relative flex flex-col justify-between overflow-hidden rounded-2xl bg-paper p-5 shadow-sm border border-line"
             >
               <div>
-                <h3 className="font-heading text-base font-bold text-ink">{tile.name}</h3>
-                <p className="text-xs text-ink-muted">{tile.subtitle}</p>
+                <h3 className="font-heading text-sm font-bold text-ink">{tile.name}</h3>
+                <p className="text-[11px] text-ink-muted">{tile.subtitle}</p>
               </div>
-              <div className="my-4 flex h-28 items-center justify-center overflow-hidden rounded-lg">
+              <div className="my-3 flex h-24 items-center justify-center overflow-hidden rounded-lg">
                 <img
                   src={tile.image}
-                  alt={tile.alt}
+                  alt={tile.name}
                   loading="lazy"
                   className="h-full w-full object-cover"
                 />
@@ -460,13 +459,13 @@ function Products() {
           {CONCEPT_B_CATEGORIES.slice(3, 9).map((cat) => (
             <div
               key={`${cat.name}-${cat.subtitle}`}
-              className="flex flex-col justify-between rounded-2xl bg-paper p-5 border border-line shadow-sm hover:shadow-md transition"
+              className="flex flex-col justify-between rounded-2xl bg-paper p-4 border border-line shadow-sm hover:shadow-md transition"
             >
               <div>
                 <h4 className="font-heading text-sm font-bold text-ink">{cat.name}</h4>
                 <p className="text-[11px] text-ink-muted">{cat.subtitle}</p>
               </div>
-              <div className="my-4 flex h-24 items-center justify-center overflow-hidden rounded-lg">
+              <div className="my-3 flex h-20 items-center justify-center overflow-hidden rounded-lg">
                 <img
                   src={cat.image}
                   alt={cat.name}
@@ -487,6 +486,7 @@ function Products() {
           ))}
         </div>
       </section>
+      </div>
 
       {/* ═══ TRENDING THIS WEEK (Concept B Product Grid) ═══════════════════ */}
       <section className="page-shell">

@@ -173,7 +173,11 @@ const Navbar = () => {
       <header className="sticky top-0 z-50 border-b border-line bg-paper/95 backdrop-blur-md">
         {/* Row 1: Nav destinations on desktop */}
         <div className="hidden border-b border-line/60 bg-paper py-1.5 md:block">
-          <div className="page-shell flex items-center justify-end gap-6 text-xs font-semibold text-ink-soft">
+          <div className="page-shell flex items-center justify-between gap-6 text-xs font-semibold text-ink-soft">
+            {/* left: destinations · right: utilities (in flow — the old
+                absolute cluster centred against the whole sticky header and
+                overlapped the Cart/Wishlist icons) */}
+            <div className="flex items-center gap-6">
             <button
               onClick={(e) => setAnchorElCategory(e.currentTarget)}
               className="flex items-center gap-1 hover:text-brand"
@@ -203,8 +207,9 @@ const Navbar = () => {
                 {item.label}
               </button>
             ))}
+            </div>
 
-            <div className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center gap-2 border-l border-line pl-4 sm:right-6 lg:right-8">
+            <div className="flex items-center gap-3 border-l border-line pl-4">
               <Tooltip title={language === "en" ? "हिन्दी" : "English"}>
                 <button
                   aria-label="Language"
