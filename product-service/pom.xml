@@ -97,6 +97,13 @@
  			<artifactId>spring-boot-starter-test</artifactId>
  			<scope>test</scope>
  		</dependency>
+		<!-- Boot context tests (ApplicationBootTests) run against in-memory H2
+		     so Hibernate metadata problems crash CI instead of production. -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
 
 
 		<dependency>
