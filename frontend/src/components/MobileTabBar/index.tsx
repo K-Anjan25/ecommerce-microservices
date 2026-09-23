@@ -54,7 +54,7 @@ function MobileTabBar() {
 
   return (
     <nav
-      aria-label="Primary"
+      aria-label={t("a11y.primaryNav")}
       className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md lg:hidden"
     >
       <ul className="mx-auto flex max-w-md items-stretch">

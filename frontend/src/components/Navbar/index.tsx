@@ -37,7 +37,8 @@ import { BrandMark } from "../../brand";
 import { CommerceSearch } from "../../features/catalog";
 import { useStoreSettings } from "../../features/storefront";
 import { MiniCartDrawer } from "../../features/cart";
-import { useI18n } from "../../features/i18n";
+import { LANGUAGES, useI18n } from "../../features/i18n";
+import type { MessageKey } from "../../features/i18n";
 import { DISPLAY_CURRENCIES, getDisplayCurrency, setDisplayCurrency } from "../../utils/currency";
 
 const CartBadge = styled(Badge)({
@@ -53,11 +54,11 @@ const CartBadge = styled(Badge)({
   },
 });
 
-const PRIMARY = [
-  { path: "/flash-sales", label: "Deals" },
-  { path: "/?sort=DATE_DESC", label: "New Arrivals" },
-  { path: "/gift-cards", label: "Gift Ideas" },
-  { path: "/about", label: "About Us" },
+const PRIMARY: { path: string; key: MessageKey }[] = [
+  { path: "/flash-sales", key: "nav.deals" },
+  { path: "/?sort=DATE_DESC", key: "nav.newArrivals" },
+  { path: "/gift-cards", key: "nav.gifts" },
+  { path: "/about", key: "nav.about" },
 ];
 
 const ANNOUNCE_KEY = "cartly-announce-dismissed";
@@ -69,9 +70,10 @@ const Navbar = () => {
   const { data: user, error } = useSelector((state: AppState) => state.user);
   const carts = useSelector((state: AppState) => state.cart);
   const { isDark, toggle: toggleScheme } = useColorSchemeContext();
-  const { language, toggleLanguage, t } = useI18n();
+  const { language, setLanguage, t } = useI18n();
   const [currency, setCurrency] = useState(getDisplayCurrency);
   const [anchorElCurrency, setAnchorElCurrency] = useState<null | HTMLElement>(null);
+  const [anchorElLanguage, setAnchorElLanguage] = useState<null | HTMLElement>(null);
 
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [anchorElCategory, setAnchorElCategory] = useState<null | HTMLElement>(null);
@@ -182,7 +184,7 @@ const Navbar = () => {
               onClick={(e) => setAnchorElCategory(e.currentTarget)}
               className="flex items-center gap-1 hover:text-brand"
             >
-              Categories <KeyboardArrowDownIcon sx={{ fontSize: 16 }} />
+              {t("nav.categories")} <KeyboardArrowDownIcon sx={{ fontSize: 16 }} />
             </button>
             <Menu
               anchorEl={anchorElCategory}
@@ -190,7 +192,7 @@ const Navbar = () => {
               onClose={() => setAnchorElCategory(null)}
               slotProps={{ paper: { className: "!mt-1 !rounded-xl !border !border-line !shadow-lift" } }}
             >
-              <MenuItem onClick={() => pickCategory("")}>All Categories</MenuItem>
+              <MenuItem onClick={() => pickCategory("")}>{t("nav.allCategories")}</MenuItem>
               {categories.map((c) => (
                 <MenuItem key={c.id} onClick={() => pickCategory(c.name)}>
                   {c.name}
@@ -204,25 +206,55 @@ const Navbar = () => {
                 onClick={() => navigate(item.path)}
                 className="transition hover:text-brand"
               >
-                {item.label}
+                {t(item.key)}
               </button>
             ))}
             </div>
 
             <div className="flex items-center gap-3 border-l border-line pl-4">
-              <Tooltip title={language === "en" ? "हिन्दी" : "English"}>
+              <Tooltip title={t("a11y.language")}>
                 <button
-                  aria-label="Language"
-                  onClick={toggleLanguage}
+                  aria-label={t("a11y.language")}
+                  onClick={(event) => setAnchorElLanguage(event.currentTarget)}
                   className="inline-flex items-center gap-1 hover:text-brand text-xs font-bold"
                 >
                   <LanguageOutlinedIcon sx={{ fontSize: 16 }} />
-                  {language === "en" ? "EN" : "HI"}
+                  {LANGUAGES.find((l) => l.code === language)?.short}
                 </button>
               </Tooltip>
-              <Tooltip title="Currency — display only, you are always charged in ₹ INR">
+              <Menu
+                anchorEl={anchorElLanguage}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                transformOrigin={{ vertical: "top", horizontal: "right" }}
+                open={Boolean(anchorElLanguage)}
+                onClose={() => setAnchorElLanguage(null)}
+                slotProps={{ paper: { className: "!mt-2 !min-w-[170px] !rounded-xl !border !border-line !shadow-lift" } }}
+              >
+                <div className="px-4 pb-2 pt-2">
+                  <p className="text-[0.6875rem] font-bold uppercase tracking-wide text-ink-muted">
+                    {t("a11y.language")}
+                  </p>
+                </div>
+                <Divider />
+                {LANGUAGES.map((l) => (
+                  <MenuItem
+                    key={l.code}
+                    selected={l.code === language}
+                    onClick={() => {
+                      setAnchorElLanguage(null);
+                      setLanguage(l.code);
+                    }}
+                  >
+                    <span className="flex w-full items-center justify-between gap-6">
+                      <span>{l.native}</span>
+                      <span className="text-[0.625rem] font-bold text-ink-muted">{l.short}</span>
+                    </span>
+                  </MenuItem>
+                ))}
+              </Menu>
+              <Tooltip title={t("common.currencyNote")}>
                 <button
-                  aria-label="Currency"
+                  aria-label={t("a11y.currency")}
                   onClick={(event) => setAnchorElCurrency(event.currentTarget)}
                   className="inline-flex items-center gap-1 hover:text-brand text-xs font-bold"
                 >
@@ -239,9 +271,9 @@ const Navbar = () => {
               >
                 <div className="px-4 pb-2 pt-2">
                   <p className="text-[0.6875rem] font-bold uppercase tracking-wide text-ink-muted">
-                    Display currency
+                    {t("common.displayCurrency")}
                   </p>
-                  <p className="text-[0.625rem] text-ink-muted">Charged in ₹ INR</p>
+                  <p className="text-[0.625rem] text-ink-muted">{t("common.currencyNote")}</p>
                 </div>
                 <Divider />
                 {DISPLAY_CURRENCIES.map((c) => (
@@ -265,7 +297,7 @@ const Navbar = () => {
               </Menu>
               <Tooltip title={isDark ? "Light mode" : "Dark mode"}>
                 <button
-                  aria-label="Toggle theme"
+                  aria-label={t("a11y.toggleTheme")}
                   onClick={toggleScheme}
                   className="hover:text-brand"
                 >
@@ -284,7 +316,7 @@ const Navbar = () => {
         <div className="page-shell flex h-16 sm:h-[4.5rem] items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <button
-              aria-label="Open menu"
+              aria-label={t("a11y.openMenu")}
               className="icon-button -ml-2 lg:hidden"
               onClick={() => setDrawerOpen(true)}
             >
@@ -294,7 +326,7 @@ const Navbar = () => {
             <button
               onClick={() => navigate("/")}
               className="shrink-0"
-              aria-label="Cartly home"
+              aria-label={t("a11y.cartlyHome")}
             >
               <BrandMark compact={false} />
             </button>
@@ -308,7 +340,7 @@ const Navbar = () => {
               onSubmit={submitNavSearch}
               onProductSelect={(product) => navigate(`/products/${product.id}`)}
               autoFocusRef={searchRef}
-              placeholder="Search for products, brands & more..."
+              placeholder={t("search.placeholder")}
             />
           </div>
 
@@ -319,7 +351,7 @@ const Navbar = () => {
               <>
                 <button
                   onClick={(event) => setAnchorElUser(event.currentTarget)}
-                  aria-label="Account menu"
+                  aria-label={t("a11y.accountMenu")}
                   className="flex flex-col items-center text-xs font-medium text-ink transition hover:text-brand"
                 >
                   <Avatar
@@ -330,7 +362,7 @@ const Navbar = () => {
                   >
                     {initials}
                   </Avatar>
-                  <span className="hidden sm:inline-block mt-0.5 text-[0.6875rem]">My Account</span>
+                  <span className="hidden sm:inline-block mt-0.5 text-[0.6875rem]">{t("nav.myAccount")}</span>
                 </button>
                 <Menu
                   anchorEl={anchorElUser}
@@ -349,14 +381,14 @@ const Navbar = () => {
                     </p>
                   </div>
                   <Divider />
-                  <MenuItem onClick={() => handleCloseUserMenu("Account")}>Account</MenuItem>
-                  <MenuItem onClick={() => handleCloseUserMenu("Profile")}>Profile</MenuItem>
-                  <MenuItem onClick={() => handleCloseUserMenu("/orders")}>Orders</MenuItem>
-                  <MenuItem onClick={() => handleCloseUserMenu("/addresses")}>Addresses</MenuItem>
+                  <MenuItem onClick={() => handleCloseUserMenu("Account")}>{t("nav.account")}</MenuItem>
+                  <MenuItem onClick={() => handleCloseUserMenu("Profile")}>{t("nav.profile")}</MenuItem>
+                  <MenuItem onClick={() => handleCloseUserMenu("/orders")}>{t("nav.orders")}</MenuItem>
+                  <MenuItem onClick={() => handleCloseUserMenu("/addresses")}>{t("nav.addresses")}</MenuItem>
                   {isStaff && [
                     <Divider key="d" />,
                     <MenuItem key="admin" onClick={() => handleCloseUserMenu("Admin")}>
-                      <DashboardIcon sx={{ fontSize: 18, mr: 1.2 }} /> Admin console
+                      <DashboardIcon sx={{ fontSize: 18, mr: 1.2 }} /> {t("nav.adminConsole")}
                     </MenuItem>,
                   ]}
                   <Divider />
@@ -364,7 +396,7 @@ const Navbar = () => {
                     onClick={() => handleCloseUserMenu("Logout")}
                     className="!text-state-danger font-semibold"
                   >
-                    Logout
+                    {t("nav.logout")}
                   </MenuItem>
                 </Menu>
               </>
@@ -372,16 +404,16 @@ const Navbar = () => {
               <button
                 onClick={() => navigate("/login")}
                 className="flex flex-col items-center text-ink transition hover:text-brand"
-                aria-label="My Account"
+                aria-label={t("nav.myAccount")}
               >
                 <PersonOutlineIcon sx={{ fontSize: 24 }} />
-                <span className="hidden sm:inline-block text-[0.6875rem] font-medium">My Account</span>
+                <span className="hidden sm:inline-block text-[0.6875rem] font-medium">{t("nav.myAccount")}</span>
               </button>
             )}
 
             {/* Cart with badge */}
             <button
-              aria-label={`Cart, ${cartCount} items`}
+              aria-label={`${t("cart.label")} · ${cartCount}`}
               onClick={() => setCartOpen(true)}
               className="flex flex-col items-center text-ink transition hover:text-brand"
             >
@@ -389,18 +421,18 @@ const Navbar = () => {
                 <ShoppingCartOutlinedIcon sx={{ fontSize: 24 }} />
               </CartBadge>
               <span className="hidden sm:inline-block text-[0.6875rem] font-medium mt-0.5">
-                Cart {cartCount > 0 ? `(${cartCount})` : ""}
+                {t("mobile.cart")} {cartCount > 0 ? `(${cartCount})` : ""}
               </span>
             </button>
 
             {/* Wishlist */}
             <button
-              aria-label="Wishlist"
+              aria-label={t("nav.wishlist")}
               onClick={() => navigate(user.isLogedIn ? "/wishlist" : "/login")}
               className="flex flex-col items-center text-ink transition hover:text-brand"
             >
               <FavoriteBorderIcon sx={{ fontSize: 24 }} />
-              <span className="hidden sm:inline-block text-[0.6875rem] font-medium mt-0.5">Wishlist</span>
+              <span className="hidden sm:inline-block text-[0.6875rem] font-medium mt-0.5">{t("nav.wishlist")}</span>
             </button>
           </div>
         </div>
@@ -423,10 +455,10 @@ const Navbar = () => {
         <div className="relative bg-accent text-white py-2 px-4 shadow-sm">
           <div className="page-shell flex items-center justify-center text-center">
             <p className="text-xs sm:text-sm font-bold tracking-wide">
-              {storeSettings.announcementText || "FLASH SALE! Up to 40% OFF Electronics & Home! Ends Midnight!"}
+              {storeSettings.announcementText || t("home.announcement")}
             </p>
             <button
-              aria-label="Dismiss announcement"
+              aria-label={t("a11y.dismissAnnouncement")}
               onClick={dismissAnnounce}
               className="absolute right-4 text-white/80 transition hover:text-white"
             >
@@ -441,20 +473,20 @@ const Navbar = () => {
         <div className="flex h-full w-[19rem] flex-col bg-paper">
           <div className="flex items-center justify-between px-5 py-4 border-b border-line">
             <BrandMark />
-            <button aria-label="Close menu" className="icon-button" onClick={() => setDrawerOpen(false)}>
+            <button aria-label={t("a11y.closeMenu")} className="icon-button" onClick={() => setDrawerOpen(false)}>
               <CloseIcon />
             </button>
           </div>
 
           <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
             <div>
-              <p className="eyebrow pb-2">Destinations</p>
+              <p className="eyebrow pb-2">{t("nav.destinations")}</p>
               <div className="space-y-1">
                 <button
                   onClick={() => go("/")}
                   className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold hover:bg-brand-soft hover:text-brand"
                 >
-                  All Products <ChevronRightIcon sx={{ fontSize: 16 }} />
+                  {t("nav.allProducts")} <ChevronRightIcon sx={{ fontSize: 16 }} />
                 </button>
                 {PRIMARY.map((item) => (
                   <button
@@ -462,7 +494,7 @@ const Navbar = () => {
                     onClick={() => go(item.path)}
                     className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold hover:bg-brand-soft hover:text-brand"
                   >
-                    {item.label} <ChevronRightIcon sx={{ fontSize: 16 }} />
+                    {t(item.key)} <ChevronRightIcon sx={{ fontSize: 16 }} />
                   </button>
                 ))}
               </div>
@@ -470,7 +502,7 @@ const Navbar = () => {
 
             {categories.length > 0 && (
               <div>
-                <p className="eyebrow pb-2">Categories</p>
+                <p className="eyebrow pb-2">{t("nav.categories")}</p>
                 <div className="flex flex-wrap gap-2">
                   {categories.map((c) => (
                     <button
@@ -492,15 +524,15 @@ const Navbar = () => {
           <div className="border-t border-line p-4 space-y-2">
             {user.isLogedIn ? (
               <button onClick={() => dispatch(logout())} className="secondary-button w-full">
-                Logout
+                {t("nav.logout")}
               </button>
             ) : (
               <div className="grid grid-cols-2 gap-2">
                 <button onClick={() => go("/login")} className="secondary-button">
-                  Sign In
+                  {t("nav.login")}
                 </button>
                 <button onClick={() => go("/register")} className="primary-button">
-                  Register
+                  {t("nav.register")}
                 </button>
               </div>
             )}

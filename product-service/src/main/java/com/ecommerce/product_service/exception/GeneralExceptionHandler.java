@@ -56,6 +56,12 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
         log.error(exception.getMessage());
         return createHttpResponse(NOT_FOUND, exception.getMessage());
     }
+
+    @ExceptionHandler(CategoryInUseException.class)
+    public ResponseEntity<?> CategoryInUseExceptionHandler(CategoryInUseException exception)  {
+        log.error(exception.getMessage());
+        return createHttpResponse(CONFLICT, exception.getMessage());
+    }
     @ExceptionHandler(ConversionFailedException.class)
     public ResponseEntity<String> handleConflict(ConversionFailedException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);

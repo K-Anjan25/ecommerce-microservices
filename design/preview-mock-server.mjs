@@ -11,7 +11,7 @@ import { createServer } from "node:http";
 
 const PORT = Number(process.env.MOCK_PORT ?? 8889);
 
-const CATEGORIES = [
+let CATEGORIES = [
   "Electronics", "Home", "Fashion", "Beauty", "Kitchen", "Sports", "Grocery", "Toys & Games", "Books",
 ].map((name, i) => ({ id: i + 1, name, slug: name.toLowerCase(), parentId: null, sortOrder: i }));
 
@@ -512,6 +512,50 @@ createServer((req, res) => {
   }
 
   if (["/v1/product-audit", "/v1/commerce-audit", "/user/audit-logs"].includes(p)) return json(res, []);
+
+  if (p === "/v1/categories" && req.method === "POST") {
+    return readBody(req, (body) => {
+      const name = String(body?.name ?? "").trim();
+      if (!name) return json(res, { message: "Category name is required" }, 400);
+      const category = {
+        id: Math.max(0, ...CATEGORIES.map((c) => c.id)) + 1,
+        name,
+        slug: name.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
+        parentId: body.parentId ?? null,
+        sortOrder: body.sortOrder ?? CATEGORIES.length,
+      };
+      CATEGORIES.push(category);
+      return json(res, category, 201);
+    });
+  }
+
+  const categoryMatch = p.match(/^\/v1\/categories\/(\d+)$/);
+  if (categoryMatch && req.method === "PUT") {
+    const id = Number(categoryMatch[1]);
+    const category = CATEGORIES.find((c) => c.id === id);
+    if (!category) return json(res, { message: `Category with id ${id} could not be found!` }, 404);
+    return readBody(req, (body) => {
+      const name = String(body?.name ?? category.name).trim();
+      if (!name) return json(res, { message: "Category name is required" }, 400);
+      category.name = name;
+      category.slug = name.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      if (body.parentId !== undefined) category.parentId = body.parentId;
+      if (body.sortOrder !== undefined) category.sortOrder = body.sortOrder;
+      return json(res, category);
+    });
+  }
+  if (categoryMatch && req.method === "DELETE") {
+    const id = Number(categoryMatch[1]);
+    const category = CATEGORIES.find((c) => c.id === id);
+    if (!category) return json(res, { message: `Category with id ${id} could not be found!` }, 404);
+    if (PRODUCTS.some((x) => x.categoryName === category.name)) {
+      return json(res, { message: "Category still has product(s) assigned. Move or remove them first." }, 409);
+    }
+    CATEGORIES = CATEGORIES.filter((c) => c.id !== id);
+    res.writeHead(204);
+    res.end();
+    return;
+  }
 
   if (p === "/v1/categories") return json(res, CATEGORIES);
 

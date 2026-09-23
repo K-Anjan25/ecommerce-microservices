@@ -8,15 +8,18 @@ import { api } from "../../api/client";
 import { CheckoutHeader } from "../../features/checkout";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
+import { useI18n } from "../../features/i18n";
+
 const FOOTER_LINKS = [
-  { label: "Help", to: "/help" },
-  { label: "Account", to: "/account" },
-  { label: "Services", to: "/services" },
-  { label: "Contact", to: "/contact" },
-  { label: "Terms", to: "/terms" },
-];
+  { key: "footer.help", to: "/help" },
+  { key: "footer.account", to: "/account" },
+  { key: "footer.services", to: "/services" },
+  { key: "footer.contact", to: "/contact" },
+  { key: "footer.terms", to: "/terms" },
+] as const;
 
 function DashboardLayout() {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const location = useLocation();
   const [subscribed, setSubscribed] = useState(false);
@@ -56,11 +59,11 @@ function DashboardLayout() {
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-6 gap-y-2 text-xs font-semibold text-ink-soft">
               {FOOTER_LINKS.map((link) => (
                 <button
-                  key={link.label}
+                  key={link.key}
                   onClick={() => navigate(link.to)}
                   className="transition hover:text-brand"
                 >
-                  {link.label}
+                  {t(link.key)}
                 </button>
               ))}
               <span className="text-ink-muted">© 2026 Cartly Inc.</span>
@@ -74,7 +77,7 @@ function DashboardLayout() {
               {/* Email signup field — POSTs to /v1/newsletter/subscribe */}
               {subscribed ? (
                 <span className="flex items-center gap-2 rounded-lg border border-state-success/30 bg-state-success-soft px-4 py-2 text-xs font-bold text-state-success-on">
-                  ✓ You&apos;re on the list — watch your inbox for deals.
+                  ✓ {t("newsletter.success")}
                 </span>
               ) : (
                 <form
@@ -86,7 +89,7 @@ function DashboardLayout() {
                       await api.post("/v1/newsletter/subscribe", { email });
                       setSubscribed(true);
                     } catch {
-                      setSubscribeError("Couldn't sign you up right now — please try again.");
+                      setSubscribeError(t("newsletter.error"));
                     }
                   }}
                   className="relative flex items-center"
@@ -95,9 +98,9 @@ function DashboardLayout() {
                   <input
                     name="email"
                     type="email"
-                    placeholder={subscribeError ? "Try a valid email" : "Email signup"}
+                    placeholder={subscribeError ? t("newsletter.tryValidEmail") : t("newsletter.placeholder")}
                     required
-                    aria-label="Email for newsletter signup"
+                    aria-label={t("newsletter.placeholder")}
                     aria-invalid={Boolean(subscribeError)}
                     className={`h-9 w-48 sm:w-56 rounded-lg border bg-paper pl-4 pr-10 text-xs text-ink outline-none transition placeholder:text-ink-muted focus:border-brand focus:ring-2 focus:ring-brand/15 ${
                       subscribeError ? "border-state-danger" : "border-line"
@@ -105,7 +108,7 @@ function DashboardLayout() {
                   />
                   <button
                     type="submit"
-                    aria-label="Submit newsletter"
+                    aria-label={t("newsletter.submitAria")}
                     className="absolute right-1 flex h-7 w-7 items-center justify-center rounded-full bg-brand text-white transition hover:bg-brand-dark"
                   >
                     <ArrowForwardIcon sx={{ fontSize: 14 }} />

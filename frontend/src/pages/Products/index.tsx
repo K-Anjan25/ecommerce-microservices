@@ -46,8 +46,8 @@ const CONCEPT_B_CATEGORIES = [
   },
   {
     name: "Electronics",
-    subtitle: "Audio",
-    image: "/images/store/demo-speaker.jpg",
+    subtitle: "MacBook",
+    image: "/images/store/tile-electronics.jpg",
   },
   {
     name: "Beauty",
@@ -61,7 +61,7 @@ const CONCEPT_B_CATEGORIES = [
   },
   {
     name: "Toys & Games",
-    subtitle: "Bricks & play",
+    subtitle: "Lego",
     image: "/images/store/tile-toys.jpg",
   },
   {
@@ -252,7 +252,7 @@ function Products() {
   const FacetPanel = (
     <div className="space-y-6">
       <section>
-        <p className="eyebrow mb-2">Sort by</p>
+        <p className="eyebrow mb-2">{t("filters.sortBy")}</p>
         <FormControl fullWidth size="small" variant="outlined">
           <Select
             value={sortBy}
@@ -271,7 +271,7 @@ function Products() {
       </section>
 
       <section>
-        <p className="eyebrow mb-3">Category</p>
+        <p className="eyebrow mb-3">{t("filters.category")}</p>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => applyCategory("")}
@@ -292,7 +292,7 @@ function Products() {
       </section>
 
       <section>
-        <p className="eyebrow mb-2">Brand</p>
+        <p className="eyebrow mb-2">{t("filters.brand")}</p>
         {facets?.brands?.length ? (
           <div className="max-h-52 space-y-0.5 overflow-y-auto pr-1">
             {facets.brands.map((b) => (
@@ -316,13 +316,13 @@ function Products() {
             ))}
           </div>
         ) : (
-          <p className="text-sm text-ink-muted">No brands yet</p>
+          <p className="text-sm text-ink-muted">{t("filters.noBrands")}</p>
         )}
       </section>
 
       <section>
         <div className="mb-3 flex items-center justify-between">
-          <p className="eyebrow !mb-0">Price</p>
+          <p className="eyebrow !mb-0">{t("filters.price")}</p>
           {(minPrice || maxPrice) && (
             <button
               type="button"
@@ -357,7 +357,7 @@ function Products() {
       </section>
 
       <section>
-        <p className="eyebrow mb-2">Rating</p>
+        <p className="eyebrow mb-2">{t("filters.rating")}</p>
         <div className="space-y-1">
           {["", "3", "4"].map((r) => (
             <button
@@ -384,103 +384,93 @@ function Products() {
   return (
     <div className="space-y-10 pb-12">
       <div className="space-y-5">
-      {/* ═══ CONCEPT B HERO & SHOWCASE GRID ════════════════════════════════ */}
+      {/* ═══ CONCEPT B HERO & SHOWCASE GRID ════════════════════════════════
+          Row 1: hero (2 cols) + three feature tiles — one equal-height band.
+          Row 2: six category tiles. Product art bleeds off the card edges
+          (no inset frames), like the concept's embedded collage look. */}
       <section className="page-shell">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Main Hero Card (span 2 cols) — headline left, product cluster right.
-              Compact like the concept: the whole row reads as one short band. */}
-          <div className="relative overflow-hidden rounded-2xl bg-paper p-5 sm:p-6 shadow-sm border border-line sm:col-span-2">
-            <div className="grid h-full items-center gap-4 sm:grid-cols-[1.1fr_0.9fr]">
-              <div>
-                {storeSettings.heroEyebrow && (
-                  <p className="eyebrow !text-accent mb-1.5">{storeSettings.heroEyebrow}</p>
-                )}
-                <h1 className="font-heading text-2xl sm:text-3xl xl:text-4xl font-black tracking-tight text-ink leading-tight">
-                  {storeSettings.heroTitle || "EXPLORE. SHOP."}
-                </h1>
-                <p className="mt-2 max-w-sm text-xs font-medium text-ink-soft leading-relaxed">
-                  {storeSettings.heroDescription ||
-                    "One modern multi-category marketplace for high quality tech, home & everyday essentials."}
-                </p>
-                <div className="mt-4">
-                  <button
-                    onClick={() => resultsRef.current?.scrollIntoView({ behavior: "smooth" })}
-                    className="rounded-full bg-brand px-5 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-brand-dark"
-                  >
-                    {storeSettings.primaryCtaLabel || "Shop Now"}
-                  </button>
-                </div>
-              </div>
-              <img
-                src="/images/store/hero-gadgets.jpg"
-                alt="Headphones, smart speaker and blender"
-                className="hidden max-h-32 w-full self-center rounded-xl object-contain sm:block"
-                loading="eager"
-              />
+          {/* Main hero card (spans 2) — oversized headline, art to the right edge */}
+          <div className="relative h-44 overflow-hidden rounded-2xl border border-line bg-paper p-5 shadow-sm sm:col-span-2 sm:h-[10.75rem]">
+            <img
+              src="/images/store/hero-gadgets.jpg"
+              alt="Headphones, smart speaker and blender"
+              className="pointer-events-none absolute bottom-0 right-0 hidden h-[96%] w-[46%] object-contain object-right-bottom mix-blend-multiply sm:block"
+              loading="eager"
+            />
+            <div className="relative flex h-full max-w-[60%] flex-col justify-center">
+              {storeSettings.heroEyebrow && (
+                <p className="eyebrow !text-accent mb-1.5">{storeSettings.heroEyebrow}</p>
+              )}
+              <h1 className="font-heading text-[1.9rem] font-black leading-[0.95] tracking-tight text-ink sm:text-4xl xl:text-[2.6rem]">
+                {storeSettings.heroTitle || t("home.heroTitle")}
+              </h1>
+              <p className="mt-2 max-w-xs text-[13px] font-medium leading-snug text-ink-soft">
+                {storeSettings.heroDescription || t("home.heroSubtitle")}
+              </p>
+              <button
+                onClick={() => resultsRef.current?.scrollIntoView({ behavior: "smooth" })}
+                className="mt-3 w-fit rounded-full bg-brand px-5 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-brand-dark"
+              >
+                {storeSettings.primaryCtaLabel || t("home.heroCta")}
+              </button>
             </div>
           </div>
 
-          {/* Feature tiles: Electronics · Fashion · Home (same short height
-              as the hero — one compact band, per the concept) */}
+          {/* Feature tiles: Electronics · Fashion · Home */}
           {CONCEPT_B_CATEGORIES.slice(0, 3).map((tile) => (
             <div
-              key={`feature-${tile.name}-${tile.subtitle}`}
-              className="relative flex flex-col justify-between overflow-hidden rounded-2xl bg-paper p-5 shadow-sm border border-line"
+              key={`feature-${tile.name}`}
+              className="relative h-44 overflow-hidden rounded-2xl border border-line bg-paper p-4 shadow-sm transition hover:shadow-md sm:h-[10.75rem]"
             >
-              <div>
-                <h3 className="font-heading text-sm font-bold text-ink">{tile.name}</h3>
-                <p className="text-[11px] text-ink-muted">{tile.subtitle}</p>
-              </div>
-              <div className="my-3 flex h-24 items-center justify-center overflow-hidden rounded-lg">
-                <img
-                  src={tile.image}
-                  alt={tile.name}
-                  loading="lazy"
-                  className="h-full w-full object-cover"
-                />
+              <img
+                src={tile.image}
+                alt={tile.name}
+                loading="lazy"
+                className="pointer-events-none absolute bottom-0 right-0 h-[68%] w-[70%] object-contain object-right-bottom mix-blend-multiply"
+              />
+              <div className="relative">
+                <h3 className="font-heading text-lg font-bold leading-tight text-ink">{tile.name}</h3>
+                <p className="mt-0.5 text-[13px] text-ink-muted">{tile.subtitle}</p>
               </div>
               <button
                 onClick={() => {
                   applyCategory(tile.name);
                   resultsRef.current?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="text-xs font-bold text-ink underline underline-offset-2 transition hover:text-brand text-left"
+                className="absolute bottom-3.5 left-4 text-[13px] font-bold text-ink underline underline-offset-2 transition hover:text-brand"
               >
-                Shop →
+                {t("home.shop")}
               </button>
             </div>
           ))}
         </div>
-      </section>
 
-      {/* ═══ CONCEPT B CATEGORY TILES — second row of six, per the concept ═══ */}
-      <section className="page-shell">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-5">
+        {/* Row 2: six category tiles — same anatomy, per the concept */}
+        <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">
           {CONCEPT_B_CATEGORIES.slice(3, 9).map((cat) => (
             <div
-              key={`${cat.name}-${cat.subtitle}`}
-              className="flex flex-col justify-between rounded-2xl bg-paper p-4 border border-line shadow-sm hover:shadow-md transition"
+              key={`tile-${cat.name}-${cat.subtitle}`}
+              className="relative h-40 overflow-hidden rounded-2xl border border-line bg-paper p-4 shadow-sm transition hover:shadow-md"
             >
-              <div>
-                <h4 className="font-heading text-sm font-bold text-ink">{cat.name}</h4>
-                <p className="text-[11px] text-ink-muted">{cat.subtitle}</p>
-              </div>
-              <div className="my-3 flex h-20 items-center justify-center overflow-hidden rounded-lg">
-                <img
-                  src={cat.image}
-                  alt={cat.name}
-                  loading="lazy"
-                  className="h-full w-full object-cover"
-                />
+              <img
+                src={cat.image}
+                alt={cat.name}
+                loading="lazy"
+                className="pointer-events-none absolute bottom-0 right-0 h-[64%] w-[78%] object-contain object-right-bottom mix-blend-multiply"
+              />
+              <div className="relative">
+                <h4 className="font-heading text-lg font-bold leading-tight text-ink">{cat.name}</h4>
+                <p className="mt-0.5 text-[13px] text-ink-muted">{cat.subtitle}</p>
               </div>
               <button
                 onClick={() => {
                   applyCategory(cat.name);
                   resultsRef.current?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="text-xs font-bold text-ink underline underline-offset-2 transition hover:text-brand text-left"
+                className="absolute bottom-3.5 left-4 text-[13px] font-bold text-ink underline underline-offset-2 transition hover:text-brand"
               >
-                Shop →
+                {t("home.shop")}
               </button>
             </div>
           ))}
@@ -492,14 +482,12 @@ function Products() {
       <section className="page-shell">
         <div className="mb-6 flex items-center justify-between">
           <h2 className="font-heading text-xl sm:text-2xl font-black tracking-tight text-ink">
-            Trending This Week
+            {t("home.trending")}
           </h2>
           <button
             onClick={() => resultsRef.current?.scrollIntoView({ behavior: "smooth" })}
             className="text-xs font-bold text-brand hover:underline"
-          >
-            See all →
-          </button>
+          >{t("home.seeAll")}</button>
         </div>
 
         {/* Carousel / horizontal cards or 5-col grid */}
@@ -553,7 +541,7 @@ function Products() {
           <aside className="hidden lg:block">
             <div className="sticky top-28 rounded-2xl border border-line bg-paper p-5 shadow-sm">
               <div className="mb-6 flex items-center justify-between border-b border-line pb-3">
-                <h3 className="font-heading text-base font-bold text-ink">Filters</h3>
+                <h3 className="font-heading text-base font-bold text-ink">{t("filters.filters")}</h3>
                 {hasActiveSearch && (
                   <button onClick={clearAll} className="text-xs font-bold text-brand hover:underline">
                     Clear
@@ -643,7 +631,7 @@ function Products() {
         PaperProps={{ className: "!rounded-t-2xl max-h-[85vh] p-5 !bg-paper" }}
       >
         <div className="mb-6 flex items-center justify-between border-b border-line pb-3">
-          <h3 className="font-heading text-lg font-bold">Filters</h3>
+          <h3 className="font-heading text-lg font-bold">{t("filters.filters")}</h3>
           <button onClick={() => setFiltersOpen(false)} className="icon-button">
             <CloseIcon />
           </button>

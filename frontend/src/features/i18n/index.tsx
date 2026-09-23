@@ -1,56 +1,95 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 
-export type Language = "en" | "hi";
+import ar from "./locales/ar";
+import de from "./locales/de";
+import en from "./locales/en";
+import es from "./locales/es";
+import fr from "./locales/fr";
+import hi from "./locales/hi";
+import ja from "./locales/ja";
+import ko from "./locales/ko";
+import nl from "./locales/nl";
+import sv from "./locales/sv";
+import type { MessageKey, Messages } from "./types";
+
+export type Language = "en" | "hi" | "de" | "fr" | "nl" | "es" | "sv" | "ar" | "ja" | "ko";
+
 const STORAGE_KEY = "cartly-language";
+const messages: Record<Language, Messages> = { en, hi, de, fr, nl, es, sv, ar, ja, ko };
 
-const messages = {
-  en: {
-    "nav.shop": "Shop", "nav.deals": "Deals", "nav.gifts": "Gift Cards", "nav.rewards": "Rewards",
-    "nav.orders": "Orders", "nav.returns": "Returns", "nav.addresses": "Addresses", "nav.compare": "Compare", "nav.wishlist": "Wishlist",
-    "nav.account": "Account", "nav.login": "Login", "nav.register": "Create account", "nav.logout": "Logout",
-    "search.placeholder": "Search products, brands and categories", "search.action": "Search", "search.products": "Products",
-    "search.hint": "Use ↑ ↓ to browse · Enter to search · Esc to close",
-    "cart.label": "Your cart", "cart.empty": "Your cart is empty", "cart.explore": "Explore the collection",
-    "cart.subtotal": "Subtotal", "cart.checkout": "Checkout", "cart.review": "Review cart", "cart.title": "Your cart", "cart.continue": "Continue shopping",
-    "product.add": "Add to cart", "product.addMore": "Add one more", "product.view": "View product", "product.inCart": "in cart",
-    "common.refine": "Refine", "common.clear": "Clear all", "common.loading": "Loading…", "common.skip": "Skip to content",
-    "checkout.title": "Checkout", "checkout.total": "Total", "checkout.pay": "Pay now",
-    "mobile.you": "You", "mobile.search": "Search", "mobile.cart": "Cart"
-  },
-  hi: {
-    "nav.shop": "खरीदें", "nav.deals": "ऑफ़र", "nav.gifts": "गिफ़्ट कार्ड", "nav.rewards": "रिवॉर्ड्स",
-    "nav.orders": "ऑर्डर", "nav.returns": "रिटर्न", "nav.addresses": "पते", "nav.compare": "तुलना", "nav.wishlist": "विशलिस्ट",
-    "nav.account": "खाता", "nav.login": "लॉग इन", "nav.register": "खाता बनाएँ", "nav.logout": "लॉग आउट",
-    "search.placeholder": "उत्पाद, ब्रांड और श्रेणियाँ खोजें", "search.action": "खोजें", "search.products": "उत्पाद",
-    "search.hint": "चुनने के लिए ↑ ↓ · खोजने के लिए Enter · बंद करने के लिए Esc",
-    "cart.label": "आपका कार्ट", "cart.empty": "आपका कार्ट खाली है", "cart.explore": "कलेक्शन देखें",
-    "cart.subtotal": "उप-योग", "cart.checkout": "चेकआउट", "cart.review": "कार्ट की समीक्षा करें", "cart.title": "आपका कार्ट", "cart.continue": "खरीदारी जारी रखें",
-    "product.add": "कार्ट में जोड़ें", "product.addMore": "एक और जोड़ें", "product.view": "उत्पाद देखें", "product.inCart": "कार्ट में",
-    "common.refine": "फ़िल्टर", "common.clear": "सभी हटाएँ", "common.loading": "लोड हो रहा है…", "common.skip": "मुख्य सामग्री पर जाएँ",
-    "checkout.title": "चेकआउट", "checkout.total": "कुल", "checkout.pay": "अभी भुगतान करें",
-    "mobile.you": "आप", "mobile.search": "खोजें", "mobile.cart": "कार्ट"
-  }
-} as const;
+/**
+ * Languages mirror the countries Cartly ships to (commerce-service
+ * `ShippingZoneSeeder`): India (en, hi), Germany & Switzerland (de),
+ * France/Belgium/Switzerland (fr), Netherlands/Belgium (nl), Spain (es),
+ * Sweden (sv), UAE (ar, RTL), Japan (ja), South Korea (ko).
+ * English also covers US, CA, GB, SG, AU and NZ.
+ */
+export const LANGUAGES: { code: Language; native: string; short: string; rtl?: boolean }[] = [
+  { code: "en", native: "English", short: "EN" },
+  { code: "hi", native: "हिन्दी", short: "HI" },
+  { code: "de", native: "Deutsch", short: "DE" },
+  { code: "fr", native: "Français", short: "FR" },
+  { code: "nl", native: "Nederlands", short: "NL" },
+  { code: "es", native: "Español", short: "ES" },
+  { code: "sv", native: "Svenska", short: "SV" },
+  { code: "ar", native: "العربية", short: "AR", rtl: true },
+  { code: "ja", native: "日本語", short: "JA" },
+  { code: "ko", native: "한국어", short: "KO" },
+];
 
-type MessageKey = keyof typeof messages.en;
-type I18nValue = { language: Language; locale: string; setLanguage: (language: Language) => void; toggleLanguage: () => void; t: (key: MessageKey) => string };
+const LOCALES: Record<Language, string> = {
+  en: "en-IN",
+  hi: "hi-IN",
+  de: "de-DE",
+  fr: "fr-FR",
+  nl: "nl-NL",
+  es: "es-ES",
+  sv: "sv-SE",
+  ar: "ar-AE",
+  ja: "ja-JP",
+  ko: "ko-KR",
+};
+
+const isLanguage = (value: string | null): value is Language =>
+  LANGUAGES.some((l) => l.code === value);
+
+type I18nValue = {
+  language: Language;
+  locale: string;
+  rtl: boolean;
+  setLanguage: (language: Language) => void;
+  t: (key: MessageKey) => string;
+};
+
 const I18nContext = createContext<I18nValue | null>(null);
 
 export function I18nProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguage] = useState<Language>(
-    () => (typeof window !== "undefined" && localStorage.getItem(STORAGE_KEY) === "hi") ? "hi" : "en"
-  );
+  const [language, setLanguage] = useState<Language>(() => {
+    if (typeof window === "undefined") return "en";
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return isLanguage(stored) ? stored : "en";
+  });
+
+  const rtl = language === "ar";
+
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, language);
     document.documentElement.lang = language;
-  }, [language]);
-  const value = useMemo<I18nValue>(() => ({
-    language,
-    locale: language === "hi" ? "hi-IN" : "en-IN",
-    setLanguage,
-    toggleLanguage: () => setLanguage((current) => current === "en" ? "hi" : "en"),
-    t: (key) => messages[language][key] ?? messages.en[key],
-  }), [language]);
+    // Arabic reads right-to-left; flex/grid layouts mirror automatically.
+    document.documentElement.dir = rtl ? "rtl" : "ltr";
+  }, [language, rtl]);
+
+  const value = useMemo<I18nValue>(
+    () => ({
+      language,
+      locale: LOCALES[language],
+      rtl,
+      setLanguage,
+      t: (key) => messages[language][key] ?? en[key],
+    }),
+    [language, rtl]
+  );
+
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
 
@@ -59,3 +98,5 @@ export function useI18n() {
   if (!value) throw new Error("useI18n must be used inside I18nProvider");
   return value;
 }
+
+export type { MessageKey };

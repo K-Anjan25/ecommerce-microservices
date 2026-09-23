@@ -50,7 +50,7 @@ export default function MiniCartDrawer({ open, onClose }: Props) {
               {count} item{count === 1 ? "" : "s"}
             </p>
           </div>
-          <button onClick={onClose} className="icon-button" aria-label="Close cart">
+          <button onClick={onClose} className="icon-button" aria-label={t("a11y.closeCart")}>
             <CloseIcon />
           </button>
         </header>
@@ -105,7 +105,7 @@ export default function MiniCartDrawer({ open, onClose }: Props) {
                                 : dispatch(decreaseProductQuantity(item.product.id, variant))
                             }
                             className="flex h-7 w-7 items-center justify-center rounded-xs text-ink transition hover:bg-sunken active:scale-95"
-                            aria-label="Decrease quantity"
+                            aria-label={t("product.decreaseQty")}
                           >
                             <RemoveIcon sx={{ fontSize: 14 }} />
                           </button>
@@ -119,7 +119,7 @@ export default function MiniCartDrawer({ open, onClose }: Props) {
                             }
                             onClick={() => dispatch(increaseProductQuantity(item.product.id, variant))}
                             className="flex h-7 w-7 items-center justify-center rounded-xs text-ink transition hover:bg-sunken active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
-                            aria-label="Increase quantity"
+                            aria-label={t("product.increaseQty")}
                           >
                             <AddIcon sx={{ fontSize: 14 }} />
                           </button>
@@ -139,7 +139,7 @@ export default function MiniCartDrawer({ open, onClose }: Props) {
                 <span className="text-sm text-ink-soft">{t("cart.subtotal")}</span>
                 <span className="font-heading text-2xl font-extrabold tracking-tight text-ink">{formatPrice(subtotal)}</span>
               </div>
-              <p className="mt-1 text-xs text-ink-muted">Shipping, tax and discounts are confirmed at checkout.</p>
+              <p className="mt-1 text-xs text-ink-muted">{t("cart.shippingNote")}</p>
               <button onClick={() => go("/checkout")} className="primary-button mt-5 w-full !py-3">
                 {t("cart.checkout")}
               </button>

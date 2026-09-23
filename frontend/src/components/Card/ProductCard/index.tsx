@@ -241,7 +241,7 @@ const ProductCard = ({ product }: CardProps) => {
               {images.length > 1 && (
                 <>
                   <button
-                    aria-label="Previous image"
+                    aria-label={t("a11y.previousImage")}
                     onClick={() =>
                       setCurrentImageIndex((p) => (p - 1 + images.length) % images.length)
                     }
@@ -250,7 +250,7 @@ const ProductCard = ({ product }: CardProps) => {
                     <ChevronLeftIcon fontSize="small" />
                   </button>
                   <button
-                    aria-label="Next image"
+                    aria-label={t("a11y.nextImage")}
                     onClick={() => setCurrentImageIndex((p) => (p + 1) % images.length)}
                     className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-paper/90 text-ink backdrop-blur transition hover:bg-paper"
                   >
@@ -301,7 +301,7 @@ const ProductCard = ({ product }: CardProps) => {
                     </span>
                   )}
                 </div>
-                <p className="mt-1 text-xs text-ink-muted">Inclusive of all taxes</p>
+                <p className="mt-1 text-xs text-ink-muted">{t("product.taxesIncluded")}</p>
                 {isFlashSaleActive && flashCountdown && (
                   <p className="mt-2 text-sm font-bold text-state-danger">
                     Flash sale ends in {flashCountdown}
@@ -312,7 +312,7 @@ const ProductCard = ({ product }: CardProps) => {
               {/* variants as chips, not a dropdown */}
               {variants.length > 0 && (
                 <div>
-                  <p className="eyebrow mb-2">Variant</p>
+                  <p className="eyebrow mb-2">{t("product.variant")}</p>
                   <div className="flex flex-wrap gap-2">
                     {variants.map((variant: ProductVariant) => {
                       const active = variant.id === selectedVariantId;
@@ -345,7 +345,7 @@ const ProductCard = ({ product }: CardProps) => {
                   <div className="flex h-12 items-center rounded-sm border border-line bg-paper px-1 shadow-none transition focus-within:border-brand">
                     <button
                       onClick={handleRemove}
-                      aria-label="Decrease quantity"
+                      aria-label={t("product.decreaseQty")}
                       className="flex h-10 w-10 items-center justify-center rounded-xs text-ink transition hover:bg-sunken active:scale-95"
                     >
                       <RemoveIcon sx={{ fontSize: 18 }} />
@@ -356,7 +356,7 @@ const ProductCard = ({ product }: CardProps) => {
                     <button
                       onClick={handleAdd}
                       disabled={displayStock > 0 && quantity >= displayStock}
-                      aria-label="Increase quantity"
+                      aria-label={t("product.increaseQty")}
                       className="flex h-10 w-10 items-center justify-center rounded-xs text-ink transition hover:bg-sunken active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
                     >
                       <AddIcon sx={{ fontSize: 18 }} />
@@ -375,10 +375,10 @@ const ProductCard = ({ product }: CardProps) => {
                       : t("product.addMore")
                     : t("product.add")}
                 </button>
-                <Tooltip title="Compare">
+                <Tooltip title={t("product.compare")}>
                   <button
                     onClick={handleCompare}
-                    aria-label="Add to compare"
+                    aria-label={t("product.compare")}
                     className={`flex h-12 w-12 items-center justify-center rounded-sm border transition ${
                       product && isInCompare(product.id)
                         ? "border-brand bg-brand-soft text-brand"
@@ -473,18 +473,18 @@ const ProductCard = ({ product }: CardProps) => {
           {tab === "Shipping & returns" && (
             <div className="max-w-3xl space-y-4 text-sm leading-relaxed text-ink-soft">
               <p>
-                <span className="font-bold text-ink">Delivery.</span> Standard shipping is free
+                <span className="font-bold text-ink">{t("product.delivery")}</span> Standard shipping is free
                 over ₹999 and arrives in 4–6 working days. Express and same-day options are
                 priced by pincode at checkout, and the exact rate is shown before you pay.
               </p>
               <p>
-                <span className="font-bold text-ink">Returns.</span> Request a return on any
+                <span className="font-bold text-ink">{t("product.returns")}</span> Request a return on any
                 order item within 7 days of delivery from the order detail page. Once an admin
                 approves it, stock is restored and the refund is issued to the original payment
                 method — cash-on-delivery orders are refunded to your saved account details.
               </p>
               <p>
-                <span className="font-bold text-ink">Taxes.</span> GST is applied per line and on
+                <span className="font-bold text-ink">{t("product.taxes")}</span> GST is applied per line and on
                 shipping, at the rate configured for your delivery state, and appears on the
                 PDF invoice emailed on payment.
               </p>
@@ -497,8 +497,8 @@ const ProductCard = ({ product }: CardProps) => {
       {relatedProducts && relatedProducts.length > 0 && (
         <section>
           <div className="mb-5">
-            <p className="eyebrow">More like this</p>
-            <h2 className="section-title mt-1">You may also like</h2>
+            <p className="eyebrow">{t("product.moreLikeThis")}</p>
+            <h2 className="section-title mt-1">{t("product.youMayAlsoLike")}</h2>
           </div>
           <div className="product-grid">
             {relatedProducts.slice(0, 4).map((related) => (
