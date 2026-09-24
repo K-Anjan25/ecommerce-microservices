@@ -89,7 +89,7 @@ public class UserController {
         // The password check above has already happened — identity proven.
         if (loginUser.isMfaEnabled()) {
             String devCode = emailMfaService.issueCode(loginUser.getEmail());
-            LoginResponse challenge = new LoginResponse(null, null, "MFA_REQUIRED");
+            LoginResponse challenge = new LoginResponse(null, null, "MFA_REQUIRED", null);
             challenge.setDevCode(devCode);
             return ResponseEntity.ok(challenge);
         }

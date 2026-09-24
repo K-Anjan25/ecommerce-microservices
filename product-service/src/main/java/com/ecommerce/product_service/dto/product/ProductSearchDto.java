@@ -21,6 +21,8 @@ public class ProductSearchDto{
     private boolean featured;
     private String categoryName;
     private String description;
+    /** JSON per-locale overrides, e.g. {"hi":{"name":"..."}}. */
+    private String translations;
     private LocalDate createdDate;
     private String imageUrl;
     private List<String> images;
