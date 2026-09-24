@@ -42,6 +42,21 @@ let CATEGORIES = [
 
 const BRANDS = ["Acme", "Northwind", "Lumen", "Kite", "Orbit", "Cobalt"];
 
+const MOCK_USER = {
+  accessToken: "mock-access-token",
+  refreshToken: "mock-refresh-token",
+  userId: "user-1",
+  email: "admin@cartly.com",
+  firstName: "Admin",
+  lastName: "User",
+  roles: ["ROLE_ADMIN"],
+  mfaEnabled: false,
+};
+
+const MFA_PENDING = new Map();
+
+let SUBSCRIPTIONS = [];
+
 let STORE_SETTINGS = {
   announcementEnabled: true,
   announcementText: "*FLASH SALE! Up to 40% OFF Electronics & Home! Ends Midnight!*",
@@ -386,26 +401,53 @@ createServer((req, res) => {
     });
   }
 
+  // ── Two-step verification (MFA) demo: sign in with any email starting
+  //    with "mfa" (e.g. mfa@cartly.com) to trigger the e-mailed-code step.
+  if (p === "/user/mfa/verify" && req.method === "POST") {
+    return readBody(req, (body) => {
+      const pending = MFA_PENDING.get(String(body.email ?? "").toLowerCase());
+      if (!pending) return json(res, { message: "No verification code was issued for this email" }, 400);
+      if (pending.consumed) return json(res, { message: "This code was already used" }, 400);
+      if (String(body.code ?? "") !== pending.code) {
+        pending.attempts += 1;
+        return json(res, { message: "Incorrect verification code" }, 400);
+      }
+      pending.consumed = true;
+      return json(res, {
+        accessToken: "mock-access-token",
+        refreshToken: "mock-refresh-token",
+        userId: "user-1",
+        email: "admin@cartly.com",
+        firstName: "Admin",
+        lastName: "User",
+        roles: ["ROLE_ADMIN"],
+      });
+    });
+  }
+
+  if (p === "/user/mfa" && req.method === "POST") {
+    return readBody(req, (body) => {
+      MOCK_USER.mfaEnabled = Boolean(body.enabled);
+      return json(res, { mfaEnabled: MOCK_USER.mfaEnabled });
+    });
+  }
+
   if (p === "/user/login" && req.method === "POST") {
-    return json(res, {
-      accessToken: "mock-access-token",
-      refreshToken: "mock-refresh-token",
-      userId: "user-1",
-      email: "admin@cartly.com",
-      firstName: "Admin",
-      lastName: "User",
-      roles: ["ROLE_ADMIN"],
+    return readBody(req, (body) => {
+      const email = String(body?.email ?? "admin@cartly.com").toLowerCase();
+      if (email.startsWith("mfa") || MOCK_USER.mfaEnabled) {
+        const code = String(Math.floor(100000 + Math.random() * 900000));
+        MFA_PENDING.set(email, { code, attempts: 0, consumed: false });
+        return json(res, { accessToken: null, refreshToken: null, role: "MFA_REQUIRED", devCode: code });
+      }
+      return json(res, { ...MOCK_USER });
     });
   }
 
   if (p === "/user/me" && req.method === "GET") {
     return json(res, {
       id: "user-1",
-      userId: "user-1",
-      email: "admin@cartly.com",
-      firstName: "Admin",
-      lastName: "User",
-      roles: ["ROLE_ADMIN"],
+      ...MOCK_USER,
     });
   }
 
@@ -670,6 +712,61 @@ createServer((req, res) => {
         views: 120 + ((prod.id.charCodeAt(2) * 37) % 260),
       })),
     });
+  }
+
+  // ── Subscriptions (auto-reorder) ─────────────────────────────────────
+  if (p === "/v1/subscriptions" && req.method === "GET") {
+    return json(res, SUBSCRIPTIONS);
+  }
+
+  if (p === "/v1/subscriptions" && req.method === "POST") {
+    return readBody(req, (body) => {
+      const product = PRODUCTS.find((x) => x.id === body.productId);
+      if (!product) return json(res, { message: "Product could not be found" }, 400);
+      const intervalDays = Number(body.intervalDays ?? 30);
+      if (intervalDays < 7 || intervalDays > 180) {
+        return json(res, { message: "Delivery cadence must be between 7 and 180 days" }, 400);
+      }
+      const subscription = {
+        id: `sub-${Date.now()}`,
+        productId: product.id,
+        productName: product.name,
+        unitPrice: product.unitPrice,
+        quantity: Math.max(1, Math.min(20, Number(body.quantity ?? 1))),
+        intervalDays,
+        nextRunAt: new Date(Date.now() + intervalDays * 86400000).toISOString(),
+        active: true,
+        lastOrderId: null,
+        createdAt: new Date().toISOString(),
+      };
+      SUBSCRIPTIONS.unshift(subscription);
+      return json(res, subscription, 201);
+    });
+  }
+
+  const subscriptionMatch = p.match(/^\/v1\/subscriptions\/([^/]+)$/);
+  if (subscriptionMatch && req.method === "PUT") {
+    const subscription = SUBSCRIPTIONS.find((x) => x.id === subscriptionMatch[1]);
+    if (!subscription) return json(res, { message: "Subscription could not be found!" }, 404);
+    return readBody(req, (body) => {
+      if (body.active !== undefined) {
+        subscription.active = Boolean(body.active);
+        if (body.active) {
+          subscription.nextRunAt = new Date(Date.now() + subscription.intervalDays * 86400000).toISOString();
+        }
+      }
+      if (body.intervalDays !== undefined) subscription.intervalDays = Number(body.intervalDays);
+      if (body.quantity !== undefined) subscription.quantity = Number(body.quantity);
+      return json(res, subscription);
+    });
+  }
+  if (subscriptionMatch && req.method === "DELETE") {
+    const existed = SUBSCRIPTIONS.some((x) => x.id === subscriptionMatch[1]);
+    if (!existed) return json(res, { message: "Subscription could not be found!" }, 404);
+    SUBSCRIPTIONS = SUBSCRIPTIONS.filter((x) => x.id !== subscriptionMatch[1]);
+    res.writeHead(204);
+    res.end();
+    return;
   }
 
   if (p === "/v1/questions" && req.method === "POST") {

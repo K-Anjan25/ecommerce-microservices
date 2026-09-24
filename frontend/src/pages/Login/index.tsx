@@ -39,6 +39,9 @@ function Login() {
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [sending, setSending] = useState(false);
   const [verifying, setVerifying] = useState(false);
+  const [mfa, setMfa] = useState<{ email: string; devCode: string | null } | null>(null);
+  const [mfaCode, setMfaCode] = useState("");
+  const [verifyingMfa, setVerifyingMfa] = useState(false);
   const [registering, setRegistering] = useState(false);
   const [profile, setProfile] = useState({ firstName: "", lastName: "", email: "" });
   const phone = toE164(dial, localNumber);
@@ -61,10 +64,33 @@ function Login() {
 
   const form = useFormik({
     ...loginForm,
-    onSubmit: (values) => {
-      dispatch(login(values));
+    onSubmit: async (values) => {
+      const result = await dispatch(login(values) as any);
+      if (result?.mfaRequired) {
+        setMfa({ email: values.email, devCode: (result as { devCode?: string | null }).devCode ?? null });
+        setMfaCode("");
+      }
     },
   });
+
+  const verifyMfaCode = async () => {
+    if (!/^\d{6}$/.test(mfaCode)) {
+      showError("Enter the 6-digit code we emailed you");
+      return;
+    }
+    setVerifyingMfa(true);
+    try {
+      const tokens = await UserApi.verifyMfa(mfa!.email, mfaCode);
+      await finishSession(tokens);
+      setMfa(null);
+      const mfaFrom = (location.state as { from?: { pathname?: string } } | null)?.from;
+      navigate(mfaFrom?.pathname ?? "/");
+    } catch (error: any) {
+      showError(error.response?.data?.message ?? "Could not verify the code");
+    } finally {
+      setVerifyingMfa(false);
+    }
+  };
 
   const sendCode = async () => {
     if (!isValidLocalNumber(dial, localNumber)) {
@@ -163,6 +189,56 @@ function Login() {
       ))}
     </TextField>
   );
+
+  // ── Two-step verification step ────────────────────────────────────────
+  if (mfa) {
+    return (
+      <AuthLayout>
+        <Typography
+          variant="h4"
+          component="h1"
+          className="!font-heading !text-3xl !font-extrabold !tracking-tight sm:!text-4xl"
+        >
+          Two-step verification
+        </Typography>
+        <Typography className="mt-2 text-sm text-ink-soft">
+          Enter the 6-digit code we just emailed to{" "}
+          <span className="font-semibold text-ink">{mfa.email}</span>.
+        </Typography>
+        {mfa.devCode && (
+          <Typography className="mt-2 rounded-lg border border-line bg-brand-soft/40 px-3 py-2 text-xs text-ink-soft">
+            Preview environment — your code is{" "}
+            <span className="font-bold text-brand">{mfa.devCode}</span>
+          </Typography>
+        )}
+        <TextField
+          fullWidth
+          margin="normal"
+          label="6-digit code"
+          value={mfaCode}
+          inputProps={{ inputMode: "numeric", maxLength: 6, "data-testid": "mfa-code" }}
+          onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, ""))}
+          onKeyDown={(e) => e.key === "Enter" && verifyMfaCode()}
+        />
+        <LoadingButton
+          fullWidth
+          size="large"
+          variant="contained"
+          loading={verifyingMfa}
+          onClick={verifyMfaCode}
+          className="!mt-4"
+        >
+          Verify and sign in
+        </LoadingButton>
+        <button
+          onClick={() => setMfa(null)}
+          className="mt-4 w-full text-center text-xs font-semibold text-ink-muted transition hover:text-brand"
+        >
+          Back to sign in
+        </button>
+      </AuthLayout>
+    );
+  }
 
   return (
     <AuthLayout>

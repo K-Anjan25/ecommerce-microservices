@@ -82,6 +82,16 @@ const updateStaffRole = async (userId: string, role: "ROLE_USER" | "ROLE_MANAGER
   return data;
 };
 
+const verifyMfa = async (email: string, code: string): Promise<Login> => {
+  const { data } = await api.post<Login>(`/user/mfa/verify`, { email, code });
+  return data;
+};
+
+const setMfaEnabled = async (enabled: boolean): Promise<{ mfaEnabled: boolean }> => {
+  const { data } = await api.post<{ mfaEnabled: boolean }>(`/user/mfa`, { enabled });
+  return data;
+};
+
 export const UserApi = {
   getUserById,
   requestPhoneOtp,
@@ -95,4 +105,6 @@ export const UserApi = {
   disableUser,
   enableUser,
   updateStaffRole,
+  verifyMfa,
+  setMfaEnabled,
 };

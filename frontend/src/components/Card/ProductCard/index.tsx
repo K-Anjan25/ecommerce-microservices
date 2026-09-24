@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Rating, Tooltip } from "@mui/material";
@@ -38,6 +38,7 @@ import { addToCompare, isInCompare } from "../../../utils/compare";
 import useCountdown from "../../../hooks/useCountdown";
 import { useI18n } from "../../../features/i18n";
 import { trackEvent } from "../../../utils/analytics";
+import { SubscriptionApi } from "../../../api/subscriptionApi";
 import { localizedDescription, localizedName } from "../../../utils/localizedEntity";
 
 type CardProps = {
@@ -58,10 +59,14 @@ const ProductCard = ({ product }: CardProps) => {
   const dispatch = useDispatch<any>();
   const { t, language } = useI18n();
   const cartItems = useSelector((state: AppState) => state.cart);
+  const { data: user } = useSelector((state: AppState) => state.user);
+  const navigate = useNavigate();
 
   const [selectedVariantId, setSelectedVariantId] = useState<string>("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [tab, setTab] = useState<Tab>("Description");
+  const [subscribeInterval, setSubscribeInterval] = useState(30);
+  const [subscribing, setSubscribing] = useState(false);
 
   // Funnel analytics: one product-view beacon per loaded product.
   useEffect(() => {
@@ -507,6 +512,62 @@ const ProductCard = ({ product }: CardProps) => {
           )}
         </div>
       </section>
+
+      {/* ══ Subscribe & Save (auto-reorder) ════════════════════════ */}
+      {productId && (
+        <section className="rounded-2xl border border-line bg-brand-soft/30 p-5">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="font-heading text-base font-extrabold text-ink">
+                {t("subscribe.title")}
+              </p>
+              <p className="mt-0.5 text-xs text-ink-soft">{t("subscribe.subtitle")}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="text-xs font-semibold text-ink-soft" htmlFor="subscribe-interval">
+                {t("subscribe.every")}
+              </label>
+              <select
+                id="subscribe-interval"
+                value={subscribeInterval}
+                onChange={(e) => setSubscribeInterval(Number(e.target.value))}
+                className="h-9 rounded-lg border border-line bg-paper px-2 text-sm font-semibold text-ink outline-none focus:border-brand"
+              >
+                {[7, 14, 30, 60, 90].map((d) => (
+                  <option key={d} value={d}>
+                    {d} {t("subscribe.days")}
+                  </option>
+                ))}
+              </select>
+              <button
+                disabled={subscribing}
+                onClick={async () => {
+                  if (!user.isLogedIn) {
+                    navigate("/login", { state: { from: { pathname: `/products/${productId}` } } });
+                    return;
+                  }
+                  setSubscribing(true);
+                  try {
+                    await SubscriptionApi.createSubscription({
+                      productId,
+                      quantity: Math.max(1, quantity),
+                      intervalDays: subscribeInterval,
+                    });
+                    showSuccess(t("subscribe.success"));
+                  } catch (error: any) {
+                    showError(error?.response?.data?.message ?? t("subscribe.error"));
+                  } finally {
+                    setSubscribing(false);
+                  }
+                }}
+                className="h-9 rounded-full bg-brand px-4 text-xs font-bold text-white transition hover:bg-brand-dark disabled:opacity-60"
+              >
+                {subscribing ? "…" : t("subscribe.cta")}
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ══ related ═════════════════════════════════════════════════ */}
       {relatedProducts && relatedProducts.length > 0 && (

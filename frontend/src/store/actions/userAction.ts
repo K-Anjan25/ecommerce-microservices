@@ -24,6 +24,13 @@ export const login = (creds: LoginForm) => async (dispatch: UserDispatch) => {
   dispatch({ type: "LOGIN_START" });
   try {
     const { data } = await api.post<Login>("/user/login", creds);
+
+    // Two-step verification: identity is proven, but no tokens yet — the
+    // login page switches to the e-mailed-code step instead.
+    if (data.role === "MFA_REQUIRED") {
+      return { mfaRequired: true as const, devCode: data.devCode ?? null };
+    }
+
     setToken(data);
 
     // Do not mark the session ready from the login response alone. Hydrating
