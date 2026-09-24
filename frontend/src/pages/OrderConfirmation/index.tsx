@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import { trackEvent } from "../../utils/analytics";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import HourglassTopOutlinedIcon from "@mui/icons-material/HourglassTopOutlined";
 import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
@@ -37,6 +39,11 @@ function OrderConfirmation() {
     () => PaymentApi.getPaymentForOrder(confirmation?.orderId ?? ""),
     { enabled: canPollPayment, refetchInterval: 5000, retry: false }
   );
+
+  // Funnel analytics: a real conversion happened.
+  useEffect(() => {
+    if (confirmation?.orderId) trackEvent("ORDER_COMPLETED");
+  }, [confirmation?.orderId]);
 
   // "You may also like" — bestsellers strip for the thank-you page.
   const { data: upsellProducts } = useQuery(

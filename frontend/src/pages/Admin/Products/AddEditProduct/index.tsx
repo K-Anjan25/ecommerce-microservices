@@ -3,10 +3,14 @@ import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternate
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { useFormik } from "formik";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { CategoryApi } from "../../../../api/categoryApi";
+import TranslationsEditor, {
+  translationsFromJson,
+  translationsToJson,
+} from "../../../../components/TranslationsEditor";
 import { ProductApi } from "../../../../api/productApi";
 import Loader from "../../../../components/Loader";
 import PageHeader from "../../../../components/PageHeader";
@@ -45,6 +49,9 @@ function AddEditProduct() {
 
   const product = productParam ?? data;
   const MODE = product ? "edit" : "add";
+  // Multi-locale overrides — kept outside formik, serialized into the payload.
+  const [translations, setTranslations] = useState<Record<string, { name?: string; description?: string }>>({});
+
   const form = useFormik({
     initialValues: productForm.initialValues(MODE === "edit"),
     validationSchema: productForm.validationSchema(MODE === "edit"),
@@ -75,6 +82,7 @@ function AddEditProduct() {
         variants: (product.variants ?? []).map(toVariantForm),
       };
       form.setValues(initialFormData, false);
+      setTranslations(translationsFromJson((initialFormData as { translations?: string | null }).translations));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [MODE, product]);
@@ -91,6 +99,7 @@ function AddEditProduct() {
    *  always send images[]/variants[] (the form owns them; [] clears). */
   const toPayload = (data: ProductForm): ProductPayload => ({
     ...data,
+    translations: translationsToJson(translations),
     images: data.images ?? [],
     variants: (data.variants ?? []).map((variant) => ({
       ...(variant.id ? { id: variant.id } : {}),
@@ -228,6 +237,12 @@ function AddEditProduct() {
             data={categories}
           />
           <TextInput name="description" label="Description" form={form} multiline minRows={3} />
+
+          <TranslationsEditor
+            value={translations}
+            onChange={setTranslations}
+            includeDescription
+          />
           <div className="grid grid-cols-2 gap-4">
             <TextInput name="unitPrice" label="Unit Price" form={form} type="number" />
             <TextInput

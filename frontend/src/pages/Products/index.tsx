@@ -19,6 +19,7 @@ import EmptyState from "../../components/EmptyState";
 import { useStoreSettings } from "../../features/storefront";
 import { useI18n } from "../../features/i18n";
 import { getRecentlyViewed, ViewedProductSnapshot } from "../../utils/recentlyViewed";
+import { localizedName } from "../../utils/localizedEntity";
 import { formatPrice } from "../../utils/currency";
 import usePageMetadata from "../../hooks/usePageMetadata";
 
@@ -82,7 +83,7 @@ function Products() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const { ref, inView } = useInView();
   const resultsRef = useRef<HTMLDivElement>(null);
 
@@ -289,7 +290,7 @@ function Products() {
               onClick={() => applyCategory(c.name)}
               className={`chip ${filter === c.name ? "chip-active" : ""}`}
             >
-              {c.name}
+              {localizedName(c, language)}
             </button>
           ))}
         </div>

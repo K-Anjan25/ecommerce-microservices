@@ -47,6 +47,7 @@ import AddIcon from "@mui/icons-material/Add";
 import Flag from "../../components/Flag";
 import { CITY_OPTIONS, CITY_OTHER } from "../../formdata/cities";
 import { COUNTRIES, countryName, isIndia } from "../../formdata/countries";
+import { trackEvent } from "../../utils/analytics";
 import { useI18n } from "../../features/i18n";
 
 const FORM_ID = "checkout-form";
@@ -581,6 +582,11 @@ function Checkout() {
     setDistricts(getDistricts(form.values.state) ?? []);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values.state]);
+
+  // Funnel analytics: the shopper reached checkout.
+  useEffect(() => {
+    trackEvent("CHECKOUT_STARTED");
+  }, []);
 
   useEffect(() => {
     const savedFormData = sessionStorage.getItem("checkout_form");

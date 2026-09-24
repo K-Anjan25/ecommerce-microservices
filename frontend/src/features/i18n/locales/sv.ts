@@ -116,6 +116,20 @@ const sv: Messages = {
   "footer.contact": "Kontakt",
   "footer.terms": "Villkor",
   "newsletter.success": "Du är med — håll koll på din inkorg.",
+  "qa.eyebrow": "Frågor & svar",
+  "qa.title": "Frågor om denna produkt",
+  "qa.placeholder": "Ställ en fråga om denna produkt",
+  "qa.helper": "5–500 tecken. Svar från Cartly-teamet.",
+  "qa.ask": "Fråga",
+  "qa.asked": "Din fråga har publicerats",
+  "qa.askFailed": "Kunde inte skicka din fråga — försök igen",
+  "qa.signInToAsk": "Logga in för att ställa en fråga om denna produkt.",
+  "qa.emptyTitle": "Inga frågor än",
+  "qa.emptySubtitle": "Var den första att fråga.",
+  "qa.askedBy": "Frågad av",
+  "qa.answeredBy": "Besvarad av",
+  "qa.awaiting": "Väntar på svar från Cartly-teamet.",
+  "orders.buyAgain": "Lägg till allt i varukorgen",
 };
 
 export default sv;

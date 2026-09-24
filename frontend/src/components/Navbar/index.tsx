@@ -38,6 +38,7 @@ import { CommerceSearch } from "../../features/catalog";
 import { useStoreSettings } from "../../features/storefront";
 import { MiniCartDrawer } from "../../features/cart";
 import { LANGUAGES, useI18n } from "../../features/i18n";
+import { localizedName } from "../../utils/localizedEntity";
 import type { MessageKey } from "../../features/i18n";
 import { DISPLAY_CURRENCIES, getDisplayCurrency, setDisplayCurrency } from "../../utils/currency";
 
@@ -195,7 +196,7 @@ const Navbar = () => {
               <MenuItem onClick={() => pickCategory("")}>{t("nav.allCategories")}</MenuItem>
               {categories.map((c) => (
                 <MenuItem key={c.id} onClick={() => pickCategory(c.name)}>
-                  {c.name}
+                  {localizedName(c, language)}
                 </MenuItem>
               ))}
             </Menu>
@@ -513,7 +514,7 @@ const Navbar = () => {
                       }}
                       className="chip text-xs"
                     >
-                      {c.name}
+                      {localizedName(c, language)}
                     </button>
                   ))}
                 </div>

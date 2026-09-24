@@ -17,6 +17,7 @@ public class CategoryDto {
     private String slug;
     private String description;
     private String imageUrl;
+    private String translations;
     private Long parentId;
     private Integer sortOrder;
     private List<CategoryDto> children;

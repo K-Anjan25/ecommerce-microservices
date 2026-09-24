@@ -11,6 +11,31 @@ import { createServer } from "node:http";
 
 const PORT = Number(process.env.MOCK_PORT ?? 8889);
 
+const QUESTIONS = [
+  {
+    id: "q-1001",
+    productId: "p-1001",
+    text: "Does this come with a carrying case?",
+    askedBy: "Priya S.",
+    createdDate: "2026-09-20T10:00:00Z",
+    answer: "Yes — every unit ships with a hard-shell case, in the box.",
+    answeredBy: "Cartly Staff",
+    answeredAt: "2026-09-20T14:30:00Z",
+  },
+  {
+    id: "q-1002",
+    productId: "p-1003",
+    text: "Is the blender jug dishwasher safe?",
+    askedBy: "Arjun M.",
+    createdDate: "2026-09-22T09:00:00Z",
+    answer: null,
+    answeredBy: null,
+    answeredAt: null,
+  },
+];
+
+const ANALYTICS_EVENTS = [];
+
 let CATEGORIES = [
   "Electronics", "Home", "Fashion", "Beauty", "Kitchen", "Sports", "Grocery", "Toys & Games", "Books",
 ].map((name, i) => ({ id: i + 1, name, slug: name.toLowerCase(), parentId: null, sortOrder: i }));
@@ -523,6 +548,7 @@ createServer((req, res) => {
         slug: name.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
         description: body.description ?? null,
         imageUrl: body.imageUrl ?? null,
+        translations: body.translations ?? null,
         parentId: body.parentId ?? null,
         sortOrder: body.sortOrder ?? CATEGORIES.length,
       };
@@ -543,6 +569,7 @@ createServer((req, res) => {
       category.slug = name.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
       if (body.description !== undefined) category.description = body.description;
       if (body.imageUrl !== undefined) category.imageUrl = body.imageUrl;
+      if (body.translations !== undefined) category.translations = body.translations;
       if (body.parentId !== undefined) category.parentId = body.parentId;
       if (body.sortOrder !== undefined) category.sortOrder = body.sortOrder;
       return json(res, category);
@@ -596,6 +623,145 @@ createServer((req, res) => {
   }
 
   if (p === "/v1/categories") return json(res, CATEGORIES);
+
+  if (p === "/v1/analytics/events" && req.method === "POST") {
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
+  if (p === "/v1/analytics/summary") {
+    const days = Number(q.get("days") ?? 30);
+    const daily = [];
+    let views = 0;
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(Date.now() - i * 86400000);
+      const weekend = [0, 6].includes(d.getDay());
+      const v = Math.round((weekend ? 140 : 90) + Math.sin(i / 3) * 25 + Math.random() * 10);
+      const c = Math.round(v * 0.22);
+      const ch = Math.round(c * 0.45);
+      const o = Math.round(ch * 0.6);
+      views += v;
+      daily.push({
+        date: d.toISOString().slice(0, 10),
+        views: v,
+        addToCarts: c,
+        checkouts: ch,
+        orders: o,
+      });
+    }
+    const addToCarts = daily.reduce((a, d) => a + d.addToCarts, 0);
+    const checkouts = daily.reduce((a, d) => a + d.checkouts, 0);
+    const orders = daily.reduce((a, d) => a + d.orders, 0);
+    return json(res, {
+      days,
+      funnel: {
+        viewedProducts: views,
+        addToCart: addToCarts,
+        checkoutStarted: checkouts,
+        orders,
+        realOrders: orders,
+        viewToCartPercent: 21.8,
+        cartToOrderPercent: 58.3,
+      },
+      daily,
+      topProducts: PRODUCTS.slice(0, 5).map((prod) => ({
+        productId: prod.id,
+        views: 120 + ((prod.id.charCodeAt(2) * 37) % 260),
+      })),
+    });
+  }
+
+  if (p === "/v1/questions" && req.method === "POST") {
+    return readBody(req, (body) => {
+      const question = {
+        id: "q-" + (1000 + QUESTIONS.length + 1),
+        productId: String(body?.productId ?? ""),
+        text: String(body?.text ?? "").trim(),
+        askedBy: "You",
+        createdDate: new Date().toISOString(),
+        answer: null,
+        answeredBy: null,
+        answeredAt: null,
+      };
+      QUESTIONS.unshift(question);
+      return json(res, question, 201);
+    });
+  }
+
+  const questionMatch = p.match(/^\/v1\/questions\/([^/]+)\/answer$/);
+  if (questionMatch && req.method === "PUT") {
+    return readBody(req, (body) => {
+      const question = QUESTIONS.find((item) => item.id === questionMatch[1]);
+      if (!question) return json(res, { message: "Question could not be found!" }, 404);
+      question.answer = String(body?.answer ?? "").trim();
+      question.answeredBy = "Cartly Staff";
+      question.answeredAt = new Date().toISOString();
+      return json(res, question);
+    });
+  }
+
+  const questionDeleteMatch = p.match(/^\/v1\/questions\/([^/]+)$/);
+  if (questionDeleteMatch && req.method === "DELETE") {
+    const idx = QUESTIONS.findIndex((item) => item.id === questionDeleteMatch[1]);
+    if (idx === -1) return json(res, { message: "Question could not be found!" }, 404);
+    QUESTIONS.splice(idx, 1);
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
+  if (p === "/v1/questions" && req.method === "GET") {
+    const productId = q.get("productId");
+    const list = QUESTIONS.filter((item) => !productId || item.productId === productId);
+    return json(res, { content: list, totalElements: list.length });
+  }
+
+  if (p === "/v1/questions/all") {
+    return json(res, { content: QUESTIONS, totalElements: QUESTIONS.length });
+  }
+
+  if (p === "/v1/products/bulk/category" && req.method === "PUT") {
+    return readBody(req, (body) => {
+      const category = CATEGORIES.find((c) => c.id === Number(body?.categoryId));
+      if (!category) return json(res, { message: "Category could not be found!" }, 404);
+      let updated = 0;
+      PRODUCTS.forEach((prod) => {
+        if ((body.ids ?? []).includes(prod.id)) {
+          prod.categoryName = category.name;
+          updated += 1;
+        }
+      });
+      return json(res, { updated });
+    });
+  }
+
+  if (p === "/v1/products/bulk/price" && req.method === "PUT") {
+    return readBody(req, (body) => {
+      let updated = 0;
+      PRODUCTS.forEach((prod) => {
+        if ((body.ids ?? []).includes(prod.id)) {
+          prod.unitPrice = Math.max(1, Math.round(prod.unitPrice * (1 + Number(body?.percent ?? 0) / 100) * 100) / 100);
+          updated += 1;
+        }
+      });
+      return json(res, { updated });
+    });
+  }
+
+  if (p === "/v1/products/bulk" && req.method === "DELETE") {
+    return readBody(req, (body) => {
+      const ids = new Set(body.ids ?? []);
+      let deleted = 0;
+      for (let i = PRODUCTS.length - 1; i >= 0; i--) {
+        if (ids.has(PRODUCTS[i].id)) {
+          PRODUCTS.splice(i, 1);
+          deleted += 1;
+        }
+      }
+      return json(res, { deleted });
+    });
+  }
 
   if (p === "/v1/products") {
     const term = (q.get("searchTerm") ?? "").toLowerCase();

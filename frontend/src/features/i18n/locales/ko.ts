@@ -116,6 +116,20 @@ const ko: Messages = {
   "footer.contact": "문의",
   "footer.terms": "이용약관",
   "newsletter.success": "구독 완료! 받은편지함을 확인하세요.",
+  "qa.eyebrow": "고객 문의 및 답변",
+  "qa.title": "이 상품에 대한 질문",
+  "qa.placeholder": "이 상품에 대해 질문해 보세요",
+  "qa.helper": "5–500자. Cartly 팀이 답변합니다.",
+  "qa.ask": "질문하기",
+  "qa.asked": "질문이 등록되었습니다",
+  "qa.askFailed": "질문을 등록하지 못했습니다 — 다시 시도해 주세요",
+  "qa.signInToAsk": "질문하려면 로그인하세요.",
+  "qa.emptyTitle": "아직 질문이 없습니다",
+  "qa.emptySubtitle": "첫 번째 질문의 주인공이 되어 보세요.",
+  "qa.askedBy": "질문",
+  "qa.answeredBy": "답변",
+  "qa.awaiting": "Cartly 팀의 답변을 기다리는 중입니다.",
+  "orders.buyAgain": "모두 장바구니에 추가",
 };
 
 export default ko;

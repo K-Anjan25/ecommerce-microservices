@@ -16,6 +16,8 @@ import PercentOutlinedIcon from "@mui/icons-material/PercentOutlined";
 import AssignmentReturnIcon from "@mui/icons-material/AssignmentReturn";
 import WebOutlinedIcon from "@mui/icons-material/WebOutlined";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
+import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
+import InsightsOutlinedIcon from "@mui/icons-material/InsightsOutlined";
 import MarkEmailUnreadOutlinedIcon from "@mui/icons-material/MarkEmailUnreadOutlined";
 import SyncProblemOutlinedIcon from "@mui/icons-material/SyncProblemOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -39,6 +41,8 @@ const NAV = [
   { path: "/admin/tax-rules", label: "Tax rules", icon: PercentOutlinedIcon, exact: false },
   { path: "/admin/returns", label: "Returns", icon: AssignmentReturnIcon, exact: false },
   { path: "/admin/storefront", label: "Storefront", icon: WebOutlinedIcon, exact: false },
+  { path: "/admin/questions", label: "Questions", icon: HelpOutlineOutlinedIcon, exact: false },
+  { path: "/admin/analytics", label: "Analytics", icon: InsightsOutlinedIcon, exact: false },
   { path: "/admin/audit-log", label: "Audit log", icon: HistoryOutlinedIcon, exact: false },
   { path: "/admin/payment-reconciliation", label: "Payment review", icon: SyncProblemOutlinedIcon, exact: false },
   { path: "/admin/email-retries", label: "Email delivery", icon: MarkEmailUnreadOutlinedIcon, exact: false },

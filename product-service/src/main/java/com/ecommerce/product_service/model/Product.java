@@ -29,6 +29,13 @@ import java.util.Set;
 public class Product extends AdvanceBaseModal{
 
     private String name;
+
+    /**
+     * Multi-locale content overrides as JSON: {"hi":{"name":"...","description":"..."}, ...}.
+     * The base columns stay the source of truth (English); missing languages fall back.
+     */
+    @Column(name = "translations", length = 8000)
+    private String translations;
     private BigDecimal unitPrice;
 
     @Column(columnDefinition="TEXT")

@@ -116,6 +116,20 @@ const de: Messages = {
   "footer.contact": "Kontakt",
   "footer.terms": "AGB",
   "newsletter.success": "Du bist dabei — halte dein Postfach im Auge.",
+  "qa.eyebrow": "Fragen & Antworten",
+  "qa.title": "Fragen zu diesem Produkt",
+  "qa.placeholder": "Stellen Sie eine Frage zu diesem Produkt",
+  "qa.helper": "5–500 Zeichen. Antworten vom Cartly-Team.",
+  "qa.ask": "Fragen",
+  "qa.asked": "Ihre Frage wurde veröffentlicht",
+  "qa.askFailed": "Frage konnte nicht gesendet werden — bitte erneut versuchen",
+  "qa.signInToAsk": "Melden Sie sich an, um eine Frage zu diesem Produkt zu stellen.",
+  "qa.emptyTitle": "Noch keine Fragen",
+  "qa.emptySubtitle": "Fragen Sie als Erste(r) zu diesem Produkt.",
+  "qa.askedBy": "Gefragt von",
+  "qa.answeredBy": "Beantwortet von",
+  "qa.awaiting": "Antwort des Cartly-Teams ausstehend.",
+  "orders.buyAgain": "Alle in den Warenkorb",
 };
 
 export default de;

@@ -121,6 +121,20 @@ export const en = {
   "footer.contact": "Contact",
   "footer.terms": "Terms",
   "newsletter.success": "You're on the list — watch your inbox for deals.",
+  "qa.eyebrow": "Customer questions & answers",
+  "qa.title": "Questions about this product",
+  "qa.placeholder": "Ask a question about this product",
+  "qa.helper": "5–500 characters. Answers come from the Cartly team.",
+  "qa.ask": "Ask",
+  "qa.asked": "Your question has been posted",
+  "qa.askFailed": "Couldn't post your question — please try again",
+  "qa.signInToAsk": "Sign in to ask a question about this product.",
+  "qa.emptyTitle": "No questions yet",
+  "qa.emptySubtitle": "Be the first to ask about this product.",
+  "qa.askedBy": "Asked by",
+  "qa.answeredBy": "Answered by",
+  "qa.awaiting": "Awaiting an answer from the Cartly team.",
+  "orders.buyAgain": "Add all to cart",
 } as const;
 
 export default en;

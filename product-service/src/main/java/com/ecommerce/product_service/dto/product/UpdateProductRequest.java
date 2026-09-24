@@ -19,6 +19,7 @@ public class UpdateProductRequest {
     private BigDecimal unitPrice;
     @NotNull
     private String description;
+    private String translations;
     private Integer quantityInStock;
     @NotNull
     private Long categoryId;

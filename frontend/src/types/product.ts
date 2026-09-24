@@ -49,6 +49,8 @@ export interface ProductAdminParam {
 
 export interface Product extends BaseProduct {
   categoryName: string;
+  /** Multi-locale overrides JSON: {"hi":{"name":"...","description":"..."}} */
+  translations?: string | null;
 }
 
 export interface ProductAdmin extends BaseProduct {
@@ -105,6 +107,8 @@ export interface ProductVariantPayload {
 /** Wire format for POST/PUT /v1/products. */
 export interface ProductPayload extends Omit<ProductForm, "variants"> {
   variants: ProductVariantPayload[];
+
+  translations?: string | null;
 }
 
 export interface ProductForm {

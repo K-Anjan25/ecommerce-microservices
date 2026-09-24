@@ -13,4 +13,5 @@ public class CreateCategoryRequest {
     private Integer sortOrder;
     private String description;
     private String imageUrl;
+    private String translations;
 }

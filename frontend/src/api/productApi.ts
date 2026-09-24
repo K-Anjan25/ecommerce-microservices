@@ -142,6 +142,22 @@ const deleteProduct = async (id: string) => {
   return data;
 };
 
+// ----- Bulk admin operations (Requires ROLE_ADMIN) -----
+const bulkMoveToCategory = async (ids: string[], categoryId: number) => {
+  const { data } = await api.put<{ updated: number }>("/v1/products/bulk/category", { ids, categoryId });
+  return data;
+};
+
+const bulkAdjustPrice = async (ids: string[], percent: number) => {
+  const { data } = await api.put<{ updated: number }>("/v1/products/bulk/price", { ids, percent });
+  return data;
+};
+
+const bulkDelete = async (ids: string[]) => {
+  const { data } = await api.delete<{ deleted: number }>("/v1/products/bulk", { data: { ids } });
+  return data;
+};
+
 export const ProductApi = {
   getProducts,
   getProductBrands,
@@ -160,4 +176,7 @@ export const ProductApi = {
   getBestsellers,
   getBoughtTogether,
   getFlashSales,
+  bulkMoveToCategory,
+  bulkAdjustPrice,
+  bulkDelete,
 };

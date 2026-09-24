@@ -14,6 +14,7 @@ const saveCategory = async (category: {
   parentId?: number | null;
   description?: string | null;
   imageUrl?: string | null;
+  translations?: string | null;
 }) => {
   // Requires ROLE_ADMIN
   const { data } = await api.post("/v1/categories", category);
@@ -32,6 +33,7 @@ const updateCategory = async (
     sortOrder?: number;
     description?: string | null;
     imageUrl?: string | null;
+    translations?: string | null;
   }
 ) => {
   // Requires ROLE_ADMIN

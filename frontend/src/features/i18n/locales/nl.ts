@@ -116,6 +116,20 @@ const nl: Messages = {
   "footer.contact": "Contact",
   "footer.terms": "Voorwaarden",
   "newsletter.success": "Je staat op de lijst — houd je inbox in de gaten.",
+  "qa.eyebrow": "Vragen & antwoorden",
+  "qa.title": "Vragen over dit product",
+  "qa.placeholder": "Stel een vraag over dit product",
+  "qa.helper": "5–500 tekens. Antwoorden van het Cartly-team.",
+  "qa.ask": "Vragen",
+  "qa.asked": "Je vraag is geplaatst",
+  "qa.askFailed": "Kon je vraag niet plaatsen — probeer opnieuw",
+  "qa.signInToAsk": "Log in om een vraag over dit product te stellen.",
+  "qa.emptyTitle": "Nog geen vragen",
+  "qa.emptySubtitle": "Wees de eerste die iets vraagt.",
+  "qa.askedBy": "Gevraagd door",
+  "qa.answeredBy": "Beantwoord door",
+  "qa.awaiting": "Antwoord van het Cartly-team volgt.",
+  "orders.buyAgain": "Alles toevoegen aan winkelwagen",
 };
 
 export default nl;

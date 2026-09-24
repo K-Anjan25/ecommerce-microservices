@@ -121,6 +121,7 @@ public class ProductMapper {
                 .badge(product.getBadge() == null ? "NONE" : product.getBadge())
                 .featured(product.isFeatured())
                 .description(product.getDescription())
+                .translations(product.getTranslations())
                 .categoryName(product.getCategory() == null ? null : product.getCategory().getName())
                 .createdDate(product.getCreatedDate() == null ? null : product.getCreatedDate().toLocalDate())
                 .imageUrl(product.getImageUrl())

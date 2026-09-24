@@ -116,6 +116,20 @@ const ar: Messages = {
   "footer.contact": "اتصل بنا",
   "footer.terms": "الشروط",
   "newsletter.success": "تم تسجيلك — تابع بريدك للعروض.",
+  "qa.eyebrow": "أسئلة وأجوبة العملاء",
+  "qa.title": "أسئلة حول هذا المنتج",
+  "qa.placeholder": "اطرح سؤالاً عن هذا المنتج",
+  "qa.helper": "5–500 حرف. تجيب فريق كارتلي.",
+  "qa.ask": "اسأل",
+  "qa.asked": "تم نشر سؤالك",
+  "qa.askFailed": "تعذّر نشر سؤالك — حاول مرة أخرى",
+  "qa.signInToAsk": "سجّل الدخول لطرح سؤال عن هذا المنتج.",
+  "qa.emptyTitle": "لا أسئلة بعد",
+  "qa.emptySubtitle": "كن أول من يسأل عن هذا المنتج.",
+  "qa.askedBy": "سأل",
+  "qa.answeredBy": "أجاب",
+  "qa.awaiting": "بانتظار إجابة فريق كارتلي.",
+  "orders.buyAgain": "أضف الكل إلى السلة",
 };
 
 export default ar;

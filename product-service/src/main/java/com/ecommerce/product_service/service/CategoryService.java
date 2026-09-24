@@ -50,6 +50,7 @@ public class CategoryService {
                 .slug(slug)
                 .description(createCategoryRequest.getDescription())
                 .imageUrl(createCategoryRequest.getImageUrl())
+                .translations(createCategoryRequest.getTranslations())
                 .parentId(createCategoryRequest.getParentId())
                 .sortOrder(createCategoryRequest.getSortOrder())
                 .build();
@@ -89,6 +90,9 @@ public class CategoryService {
         }
         if (request.getImageUrl() != null) {
             category.setImageUrl(request.getImageUrl().isBlank() ? null : request.getImageUrl().trim());
+        }
+        if (request.getTranslations() != null) {
+            category.setTranslations(request.getTranslations().isBlank() ? null : request.getTranslations().trim());
         }
         CategoryDto saved = categoryMapper.categoryToCategoryDto(categoryRepository.save(category));
         auditLogService.record("CATEGORY_UPDATED", "CATEGORY", saved.getId().toString(), saved.getName());

@@ -1,8 +1,12 @@
+import React from "react";
+
 export interface Column {
   id: string | number;
   label: string;
   minWidth?: number;
   align?: "right" | "center" | "left";
+  /** Optional custom cell renderer (passed through to the data table). */
+  render?: (row: any) => React.ReactNode;
 }
 
 export class ProductRow {

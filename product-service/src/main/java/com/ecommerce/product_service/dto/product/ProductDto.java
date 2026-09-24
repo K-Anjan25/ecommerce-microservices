@@ -28,6 +28,7 @@ public class ProductDto {
     private boolean featured;
     private CategoryDto category;
     private String description;
+    private String translations;
     private LocalDateTime createdDate;
     private String imageUrl;
     private List<String> images;

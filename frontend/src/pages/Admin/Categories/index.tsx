@@ -35,6 +35,10 @@ import SkeletonRows from "../../../components/SkeletonRows";
 import { showError } from "../../../utils/showError";
 import { showSuccess } from "../../../utils/showSuccess";
 import { Category } from "../../../types/category";
+import TranslationsEditor, {
+  translationsFromJson,
+  translationsToJson,
+} from "../../../components/TranslationsEditor";
 
 const bySortOrder = (a: Category, b: Category) =>
   (a.sortOrder ?? Number.MAX_SAFE_INTEGER) - (b.sortOrder ?? Number.MAX_SAFE_INTEGER) ||
@@ -76,12 +80,14 @@ function Categories() {
   const [editParentId, setEditParentId] = useState<number | "">("");
   const [editDescription, setEditDescription] = useState("");
   const [editImageUrl, setEditImageUrl] = useState("");
+  const [editTranslations, setEditTranslations] = useState<Record<string, { name?: string; description?: string }>>({});
   const [deleting, setDeleting] = useState<Category | null>(null);
 
   // ── Tree expansion + drag & drop ───────────────────────────────────────
   const [collapsed, setCollapsed] = useState<Set<number>>(new Set());
   const [dragId, setDragId] = useState<number | null>(null);
   const [dropTargetId, setDropTargetId] = useState<number | null>(null);
+  const [dropEdge, setDropEdge] = useState<"before" | "after" | "into">("into");
 
   const { data: categories, isLoading } = useQuery(["admin-category:categories"], () =>
     CategoryApi.getCategories()
@@ -172,12 +178,14 @@ function Categories() {
       parentId: number | null;
       description?: string | null;
       imageUrl?: string | null;
+      translations?: string | null;
     }) =>
       CategoryApi.updateCategory(payload.id, {
         name: payload.name,
         parentId: payload.parentId,
         description: payload.description,
         imageUrl: payload.imageUrl,
+        translations: payload.translations,
       }),
     {
       onSuccess: () => {
@@ -227,6 +235,7 @@ function Categories() {
     setEditParentId(category.parentId ?? "");
     setEditDescription(category.description ?? "");
     setEditImageUrl(category.imageUrl ?? "");
+    setEditTranslations(translationsFromJson(category.translations));
     setMenuAnchor(null);
   };
 
@@ -238,6 +247,7 @@ function Categories() {
       parentId: editParentId === "" ? null : editParentId,
       description: editDescription.trim() || null,
       imageUrl: editImageUrl.trim() || null,
+      translations: translationsToJson(editTranslations),
     });
   };
 
@@ -254,7 +264,12 @@ function Categories() {
     });
   };
 
-  /** Drop handlers: onto a row = nest under it; onto the root strip = top level. */
+  /**
+   * Drop handlers. Dropping on the TOP/BOTTOM HALF of a row reorders
+   * before/after that row within its parent (insertion line feedback);
+   * dropping on the MIDDLE nests under it. The strip above the list
+   * promotes to top level.
+   */
   const handleDrop = (target: Category | null) => {
     setDropTargetId(null);
     if (dragId == null) return;
@@ -266,8 +281,20 @@ function Categories() {
         showError("A category can't be dropped into its own subcategory.");
         return;
       }
-      const siblingCount = childrenOf(target.id).length;
-      moveMutation.mutate({ id: dragged.id, parentId: target.id, position: siblingCount });
+      if (dropEdge === "into") {
+        const siblingCount = childrenOf(target.id).length;
+        moveMutation.mutate({ id: dragged.id, parentId: target.id, position: siblingCount });
+        return;
+      }
+      // Reorder next to the target within ITS parent.
+      const siblings = childrenOf(target.parentId ?? null);
+      const targetIndex = siblings.findIndex((c) => c.id === target.id);
+      const insertAt = dropEdge === "before" ? targetIndex : targetIndex + 1;
+      moveMutation.mutate({
+        id: dragged.id,
+        parentId: target.parentId ?? null,
+        position: insertAt,
+      });
     } else {
       moveMutation.mutate({ id: dragged.id, parentId: null, position: 0 });
     }
@@ -423,13 +450,23 @@ function Categories() {
                 }}
                 onDragOver={(e) => {
                   e.preventDefault();
-                  if (dragId != null && dragId !== category.id) setDropTargetId(category.id);
+                  if (dragId == null || dragId === category.id) return;
+                  setDropTargetId(category.id);
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const ratio = (e.clientY - rect.top) / rect.height;
+                  setDropEdge(ratio < 0.3 ? "before" : ratio > 0.7 ? "after" : "into");
                 }}
                 onDragLeave={() => setDropTargetId((cur) => (cur === category.id ? null : cur))}
                 onDrop={() => handleDrop(category)}
-                className={`grid grid-cols-[1fr_auto_auto_auto] items-center gap-4 border-b border-line px-5 py-3 last:border-b-0 transition ${
-                  isDragging ? "opacity-40" : ""
-                } ${isDropTarget ? "bg-brand-soft/60 ring-1 ring-inset ring-brand/40" : "hover:bg-brand-soft/20"}`}
+                className={`grid grid-cols-[1fr_auto_auto_auto] items-center gap-4 px-5 py-3 transition ${
+                  isDragging ? "opacity-40" : "hover:bg-brand-soft/20"
+                } ${
+                  isDropTarget && dropEdge === "before"
+                    ? "!border-t-2 !border-t-brand border-b border-line"
+                    : isDropTarget && dropEdge === "after"
+                    ? "!border-b-2 !border-b-brand"
+                    : "border-b border-line last:border-b-0"
+                } ${isDropTarget && dropEdge === "into" ? "bg-brand-soft/60 ring-1 ring-inset ring-brand/40" : ""}`}
                 style={{ paddingLeft: 20 + depth * 28, cursor: "grab" }}
               >
                 <Box className="flex min-w-0 items-center gap-1.5">
@@ -515,8 +552,9 @@ function Categories() {
             );
           })}
           <div className="px-5 py-2 text-[0.6875rem] text-ink-muted">
-            Tip: drag a row onto another category to nest it (drop on the strip above the list for top
-            level). Arrows reorder within the same parent.
+            Tip: drag onto the top/bottom edge of a row to reorder next to it, onto the middle of a
+            row to nest under it, or onto the strip above the list for top level. Arrows also reorder
+            within the same parent.
           </div>
         </Paper>
       )}
@@ -585,6 +623,7 @@ function Categories() {
               />
             )}
           </Box>
+          <TranslationsEditor value={editTranslations} onChange={setEditTranslations} includeDescription />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setEditing(null)}>Cancel</Button>

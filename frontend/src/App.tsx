@@ -89,6 +89,8 @@ function App() {
   const AdminFlashSales = React.lazy(() => import("./pages/Admin/FlashSales"));
   const AdminShippingRates = React.lazy(() => import("./pages/Admin/ShippingRates"));
   const AdminTaxRules = React.lazy(() => import("./pages/Admin/TaxRules"));
+  const AdminQuestions = React.lazy(() => import("./pages/Admin/Questions"));
+  const AdminAnalytics = React.lazy(() => import("./pages/Admin/Analytics"));
   const AddEditProducts = React.lazy(
     () => import("./pages/Admin/Products/AddEditProduct")
   );
@@ -166,6 +168,8 @@ function App() {
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<Home />} />
                 <Route path="orders" element={<AdminOrders />} />
+                <Route path="questions" element={<AdminQuestions />} />
+                <Route path="analytics" element={<AdminAnalytics />} />
                 <Route path="orderDetail/:orderId" element={<OrderDetail />} />
                 <Route path="returns" element={<AdminReturns />} />
                 <Route

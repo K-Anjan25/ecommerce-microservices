@@ -116,6 +116,20 @@ const ja: Messages = {
   "footer.contact": "お問い合わせ",
   "footer.terms": "利用規約",
   "newsletter.success": "登録しました！メールをご確認ください。",
+  "qa.eyebrow": "カスタマーQ&A",
+  "qa.title": "この商品についての質問",
+  "qa.placeholder": "この商品について質問する",
+  "qa.helper": "5〜500文字。回答はCartlyチームが行います。",
+  "qa.ask": "投稿",
+  "qa.asked": "質問を投稿しました",
+  "qa.askFailed": "質問を投稿できませんでした — もう一度お試しください",
+  "qa.signInToAsk": "質問するにはログインしてください。",
+  "qa.emptyTitle": "質問はまだありません",
+  "qa.emptySubtitle": "最初の質問を投稿しませんか。",
+  "qa.askedBy": "質問者",
+  "qa.answeredBy": "回答者",
+  "qa.awaiting": "Cartlyチームの回答を待っています。",
+  "orders.buyAgain": "すべてカートに追加",
 };
 
 export default ja;

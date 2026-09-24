@@ -38,6 +38,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/v1/support/tickets").permitAll()
                 // Newsletter signup is public and idempotent.
                 .antMatchers(HttpMethod.POST, "/v1/newsletter/subscribe").permitAll()
+                .antMatchers(HttpMethod.POST, "/v1/analytics/events").permitAll()
                 .antMatchers(HttpMethod.GET, "/actuator/health", "/actuator/health/**", "/actuator/info").permitAll()
                 .anyRequest()
                 .authenticated()

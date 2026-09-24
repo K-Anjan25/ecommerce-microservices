@@ -19,6 +19,14 @@ import { formatDate } from "../../../utils/date";
 import { formatPrice } from "../../../utils/cart";
 import { showSuccess } from "../../../utils/showSuccess";
 import ProductCsvTools from "./ProductCsvTools";
+import Checkbox from "@mui/material/Checkbox";
+import Paper from "@mui/material/Paper";
+import LoadingButton from "@mui/lab/LoadingButton";
+import MenuItem from "@mui/material/MenuItem";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import { Category as CategoryType } from "../../../types/category";
+import { CategoryApi } from "../../../api/categoryApi";
+import { showError } from "../../../utils/showError";
 
 const STOCK_FILTERS = ["ALL", "IN_STOCK", "LOW_STOCK", "OUT_OF_STOCK"] as const;
 type StockFilter = (typeof STOCK_FILTERS)[number];
@@ -29,6 +37,9 @@ function Products() {
   const [productId, setProductId] = useState<string>();
   const [search, setSearch] = useState("");
   const [stockFilter, setStockFilter] = useState<StockFilter>("ALL");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkCategoryId, setBulkCategoryId] = useState<number | "">("");
+  const [bulkPercent, setBulkPercent] = useState("");
   const { page, handleChangePage, handleChangeItemsPerPage, itemsPerPage } =
     usePagination();
 
@@ -97,6 +108,54 @@ function Products() {
       queryClient.invalidateQueries("admin:products");
     },
   });
+
+  // ── Bulk operations ────────────────────────────────────────────────────
+  const { data: categories } = useQuery(["admin-category:categories"], () =>
+    CategoryApi.getCategories()
+  );
+
+  const clearSelection = () => setSelectedIds(new Set());
+  const toggleRow = (id: string) =>
+    setSelectedIds((current) => {
+      const next = new Set(current);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  const toggleAllOnPage = () =>
+    setSelectedIds((current) => {
+      const allOnPage = productRows.every((row) => current.has(row.id));
+      const next = new Set(current);
+      productRows.forEach((row) => (allOnPage ? next.delete(row.id) : next.add(row.id)));
+      return next;
+    });
+
+  const afterBulk = (message: string) => {
+    showSuccess(message);
+    clearSelection();
+    queryClient.invalidateQueries("admin:products");
+  };
+  const bulkError = (e: unknown) => {
+    const response = (e as { response?: { data?: { message?: string } | string } })?.response?.data;
+    showError(typeof response === "string" ? response : response?.message ?? "Bulk action failed");
+  };
+
+  const bulkMoveMutation = useMutation(
+    () => ProductApi.bulkMoveToCategory(Array.from(selectedIds), bulkCategoryId as number),
+    { onSuccess: (r) => afterBulk(`${r.updated} product(s) moved`), onError: bulkError }
+  );
+  const bulkDeleteMutation = useMutation(() => ProductApi.bulkDelete(Array.from(selectedIds)), {
+    onSuccess: (r) => afterBulk(`${r.deleted} product(s) deleted`),
+    onError: bulkError,
+  });
+
+  const runBulkPrice = (direction: 1 | -1) => {
+    const value = Number(bulkPercent);
+    if (!value || value <= 0 || selectedIds.size === 0) return;
+    ProductApi.bulkAdjustPrice(Array.from(selectedIds), direction * value)
+      .then((r) => afterBulk(`${r.updated} product(s) repriced by ${direction * value}%`))
+      .catch(bulkError);
+  };
 
   return (
     <div className="space-y-6">
@@ -184,9 +243,84 @@ function Products() {
           />
         </div>
       ) : (
+        <>
+        {selectedIds.size > 0 && (
+          <Paper className="flex flex-wrap items-center gap-3 border-l-4 !border-l-brand p-4">
+            <span className="text-sm font-bold text-ink">{selectedIds.size} selected</span>
+            <Button size="small" onClick={toggleAllOnPage}>
+              Select all on page
+            </Button>
+            <TextField
+              select
+              size="small"
+              label="Move to category"
+              value={bulkCategoryId}
+              onChange={(e) => setBulkCategoryId(e.target.value as number | "")}
+              className="min-w-[12rem]"
+            >
+              {(categories ?? []).map((category: CategoryType) => (
+                <MenuItem key={category.id} value={category.id}>
+                  {category.name}
+                </MenuItem>
+              ))}
+            </TextField>
+            <LoadingButton
+              size="small"
+              variant="outlined"
+              disabled={bulkCategoryId === ""}
+              loading={bulkMoveMutation.isLoading}
+              onClick={() => bulkMoveMutation.mutate()}
+            >
+              Move
+            </LoadingButton>
+            <TextField
+              size="small"
+              type="number"
+              label="Price ±%"
+              value={bulkPercent}
+              onChange={(e) => setBulkPercent(e.target.value)}
+              className="w-28"
+              inputProps={{ min: 1, max: 100 }}
+            />
+            <Button size="small" variant="outlined" onClick={() => runBulkPrice(-1)}>
+              Discount
+            </Button>
+            <Button size="small" variant="outlined" onClick={() => runBulkPrice(1)}>
+              Increase
+            </Button>
+            <LoadingButton
+              size="small"
+              color="error"
+              variant="contained"
+              startIcon={<DeleteOutlineOutlinedIcon />}
+              loading={bulkDeleteMutation.isLoading}
+              onClick={() => bulkDeleteMutation.mutate()}
+            >
+              Delete
+            </LoadingButton>
+            <Button size="small" onClick={clearSelection}>
+              Clear
+            </Button>
+          </Paper>
+        )}
         <TableWithActions
           rows={productRows}
-          columns={PRODUCT_COLUMNS}
+          columns={[
+            {
+              id: "select",
+              label: "",
+              render: (row) => (
+                <Checkbox
+                  size="small"
+                  aria-label={`Select ${row.name}`}
+                  checked={selectedIds.has(row.id)}
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={() => toggleRow(row.id)}
+                />
+              ),
+            },
+            ...PRODUCT_COLUMNS,
+          ]}
           deleteItem={deleteItem}
           editItem={editItem}
           totalSize={search || stockFilter !== "ALL" ? productRows.length : products?.totalSize}
@@ -195,6 +329,7 @@ function Products() {
           page={page}
           itemsPerPage={itemsPerPage}
         />
+        </>
       )}
 
       <Modal

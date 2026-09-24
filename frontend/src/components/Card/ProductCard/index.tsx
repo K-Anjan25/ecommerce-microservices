@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -17,6 +17,7 @@ import CardGiftcardOutlinedIcon from "@mui/icons-material/CardGiftcardOutlined";
 import BoltOutlinedIcon from "@mui/icons-material/BoltOutlined";
 
 import Comments from "../../Comments";
+import Questions from "../../Questions";
 import PriceWatch from "../../PriceWatch";
 import Card from "../index";
 import { ProductApi } from "../../../api/productApi";
@@ -36,12 +37,14 @@ import { formatPrice } from "../../../utils/cart";
 import { addToCompare, isInCompare } from "../../../utils/compare";
 import useCountdown from "../../../hooks/useCountdown";
 import { useI18n } from "../../../features/i18n";
+import { trackEvent } from "../../../utils/analytics";
+import { localizedDescription, localizedName } from "../../../utils/localizedEntity";
 
 type CardProps = {
   product: ProductAdmin | undefined;
 };
 
-const TABS = ["Description", "Specifications", "Reviews", "Shipping & returns"] as const;
+const TABS = ["Description", "Specifications", "Q&A", "Reviews", "Shipping & returns"] as const;
 type Tab = (typeof TABS)[number];
 
 /**
@@ -53,12 +56,18 @@ const ProductCard = ({ product }: CardProps) => {
   const { productId } = useParams();
   const queryClient = useQueryClient();
   const dispatch = useDispatch<any>();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const cartItems = useSelector((state: AppState) => state.cart);
 
   const [selectedVariantId, setSelectedVariantId] = useState<string>("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [tab, setTab] = useState<Tab>("Description");
+
+  // Funnel analytics: one product-view beacon per loaded product.
+  useEffect(() => {
+    if (product?.id) trackEvent("VIEW_PRODUCT", product.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product?.id]);
 
   const variants = product?.variants ?? [];
   const selectedVariant = variants.find((v) => v.id === selectedVariantId);
@@ -127,6 +136,7 @@ const ProductCard = ({ product }: CardProps) => {
   const handleAdd = () => {
     if (!product) return;
     if (quantity === 0) {
+      trackEvent("ADD_TO_CART", product.id);
       dispatch(
         addToCart({
           product,
@@ -218,7 +228,7 @@ const ProductCard = ({ product }: CardProps) => {
               {images.length > 0 ? (
                 <img
                   src={images[currentImageIndex]}
-                  alt={product?.name}
+                  alt={product ? localizedName(product, language) : ""}
                   className="h-full w-full object-cover"
                 />
               ) : (
@@ -267,7 +277,7 @@ const ProductCard = ({ product }: CardProps) => {
                   {product?.brand || product?.category?.name || "Cartly"}
                 </p>
                 <h1 className="mt-2 font-heading text-3xl font-extrabold leading-[1.05] tracking-tight text-ink sm:text-4xl">
-                  {product?.name}
+                  {product ? localizedName(product, language) : ""}
                 </h1>
                 {!!product?.ratingCount && (
                   <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
@@ -451,7 +461,10 @@ const ProductCard = ({ product }: CardProps) => {
         <div className="py-7 sm:py-9">
           {tab === "Description" && (
             <p className="max-w-3xl whitespace-pre-line text-sm leading-relaxed text-ink-soft">
-              {product?.description || "No description has been added for this product yet."}
+              {product
+                ? localizedDescription(product, language) ||
+                  "No description has been added for this product yet."
+                : "No description has been added for this product yet."}
             </p>
           )}
 
@@ -465,6 +478,8 @@ const ProductCard = ({ product }: CardProps) => {
               ))}
             </dl>
           )}
+
+          {tab === "Q&A" && productId && <Questions productId={productId} />}
 
           {tab === "Reviews" && (
             <Comments comments={comments ?? []} onCreateComment={handleCreateComment} />
