@@ -42,4 +42,10 @@ public class User {
     private String phoneNumber;
     @Column(nullable = false, columnDefinition = "INTEGER DEFAULT 0")
     private int tokenVersion;
+
+    /**
+     * Two-step verification: when true, password sign-in issues an e-mailed
+     * 6-digit code that must be exchanged for tokens before entry.
+     */
+    private boolean mfaEnabled;
 }
