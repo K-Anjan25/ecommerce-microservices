@@ -39,7 +39,7 @@ public class AuthenticationHelper {
     private final UserService userService;
     public LoginResponse getLoginResponse(UserPrincipal user) {
         return new LoginResponse(jwtTokenProvider.generateAccessToken(user),jwtTokenProvider.generateRefreshToken(user)
-                ,user.getRole());
+                ,user.getRole(), null);
     }
 
     public void authenticate(String email, String password) {

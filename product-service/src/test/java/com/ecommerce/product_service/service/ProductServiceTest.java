@@ -10,6 +10,7 @@ import com.ecommerce.product_service.model.Category;
 import com.ecommerce.product_service.model.Product;
 import com.ecommerce.product_service.repository.ProductImageRepository;
 import com.ecommerce.product_service.repository.ProductRepository;
+import com.ecommerce.product_service.audit.AuditLogService;
 import com.ecommerce.product_service.repository.ProductVariantRepository;
 import com.ecommerce.product_service.repository.FlashSaleRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,6 +35,9 @@ class ProductServiceTest {
 
     @Mock
     private ProductRepository productRepository;
+
+    @Mock
+    private AuditLogService auditLogService;
 
     @Mock
     private CategoryService categoryService;
@@ -68,7 +72,7 @@ class ProductServiceTest {
 
     @BeforeEach
     void setUp() {
-        productService = new ProductService(productRepository, categoryService, productMapper, commentMapper,
+        productService = new ProductService(productRepository, auditLogService, categoryService, productMapper, commentMapper,
                 inventoryService, productImageRepository, productVariantRepository, flashSaleRepository, priceWatchService);
 
         productId = UUID.randomUUID();
