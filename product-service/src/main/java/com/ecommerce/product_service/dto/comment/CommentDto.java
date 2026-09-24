@@ -19,4 +19,6 @@ public class CommentDto {
     private Integer rating;
 
     private Boolean verifiedPurchase;
+    /** Photos the customer attached of the product they received. */
+    private List<CommentImageDto> images;
 }

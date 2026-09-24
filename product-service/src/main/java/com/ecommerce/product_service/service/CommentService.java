@@ -65,6 +65,7 @@ public class CommentService {
                 // from the order service, never from client input.
                 .verifiedPurchase(userId != null
                         && isVerifiedPurchase(userId, createCommentDto.getProductId()))
+                .images(new ArrayList<>())
                 .build();
 
         // Review photos of the received product (data:/https URLs, max 8).

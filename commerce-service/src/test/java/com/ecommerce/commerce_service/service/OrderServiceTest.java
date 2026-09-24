@@ -74,6 +74,9 @@ class OrderServiceTest {
     private ShippingRateService shippingRateService;
 
     @Mock
+    private com.ecommerce.commerce_service.membership.MembershipService membershipService;
+
+    @Mock
     private ShippingZoneService shippingZoneService;
 
     @Mock
@@ -108,9 +111,9 @@ class OrderServiceTest {
     void setUp() {
         orderService = new OrderService(orderRepository, orderMapper, commerceInventoryService,
                 couponService, orderStatusHistoryRepository, rabbitMQMessageProducer, orderItemRepository,
-                shippingRateService, shippingZoneService, taxRuleService, checkoutTokenService,
-                productCatalogClient, giftCardService, loyaltyPointService, paymentRepository,
-                paymentProviderCancellationService);
+                shippingRateService, membershipService, shippingZoneService, taxRuleService,
+                checkoutTokenService, productCatalogClient, giftCardService, loyaltyPointService,
+                paymentRepository, paymentProviderCancellationService);
 
         productId = UUID.randomUUID();
         orderId = UUID.randomUUID();

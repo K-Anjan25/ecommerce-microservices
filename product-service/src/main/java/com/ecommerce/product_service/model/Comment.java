@@ -50,6 +50,5 @@ public class Comment extends AdvanceBaseModal {
     /** Photos the customer attached of the product they received. */
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("sortOrder ASC")
-    @Builder.Default
-    private List<CommentImage> images = new ArrayList<>();
+    private List<CommentImage> images;
 }

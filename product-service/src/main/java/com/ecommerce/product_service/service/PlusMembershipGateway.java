@@ -37,7 +37,15 @@ public class PlusMembershipGateway {
 
     private static final long CACHE_TTL_MS = 60_000L;
 
-    private record CacheEntry(boolean active, long fetchedAtMs) {}
+    private static final class CacheEntry {
+        final boolean active;
+        final long fetchedAtMs;
+
+        CacheEntry(boolean active, long fetchedAtMs) {
+            this.active = active;
+            this.fetchedAtMs = fetchedAtMs;
+        }
+    }
 
     private final Map<UUID, CacheEntry> cache = new ConcurrentHashMap<>();
 
@@ -51,8 +59,8 @@ public class PlusMembershipGateway {
         if (userId == null) return false;
         long nowMs = System.currentTimeMillis();
         CacheEntry entry = cache.get(userId);
-        if (entry != null && nowMs - entry.fetchedAtMs() < CACHE_TTL_MS) {
-            return entry.active();
+        if (entry != null && nowMs - entry.fetchedAtMs < CACHE_TTL_MS) {
+            return entry.active;
         }
         boolean active = fetch(userId);
         cache.put(userId, new CacheEntry(active, nowMs));
