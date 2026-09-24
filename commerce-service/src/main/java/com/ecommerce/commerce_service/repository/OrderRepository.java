@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.UUID;
 
 public interface OrderRepository extends JpaRepository<Order, UUID> {
+
+    /** Funnel analytics: real orders since a point in time. */
+    long countByCreatedDateAfter(java.time.LocalDateTime date);
     List<Order> findByCustomerIdOrderByCreatedDateDesc(UUID customerId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
