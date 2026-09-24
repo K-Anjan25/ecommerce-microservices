@@ -9,36 +9,58 @@
   "products": {
     "sony-wh-1000xm5": {
       "product": "Sony WH-1000XM5 Wireless Headphones",
-      "source_page": "https://www.sony.co.in/electronics/headband-headphones/wh-1000xm5",
-      "cdn": "sony.co.in/image (Scene7-style: fmt/wid/hei params)",
+      "source_page": "https://electronics.sony.com/audio/headphones/headband/p/wh1000xm5-b",
+      "cdn": "d1ncau8tqf99kp.cloudfront.net (Sony Electronics storefront CDN, 1200x1050 webp)",
+      "note": "Black set from /wh1000xm5-b, Silver set from /wh1000xm5-s (WH1000XM5/B & WH1000XM5/S official packshots). sony.co.in /image/ hashes dropped (bot-blocked; India buy pages delisted).",
       "images": [
         {
           "angle": "front",
-          "sku": null,
-          "alt": "Sony WH-1000XM5 studio product view",
-          "full": "https://www.sony.co.in/image/1aefe3317d479050cfa77837cba7e9d5?fmt=png-alpha&wid=2000&hei=1400&bgcolor=F6F9FF",
-          "thumb": "https://www.sony.co.in/image/1aefe3317d479050cfa77837cba7e9d5?fmt=png-alpha&wid=700&hei=500&bgcolor=F6F9FF"
+          "sku": "SONY-XM5-BLK",
+          "alt": "Sony WH-1000XM5 in Black, three-quarter front studio view",
+          "full": "https://d1ncau8tqf99kp.cloudfront.net/converted/103364_original_local_1200x1050_v3_converted.webp",
+          "thumb": "https://d1ncau8tqf99kp.cloudfront.net/converted/103364_original_local_1200x1050_v3_converted.webp"
         },
         {
           "angle": "side",
-          "sku": null,
-          "alt": "Sony WH-1000XM5 side profile studio view",
-          "full": "https://www.sony.co.in/image/623af7b9b246c988fc3f3264a4de278c?fmt=png-alpha&wid=2000&hei=1400&bgcolor=F6F9FF",
-          "thumb": "https://www.sony.co.in/image/623af7b9b246c988fc3f3264a4de278c?fmt=png-alpha&wid=700&hei=500&bgcolor=F6F9FF"
+          "sku": "SONY-XM5-BLK",
+          "alt": "Sony WH-1000XM5 in Black, side studio view",
+          "full": "https://d1ncau8tqf99kp.cloudfront.net/converted/121141_original_local_1200x1050_v3_converted.webp",
+          "thumb": "https://d1ncau8tqf99kp.cloudfront.net/converted/121141_original_local_1200x1050_v3_converted.webp"
         },
         {
           "angle": "detail",
-          "sku": null,
-          "alt": "Sony WH-1000XM5 earcup and headband detail",
-          "full": "https://www.sony.co.in/image/ce0f6885ec1d1701f08d7b522e4f4ca3?fmt=png-alpha&wid=2000&hei=1400&bgcolor=F6F9FF",
-          "thumb": "https://www.sony.co.in/image/ce0f6885ec1d1701f08d7b522e4f4ca3?fmt=png-alpha&wid=700&hei=500&bgcolor=F6F9FF"
+          "sku": "SONY-XM5-BLK",
+          "alt": "Sony WH-1000XM5 in Black, earcup and headband detail",
+          "full": "https://d1ncau8tqf99kp.cloudfront.net/converted/103365_original_local_1200x1050_v3_converted.webp",
+          "thumb": "https://d1ncau8tqf99kp.cloudfront.net/converted/103365_original_local_1200x1050_v3_converted.webp"
+        },
+        {
+          "angle": "front",
+          "sku": "SONY-XM5-SLV",
+          "alt": "Sony WH-1000XM5 in Silver, three-quarter front studio view",
+          "full": "https://d1ncau8tqf99kp.cloudfront.net/converted/103375_original_local_1200x1050_v3_converted.webp",
+          "thumb": "https://d1ncau8tqf99kp.cloudfront.net/converted/103375_original_local_1200x1050_v3_converted.webp"
+        },
+        {
+          "angle": "side",
+          "sku": "SONY-XM5-SLV",
+          "alt": "Sony WH-1000XM5 in Silver, side studio view",
+          "full": "https://d1ncau8tqf99kp.cloudfront.net/converted/103376_original_local_1200x1050_v3_converted.webp",
+          "thumb": "https://d1ncau8tqf99kp.cloudfront.net/converted/103376_original_local_1200x1050_v3_converted.webp"
+        },
+        {
+          "angle": "detail",
+          "sku": "SONY-XM5-SLV",
+          "alt": "Sony WH-1000XM5 in Silver, earcup and headband detail",
+          "full": "https://d1ncau8tqf99kp.cloudfront.net/converted/103379_original_local_1200x1050_v3_converted.webp",
+          "thumb": "https://d1ncau8tqf99kp.cloudfront.net/converted/103379_original_local_1200x1050_v3_converted.webp"
         }
       ]
     },
     "jbl-flip-6": {
       "product": "JBL Flip 6 Portable Bluetooth Speaker",
       "source_page": "https://in.jbl.com/FLIP-6-.html",
-      "cdn": "in.jbl.com Demandware (sw/sh resize params)",
+      "cdn": "in.jbl.com + jbl.com Harman Demandware CDN (sw/sh/sm/sfrm params)",
       "note_colorway": "Blue (JBLFLIP6BLU) studio set \u2014 official default colourway",
       "images": [
         {
@@ -96,8 +118,23 @@
           "alt": "JBL Flip 6 in Blue, bottom view",
           "full": "https://in.jbl.com/dw/image/v2/BFND_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dwf0ba514f/JBL_FLIP6_BOTTOM_BLUE_29541_x1.png?sw=1400&sh=1400&sfrm=png",
           "thumb": "https://in.jbl.com/dw/image/v2/BFND_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dwf0ba514f/JBL_FLIP6_BOTTOM_BLUE_29541_x1.png?sw=600&sh=600&sfrm=png"
+        },
+        {
+          "angle": "variant",
+          "sku": "JBL-FLIP6-GRY",
+          "alt": "JBL Flip 6 in Grey, hero studio view",
+          "full": "https://www.jbl.com/dw/image/v2/AAUJ_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dwb8b5ff26/1_JBL_FLIP6_HERO_GREY_29399_x1.jpg?sw=1400&sh=1400&sm=fit&sfrm=png",
+          "thumb": "https://www.jbl.com/dw/image/v2/AAUJ_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dwb8b5ff26/1_JBL_FLIP6_HERO_GREY_29399_x1.jpg?sw=600&sh=600&sm=fit&sfrm=png"
+        },
+        {
+          "angle": "variant",
+          "sku": "JBL-FLIP6-RED",
+          "alt": "JBL Flip 6 in Red, hero studio view",
+          "full": "https://www.jbl.com/dw/image/v2/AAUJ_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dw6d9c1a12/1_JBL_FLIP6_HERO_RED_29399_x1.jpg?sw=1400&sh=1400&sm=fit&sfrm=png",
+          "thumb": "https://www.jbl.com/dw/image/v2/AAUJ_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dw6d9c1a12/1_JBL_FLIP6_HERO_RED_29399_x1.jpg?sw=600&sh=600&sm=fit&sfrm=png"
         }
-      ]
+      ],
+      "note": "Blue = full 8-angle studio set (in.jbl.com BFND_PRD). Grey/Red heroes from the shared Harman catalog (AAUJ_PRD); Flip 6 'Squad' camo is not an official colourway and was dropped from seed variants."
     },
     "canon-eos-1500d": {
       "product": "Canon EOS 1500D DSLR Camera with 18-55mm Lens",
@@ -152,6 +189,791 @@
           "alt": "Canon EOS 1500D with 18-55mm kit lens, studio angle 7",
           "full": "https://in.canon/media/image/2018/03/25/a9465645bd2b45c587dd70f1381d33d2_eos-1500d_b7.png",
           "thumb": "https://in.canon/media/image/2018/03/25/a9465645bd2b45c587dd70f1381d33d2_eos-1500d_b7.png"
+        }
+      ]
+    },
+    "boat-airdopes-141": {
+      "product": "boAt Airdopes 141 TWS Earbuds",
+      "source_page": "https://www.boat-lifestyle.com/products/airdopes-141",
+      "cdn": "boat-lifestyle.com Shopify CDN (_600x thumb / _1800x full suffixes)",
+      "note_colorway": "Bold Black studio set; Grey shot (AD141-FI_Grey01) also exists on the CDN \u2014 variant gallery candidate",
+      "images": [
+        {
+          "angle": "front",
+          "sku": "BOAT-141-BLK",
+          "alt": "boAt Airdopes 141 in Black with charging case, front studio view",
+          "full": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_Black01_1800x.png?v=1698391770",
+          "thumb": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_Black01_600x.png?v=1698391770"
+        },
+        {
+          "angle": "side",
+          "sku": "BOAT-141-BLK",
+          "alt": "boAt Airdopes 141 Black earbuds, side studio view",
+          "full": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_Black06_1800x.jpg?v=1722247855",
+          "thumb": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_Black06_600x.jpg?v=1722247855"
+        },
+        {
+          "angle": "detail",
+          "sku": "BOAT-141-BLK",
+          "alt": "boAt Airdopes 141 Black earbuds close-up studio detail",
+          "full": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_Black02_1800x.jpg?v=1722247855",
+          "thumb": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_Black02_600x.jpg?v=1722247855"
+        },
+        {
+          "angle": "back",
+          "sku": "BOAT-141-BLK",
+          "alt": "boAt Airdopes 141 Black charging case, rear studio view",
+          "full": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_Black03_1800x.jpg?v=1722247855",
+          "thumb": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_Black03_600x.jpg?v=1722247855"
+        },
+        {
+          "angle": "gallery",
+          "sku": "BOAT-141-BLK",
+          "alt": "boAt Airdopes 141 Black earbuds with case, studio angle",
+          "full": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_Black05_1800x.jpg?v=1722247855",
+          "thumb": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_Black05_600x.jpg?v=1722247855"
+        },
+        {
+          "angle": "front",
+          "sku": "BOAT-141-WHT",
+          "alt": "boAt Airdopes 141 in White, earbuds with charging case, front studio packshot",
+          "full": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_White01_1800x.png?v=1698391770",
+          "thumb": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_White01_600x.png?v=1698391770"
+        },
+        {
+          "angle": "side",
+          "sku": "BOAT-141-WHT",
+          "alt": "boAt Airdopes 141 White, side studio view",
+          "full": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_White06_1800x.jpg?v=1722247855",
+          "thumb": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_White06_600x.jpg?v=1722247855"
+        },
+        {
+          "angle": "detail",
+          "sku": "BOAT-141-WHT",
+          "alt": "boAt Airdopes 141 White, earbud close-up studio detail",
+          "full": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_White02_1800x.jpg?v=1722247855",
+          "thumb": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_White02_600x.jpg?v=1722247855"
+        },
+        {
+          "angle": "back",
+          "sku": "BOAT-141-WHT",
+          "alt": "boAt Airdopes 141 White, charging case back studio view",
+          "full": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_White03_1800x.jpg?v=1722247855",
+          "thumb": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_White03_600x.jpg?v=1722247855"
+        },
+        {
+          "angle": "gallery",
+          "sku": "BOAT-141-WHT",
+          "alt": "boAt Airdopes 141 White, studio angle",
+          "full": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_White05_1800x.jpg?v=1722247855",
+          "thumb": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_White05_600x.jpg?v=1722247855"
+        },
+        {
+          "angle": "front",
+          "sku": "BOAT-141-BLU",
+          "alt": "boAt Airdopes 141 in Blue, earbuds with charging case, front studio packshot",
+          "full": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_Blue01_1800x.png?v=1698391770",
+          "thumb": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_Blue01_600x.png?v=1698391770"
+        },
+        {
+          "angle": "side",
+          "sku": "BOAT-141-BLU",
+          "alt": "boAt Airdopes 141 Blue, side studio view",
+          "full": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_Blue06_1800x.jpg?v=1722247855",
+          "thumb": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_Blue06_600x.jpg?v=1722247855"
+        },
+        {
+          "angle": "detail",
+          "sku": "BOAT-141-BLU",
+          "alt": "boAt Airdopes 141 Blue, earbud close-up studio detail",
+          "full": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_Blue02_1800x.jpg?v=1722247855",
+          "thumb": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_Blue02_600x.jpg?v=1722247855"
+        },
+        {
+          "angle": "back",
+          "sku": "BOAT-141-BLU",
+          "alt": "boAt Airdopes 141 Blue, charging case back studio view",
+          "full": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_Blue03_1800x.jpg?v=1722247855",
+          "thumb": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_Blue03_600x.jpg?v=1722247855"
+        },
+        {
+          "angle": "gallery",
+          "sku": "BOAT-141-BLU",
+          "alt": "boAt Airdopes 141 Blue, studio angle",
+          "full": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_Blue05_1800x.jpg?v=1722247855",
+          "thumb": "https://www.boat-lifestyle.com/cdn/shop/files/AD141-FI_Blue05_600x.jpg?v=1722247855"
+        }
+      ],
+      "note": "Per-colour studio sets (Black / White Purity / Thunder Blue) from the official Shopify product media (AD141-FI_* naming)."
+    },
+    "logitech-mx-keys-s": {
+      "product": "Logitech MX Keys S Wireless Keyboard",
+      "source_page": "https://www.logitech.com/en-us/shop/p/mx-keys-s.920-011558",
+      "cdn": "resource.logitech.com (imgix-style w_/q_/f_ transforms)",
+      "note_colorway": "Graphite studio set (920-011558); Black 920-011406 and Pale Gray 920-011559 also listed",
+      "images": [
+        {
+          "angle": "front",
+          "sku": "LOGI-MXS-GRP",
+          "alt": "Logitech MX Keys S in Graphite, top view studio shot",
+          "full": "https://resource.logitech.com/w_1600,q_90,f_auto/d_transparent.gif/content/dam/logitech/en/products/keyboards/mx-keys-s/migration-assets-for-delorean-2025/gallery/mx-keys-s-top-view-graphite-us.png",
+          "thumb": "https://resource.logitech.com/w_600,h_600,c_pad,q_auto,f_auto/d_transparent.gif/content/dam/logitech/en/products/keyboards/mx-keys-s/migration-assets-for-delorean-2025/gallery/mx-keys-s-top-view-graphite-us.png"
+        },
+        {
+          "angle": "side",
+          "sku": "LOGI-MXS-GRP",
+          "alt": "Logitech MX Keys S in Graphite, three-quarter front view",
+          "full": "https://resource.logitech.com/w_1600,q_90,f_auto/d_transparent.gif/content/dam/logitech/en/products/keyboards/mx-keys-s/migration-assets-for-delorean-2025/gallery/mx-keys-s-fob-view-graphite-us.png",
+          "thumb": "https://resource.logitech.com/w_600,h_600,c_pad,q_auto,f_auto/d_transparent.gif/content/dam/logitech/en/products/keyboards/mx-keys-s/migration-assets-for-delorean-2025/gallery/mx-keys-s-fob-view-graphite-us.png"
+        },
+        {
+          "angle": "back",
+          "sku": "LOGI-MXS-GRP",
+          "alt": "Logitech MX Keys S in Graphite, bottom view",
+          "full": "https://resource.logitech.com/w_1600,q_90,f_auto/d_transparent.gif/content/dam/logitech/en/products/keyboards/mx-keys-s/migration-assets-for-delorean-2025/gallery/mx-keys-s-bty-view-graphite-us.png",
+          "thumb": "https://resource.logitech.com/w_600,h_600,c_pad,q_auto,f_auto/d_transparent.gif/content/dam/logitech/en/products/keyboards/mx-keys-s/migration-assets-for-delorean-2025/gallery/mx-keys-s-bty-view-graphite-us.png"
+        }
+      ]
+    },
+    "lenovo-ideapad-slim-3": {
+      "product": "Lenovo IdeaPad Slim 3 Laptop",
+      "source_page": "https://www.lenovo.com/in/en/p/laptops/ideapad/ideapad-s-series/ideapad-slim-3-gen-8-15-inch-amd/len101i0073",
+      "cdn": "p1/p3-ofp.static.pub (width/height resize params)",
+      "images": [
+        {
+          "angle": "front",
+          "sku": "LEN-SLIM3-16512",
+          "alt": "Lenovo IdeaPad Slim 3 in Arctic Grey, open front view",
+          "full": "https://p3-ofp.static.pub//fes/cms/2024/04/29/09bkal2ihkgzk5u7ztpfx54w8xeitl660072.png?width=1600&height=1600",
+          "thumb": "https://p3-ofp.static.pub//fes/cms/2024/04/29/09bkal2ihkgzk5u7ztpfx54w8xeitl660072.png?width=600&height=600"
+        },
+        {
+          "angle": "side",
+          "sku": "LEN-SLIM3-16512",
+          "alt": "Lenovo IdeaPad Slim 3 side profile studio view",
+          "full": "https://p1-ofp.static.pub//fes/cms/2024/04/29/zehba70opbrzi4nfr2zdiz4ejwjg22553306.jpg?width=1600&height=1600",
+          "thumb": "https://p1-ofp.static.pub//fes/cms/2024/04/29/zehba70opbrzi4nfr2zdiz4ejwjg22553306.jpg?width=600&height=600"
+        },
+        {
+          "angle": "detail",
+          "sku": "LEN-SLIM3-16512",
+          "alt": "Lenovo IdeaPad Slim 3 keyboard and display detail",
+          "full": "https://p1-ofp.static.pub//fes/cms/2024/04/29/x5g8hthmzug6m1z0ocjgu8ddwxexia573798.jpg?width=1600&height=1600",
+          "thumb": "https://p1-ofp.static.pub//fes/cms/2024/04/29/x5g8hthmzug6m1z0ocjgu8ddwxexia573798.jpg?width=600&height=600"
+        },
+        {
+          "angle": "gallery",
+          "sku": "LEN-SLIM3-16512",
+          "alt": "Lenovo IdeaPad Slim 3 studio angle",
+          "full": "https://p1-ofp.static.pub//fes/cms/2024/04/29/t7ztv5p2plwubj5x7hbfpua7juoleh237623.jpg?width=1600&height=1600",
+          "thumb": "https://p1-ofp.static.pub//fes/cms/2024/04/29/t7ztv5p2plwubj5x7hbfpua7juoleh237623.jpg?width=600&height=600"
+        },
+        {
+          "angle": "gallery",
+          "sku": "LEN-SLIM3-16512",
+          "alt": "Lenovo IdeaPad Slim 3 closed lid view",
+          "full": "https://p1-ofp.static.pub//fes/cms/2024/04/29/60ei8u1xo3visck0r6ph8zbgdpd3bf376419.jpg?width=1600&height=1600",
+          "thumb": "https://p1-ofp.static.pub//fes/cms/2024/04/29/60ei8u1xo3visck0r6ph8zbgdpd3bf376419.jpg?width=600&height=600"
+        }
+      ]
+    },
+    "noise-colorfit-pro-5": {
+      "product": "Noise ColorFit Pro 5 Smart Watch",
+      "source_page": "https://www.gonoise.com/products/noise-colorfit-pro-5-smart-watch",
+      "cdn": "gonoise.com Shopify CDN (width param)",
+      "images": [
+        {
+          "angle": "front",
+          "sku": "NOISE-P5-BLK",
+          "alt": "Noise ColorFit Pro 5 in Midnight Black, front studio packshot",
+          "full": "https://www.gonoise.com/cdn/shop/files/3_result_-_Copy_-_Copy_-_Copy_-_Copy_-_Copy_-_Copy_-_Copy.webp?v=1746448737&width=1600",
+          "thumb": "https://www.gonoise.com/cdn/shop/files/3_result_-_Copy_-_Copy_-_Copy_-_Copy_-_Copy_-_Copy_-_Copy.webp?v=1746448737&width=600"
+        },
+        {
+          "angle": "side",
+          "sku": "NOISE-P5-BLK",
+          "alt": "Noise ColorFit Pro 5 in Midnight Black, side studio view",
+          "full": "https://www.gonoise.com/cdn/shop/files/4.4_result.webp?v=1746448737&width=1600",
+          "thumb": "https://www.gonoise.com/cdn/shop/files/4.4_result.webp?v=1746448737&width=600"
+        },
+        {
+          "angle": "detail",
+          "sku": "NOISE-P5-BLK",
+          "alt": "Noise ColorFit Pro 5 in Midnight Black, display and strap detail",
+          "full": "https://www.gonoise.com/cdn/shop/files/1_result_-_Copy_-_Copy_-_Copy_-_Copy_-_Copy.webp?v=1746448737&width=1600",
+          "thumb": "https://www.gonoise.com/cdn/shop/files/1_result_-_Copy_-_Copy_-_Copy_-_Copy_-_Copy.webp?v=1746448737&width=600"
+        },
+        {
+          "angle": "back",
+          "sku": "NOISE-P5-BLK",
+          "alt": "Noise ColorFit Pro 5 in Midnight Black, case back studio view",
+          "full": "https://www.gonoise.com/cdn/shop/files/2_result_-_Copy.webp?v=1746448737&width=1600",
+          "thumb": "https://www.gonoise.com/cdn/shop/files/2_result_-_Copy.webp?v=1746448737&width=600"
+        },
+        {
+          "angle": "front",
+          "sku": "NOISE-P5-BRN",
+          "alt": "Noise ColorFit Pro 5 in Classic Brown, front studio packshot",
+          "full": "https://www.gonoise.com/cdn/shop/files/4_d8022489-5c21-4e09-b94b-3a3fd03bdfc4.webp?v=1746448737&width=1600",
+          "thumb": "https://www.gonoise.com/cdn/shop/files/4_d8022489-5c21-4e09-b94b-3a3fd03bdfc4.webp?v=1746448737&width=600"
+        },
+        {
+          "angle": "side",
+          "sku": "NOISE-P5-BRN",
+          "alt": "Noise ColorFit Pro 5 in Classic Brown, side studio view",
+          "full": "https://www.gonoise.com/cdn/shop/files/3_result_-_Copy_-_Copy_-_Copy_-_Copy_-_Copy.webp?v=1746448737&width=1600",
+          "thumb": "https://www.gonoise.com/cdn/shop/files/3_result_-_Copy_-_Copy_-_Copy_-_Copy_-_Copy.webp?v=1746448737&width=600"
+        },
+        {
+          "angle": "detail",
+          "sku": "NOISE-P5-BRN",
+          "alt": "Noise ColorFit Pro 5 in Classic Brown, display and strap detail",
+          "full": "https://www.gonoise.com/cdn/shop/files/4.2_result_1de99f7c-361c-4e93-afbd-024133af4f0a.webp?v=1746448737&width=1600",
+          "thumb": "https://www.gonoise.com/cdn/shop/files/4.2_result_1de99f7c-361c-4e93-afbd-024133af4f0a.webp?v=1746448737&width=600"
+        },
+        {
+          "angle": "back",
+          "sku": "NOISE-P5-BRN",
+          "alt": "Noise ColorFit Pro 5 in Classic Brown, case back studio view",
+          "full": "https://www.gonoise.com/cdn/shop/files/2_result_-_Copy_-_Copy_-_Copy_-_Copy.webp?v=1746448737&width=1600",
+          "thumb": "https://www.gonoise.com/cdn/shop/files/2_result_-_Copy_-_Copy_-_Copy_-_Copy.webp?v=1746448737&width=600"
+        },
+        {
+          "angle": "gallery",
+          "sku": "NOISE-P5-BRN",
+          "alt": "Noise ColorFit Pro 5 in Classic Brown, studio angle",
+          "full": "https://www.gonoise.com/cdn/shop/files/1_result_-_Copy.webp?v=1746448737&width=1600",
+          "thumb": "https://www.gonoise.com/cdn/shop/files/1_result_-_Copy.webp?v=1746448737&width=600"
+        },
+        {
+          "angle": "front",
+          "sku": "NOISE-P5-GLD",
+          "alt": "Noise ColorFit Pro 5 in Starlight Gold, front studio packshot",
+          "full": "https://www.gonoise.com/cdn/shop/files/3_85b2eb8d-ce2f-44fa-86eb-e2814a4a9cd1.webp?v=1746448737&width=1600",
+          "thumb": "https://www.gonoise.com/cdn/shop/files/3_85b2eb8d-ce2f-44fa-86eb-e2814a4a9cd1.webp?v=1746448737&width=600"
+        },
+        {
+          "angle": "side",
+          "sku": "NOISE-P5-GLD",
+          "alt": "Noise ColorFit Pro 5 in Starlight Gold, side studio view",
+          "full": "https://www.gonoise.com/cdn/shop/files/4.7_result.webp?v=1746448737&width=1600",
+          "thumb": "https://www.gonoise.com/cdn/shop/files/4.7_result.webp?v=1746448737&width=600"
+        },
+        {
+          "angle": "detail",
+          "sku": "NOISE-P5-GLD",
+          "alt": "Noise ColorFit Pro 5 in Starlight Gold, display and strap detail",
+          "full": "https://www.gonoise.com/cdn/shop/files/3_result_-_Copy_-_Copy_-_Copy.webp?v=1746448737&width=1600",
+          "thumb": "https://www.gonoise.com/cdn/shop/files/3_result_-_Copy_-_Copy_-_Copy.webp?v=1746448737&width=600"
+        },
+        {
+          "angle": "back",
+          "sku": "NOISE-P5-GLD",
+          "alt": "Noise ColorFit Pro 5 in Starlight Gold, case back studio view",
+          "full": "https://www.gonoise.com/cdn/shop/files/2_result_0647df25-abf8-43c8-980e-68056366bc0e.webp?v=1746448737&width=1600",
+          "thumb": "https://www.gonoise.com/cdn/shop/files/2_result_0647df25-abf8-43c8-980e-68056366bc0e.webp?v=1746448737&width=600"
+        },
+        {
+          "angle": "gallery",
+          "sku": "NOISE-P5-GLD",
+          "alt": "Noise ColorFit Pro 5 in Starlight Gold, studio angle",
+          "full": "https://www.gonoise.com/cdn/shop/files/1_result_-_Copy_-_Copy_-_Copy.webp?v=1746448737&width=1600",
+          "thumb": "https://www.gonoise.com/cdn/shop/files/1_result_-_Copy_-_Copy_-_Copy.webp?v=1746448737&width=600"
+        }
+      ],
+      "note": "Per-colour studio sets (Midnight Black / Classic Brown / Starlight Gold) from official Shopify media alts. Seed variants realigned from discontinued Jet Black/Silver Grey/Deep Wine to these current official colourways."
+    },
+    "samsung-galaxy-s24": {
+      "product": "Samsung Galaxy S24",
+      "source_page": "https://www.samsung.com/in/smartphones/galaxy-s24/buy/",
+      "cdn": "images.samsung.com Scene7 (preset size params)",
+      "images": [
+        {
+          "angle": "front",
+          "sku": "SAM-S24-VLT",
+          "alt": "Galaxy S24 in Onyx Black, Amber Yellow, Cobalt Violet and Marble Gray, rear colour lineup",
+          "full": "https://images.samsung.com/is/image/samsung/assets/in/smartphones/galaxy-s24/buy/2d.jpg?imbypass=true",
+          "thumb": "https://images.samsung.com/is/image/samsung/assets/in/smartphones/galaxy-s24/buy/2d.jpg?$LazyLoad_Home_JPG$"
+        },
+        {
+          "angle": "detail",
+          "sku": "SAM-S24-VLT",
+          "alt": "Galaxy S24 in Cobalt Violet, studio product view",
+          "full": "https://images.samsung.com/is/image/samsung/assets/in/smartphones/galaxy-s24/buy/S24-Color-Cobalt_Violet_PC_0527_final.jpg?imbypass=true",
+          "thumb": "https://images.samsung.com/is/image/samsung/assets/in/smartphones/galaxy-s24/buy/S24-Color-Cobalt_Violet_PC_0527_final.jpg?$LazyLoad_Home_JPG$"
+        },
+        {
+          "angle": "gallery",
+          "sku": null,
+          "alt": "Galaxy S24 in Jade Green, Sapphire Blue and Sandstone Orange colourways",
+          "full": "https://images.samsung.com/is/image/samsung/assets/in/smartphones/galaxy-s24/buy/s24-1600x864mp40.jpg?imbypass=true",
+          "thumb": "https://images.samsung.com/is/image/samsung/assets/in/smartphones/galaxy-s24/buy/s24-1600x864mp40.jpg?$LazyLoad_Home_JPG$"
+        }
+      ]
+    },
+    "mamaearth-vitamin-c-face-wash": {
+      "product": "Mamaearth Vitamin C Foaming Face Wash 150ml",
+      "source_page": "https://mamaearth.in/products/vitamin-c-foaming-face-wash-with-vitamin-c-turmeric-for-skin-illumination-150ml",
+      "cdn": "mamaearth.com Shopify CDN (width param)",
+      "images": [
+        {
+          "angle": "front",
+          "sku": "MAM-VCFW-150",
+          "alt": "Mamaearth Vitamin C foaming face wash with brush applicator, front studio packshot",
+          "full": "https://mamaearth.com/cdn/shop/files/mamaearth-skin-care-100ml-mamaearth-vitamin-c-face-wash-with-vitamin-c-and-turmeric-for-skin-illumination-28452967153711.png?v=1773037228&width=1600",
+          "thumb": "https://mamaearth.com/cdn/shop/files/mamaearth-skin-care-100ml-mamaearth-vitamin-c-face-wash-with-vitamin-c-and-turmeric-for-skin-illumination-28452967153711.png?v=1773037228&width=600"
+        },
+        {
+          "angle": "side",
+          "sku": null,
+          "alt": "Mamaearth Vitamin C face wash bottle, side studio view",
+          "full": "https://mamaearth.com/cdn/shop/files/mamaearth-skin-care-100ml-mamaearth-vitamin-c-face-wash-with-vitamin-c-and-turmeric-for-skin-illumination-28452967120943.jpg?v=1773037229&width=1600",
+          "thumb": "https://mamaearth.com/cdn/shop/files/mamaearth-skin-care-100ml-mamaearth-vitamin-c-face-wash-with-vitamin-c-and-turmeric-for-skin-illumination-28452967120943.jpg?v=1773037229&width=600"
+        },
+        {
+          "angle": "detail",
+          "sku": null,
+          "alt": "Mamaearth Vitamin C face wash studio detail",
+          "full": "https://mamaearth.com/cdn/shop/files/mamaearth-skin-care-100ml-mamaearth-vitamin-c-face-wash-with-vitamin-c-and-turmeric-for-skin-illumination-28452967088175.jpg?v=1773037231&width=1600",
+          "thumb": "https://mamaearth.com/cdn/shop/files/mamaearth-skin-care-100ml-mamaearth-vitamin-c-face-wash-with-vitamin-c-and-turmeric-for-skin-illumination-28452967088175.jpg?v=1773037231&width=600"
+        }
+      ]
+    },
+    "levis-511": {
+      "product": "Levi's 511 Slim Fit Jeans",
+      "source_page": "https://levi.in/products/mens-511-blue-slim-fit-jeans-a70870056",
+      "cdn": "levi.in Shopify CDN (width param)",
+      "images": [
+        {
+          "angle": "front",
+          "sku": null,
+          "alt": "Levi's 511 slim fit jeans in Blue, front studio view",
+          "full": "https://levi.in/cdn/shop/files/A70870056-Front.jpg?v=1767769731&width=1600",
+          "thumb": "https://levi.in/cdn/shop/files/A70870056-Front.jpg?v=1767769731&width=600"
+        },
+        {
+          "angle": "side",
+          "sku": null,
+          "alt": "Levi's 511 slim fit jeans in Blue, side studio view",
+          "full": "https://levi.in/cdn/shop/files/A70870056_Side.jpg?v=1767769731&width=1600",
+          "thumb": "https://levi.in/cdn/shop/files/A70870056_Side.jpg?v=1767769731&width=600"
+        },
+        {
+          "angle": "back",
+          "sku": null,
+          "alt": "Levi's 511 slim fit jeans in Blue, back studio view",
+          "full": "https://levi.in/cdn/shop/files/A70870056_Back.jpg?v=1767769731&width=1600",
+          "thumb": "https://levi.in/cdn/shop/files/A70870056_Back.jpg?v=1767769731&width=600"
+        },
+        {
+          "angle": "detail",
+          "sku": null,
+          "alt": "Levi's 511 slim fit jeans, style detail studio shot",
+          "full": "https://levi.in/cdn/shop/files/A70870056_Styledetails.jpg?v=1767769731&width=1600",
+          "thumb": "https://levi.in/cdn/shop/files/A70870056_Styledetails.jpg?v=1767769731&width=600"
+        },
+        {
+          "angle": "detail",
+          "sku": null,
+          "alt": "Levi's 511 slim fit jeans, zip and hardware detail",
+          "full": "https://levi.in/cdn/shop/files/A70870056_ZipDetails.jpg?v=1767769731&width=1600",
+          "thumb": "https://levi.in/cdn/shop/files/A70870056_ZipDetails.jpg?v=1767769731&width=600"
+        }
+      ]
+    },
+    "puma-rs-x": {
+      "product": "Puma RS-X Sneakers",
+      "source_page": "https://us.puma.com/us/en/pd/rs-x-heritage-sneakers/398210",
+      "cdn": "images.puma.com Cloudinary (w_/h_ transforms)",
+      "note_model": "RS-X Heritage (398210_03) official studio set",
+      "images": [
+        {
+          "angle": "front",
+          "sku": null,
+          "alt": "Puma RS-X Heritage sneakers in PUMA White-Cool Light Gray, front studio view",
+          "full": "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_1600,h_1600/global/398210/03/fnd/PNA/fmt/png/RS-X-Heritage-Sneakers",
+          "thumb": "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_600,h_600/global/398210/03/fnd/PNA/fmt/png/RS-X-Heritage-Sneakers"
+        },
+        {
+          "angle": "side",
+          "sku": null,
+          "alt": "Puma RS-X Heritage sneakers, side profile studio view",
+          "full": "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_1600,h_1600/global/398210/03/sv01/fnd/PNA/fmt/png/RS-X-Heritage-Sneakers",
+          "thumb": "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_600,h_600/global/398210/03/sv01/fnd/PNA/fmt/png/RS-X-Heritage-Sneakers"
+        },
+        {
+          "angle": "gallery",
+          "sku": null,
+          "alt": "Puma RS-X Heritage sneakers, studio angle 2",
+          "full": "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_1600,h_1600/global/398210/03/sv02/fnd/PNA/fmt/png/RS-X-Heritage-Sneakers",
+          "thumb": "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_600,h_600/global/398210/03/sv02/fnd/PNA/fmt/png/RS-X-Heritage-Sneakers"
+        },
+        {
+          "angle": "gallery",
+          "sku": null,
+          "alt": "Puma RS-X Heritage sneakers, studio angle 3",
+          "full": "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_1600,h_1600/global/398210/03/sv03/fnd/PNA/fmt/png/RS-X-Heritage-Sneakers",
+          "thumb": "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_600,h_600/global/398210/03/sv03/fnd/PNA/fmt/png/RS-X-Heritage-Sneakers"
+        },
+        {
+          "angle": "gallery",
+          "sku": null,
+          "alt": "Puma RS-X Heritage sneakers, studio angle 4",
+          "full": "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_1600,h_1600/global/398210/03/sv04/fnd/PNA/fmt/png/RS-X-Heritage-Sneakers",
+          "thumb": "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_600,h_600/global/398210/03/sv04/fnd/PNA/fmt/png/RS-X-Heritage-Sneakers"
+        },
+        {
+          "angle": "back",
+          "sku": null,
+          "alt": "Puma RS-X Heritage sneakers, outsole studio view",
+          "full": "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_1600,h_1600/global/398210/03/bv/fnd/PNA/fmt/png/RS-X-Heritage-Sneakers",
+          "thumb": "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_600,h_600/global/398210/03/bv/fnd/PNA/fmt/png/RS-X-Heritage-Sneakers"
+        }
+      ]
+    },
+    "philips-air-lamp": {
+      "product": "Philips Air LED Desk Light",
+      "source_page": "https://www.lighting.philips.co.in/consumer/p/functional-table-lamp/919215850437",
+      "cdn": "assets.signify.com Scene7 (wid/hei/qlt params)",
+      "images": [
+        {
+          "angle": "front",
+          "sku": "PHL-LAMP-BLK",
+          "alt": "Philips Air LED desk light in Glossy Black, front studio view",
+          "full": "https://www.assets.signify.com/is/image/Signify/61013%20Air%20LED%20desklight%20Black%20-%20Glossy%20Black?wid=1600&hei=1600&qlt=95",
+          "thumb": "https://www.assets.signify.com/is/image/Signify/61013%20Air%20LED%20desklight%20Black%20-%20Glossy%20Black?wid=600&hei=600&qlt=82"
+        },
+        {
+          "angle": "front",
+          "sku": "PHL-LAMP-WHT",
+          "alt": "Philips Air LED desk light (White SKU 919215850436), studio view",
+          "full": "https://www.assets.signify.com/is/image/Signify/61013%20Air%20LED%20desklight%20Black%20-%20Matt%20Black?wid=1600&hei=1600&qlt=95",
+          "thumb": "https://www.assets.signify.com/is/image/Signify/61013%20Air%20LED%20desklight%20Black%20-%20Matt%20Black?wid=600&hei=600&qlt=82"
+        },
+        {
+          "angle": "detail",
+          "sku": null,
+          "alt": "Philips Air LED desk light flexible arm detail",
+          "full": "https://www.assets.signify.com/is/image/Signify/1307300csq_fim?wid=1600&hei=1600&qlt=95",
+          "thumb": "https://www.assets.signify.com/is/image/Signify/1307300csq_fim?wid=600&hei=600&qlt=82"
+        }
+      ]
+    },
+    "nike-pegasus-40": {
+      "product": "Nike Pegasus 40 Road Running Shoes",
+      "source_page": "https://sneakernews.com/2023/01/17/nike-pegasus-40-release-date/",
+      "cdn": "sneakernews.com mirror of Nike official press images (EXCEPTION: nike.com delisted the product)",
+      "note_exception": "Nike's own CDN URLs are gone with the delisted PDP; these are the official Nike press packshots as published by SneakerNews. Replace if Nike restores assets.",
+      "images": [
+        {
+          "angle": "front",
+          "sku": null,
+          "alt": "Nike Pegasus 40 in Black/Red (DV3853-003), official studio packshot",
+          "full": "https://sneakernews.com/wp-content/uploads/2023/01/nike-pegasus-40-black-red-DV3853-003-1.jpg",
+          "thumb": "https://sneakernews.com/wp-content/uploads/2023/01/nike-pegasus-40-black-red-DV3853-003-1.jpg"
+        },
+        {
+          "angle": "side",
+          "sku": null,
+          "alt": "Nike Pegasus 40 Black/Red, side profile official studio shot",
+          "full": "https://sneakernews.com/wp-content/uploads/2023/01/nike-pegasus-40-black-red-DV3853-003-2.jpg",
+          "thumb": "https://sneakernews.com/wp-content/uploads/2023/01/nike-pegasus-40-black-red-DV3853-003-2.jpg"
+        },
+        {
+          "angle": "gallery",
+          "sku": null,
+          "alt": "Nike Pegasus 40 Black/Red, rear official studio shot",
+          "full": "https://sneakernews.com/wp-content/uploads/2023/01/nike-pegasus-40-black-red-DV3853-003-3.jpg",
+          "thumb": "https://sneakernews.com/wp-content/uploads/2023/01/nike-pegasus-40-black-red-DV3853-003-3.jpg"
+        },
+        {
+          "angle": "variant",
+          "sku": null,
+          "alt": "Nike Pegasus 40 in Dusty Purple (DV3853-500), official studio packshot",
+          "full": "https://sneakernews.com/wp-content/uploads/2023/01/nike-pegasus-40-dusty-purple-DV3853-500-1.jpg",
+          "thumb": "https://sneakernews.com/wp-content/uploads/2023/01/nike-pegasus-40-dusty-purple-DV3853-500-1.jpg"
+        },
+        {
+          "angle": "gallery",
+          "sku": null,
+          "alt": "Nike Pegasus 40 Dusty Purple, official studio angle",
+          "full": "https://sneakernews.com/wp-content/uploads/2023/01/nike-pegasus-40-dusty-purple-DV3853-500-2.jpg",
+          "thumb": "https://sneakernews.com/wp-content/uploads/2023/01/nike-pegasus-40-dusty-purple-DV3853-500-2.jpg"
+        },
+        {
+          "angle": "detail",
+          "sku": null,
+          "alt": "Nike Pegasus 40 official studio detail",
+          "full": "https://sneakernews.com/wp-content/uploads/2023/01/nike-pegasus-40-release-date-5.jpg",
+          "thumb": "https://sneakernews.com/wp-content/uploads/2023/01/nike-pegasus-40-release-date-5.jpg"
+        }
+      ]
+    },
+    "adidas-ultraboost-light": {
+      "product": "adidas Ultraboost Light Shoes",
+      "source_page": "https://thedropdate.com/sneakers/adidas-ultraboost-light-hq6341/389189",
+      "cdn": "static.clickwire.io (The Drop Date) mirror of adidas official studio image (EXCEPTION: adidas.com delisted HQ6341)",
+      "note_exception": "assets.adidas.com URLs went with the delisted PDP; single official studio hero remains. Replace if adidas restores assets.",
+      "images": [
+        {
+          "angle": "front",
+          "sku": null,
+          "alt": "adidas Ultraboost Light HQ6341 Solar Red, official studio product view",
+          "full": "https://static.clickwire.io/279275/adidas-ultraboost-light.jpg",
+          "thumb": "https://static.clickwire.io/279275/adidas-ultraboost-light.jpg"
+        }
+      ]
+    },
+    "kore-dumbbell-set": {
+      "product": "Kore PVC Dumbbell Set for Home Gym",
+      "source_page": "https://korefitness.in/products/kore-pvc-10-50-kg-home-gym-set-with-one-3-ft-curl-and-one-pair-dumbbell-rods-pvc-combo3-wb-wa",
+      "cdn": "korefitness.in Shopify CDN (width param)",
+      "images": [
+        {
+          "angle": "front",
+          "sku": "KORE-DB-10KG",
+          "alt": "Kore PVC 10kg home gym set with curl rod and dumbbell rods, front studio packshot",
+          "full": "https://korefitness.in/cdn/shop/files/KorePVC10-50kgHomeGymSetwithOne3FtCurlandOnePairDumbbellRods_PVC-COMBO3-WB-WA_IK-PVC-10KGCOMBO3-WB-WAIKORE.jpg?v=1686041543&width=1600",
+          "thumb": "https://korefitness.in/cdn/shop/files/KorePVC10-50kgHomeGymSetwithOne3FtCurlandOnePairDumbbellRods_PVC-COMBO3-WB-WA_IK-PVC-10KGCOMBO3-WB-WAIKORE.jpg?v=1686041543&width=600"
+        },
+        {
+          "angle": "detail",
+          "sku": "KORE-DB-10KG",
+          "alt": "Kore PVC 10kg set, plates and rods studio detail",
+          "full": "https://korefitness.in/cdn/shop/files/KorePVC10-50kgHomeGymSetwithOne3FtCurlandOnePairDumbbellRods_PVC-COMBO3-WB-WA_IK-PVC-10KGCOMBO3-WB-WAIKORE1.jpg?v=1686041543&width=1600",
+          "thumb": "https://korefitness.in/cdn/shop/files/KorePVC10-50kgHomeGymSetwithOne3FtCurlandOnePairDumbbellRods_PVC-COMBO3-WB-WA_IK-PVC-10KGCOMBO3-WB-WAIKORE1.jpg?v=1686041543&width=600"
+        },
+        {
+          "angle": "gallery",
+          "sku": "KORE-DB-10KG",
+          "alt": "Kore PVC 10kg set studio angle",
+          "full": "https://korefitness.in/cdn/shop/files/KorePVC10-50kgHomeGymSetwithOne3FtCurlandOnePairDumbbellRods_PVC-COMBO3-WB-WA_IK-PVC-10KGCOMBO3-WB-WAIKORE2.jpg?v=1686041543&width=1600",
+          "thumb": "https://korefitness.in/cdn/shop/files/KorePVC10-50kgHomeGymSetwithOne3FtCurlandOnePairDumbbellRods_PVC-COMBO3-WB-WA_IK-PVC-10KGCOMBO3-WB-WAIKORE2.jpg?v=1686041543&width=600"
+        },
+        {
+          "angle": "variant",
+          "sku": "KORE-DB-20KG",
+          "alt": "Kore PVC 20kg home gym set, front studio packshot",
+          "full": "https://korefitness.in/cdn/shop/files/KorePVC10-50kgHomeGymSetwithOne3FtCurlandOnePairDumbbellRods_PVC-COMBO3-WB-WA_IK-PVC-20KGCOMBO3-WB-WAIKORE.jpg?v=1686041543&width=1600",
+          "thumb": "https://korefitness.in/cdn/shop/files/KorePVC10-50kgHomeGymSetwithOne3FtCurlandOnePairDumbbellRods_PVC-COMBO3-WB-WA_IK-PVC-20KGCOMBO3-WB-WAIKORE.jpg?v=1686041543&width=600"
+        },
+        {
+          "angle": "gallery",
+          "sku": "KORE-DB-20KG",
+          "alt": "Kore PVC 20kg set studio detail",
+          "full": "https://korefitness.in/cdn/shop/files/KorePVC10-50kgHomeGymSetwithOne3FtCurlandOnePairDumbbellRods_PVC-COMBO3-WB-WA_IK-PVC-20KGCOMBO3-WB-WAIKORE1.jpg?v=1686041543&width=1600",
+          "thumb": "https://korefitness.in/cdn/shop/files/KorePVC10-50kgHomeGymSetwithOne3FtCurlandOnePairDumbbellRods_PVC-COMBO3-WB-WA_IK-PVC-20KGCOMBO3-WB-WAIKORE1.jpg?v=1686041543&width=600"
+        }
+      ]
+    },
+    "prestige-cookware-set": {
+      "product": "Prestige Nakshatra Plus Cookware Set",
+      "source_page": "https://shop.ttkprestige.com/prestige-svachh-nakshatra-plus-aluminium-pressure-cooker-combo-5-3-litres.html",
+      "cdn": "shop.ttkprestige.com Magento CDN (fit=bounds&height/width params)",
+      "images": [
+        {
+          "angle": "front",
+          "sku": "PRSTG-NS5-STD",
+          "alt": "Prestige Svachh Nakshatra Plus cooker combo 5+3 litres, front studio packshot",
+          "full": "https://shop.ttkprestige.com/media/catalog/product/8/0/8059-11787-IMG1.jpg?optimize=medium&fit=bounds&height=1600&width=1600",
+          "thumb": "https://shop.ttkprestige.com/media/catalog/product/8/0/8059-11787-IMG1.jpg?optimize=medium&fit=bounds&height=600&width=600"
+        },
+        {
+          "angle": "detail",
+          "sku": null,
+          "alt": "Prestige Svachh Nakshatra Plus combo, lid and handle detail",
+          "full": "https://shop.ttkprestige.com/media/catalog/product/8/8/8865-11787-IMG2.jpg?optimize=medium&fit=bounds&height=1600&width=1600",
+          "thumb": "https://shop.ttkprestige.com/media/catalog/product/8/8/8865-11787-IMG2.jpg?optimize=medium&fit=bounds&height=600&width=600"
+        },
+        {
+          "angle": "gallery",
+          "sku": null,
+          "alt": "Prestige Svachh Nakshatra Plus combo, both cookers studio view",
+          "full": "https://shop.ttkprestige.com/media/catalog/product/7/8/7831-11787-IMG3.jpg?optimize=medium&fit=bounds&height=1600&width=1600",
+          "thumb": "https://shop.ttkprestige.com/media/catalog/product/7/8/7831-11787-IMG3.jpg?optimize=medium&fit=bounds&height=600&width=600"
+        },
+        {
+          "angle": "gallery",
+          "sku": null,
+          "alt": "Prestige Svachh Nakshatra Plus combo studio angle",
+          "full": "https://shop.ttkprestige.com/media/catalog/product/2/1/2133-11787-IMG4.jpg?optimize=medium&fit=bounds&height=1600&width=1600",
+          "thumb": "https://shop.ttkprestige.com/media/catalog/product/2/1/2133-11787-IMG4.jpg?optimize=medium&fit=bounds&height=600&width=600"
+        }
+      ]
+    },
+    "boldfit-yoga-mat": {
+      "product": "Boldfit Yoga Mat for Men and Women",
+      "source_page": "https://www.boldfit.com/products/boldfit-pro-align-6-mm-tpe-yoga-mat-with-strap-blue",
+      "cdn": "boldfit.com Shopify CDN (width param)",
+      "images": [
+        {
+          "angle": "front",
+          "sku": "BLD-YOGA-BLU6",
+          "alt": "Boldfit Pro Align 6 mm TPE yoga mat in Blue, front studio packshot",
+          "full": "https://www.boldfit.com/cdn/shop/files/1_d569e690-a156-4ae9-915a-39d1e8b554bb.jpg?v=1771484860&width=1600",
+          "thumb": "https://www.boldfit.com/cdn/shop/files/1_d569e690-a156-4ae9-915a-39d1e8b554bb.jpg?v=1771484860&width=600"
+        },
+        {
+          "angle": "gallery",
+          "sku": null,
+          "alt": "Boldfit Pro Align yoga mat rolled view, studio",
+          "full": "https://www.boldfit.com/cdn/shop/files/2_9e45c3c3-67e5-4f9e-bde8-2a3db7ef97e7.jpg?v=1771484868&width=1600",
+          "thumb": "https://www.boldfit.com/cdn/shop/files/2_9e45c3c3-67e5-4f9e-bde8-2a3db7ef97e7.jpg?v=1771484868&width=600"
+        },
+        {
+          "angle": "detail",
+          "sku": null,
+          "alt": "Boldfit Pro Align yoga mat surface texture detail",
+          "full": "https://www.boldfit.com/cdn/shop/files/3_3da853fc-77cb-413d-b10a-9da72c6e7c18.jpg?v=1771484877&width=1600",
+          "thumb": "https://www.boldfit.com/cdn/shop/files/3_3da853fc-77cb-413d-b10a-9da72c6e7c18.jpg?v=1771484877&width=600"
+        },
+        {
+          "angle": "gallery",
+          "sku": null,
+          "alt": "Boldfit Pro Align yoga mat with strap, studio view",
+          "full": "https://www.boldfit.com/cdn/shop/files/4_190037ef-fbdd-41de-a50c-79a07bac1c4d.jpg?v=1771484885&width=1600",
+          "thumb": "https://www.boldfit.com/cdn/shop/files/4_190037ef-fbdd-41de-a50c-79a07bac1c4d.jpg?v=1771484885&width=600"
+        },
+        {
+          "angle": "side",
+          "sku": null,
+          "alt": "Boldfit Pro Align yoga mat side profile studio shot",
+          "full": "https://www.boldfit.com/cdn/shop/files/5_39b70dc7-5fd7-41e6-befc-0f9cd77d8d98.jpg?v=1771484891&width=1600",
+          "thumb": "https://www.boldfit.com/cdn/shop/files/5_39b70dc7-5fd7-41e6-befc-0f9cd77d8d98.jpg?v=1771484891&width=600"
+        },
+        {
+          "angle": "gallery",
+          "sku": null,
+          "alt": "Boldfit Pro Align yoga mat studio angle",
+          "full": "https://www.boldfit.com/cdn/shop/files/6_8cd6fac5-e763-4cff-9948-03507ca203a5.jpg?v=1771484898&width=1600",
+          "thumb": "https://www.boldfit.com/cdn/shop/files/6_8cd6fac5-e763-4cff-9948-03507ca203a5.jpg?v=1771484898&width=600"
+        }
+      ]
+    },
+    "nivia-skipping-rope": {
+      "product": "Nivia Skipping Rope",
+      "source_page": "https://www.niviasports.com/products/nivia-trainer-jump-rope-1515",
+      "cdn": "niviasports.com Shopify CDN (width param)",
+      "images": [
+        {
+          "angle": "front",
+          "sku": "NIV-SKIP-STD",
+          "alt": "Nivia Trainer jump rope in Blue, studio packshot",
+          "full": "https://www.niviasports.com/cdn/shop/files/Re-1515BL-Blue-1.jpg?v=1697712928&width=1600",
+          "thumb": "https://www.niviasports.com/cdn/shop/files/Re-1515BL-Blue-1.jpg?v=1697712928&width=600"
+        },
+        {
+          "angle": "detail",
+          "sku": null,
+          "alt": "Nivia Trainer jump rope handle detail, studio",
+          "full": "https://www.niviasports.com/cdn/shop/files/077A2258_49bfcb7c-f92e-464e-9289-7f205d3f127c.jpg?v=1770363664&width=1600",
+          "thumb": "https://www.niviasports.com/cdn/shop/files/077A2258_49bfcb7c-f92e-464e-9289-7f205d3f127c.jpg?v=1770363664&width=600"
+        }
+      ]
+    },
+    "fire-boltt-ninja-call-pro-plus": {
+      "product": "Fire-Boltt Ninja Call Pro Plus Smartwatch",
+      "source_page": "https://www.fireboltt.com/collections/ninja-series-1/products/ninja-call-pro-plus-black",
+      "cdn": "fireboltt.com Shopify CDN (_{width}x suffix)",
+      "images": [
+        {
+          "angle": "front",
+          "sku": "FB-NINJA-BLK",
+          "alt": "Fire-Boltt Ninja Call Pro Plus in Black, front studio packshot",
+          "full": "https://www.fireboltt.com/cdn/shop/files/Black_bd543ece-636f-4e78-ac76-35729c6afda1_1200x.png?v=1778584781",
+          "thumb": "https://www.fireboltt.com/cdn/shop/files/Black_bd543ece-636f-4e78-ac76-35729c6afda1_800x.png?v=1778584781"
+        }
+      ]
+    },
+    "redmi-note-13": {
+      "product": "Redmi Note 13 5G",
+      "source_page": "https://www.mi.com/in/product/redmi-note-13-5g/specs/",
+      "cdn": "i02.appmifile.com (Xiaomi brand CDN, original size)",
+      "images": [
+        {
+          "angle": "front",
+          "sku": "RED-N13-BLK",
+          "alt": "Redmi Note 13 5G in Stealth Black, front and back studio packshot",
+          "full": "https://i02.appmifile.com/mi-com-product/fly-birds/redmi-note-13-5g/specs-pc/black.png",
+          "thumb": "https://i02.appmifile.com/mi-com-product/fly-birds/redmi-note-13-5g/specs-pc/black.png"
+        },
+        {
+          "angle": "variant",
+          "sku": null,
+          "alt": "Redmi Note 13 5G in Prism Gold, studio packshot",
+          "full": "https://i02.appmifile.com/mi-com-product/fly-birds/redmi-note-13-5g/specs-pc/brown.png",
+          "thumb": "https://i02.appmifile.com/mi-com-product/fly-birds/redmi-note-13-5g/specs-pc/brown.png"
+        },
+        {
+          "angle": "variant",
+          "sku": null,
+          "alt": "Redmi Note 13 5G in Arctic White, studio packshot",
+          "full": "https://i02.appmifile.com/mi-com-product/fly-birds/redmi-note-13-5g/specs-pc/white.png",
+          "thumb": "https://i02.appmifile.com/mi-com-product/fly-birds/redmi-note-13-5g/specs-pc/white.png"
+        },
+        {
+          "angle": "gallery",
+          "sku": null,
+          "alt": "Redmi Note 13 5G official studio composition",
+          "full": "https://i02.appmifile.com/mi-com-product/fly-birds/redmi-note-13-5g/specs-pc/97cada54176e9c5e38b13cfa44e1bf22.png",
+          "thumb": "https://i02.appmifile.com/mi-com-product/fly-birds/redmi-note-13-5g/specs-pc/97cada54176e9c5e38b13cfa44e1bf22.png"
+        }
+      ]
+    },
+    "hp-pavilion-15": {
+      "product": "HP Pavilion 15 Laptop",
+      "source_page": "https://support.hp.com/au-en/document/ish_7670828-7670876-16",
+      "cdn": "kaas.hpcloud.hp.com (HP official support asset CDN, original size)",
+      "note": "Official HP product image for the 15-eg3000 series (covers 15-eg3079tu). hp.com shop PDPs are client-side shells that expose no gallery to fetchers.",
+      "images": [
+        {
+          "angle": "front",
+          "sku": null,
+          "alt": "HP Pavilion Laptop 15, official product image, open front three-quarter view",
+          "full": "https://kaas.hpcloud.hp.com/PROD/v2/renderbinary/7670828/6302698/con-win-nb-p-strelka-23c1-hp-pavilion-15-eg3000-specification/con-strelka-22c1-hp-pavilion-15-eg2000-product-image",
+          "thumb": "https://kaas.hpcloud.hp.com/PROD/v2/renderbinary/7670828/6302698/con-win-nb-p-strelka-23c1-hp-pavilion-15-eg3000-specification/con-strelka-22c1-hp-pavilion-15-eg2000-product-image"
+        }
+      ]
+    },
+    "american-tourister-duffel": {
+      "product": "American Tourister Duffel Bag",
+      "source_page": "https://www.americantourister.at/en/urban-tide-duffle-bag-black/160173-1041.html",
+      "cdn": "americantourister.at Demandware CDN (sw/sh params)",
+      "images": [
+        {
+          "angle": "front",
+          "sku": "AT-DUF55-BLK",
+          "alt": "American Tourister Urban Tide duffel bag in Black, front studio view",
+          "full": "https://www.americantourister.at/dw/image/v2/AATF_PRD/on/demandware.static/-/Sites-americantourister-product-catalog/default/dw1d62630d/images/salsify/pyglfhtroroaukfn2ewb_s--eGaK0KGg--_fl_clip_pg_1_e_trim_c_fit_w_2000_h_3000_u_tcrttuyt8xafi2acibgb_fl_layer_apply_e_make_transparent.png?sw=1200&sh=1800",
+          "thumb": "https://www.americantourister.at/dw/image/v2/AATF_PRD/on/demandware.static/-/Sites-americantourister-product-catalog/default/dw1d62630d/images/salsify/pyglfhtroroaukfn2ewb_s--eGaK0KGg--_fl_clip_pg_1_e_trim_c_fit_w_2000_h_3000_u_tcrttuyt8xafi2acibgb_fl_layer_apply_e_make_transparent.png?sw=600&sh=900"
+        },
+        {
+          "angle": "side",
+          "sku": null,
+          "alt": "American Tourister Urban Tide duffel bag Black, side profile studio view",
+          "full": "https://www.americantourister.at/dw/image/v2/AATF_PRD/on/demandware.static/-/Sites-americantourister-product-catalog/default/dw882f38a6/images/salsify/ufjqbk5zyqszofjg3eku_s--K7iPYFe1--_fl_clip_pg_1_e_trim_c_fit_w_2000_h_3000_u_tcrttuyt8xafi2acibgb_fl_layer_apply_e_make_transparent.png?sw=1200&sh=1800",
+          "thumb": "https://www.americantourister.at/dw/image/v2/AATF_PRD/on/demandware.static/-/Sites-americantourister-product-catalog/default/dw882f38a6/images/salsify/ufjqbk5zyqszofjg3eku_s--K7iPYFe1--_fl_clip_pg_1_e_trim_c_fit_w_2000_h_3000_u_tcrttuyt8xafi2acibgb_fl_layer_apply_e_make_transparent.png?sw=600&sh=900"
+        },
+        {
+          "angle": "back",
+          "sku": null,
+          "alt": "American Tourister Urban Tide duffel bag Black, back studio view",
+          "full": "https://www.americantourister.at/dw/image/v2/AATF_PRD/on/demandware.static/-/Sites-americantourister-product-catalog/default/dw7ca278e7/images/salsify/qrz8estwfxnjhbq97wyg_s--3Pv_V3ov--_fl_clip_pg_1_e_trim_c_fit_w_2000_h_3000_u_tcrttuyt8xafi2acibgb_fl_layer_apply_e_make_transparent.png?sw=1200&sh=1800",
+          "thumb": "https://www.americantourister.at/dw/image/v2/AATF_PRD/on/demandware.static/-/Sites-americantourister-product-catalog/default/dw7ca278e7/images/salsify/qrz8estwfxnjhbq97wyg_s--3Pv_V3ov--_fl_clip_pg_1_e_trim_c_fit_w_2000_h_3000_u_tcrttuyt8xafi2acibgb_fl_layer_apply_e_make_transparent.png?sw=600&sh=900"
+        },
+        {
+          "angle": "detail",
+          "sku": null,
+          "alt": "American Tourister Urban Tide duffel bag Black, strap and zip detail",
+          "full": "https://www.americantourister.at/dw/image/v2/AATF_PRD/on/demandware.static/-/Sites-americantourister-product-catalog/default/dw4a604391/images/salsify/f87xqs030kbkawyhj3na_s--i3Eu_YwV--_fl_clip_pg_1_e_trim_c_fit_w_2000_h_3000_u_tcrttuyt8xafi2acibgb_fl_layer_apply_e_make_transparent.png?sw=1200&sh=1800",
+          "thumb": "https://www.americantourister.at/dw/image/v2/AATF_PRD/on/demandware.static/-/Sites-americantourister-product-catalog/default/dw4a604391/images/salsify/f87xqs030kbkawyhj3na_s--i3Eu_YwV--_fl_clip_pg_1_e_trim_c_fit_w_2000_h_3000_u_tcrttuyt8xafi2acibgb_fl_layer_apply_e_make_transparent.png?sw=600&sh=900"
+        },
+        {
+          "angle": "gallery",
+          "sku": null,
+          "alt": "American Tourister Urban Tide duffel bag Black, studio angle",
+          "full": "https://www.americantourister.at/dw/image/v2/AATF_PRD/on/demandware.static/-/Sites-americantourister-product-catalog/default/dw2d047d2a/images/salsify/a35ahpivat3kernch3gj_s---DQd3m7Q--_fl_clip_pg_1_e_trim_c_fit_w_2000_h_3000_u_tcrttuyt8xafi2acibgb_fl_layer_apply_e_make_transparent.png?sw=1200&sh=1800",
+          "thumb": "https://www.americantourister.at/dw/image/v2/AATF_PRD/on/demandware.static/-/Sites-americantourister-product-catalog/default/dw2d047d2a/images/salsify/a35ahpivat3kernch3gj_s---DQd3m7Q--_fl_clip_pg_1_e_trim_c_fit_w_2000_h_3000_u_tcrttuyt8xafi2acibgb_fl_layer_apply_e_make_transparent.png?sw=600&sh=900"
         }
       ]
     }

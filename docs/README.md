@@ -151,3 +151,19 @@ hardening (pg_trgm auto-provisioned via V3 migration + boot guard, deduped
 suggestion requests through the react-query cache, shareable `/?q=` and
 `/?category=` catalog URLs, SPA scroll restoration); optional SSR for the
 storefront.
+
+
+## Catalog media (product photography)
+
+All product photography is hotlinked from brand-owned CDNs — zero product photos live in this
+repo. Per-angle full/thumb URLs, SKUs and provenance: `tools/catalog-media/manifest.json`.
+`tools/catalog-media/generate_seed.py` bakes them into `docker/postgres/seed-catalog-data.sql`
+(`product_images.url`/`thumb_url`, `product_variants.image_url`). Slugs with no brand-CDN set
+(L'Oréal Revitalift serum, Hawkins Contura) seed the shared placeholder
+`frontend/public/images/store/product-placeholder.svg`; the storefront also falls back to it via
+`onError` in `ProductCard` when a hotlink dies.
+
+Link-rot guard — run on demand (CI-gateable, exits 1 on dead URLs):
+
+    python3 tools/catalog-media/check_images.py           # report
+    python3 tools/catalog-media/check_images.py --write   # stamp *_alive flags into the manifest

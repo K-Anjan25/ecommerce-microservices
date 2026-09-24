@@ -10,7 +10,8 @@ Regenerate:  python3 tools/catalog-media/generate_seed.py
 import json, os, sys
 
 OUT = "docker/postgres/seed-catalog-data.sql"
-IMG = "/images/catalog"  # legacy local photos — fallback for not-yet-migrated slugs
+IMG = "/images/catalog"  # retired local-photo root (kept for reference only)
+PLACEHOLDER = "/images/store/product-placeholder.svg"  # shared fallback for slugs with no brand-CDN set
 
 # v2: brand-studio showcase photography, hotlinked from brand-owned CDNs
 # (manifest.json records full + thumb URLs, angles, SKUs, source pages).
@@ -30,8 +31,8 @@ def images_for(slug, legacy_imgs):
             rows.append((full, thumb, im.get("angle") or "gallery",
                          im.get("alt") or slug, im.get("sku")))
         return rows
-    return [(f"{IMG}/{slug}/{f}.jpg", f"{IMG}/{slug}/{f}.jpg", a, alt, sku)
-            for (f, a, alt, sku) in legacy_imgs]
+    return [(PLACEHOLDER, PLACEHOLDER, "front",
+             f"{slug.replace('-', ' ').title()} — studio photography coming soon", None)]
 
 
 def variant_img_for(slug, sku, legacy_img, rows):
@@ -39,11 +40,11 @@ def variant_img_for(slug, sku, legacy_img, rows):
     for (_full, thumb, _a, _alt, s) in rows:
         if s and s == sku:
             return f"'{thumb}'"
-    return f"'{IMG}/{slug}/{legacy_img}.jpg'" if legacy_img else "NULL"
+    return f"'{rows[0][1]}'" if rows else f"'{PLACEHOLDER}'"
 
 
 def hero_for(slug, rows):
-    return rows[0][1] if rows else f"{IMG}/{slug}/01.jpg"
+    return rows[0][1] if rows else PLACEHOLDER
 
 # (name, slug, category, brand, price, mrp, badge, featured, description,
 #  images: [(file, angle, alt, sku|None)], variants: [(sku, vname, price, stock, attrs, swatch, img|None)], stock)
@@ -69,9 +70,9 @@ P = [
   ("06", "gallery", "Airdopes 141 Pure White charging case", "BOAT-141-WHT"),
   ("02", "gallery", "Airdopes 141 charging case with earbuds", None),
   ("07", "gallery", "Airdopes 141 earbud close-up, immersive audio", None)],
- [("BOAT-141-BLK", "Bold Black", 1299, 40, '{"color":"Bold Black"}', "#1a1a1a", "01"),
-  ("BOAT-141-WHT", "Pure White", 1299, 35, '{"color":"Pure White"}', "#f2f2f2", "05"),
-  ("BOAT-141-BLU", "Aqua Blue", 1349, 25, '{"color":"Aqua Blue"}', "#6ec6d9", None)], 100),
+ [("BOAT-141-BLK", "Black", 1299, 40, '{"color":"Black"}', "#1a1a1a", "01"),
+  ("BOAT-141-WHT", "White Purity", 1299, 35, '{"color":"White Purity"}', "#f2f2f2", "05"),
+  ("BOAT-141-BLU", "Thunder Blue", 1349, 25, '{"color":"Thunder Blue"}', "#3a5fcd", "02")], 100),
 
 ("JBL Flip 6 Portable Bluetooth Speaker", "jbl-flip-6", "audio", "JBL", 9999, 14999, "SALE", False,
  "Portable Bluetooth speaker with JBL Original Pro Sound, racetrack-shaped woofer + separate tweeter, 12 hours of playtime, IP67 waterproof and dustproof, PartyBoost pairing, USB-C quick charge, bold fabric wrap.",
@@ -83,8 +84,8 @@ P = [
   ("09", "gallery", "JBL Flip 6 Grey on white", "JBL-FLIP6-GRY"),
   ("06", "gallery", "JBL Flip 6 Squad camo on rock", "JBL-FLIP6-SQD"),
   ("02", "gallery", "JBL Flip 6 colour lineup", None)],
- [("JBL-FLIP6-GRY", "Grey", 9999, 15, '{"color":"Grey"}', "#6d6d6d", "07"),
-  ("JBL-FLIP6-SQD", "Squad", 9999, 9, '{"color":"Squad"}', "#4d563f", "05"),
+ [("JBL-FLIP6-BLU", "Blue", 9999, 18, '{"color":"Blue"}', "#2e6fdb", "03"),
+  ("JBL-FLIP6-GRY", "Grey", 9999, 15, '{"color":"Grey"}', "#6d6d6d", "07"),
   ("JBL-FLIP6-RED", "Red", 9999, 11, '{"color":"Red"}', "#d32f2f", "04")], 24),
 
 ("Logitech MX Keys S Wireless Keyboard", "logitech-mx-keys-s", "computers", "Logitech", 11995, 13995, "NEW", False,
@@ -143,9 +144,9 @@ P = [
   ("05", "detail", "ColorFit Pro 5 Midnight Black, display and strap", "NOISE-P5-BLK"),
   ("04", "gallery", "ColorFit Pro 5 Silver Grey, case back sensors", "NOISE-P5-SLV"),
   ("01", "gallery", "ColorFit Pro 5 hero render with watch faces", None)],
- [("NOISE-P5-BLK", "Jet Black", 2999, 45, '{"color":"Jet Black"}', "#101010", "02"),
-  ("NOISE-P5-SLV", "Silver Grey", 2999, 30, '{"color":"Silver Grey"}', "#9a9a9a", "04"),
-  ("NOISE-P5-WNE", "Deep Wine", 3199, 20, '{"color":"Deep Wine"}', "#6d1a36", "03")], 75),
+ [("NOISE-P5-BLK", "Midnight Black", 2999, 45, '{"color":"Midnight Black"}', "#101010", "02"),
+  ("NOISE-P5-GLD", "Starlight Gold", 2999, 30, '{"color":"Starlight Gold"}', "#d9c9a3", "04"),
+  ("NOISE-P5-BRN", "Classic Brown", 3199, 20, '{"color":"Classic Brown"}', "#6b4a33", "03")], 75),
 
 ("Fire-Boltt Ninja Call Pro Plus Smartwatch", "fire-boltt-ninja-call-pro-plus", "wearables", "Fire-Boltt", 1499, 4999, "SALE", False,
  "1.83-inch (46.48 mm) HD display, Bluetooth calling with AI voice assistant, 240x280 resolution, 100+ sports modes, SpO2 and heart-rate monitoring, IP67 rating, built-in games, smart notifications, 5-day battery.",
@@ -353,8 +354,9 @@ for p in P:
     body.append("")
 
 # cleanup of the one renamed SKU family (old Black JBL) so upgrades converge
-body.append("-- Cleanup: JBL Flip 6 'Black' SKU was renamed to the photographed 'Grey' variant.")
-body.append("DELETE FROM product_variants WHERE sku = 'JBL-FLIP6-BLK';")
+body.append("-- Cleanup: drop superseded variant SKUs (JBL Black/Squad realigned to Blue/Grey/Red;")
+body.append("-- Noise Silver Grey/Deep Wine realigned to Midnight Black/Starlight Gold/Classic Brown).")
+body.append("DELETE FROM product_variants WHERE sku IN ('JBL-FLIP6-BLK', 'JBL-FLIP6-SQD', 'NOISE-P5-SLV', 'NOISE-P5-WNE');")
 
 with open(OUT, "w") as f:
     f.write(header + categories_block + "\n".join(body) + "\n")
