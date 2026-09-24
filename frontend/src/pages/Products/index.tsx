@@ -396,14 +396,16 @@ function Products() {
       <section className="page-shell">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {/* Main hero card (spans 2) — oversized headline, art to the right edge */}
-          <div className="relative h-44 overflow-hidden rounded-2xl border border-line bg-paper p-5 shadow-sm sm:col-span-2 sm:h-[10.75rem]">
-            <img
-              src="/images/store/tiles/hero-cluster.png"
-              alt=""
-              className="pointer-events-none absolute bottom-1 right-2 hidden h-[88%] w-[44%] object-contain object-bottom-right sm:block"
-              loading="eager"
-            />
-            <div className="relative flex h-full max-w-[60%] flex-col justify-center">
+          <div className="group flex h-44 overflow-hidden rounded-2xl border border-line bg-paper p-5 shadow-sm transition hover:shadow-md sm:col-span-2 sm:h-[10.75rem]">
+            <div className="pointer-events-none relative hidden min-h-0 flex-1 self-stretch sm:block">
+              <img
+                src="/images/store/tiles/hero-cluster.png"
+                alt=""
+                className="absolute bottom-0 right-0 h-full w-full object-contain object-bottom-right drop-shadow-[0_14px_16px_rgba(15,23,42,0.20)] transition-transform duration-300 group-hover:-translate-y-1 dark:drop-shadow-[0_0_12px_rgba(255,255,255,0.14)] dark:brightness-110"
+                loading="eager"
+              />
+            </div>
+            <div className="relative z-10 flex h-full max-w-[58%] flex-col justify-center sm:max-w-[52%]">
               {storeSettings.heroEyebrow && (
                 <p className="eyebrow !text-accent mb-1.5">{storeSettings.heroEyebrow}</p>
               )}
@@ -426,24 +428,27 @@ function Products() {
           {CONCEPT_B_CATEGORIES.slice(0, 3).map((tile) => (
             <div
               key={`feature-${tile.name}`}
-              className="relative h-44 overflow-hidden rounded-2xl border border-line bg-paper p-4 shadow-sm transition hover:shadow-md sm:h-[10.75rem]"
+              className="group flex h-44 flex-col overflow-hidden rounded-2xl border border-line bg-paper p-4 shadow-sm transition hover:shadow-md sm:h-[10.75rem]"
             >
-              <img
-                src={tile.image}
-                alt=""
-                className="pointer-events-none absolute bottom-0 right-0 h-[70%] w-[72%] object-contain object-bottom-right"
-                loading="lazy"
-              />
-              <div className="relative">
+              <div className="relative z-10">
                 <h3 className="font-heading text-lg font-bold leading-tight text-ink">{tile.name}</h3>
                 <p className="mt-0.5 text-[13px] text-ink-muted">{tile.subtitle}</p>
+              </div>
+              {/* bounded art zone — text and image can never overlap */}
+              <div className="pointer-events-none relative -mx-4 mt-1 min-h-0 flex-1">
+                <img
+                  src={tile.image}
+                  alt=""
+                  className="absolute bottom-0 right-3 h-full w-[86%] object-contain object-bottom-right drop-shadow-[0_10px_12px_rgba(15,23,42,0.22)] transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-[1.03] dark:drop-shadow-[0_0_10px_rgba(255,255,255,0.16)] dark:brightness-110"
+                  loading="lazy"
+                />
               </div>
               <button
                 onClick={() => {
                   applyCategory(tile.name);
                   resultsRef.current?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="absolute bottom-3.5 left-4 text-[13px] font-bold text-ink underline underline-offset-2 transition hover:text-brand"
+                className="relative z-10 mt-1 w-fit text-[13px] font-bold text-ink underline underline-offset-2 transition hover:text-brand"
               >
                 {t("home.shop")}
               </button>
@@ -456,24 +461,27 @@ function Products() {
           {CONCEPT_B_CATEGORIES.slice(3, 9).map((cat) => (
             <div
               key={`tile-${cat.name}-${cat.subtitle}`}
-              className="relative h-40 overflow-hidden rounded-2xl border border-line bg-paper p-4 shadow-sm transition hover:shadow-md"
+              className="group flex h-40 flex-col overflow-hidden rounded-2xl border border-line bg-paper p-4 shadow-sm transition hover:shadow-md"
             >
-              <img
-                src={cat.image}
-                alt=""
-                className="pointer-events-none absolute bottom-0 right-0 h-[66%] w-[78%] object-contain object-bottom-right"
-                loading="lazy"
-              />
-              <div className="relative">
+              <div className="relative z-10">
                 <h4 className="font-heading text-lg font-bold leading-tight text-ink">{cat.name}</h4>
                 <p className="mt-0.5 text-[13px] text-ink-muted">{cat.subtitle}</p>
+              </div>
+              {/* bounded art zone — text and image can never overlap */}
+              <div className="pointer-events-none relative -mx-4 mt-1 min-h-0 flex-1">
+                <img
+                  src={cat.image}
+                  alt=""
+                  className="absolute bottom-0 right-3 h-full w-[88%] object-contain object-bottom-right drop-shadow-[0_10px_12px_rgba(15,23,42,0.22)] transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-[1.03] dark:drop-shadow-[0_0_10px_rgba(255,255,255,0.16)] dark:brightness-110"
+                  loading="lazy"
+                />
               </div>
               <button
                 onClick={() => {
                   applyCategory(cat.name);
                   resultsRef.current?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="absolute bottom-3.5 left-4 text-[13px] font-bold text-ink underline underline-offset-2 transition hover:text-brand"
+                className="relative z-10 mt-1 w-fit text-[13px] font-bold text-ink underline underline-offset-2 transition hover:text-brand"
               >
                 {t("home.shop")}
               </button>
