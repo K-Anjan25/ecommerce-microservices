@@ -60,6 +60,15 @@ const updateOrderStatus = async (orderId: string, status: string, note?: string)
   return data;
 };
 
+// PUT /v1/orders/{id}/shipment — staff records the courier AWB (implies SHIPPED).
+const updateShipment = async (orderId: string, awb: string, carrierName?: string) => {
+  const { data } = await api.put<Order>(`/v1/orders/${orderId}/shipment`, {
+    awb,
+    carrierName,
+  });
+  return data;
+};
+
 const getOrderTracking = async (orderId: string) => {
   const { data } = await api.get<any[]>(`/v1/orders/${orderId}/track`);
   return data;
@@ -90,6 +99,7 @@ export const OrderApi = {
   cancelMyOrder,
   createOrder,
   updateOrderStatus,
+  updateShipment,
   getOrderTracking,
   getInvoice,
   getDashboardStats,

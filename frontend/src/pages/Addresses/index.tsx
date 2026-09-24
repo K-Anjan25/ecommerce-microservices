@@ -1,68 +1,29 @@
-import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import {
-  Checkbox,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  FormControl,
-  FormControlLabel,
-  InputLabel,
-  MenuItem,
-  Select,
-  Skeleton,
-} from "@mui/material";
-import { LoadingButton } from "@mui/lab";
+import { Skeleton } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import { useState } from "react";
 
 import { AddressApi } from "../../api/addressApi";
+import AddressFormDialog from "../../components/AddressFormDialog";
 import PageHeader from "../../components/PageHeader";
 import EmptyState from "../../components/EmptyState";
 import { showSuccess } from "../../utils/showSuccess";
 import { showError } from "../../utils/showError";
 import { SavedAddress } from "../../types/address";
-import statesAndDistrict from "../../formdata.json";
-
-const EMPTY = { state: "", district: "", addressDetail: "", defaultAddress: false };
+import { countryName } from "../../formdata/countries";
+import { Flag } from "../../components/Flag";
 
 function Addresses() {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState(EMPTY);
 
   const { data: addresses, isLoading } = useQuery(
     "savedAddresses",
     AddressApi.getSavedAddresses
   );
-
-  /* The full state/district dataset — the same one checkout uses. This page
-     previously hardcoded five states, so an address in e.g. Telangana could
-     not be saved at all. */
-  const states = useMemo(
-    () => (statesAndDistrict as any[]).map((s) => s.state_name as string),
-    []
-  );
-  const districts = useMemo(
-    () =>
-      ((statesAndDistrict as any[]).find((s) => s.state_name === form.state)?.districts ??
-        []).map((d: any) => d.district_name as string),
-    [form.state]
-  );
-
-  const createMutation = useMutation(AddressApi.createSavedAddress, {
-    onSuccess: () => {
-      showSuccess("Address saved");
-      setOpen(false);
-      setForm(EMPTY);
-      queryClient.invalidateQueries("savedAddresses");
-      queryClient.invalidateQueries("defaultAddress");
-    },
-    onError: () => showError("Failed to save address"),
-  });
 
   const deleteMutation = useMutation((id: string) => AddressApi.deleteSavedAddress(id), {
     onSuccess: () => {
@@ -72,14 +33,6 @@ function Addresses() {
     },
     onError: () => showError("Failed to delete address"),
   });
-
-  const handleSubmit = () => {
-    if (!form.state || !form.district || !form.addressDetail.trim()) {
-      showError("State, district and address detail are all required");
-      return;
-    }
-    createMutation.mutate(form);
-  };
 
   const list = addresses ?? [];
 
@@ -135,12 +88,16 @@ function Addresses() {
                       Default
                     </span>
                   )}
-                  <p className="font-display text-xl leading-snug text-ink">
+                  <p className="font-heading text-lg font-bold leading-snug text-ink">
                     {addr.addressDetail}
                   </p>
-                  <p className="mt-1 text-sm text-ink-soft">
+                  <p className="mt-1 flex flex-wrap items-center gap-1.5 text-sm text-ink-soft">
                     {addr.district}, {addr.state}
+                    <span className="inline-flex items-center gap-1">
+                      · <Flag code={addr.country} size={14} /> {countryName(addr.country)}
+                    </span>
                   </p>
+                  {addr.pincode && <p className="text-sm text-ink-muted">{addr.pincode}</p>}
                 </div>
                 <button
                   onClick={() => deleteMutation.mutate(addr.id)}
@@ -157,82 +114,7 @@ function Addresses() {
         </div>
       )}
 
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="xs" fullWidth>
-        <DialogTitle className="!font-display !text-2xl !font-normal">Add a new address</DialogTitle>
-        <DialogContent dividers>
-          <div className="space-y-4 py-1">
-            <FormControl fullWidth size="small">
-              <InputLabel id="addr-state-label">State</InputLabel>
-              <Select
-                labelId="addr-state-label"
-                id="addr-state"
-                label="State"
-                value={form.state}
-                onChange={(e) => setForm({ ...form, state: e.target.value, district: "" })}
-              >
-                {states.map((s) => (
-                  <MenuItem key={s} value={s}>
-                    {s}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            <FormControl fullWidth size="small" disabled={!form.state}>
-              <InputLabel id="addr-district-label">District</InputLabel>
-              <Select
-                labelId="addr-district-label"
-                id="addr-district"
-                label="District"
-                value={form.district}
-                onChange={(e) => setForm({ ...form, district: e.target.value })}
-              >
-                {districts.map((d: string) => (
-                  <MenuItem key={d} value={d}>
-                    {d}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            <div>
-              <label htmlFor="addr-detail" className="eyebrow mb-1.5 block">
-                Address detail
-              </label>
-              <textarea
-                id="addr-detail"
-                rows={3}
-                className="input-control !h-auto py-2.5"
-                placeholder="Flat / house no, street, landmark"
-                value={form.addressDetail}
-                onChange={(e) => setForm({ ...form, addressDetail: e.target.value })}
-              />
-            </div>
-
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={form.defaultAddress}
-                  onChange={(e) => setForm({ ...form, defaultAddress: e.target.checked })}
-                />
-              }
-              label={<span className="text-sm">Use as my default delivery address</span>}
-            />
-          </div>
-        </DialogContent>
-        <DialogActions className="!px-6 !py-4">
-          <button className="secondary-button !py-2" onClick={() => setOpen(false)}>
-            Cancel
-          </button>
-          <LoadingButton
-            variant="contained"
-            onClick={handleSubmit}
-            loading={createMutation.isLoading}
-          >
-            Save address
-          </LoadingButton>
-        </DialogActions>
-      </Dialog>
+      <AddressFormDialog open={open} onClose={() => setOpen(false)} />
     </div>
   );
 }

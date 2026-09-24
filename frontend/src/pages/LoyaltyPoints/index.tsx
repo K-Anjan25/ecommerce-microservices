@@ -79,7 +79,7 @@ function LoyaltyPoints() {
             </span>
             <div className="min-w-0">
               <p className="text-eyebrow font-bold uppercase text-ink-muted">{label}</p>
-              <p className="font-display text-2xl text-ink">
+              <p className="font-heading text-2xl font-extrabold text-ink">
                 {value.toLocaleString("en-IN")}
               </p>
             </div>
@@ -97,7 +97,7 @@ function LoyaltyPoints() {
 
       <section className="border-t border-ink">
         <div className="flex items-center justify-between gap-3 border-b border-line py-4">
-          <h2 className="font-display text-2xl font-normal">Points history</h2>
+          <h2 className="font-heading text-xl font-extrabold tracking-tight">Points history</h2>
           {!!history?.length && (
             <span className="text-xs text-ink-muted">{history.length} entries</span>
           )}

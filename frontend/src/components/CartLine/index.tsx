@@ -37,7 +37,7 @@ function CartLine({ item, readOnly = false }: { item: CartItem; readOnly?: boole
     <li className="flex gap-4 py-4 first:pt-0 last:pb-0">
       <button
         onClick={() => navigate(`/products/${product.id}`)}
-        className="h-20 w-20 shrink-0 overflow-hidden rounded-sm border border-line bg-sunken sm:h-24 sm:w-24"
+        className="h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-line bg-sunken sm:h-24 sm:w-24"
         aria-label={`View ${product.name}`}
       >
         {cover ? (

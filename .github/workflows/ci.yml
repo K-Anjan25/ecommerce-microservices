@@ -25,8 +25,30 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: maven
 
+      - name: Entity column-reference guard (boot-crash class)
+        run: bash tools/check-entity-columns.sh
+
       - name: Build & test
-        run: mvn -B -ntp clean package
+        run: set -o pipefail; mvn -B -ntp -fae clean package 2>&1 | tee maven-output.log
+
+      # Boot-test failures print full stack traces only here; the logs API is
+      # unreachable from some environments, so ship the reports as artifacts.
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: "**/target/surefire-reports/*"
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Surface build errors as annotations
+        if: failure()
+        run: |
+          # Deep root causes first: the Caused-by chain of boot-test failures,
+          # then the standard [ERROR] summary lines.
+          grep -E "Caused by:" maven-output.log | sort -u | head -6 | while IFS= read -r line; do echo "::error title=root-cause::${line:0:400}"; done
+          grep -E "\[ERROR\]|BUILD FAILURE" maven-output.log | head -9 | while IFS= read -r line; do echo "::error::${line:0:350}"; done
 
       - name: Upload jars
         if: matrix.java == '17'

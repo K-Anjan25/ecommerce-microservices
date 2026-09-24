@@ -24,6 +24,10 @@ public class Order extends AdvanceBaseModal {
     @Column(length = 32)
     private String orderType;
 
+    /** UI language at checkout — localizes the confirmation email (fallback en). */
+    @Column(length = 8)
+    private String locale;
+
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
@@ -70,6 +74,14 @@ public class Order extends AdvanceBaseModal {
 
     @Column(precision = 19, scale = 2)
     private BigDecimal giftCardAmount;
+
+    /** Carrier waybill / tracking number once the order ships. */
+    @Column(length = 40)
+    private String awb;
+
+    /** Courier carrying the shipment, e.g. DHL Express / Delhivery. */
+    @Column(name = "carrier_name", length = 60)
+    private String carrierName;
 
     @Column(precision = 19, scale = 2)
     private BigDecimal giftCardRefundedAmount;

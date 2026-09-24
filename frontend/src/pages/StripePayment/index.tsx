@@ -134,7 +134,7 @@ export default function StripePaymentPage() {
       <CheckoutSteps current="details" />
       <div className="mx-auto max-w-2xl">
         <p className="eyebrow">Secure payment</p>
-        <h1 className="mt-2 font-display text-5xl font-normal tracking-[-0.03em] text-ink">Complete your payment</h1>
+        <h1 className="mt-2 font-heading text-3xl font-black tracking-tight sm:text-4xl text-ink">Complete your payment</h1>
         <p className="mt-3 text-sm text-ink-soft">
           Order <span className="font-mono text-xs text-ink">{confirmation.orderId}</span> · {formatPrice(Number(confirmation.payment.amount))}
         </p>
@@ -149,10 +149,10 @@ export default function StripePaymentPage() {
               appearance: {
                 theme: "stripe",
                 variables: {
-                  colorPrimary: "#A4472D",
-                  colorText: "#221A16",
-                  colorBackground: "#FBF9F4",
-                  borderRadius: "0px",
+                  colorPrimary: "#0052CC",
+                  colorText: "#0F172A",
+                  colorBackground: "#FFFFFF",
+                  borderRadius: "10px",
                 },
               },
             }}

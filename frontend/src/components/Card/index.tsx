@@ -1,3 +1,5 @@
+import { useI18n } from "../../features/i18n";
+import { localizedName } from "../../utils/localizedEntity";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -35,6 +37,7 @@ type CardProps = {
  * - Full-width pill-shaped blue "Add to Cart" button
  */
 const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
+  const { language } = useI18n();
   const dispatch = useDispatch<any>();
   const navigate = useNavigate();
   const cartItems = useSelector((state: AppState) => state.cart);
@@ -90,7 +93,7 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
   return (
     <article
       onClick={onClick}
-      className="group relative flex h-full cursor-pointer flex-col rounded-2xl border border-line bg-paper p-3.5 shadow-sm transition hover:shadow-md"
+      className="group relative flex h-full cursor-pointer flex-col rounded-2xl border border-line bg-paper p-4 shadow-sm transition hover:shadow-md"
     >
       {/* Top action: Wishlist */}
       <div className="absolute right-3 top-3 z-10">
@@ -112,7 +115,7 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
         {cover ? (
           <img
             src={cover}
-            alt={product.name}
+            alt={localizedName(product, language)}
             loading="lazy"
             className="h-full w-full object-contain p-2 transition duration-300 group-hover:scale-105"
           />
@@ -136,8 +139,8 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
       </div>
 
       {/* Product Title */}
-      <h3 className="line-clamp-1 font-heading text-xs sm:text-sm font-bold text-ink mb-3" title={product.name}>
-        {product.name}
+      <h3 className="line-clamp-1 font-heading text-xs sm:text-sm font-bold text-ink mb-3" title={localizedName(product, language)}>
+        {localizedName(product, language)}
       </h3>
 
       {/* Action button: Concept B pill blue Add to Cart */}

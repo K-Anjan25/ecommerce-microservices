@@ -24,4 +24,5 @@ public class CreateOrderRequest {
     private String giftCardCode;
     @Min(value = 0, message = "Loyalty points cannot be negative")
     private Integer loyaltyPoints;
+    private String locale;
 }

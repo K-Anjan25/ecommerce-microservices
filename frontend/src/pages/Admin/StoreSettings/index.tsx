@@ -98,7 +98,7 @@ export default function StoreSettingsPage() {
           <div className="panel space-y-5 p-5 sm:p-6">
             <div className="flex items-center justify-between gap-4 border-b border-line pb-4">
               <div>
-                <p className="font-display text-2xl text-ink">Homepage content</p>
+                <p className="font-heading text-2xl font-extrabold text-ink">Homepage content</p>
                 <p className="mt-1 text-sm text-ink-muted">Changes become public as soon as they are published.</p>
               </div>
               <FormControlLabel
@@ -139,7 +139,7 @@ export default function StoreSettingsPage() {
             </div>
 
             <div className="border-t border-line pt-5">
-              <p className="font-display text-xl text-ink">Brand &amp; invoice</p>
+              <p className="font-heading text-lg font-bold text-ink">Brand &amp; invoice</p>
               <p className="mb-4 mt-1 text-sm text-ink-muted">
                 Shown on invoices emailed to customers and in their subject lines.
               </p>
@@ -181,22 +181,22 @@ export default function StoreSettingsPage() {
             <p className="eyebrow mb-3">Live content preview</p>
             <div className="overflow-hidden border border-line bg-paper">
               {form.announcementEnabled && (
-                <div className="flex min-h-9 items-center justify-center gap-2 bg-contrast px-4 text-center text-[0.6875rem] font-semibold text-oncontrast">
+                <div className="flex min-h-9 items-center justify-center gap-2 bg-accent px-4 text-center text-[0.6875rem] font-bold text-oncontrast">
                   {form.announcementText || "Announcement text"}
                   {form.announcementLinkText && (
-                    <span className="text-accent">· {form.announcementLinkText}</span>
+                    <span className="underline underline-offset-2">· {form.announcementLinkText}</span>
                   )}
                 </div>
               )}
               <div className="grid sm:grid-cols-[0.9fr_1.1fr]">
                 <img
-                  src="/images/editorial/hero.jpg"
+                  src="/images/store/hero-gadgets.jpg"
                   alt=""
                   className="h-full min-h-[17rem] w-full object-cover"
                 />
                 <div className="flex flex-col justify-center p-7">
                   <p className="eyebrow !text-brand">{form.heroEyebrow || "Eyebrow"}</p>
-                  <h2 className="mt-3 font-display text-4xl font-normal leading-[0.98] tracking-[-0.03em] text-ink">
+                  <h2 className="mt-3 font-heading text-4xl font-normal leading-[0.98] tracking-[-0.03em] text-ink">
                     {form.heroTitle || "Hero title"}
                     <span className="mt-1 block italic text-brand">
                       {form.heroEmphasis || "Emphasized line"}

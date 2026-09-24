@@ -164,7 +164,7 @@ function DataTable<T>({
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
                 className={`p-4 ${onRowClick ? "cursor-pointer active:bg-brand-tint" : ""}`}
               >
-                <p className="font-display text-xl text-ink">{cell(row, primary)}</p>
+                <p className="font-heading text-lg font-bold text-ink">{cell(row, primary)}</p>
                 <dl className="mt-2 space-y-1.5">
                   {rest.map((col) => (
                     <div key={col.id} className="flex items-start justify-between gap-3 text-xs">

@@ -16,4 +16,6 @@ public class CommentDto {
     private String text;
     private String creator;
     private Integer rating;
+
+    private Boolean verifiedPurchase;
 }

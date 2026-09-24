@@ -7,6 +7,8 @@ type RequestConfig = {
   params?: object;
   headers?: Record<string, string>;
   responseType?: "blob";
+  /** Optional request body (DELETE with payload). */
+  data?: unknown;
 };
 type ApiResponse<T> = { data: T; status: number; headers: Headers };
 export type TokenPair = { accessToken: string; refreshToken: string };
@@ -171,5 +173,5 @@ export const api = {
   get: <T = any>(path: string, config?: RequestConfig) => request<T>("GET", path, undefined, config),
   post: <T = any>(path: string, body?: unknown, config?: RequestConfig) => request<T>("POST", path, body, config),
   put: <T = any>(path: string, body?: unknown, config?: RequestConfig) => request<T>("PUT", path, body, config),
-  delete: <T = any>(path: string, config?: RequestConfig) => request<T>("DELETE", path, undefined, config),
+  delete: <T = any>(path: string, config?: RequestConfig) => request<T>("DELETE", path, config?.data, config),
 };

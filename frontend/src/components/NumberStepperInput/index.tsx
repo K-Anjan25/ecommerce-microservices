@@ -107,7 +107,7 @@ export function NumberStepperInput({
             placeholder={placeholder}
             disabled={disabled}
             onChange={handleInputChange}
-            className="w-full min-w-0 bg-transparent px-1 text-center font-display text-xs font-bold text-ink outline-none [appearance:textfield] placeholder:text-ink-muted/50 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+            className="w-full min-w-0 bg-transparent px-1 text-center font-heading text-xs font-bold text-ink outline-none [appearance:textfield] placeholder:text-ink-muted/50 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           />
         </div>
 

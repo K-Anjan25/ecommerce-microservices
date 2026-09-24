@@ -97,4 +97,29 @@ public class ProductController {
     public ResponseEntity<List<ProductDto>> getRelatedProducts(@PathVariable UUID id){
         return ResponseEntity.ok(productService.getRelatedProducts(id));
     }
+
+    // ── Bulk operations (admin) ────────────────────────────────────────────
+    @org.springframework.web.bind.annotation.PutMapping("/bulk/category")
+    public ResponseEntity<?> bulkMoveToCategory(
+            @javax.validation.Valid @org.springframework.web.bind.annotation.RequestBody
+            com.ecommerce.product_service.dto.product.BulkCategoryMoveRequest request) {
+        int moved = productService.bulkMoveToCategory(request.getIds(), request.getCategoryId());
+        return ResponseEntity.ok(java.util.Map.of("updated", moved));
+    }
+
+    @org.springframework.web.bind.annotation.PutMapping("/bulk/price")
+    public ResponseEntity<?> bulkAdjustPrice(
+            @javax.validation.Valid @org.springframework.web.bind.annotation.RequestBody
+            com.ecommerce.product_service.dto.product.BulkPriceAdjustRequest request) {
+        int updated = productService.bulkAdjustPrice(request.getIds(), request.getPercent());
+        return ResponseEntity.ok(java.util.Map.of("updated", updated));
+    }
+
+    @org.springframework.web.bind.annotation.DeleteMapping("/bulk")
+    public ResponseEntity<?> bulkDelete(
+            @javax.validation.Valid @org.springframework.web.bind.annotation.RequestBody
+            com.ecommerce.product_service.dto.product.BulkProductRequest request) {
+        int deleted = productService.bulkDelete(request.getIds());
+        return ResponseEntity.ok(java.util.Map.of("deleted", deleted));
+    }
 }

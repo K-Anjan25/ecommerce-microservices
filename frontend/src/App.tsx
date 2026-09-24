@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { userMe } from "./store/actions/userAction";
 import { AppState } from "./store";
 import Loader from "./components/Loader";
+import ErrorBoundary from "./components/ErrorBoundary";
 import AdminLayout from "./components/AdminLayout";
 import Home from "./pages/Admin/Home";
 import ForgetPassword from "./pages/Login/ForgetPassword";
@@ -59,9 +60,13 @@ function App() {
     };
   }, [dispatch]);
 
-  if (loading || initialLoading) {
+  // Only the one-time session bootstrap blocks the router. The shared
+  // `loading` flag (USER_START from login/profile refreshes) must never
+  // unmount the whole app — that was the full-screen flash on navigation.
+  if (initialLoading) {
     return <Loader />;
   }
+  void loading;
 
   const ResetPassword = React.lazy(() => import("./pages/Login/ResetPassword"));
   const Cart = React.lazy(() => import("./pages/Cart"));
@@ -84,6 +89,8 @@ function App() {
   const AdminFlashSales = React.lazy(() => import("./pages/Admin/FlashSales"));
   const AdminShippingRates = React.lazy(() => import("./pages/Admin/ShippingRates"));
   const AdminTaxRules = React.lazy(() => import("./pages/Admin/TaxRules"));
+  const AdminQuestions = React.lazy(() => import("./pages/Admin/Questions"));
+  const AdminAnalytics = React.lazy(() => import("./pages/Admin/Analytics"));
   const AddEditProducts = React.lazy(
     () => import("./pages/Admin/Products/AddEditProduct")
   );
@@ -100,11 +107,17 @@ function App() {
   const Returns = React.lazy(() => import("./pages/Returns"));
   const LoyaltyPoints = React.lazy(() => import("./pages/LoyaltyPoints"));
   const Product = React.lazy(() => import("./pages/Products/Product"));
+  const About = React.lazy(() => import("./pages/About"));
+  const Help = React.lazy(() => import("./pages/Help"));
+  const Services = React.lazy(() => import("./pages/Services"));
+  const Contact = React.lazy(() => import("./pages/Contact"));
+  const Terms = React.lazy(() => import("./pages/Terms"));
   const UserOrderDetail = React.lazy(() => import("./pages/Orders/OrderDetail"));
 
   return (
     <>
       <ScrollToTop />
+      <ErrorBoundary>
       <Suspense fallback={<Loader />}>
         <Routes>
           <Route path="/" element={<DashboardLayout />}>
@@ -114,6 +127,11 @@ function App() {
             <Route path="forgetPassword" element={<ForgetPassword />} />
             <Route path="reset-password" element={<ResetPassword />} />
             <Route path="register" element={<Register />} />
+            <Route path="about" element={<About />} />
+            <Route path="help" element={<Help />} />
+            <Route path="services" element={<Services />} />
+            <Route path="contact" element={<Contact />} />
+            <Route path="terms" element={<Terms />} />
             <Route
               element={
                 <RequireAuth allowedRoles={["ROLE_USER"]} roles={data.roles} />
@@ -150,6 +168,8 @@ function App() {
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<Home />} />
                 <Route path="orders" element={<AdminOrders />} />
+                <Route path="questions" element={<AdminQuestions />} />
+                <Route path="analytics" element={<AdminAnalytics />} />
                 <Route path="orderDetail/:orderId" element={<OrderDetail />} />
                 <Route path="returns" element={<AdminReturns />} />
                 <Route
@@ -183,6 +203,7 @@ function App() {
           <Route path="/unauthorized" element={<Unauthorized />} />
         </Routes>
       </Suspense>
+      </ErrorBoundary>
     </>
   );
 }

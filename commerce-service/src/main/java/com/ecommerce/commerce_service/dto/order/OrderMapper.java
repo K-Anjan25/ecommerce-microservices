@@ -43,6 +43,8 @@ public class OrderMapper {
                 .loyaltyDiscountAmount(order.getLoyaltyDiscountAmount())
                 .giftCardCodeLast4(order.getGiftCardCodeLast4())
                 .giftCardAmount(order.getGiftCardAmount())
+                .awb(order.getAwb())
+                .carrierName(order.getCarrierName())
                 .build();
     }
 

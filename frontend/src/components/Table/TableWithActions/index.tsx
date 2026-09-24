@@ -29,9 +29,10 @@ export const toDataColumns = (columns: readonly Column[]): DataColumn<TableRowTy
     mono: MONO_IDS.has(String(c.id)),
     // keep the first two columns at every width; push the rest behind breakpoints
     hideBelow: i > 2 ? "lg" : undefined,
-    render: STATUS_IDS.has(String(c.id))
-      ? (row) => <StatusPill value={String((row as any)[c.id] ?? "")} />
-      : undefined,
+    render: c.render ??
+      (STATUS_IDS.has(String(c.id))
+        ? (row) => <StatusPill value={String((row as any)[c.id] ?? "")} />
+        : undefined),
   }));
 
 /**

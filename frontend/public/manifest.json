@@ -1,7 +1,7 @@
 {
   "short_name": "Cartly",
-  "name": "Cartly — Curated for everyday",
-  "description": "A considered collection across home and life.",
+  "name": "Cartly — One modern multi-category marketplace",
+  "description": "Shop electronics, fashion, home, beauty and more — secure checkout, tracked delivery, easy returns and rewards.",
   "icons": [
     {
       "src": "/logo192.png",
@@ -20,6 +20,6 @@
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "theme_color": "#221A16",
-  "background_color": "#F4F0E8"
+  "theme_color": "#0052CC",
+  "background_color": "#F5F6F8"
 }

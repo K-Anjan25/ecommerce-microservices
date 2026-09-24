@@ -73,7 +73,7 @@ function Compare() {
     {
       label: "Price",
       render: (p) => (
-        <span className="font-display text-xl text-ink">
+        <span className="font-heading text-lg font-bold text-ink">
           {formatPrice(p.unitPrice)}
         </span>
       ),
@@ -202,7 +202,7 @@ function Compare() {
                           <CloseIcon sx={{ fontSize: 14 }} />
                         </button>
                       </div>
-                      <p className="line-clamp-2 text-center font-display text-xl font-normal leading-tight text-ink">
+                      <p className="line-clamp-2 text-center font-heading text-lg font-bold leading-tight text-ink">
                         {p.name}
                       </p>
                     </div>

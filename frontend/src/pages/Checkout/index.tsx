@@ -1,8 +1,9 @@
-import { Box, Checkbox, Divider, FormControlLabel } from "@mui/material";
+import { Box, Button, Checkbox, Divider, FormControlLabel } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useFormik } from "formik";
 import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "react-query";
+import { formatPrice } from "../../utils/currency";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
@@ -35,11 +36,18 @@ import { SavedAddress } from "../../types/address";
 import {
   calculateCountOfCartItems,
   calculateTotalPriceOfCartItems,
-  formatPrice,
+
 } from "../../utils/cart";
 import { showError } from "../../utils/showError";
 import { showSuccess } from "../../utils/showSuccess";
 import statesAndDistrict from "../../formdata.json";
+import { getTerritory } from "../../formdata/territories";
+import AddressFormDialog from "../../components/AddressFormDialog";
+import AddIcon from "@mui/icons-material/Add";
+import Flag from "../../components/Flag";
+import { CITY_OPTIONS, CITY_OTHER } from "../../formdata/cities";
+import { COUNTRIES, countryName, isIndia } from "../../formdata/countries";
+import { trackEvent } from "../../utils/analytics";
 import { useI18n } from "../../features/i18n";
 
 const FORM_ID = "checkout-form";
@@ -114,11 +122,11 @@ function Section({
   return (
     <section className="border-t border-line py-7 sm:py-8">
       <div className="mb-5 flex items-start gap-3">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center border border-ink font-display text-base text-ink">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center border border-ink font-heading text-base text-ink">
           {step}
         </span>
         <div className="min-w-0">
-          <h2 className="flex items-center gap-2 font-display text-2xl font-normal text-ink">
+          <h2 className="flex items-center gap-2 font-heading text-xl font-extrabold tracking-tight text-ink">
             <Icon sx={{ fontSize: 17 }} className="text-ink-muted" />
             {title}
           </h2>
@@ -151,7 +159,7 @@ function OptionCard({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`flex flex-1 items-start gap-3 border p-4 text-left transition ${
+      className={`flex flex-1 items-start gap-3 border p-5 text-left transition ${
         active
           ? "border-brand bg-brand-tint"
           : "border-line bg-paper hover:border-ink-faint"
@@ -178,7 +186,7 @@ function OptionCard({
 function Checkout() {
   const navigate = useNavigate();
   const dispatch = useDispatch<any>();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const items = useSelector((state: AppState) => state.cart);
   const isLoggedIn = useSelector((state: AppState) => state.user.data.isLogedIn);
   const [districts, setDistricts] = useState<{ name: string; id: string }[]>([]);
@@ -194,6 +202,12 @@ function Checkout() {
   const subtotal = Number(calculateTotalPriceOfCartItems(items));
   const itemCount = calculateCountOfCartItems(items);
 
+  const { data: savedAddresses } = useQuery("savedAddresses", AddressApi.getSavedAddresses, {
+    enabled: isLoggedIn,
+    retry: false,
+  });
+  const [addressDialogOpen, setAddressDialogOpen] = useState(false);
+  const [appliedAddressId, setAppliedAddressId] = useState<string | null>(null);
   const { data: defaultAddress } = useQuery("defaultAddress", AddressApi.getDefaultAddress, {
     enabled: isLoggedIn,
     retry: false,
@@ -204,11 +218,16 @@ function Checkout() {
   });
 
   const applyAddress = (address: SavedAddress) => {
+    setAppliedAddressId(address.id);
+    const country = address.country ?? "IN";
     form.setValues({
       ...form.values,
+      country,
       state: address.state,
       district: address.district,
       addressDetail: address.addressDetail,
+      pincode: address.pincode ?? "",
+      phoneNumber: address.phoneNumber ?? "",
     });
     setDistricts(
       statesAndDistrict
@@ -232,6 +251,7 @@ function Checkout() {
           district: values.district,
           addressDetail: values.addressDetail,
           phoneNumber: values.phoneNumber || undefined,
+          country: values.country || "IN",
         },
         items: products,
         shippingMethod,
@@ -243,6 +263,7 @@ function Checkout() {
         giftCardCode: giftCardCode.trim() || undefined,
         loyaltyPoints: appliedLoyaltyPoints || undefined,
         phoneNumber: values.phoneNumber || undefined,
+        locale: language,
       } as CreateOrderRequest;
 
       createOrderMutation.mutate(order);
@@ -253,12 +274,22 @@ function Checkout() {
   // gateway AuthFilter, so they are only queried for logged-in users; guests
   // fall back to the legacy flat estimate below).
   const pincode = (form.values.pincode ?? "").trim();
-  const pincodeValid = /^\d{6}$/.test(pincode);
+  const addressCountry = form.values.country || "IN";
+  const domesticDelivery = isIndia(addressCountry);
+  const pincodeValid = domesticDelivery && /^\d{6}$/.test(pincode);
 
   const { data: shippingQuote, isFetching: shippingFetching } = useQuery(
     ["shippingQuote", pincode, subtotal],
     () => ShippingApi.calculateShipping(pincode, subtotal),
     { enabled: isLoggedIn && pincodeValid, retry: false }
+  );
+
+  // International quote for zone countries (server names the zone, carrier,
+  // ETA and import-duty rate; available=false ⇒ we don't ship there yet).
+  const { data: intlQuote, isFetching: intlFetching } = useQuery(
+    ["intlQuote", addressCountry, subtotal],
+    () => ShippingApi.quoteInternational(addressCountry, subtotal),
+    { enabled: isLoggedIn && !domesticDelivery, retry: false }
   );
 
   const { data: taxRule } = useQuery(
@@ -268,25 +299,39 @@ function Checkout() {
   );
 
   const hasShippingQuote = Boolean(shippingQuote?.active);
-  const shippingCost = hasShippingQuote
-    ? Number(shippingQuote?.cost ?? 0)
-    : subtotal >= 500
-    ? 0
-    : shippingMethod === ShippingMethod.EXPRESS
-    ? 100
-    : 50;
+  const hasIntlQuote = Boolean(intlQuote?.available);
+  const shippingCost = domesticDelivery
+    ? hasShippingQuote
+      ? Number(shippingQuote?.cost ?? 0)
+      : subtotal >= 500
+      ? 0
+      : shippingMethod === ShippingMethod.EXPRESS
+      ? 100
+      : 50
+    : hasIntlQuote
+    ? intlQuote?.freeAbove && subtotal >= intlQuote.freeAbove
+      ? 0
+      : Number(intlQuote?.cost ?? 0)
+    : 0;
   const giftWrapFee = giftWrap ? 50 : 0;
   const discount = coupon?.discount ?? 0;
   const maxLoyaltyPoints = Math.max(0, Math.floor((subtotal - discount) * 10));
   const appliedLoyaltyPoints = Math.min(loyaltyPoints, loyaltyBalance, maxLoyaltyPoints);
   const loyaltyDiscount = appliedLoyaltyPoints / 10;
-  const taxRate = taxRule?.rate ?? 0.18;
-  const taxLabel = taxRule ? `${taxRule.taxName} ${Math.round(taxRate * 100)}%` : "18% GST";
+  const taxRate = domesticDelivery ? taxRule?.rate ?? 0.18 : intlQuote?.dutyRate ?? 0;
+  const taxLabel = domesticDelivery
+    ? taxRule
+      ? `${taxRule.taxName} ${Math.round(taxRate * 100)}%`
+      : "18% GST"
+    : `${intlQuote?.dutyName ?? "Import duty & VAT"} ${Math.round(taxRate * 100)}%`;
   // Mirrors the backend: tax applies to subtotal + shipping - discount + gift wrap.
   const tax = Number(
     ((subtotal + shippingCost - discount - loyaltyDiscount + giftWrapFee) * taxRate).toFixed(2)
   );
   const total = subtotal + shippingCost - discount - loyaltyDiscount + giftWrapFee + tax;
+  // Pay unlocks once the destination is servable: a valid Indian pincode, or a
+  // live international quote for the selected country.
+  const canPay = domesticDelivery ? pincodeValid : hasIntlQuote;
 
   // A cart change invalidates the applied coupon (discount depends on subtotal).
   useEffect(() => {
@@ -362,7 +407,7 @@ function Checkout() {
             goToConfirmation(payment, order);
           },
         },
-        theme: { color: "#A4472D" },
+        theme: { color: "#0052CC" },
       });
       checkout.on("payment.failed", () => {
         showError("Razorpay did not complete this payment; close the window to review the pending order");
@@ -470,6 +515,62 @@ function Checkout() {
     id: state.state_name,
   }));
 
+  // Country-specific address structure (divisions, labels, postal format).
+  const territory = getTerritory(addressCountry);
+  const cityOptions = CITY_OPTIONS[addressCountry];
+  // City renders as a dropdown of major cities; "Other" flips it to free text
+  // so towns outside the list still work.
+  const [cityOther, setCityOther] = useState(false);
+
+  // City picker: dropdown of the country's major cities with an "Other"
+  // escape hatch that switches to a free-text field.
+  const cityField = cityOptions && !cityOther ? (
+    <SelectInput
+      name="district"
+      label={territory.cityLabel}
+      form={form}
+      data={[
+        ...cityOptions.map((c) => ({ name: c, id: c })),
+        { name: "Other (type manually)", id: CITY_OTHER },
+      ]}
+      onChange={(event: any) => {
+        const value = event.target.value;
+        if (value === CITY_OTHER) {
+          setCityOther(true);
+          form.setFieldValue("district", "");
+        } else {
+          form.setFieldValue("district", value);
+        }
+      }}
+    />
+  ) : (
+    <TextInput
+      name="district"
+      label={territory.cityLabel}
+      form={form}
+      placeholder={territory.cityExample}
+      helperText={cityOther ? "Not in the list — type any town or city" : undefined}
+      InputProps={
+        cityOther && cityOptions
+          ? {
+              endAdornment: (
+                <Button
+                  size="small"
+                  className="!text-brand"
+                  onClick={() => {
+                    setCityOther(false);
+                    form.setFieldValue("district", "");
+                  }}
+                >
+                  List
+                </Button>
+              ),
+            }
+          : undefined
+      }
+    />
+  );
+
   const getDistricts = (stateName: string) =>
     statesAndDistrict
       .find((state: any) => state.state_name === stateName)
@@ -483,11 +584,47 @@ function Checkout() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values.state]);
 
+  // Funnel analytics: the shopper reached checkout.
+  useEffect(() => {
+    trackEvent("CHECKOUT_STARTED");
+  }, []);
+
   useEffect(() => {
     const savedFormData = sessionStorage.getItem("checkout_form");
-    if (savedFormData) form.setValues(JSON.parse(savedFormData));
+    if (savedFormData) {
+      try {
+        form.setValues(JSON.parse(savedFormData));
+      } catch {
+        sessionStorage.removeItem("checkout_form");
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Switching destination country resets the divisions: each country has its
+  // own territory list, labels and postal format, so stale values from the
+  // previous country would never validate.
+  const firstCountryRender = useRef(true);
+  useEffect(() => {
+    if (firstCountryRender.current) {
+      firstCountryRender.current = false;
+      return;
+    }
+    form.setFieldValue("state", getTerritory(addressCountry).defaultRegion ?? "");
+    form.setFieldValue("district", "");
+    form.setFieldValue("pincode", "");
+    setCityOther(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addressCountry]);
+
+  // A restored draft carrying a city outside the dropdown reopens free text.
+  useEffect(() => {
+    const restored = (form.values.district ?? "").trim();
+    if (cityOptions && restored && !cityOptions.includes(restored)) {
+      setCityOther(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addressCountry]);
 
   useEffect(() => {
     sessionStorage.setItem("checkout_form", JSON.stringify(form.values));
@@ -543,10 +680,15 @@ function Checkout() {
       <div className="flex justify-between">
         <dt className="text-ink-soft">
           Shipping
-          {hasShippingQuote && (
+          {(domesticDelivery ? hasShippingQuote : hasIntlQuote) && (
             <span className="block text-[0.6875rem] text-ink-muted">
-              {shippingQuote?.carrier} · {shippingQuote?.estimatedDaysMin}–
-              {shippingQuote?.estimatedDaysMax} days
+              {domesticDelivery ? shippingQuote?.carrier : intlQuote?.carrier} ·{" "}
+              {(domesticDelivery ? shippingQuote?.estimatedDaysMin : intlQuote?.estimatedDaysMin) ??
+                ""}–
+              {(domesticDelivery
+                ? shippingQuote?.estimatedDaysMax
+                : intlQuote?.estimatedDaysMax) ?? ""}{" "}
+              days
             </span>
           )}
         </dt>
@@ -561,6 +703,11 @@ function Checkout() {
       {isLoggedIn && pincodeValid && !shippingFetching && !hasShippingQuote && (
         <p className="text-[0.6875rem] text-ink-muted">
           No courier rate found for this pincode — flat rate applies.
+        </p>
+      )}
+      {!domesticDelivery && hasIntlQuote && intlQuote?.freeAbove && (
+        <p className="text-[0.6875rem] text-ink-muted">
+          Free international shipping on orders over {formatPrice(intlQuote.freeAbove, { forceINR: true })}.
         </p>
       )}
       <div className="flex justify-between">
@@ -582,7 +729,7 @@ function Checkout() {
 
       <div className="mb-6">
         <p className="eyebrow">Step 2 of 3</p>
-        <h1 className="mt-2 font-display text-5xl font-normal tracking-[-0.03em] text-ink">{t("checkout.title")}</h1>
+        <h1 className="mt-2 font-heading text-3xl font-black tracking-tight sm:text-4xl text-ink">{t("checkout.title")}</h1>
         <p className="page-subtitle">
           {itemCount} item{itemCount === 1 ? "" : "s"} · everything below is confirmed before
           payment is taken.
@@ -591,7 +738,7 @@ function Checkout() {
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         {/* ══ left: the flow ══════════════════════════════════════════ */}
-        <form id={FORM_ID} onSubmit={form.handleSubmit} className="space-y-4">
+        <form id={FORM_ID} onSubmit={form.handleSubmit} className="space-y-5">
           <Section
             step={1}
             title="Delivery address"
@@ -608,40 +755,128 @@ function Checkout() {
                 />
               )}
 
-              {defaultAddress && (
+              {/* Amazon-style address picker: every saved address, add new. */}
+              {isLoggedIn && (savedAddresses?.length ?? 0) > 0 && (
+                <div className="space-y-2">
+                  {savedAddresses!.map((addr) => (
+                    <button
+                      key={addr.id}
+                      type="button"
+                      onClick={() => applyAddress(addr)}
+                      className={`flex w-full items-center justify-between gap-3 border px-4 py-3 text-left transition ${
+                        appliedAddressId === addr.id
+                          ? "border-brand bg-brand-tint"
+                          : "border-line bg-canvas hover:border-brand"
+                      }`}
+                    >
+                      <span className="flex min-w-0 items-center gap-3">
+                        <Flag code={addr.country} size={18} />
+                        <span className="min-w-0">
+                          <span className="block text-sm font-bold text-ink">
+                            {addr.addressDetail}
+                            {addr.defaultAddress && (
+                              <span className="ml-2 rounded-full bg-brand px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-wide text-white">
+                                Default
+                              </span>
+                            )}
+                          </span>
+                          <span className="block truncate text-xs text-ink-soft">
+                            {addr.district}, {addr.state}
+                            {addr.pincode ? ` · ${addr.pincode}` : ""}
+                          </span>
+                        </span>
+                      </span>
+                      <span
+                        className={`shrink-0 text-xs font-bold ${
+                          appliedAddressId === addr.id ? "text-brand" : "text-ink-muted"
+                        }`}
+                      >
+                        {appliedAddressId === addr.id ? "✓ Applied" : "Apply"}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {isLoggedIn && (
                 <button
                   type="button"
-                  onClick={() => applyAddress(defaultAddress)}
-                  className="flex w-full items-center justify-between gap-3 border border-line bg-canvas px-4 py-3 text-left transition hover:border-brand hover:bg-brand-tint"
+                  onClick={() => setAddressDialogOpen(true)}
+                  className="flex w-full items-center justify-center gap-1.5 border border-dashed border-line px-4 py-3 text-sm font-bold text-brand transition hover:border-brand hover:bg-brand-tint"
                 >
-                  <span className="min-w-0">
-                    <span className="block text-sm font-bold text-ink">Use saved address</span>
-                    <span className="block truncate text-xs text-ink-soft">
-                      {defaultAddress.addressDetail}, {defaultAddress.district},{" "}
-                      {defaultAddress.state}
-                    </span>
-                  </span>
-                  <span className="shrink-0 text-xs font-bold text-brand">Apply</span>
+                  <AddIcon sx={{ fontSize: 16 }} />
+                  Add a new address
                 </button>
               )}
 
-              <div className="grid gap-3 sm:grid-cols-2">
-                <SelectInput name="state" label="State" form={form} data={states} />
-                <SelectInput name="district" label="District" form={form} data={districts} />
-              </div>
+              <SelectInput
+                name="country"
+                label="Country"
+                form={form}
+                data={COUNTRIES.map((c) => ({ name: c.name, id: c.code }))}
+              />
+
+              {/* Amazon-style: no success banner for serviceable countries —
+                  carrier, ETA and duty already surface in the summary. Only
+                  warn when the destination can't be served. */}
+              {!domesticDelivery && !hasIntlQuote && (
+                <p className="rounded-xl border border-accent/40 bg-accent-soft px-4 py-3 text-xs font-semibold leading-relaxed text-state-warning-on">
+                  {!isLoggedIn
+                    ? `Sign in to check live delivery to ${countryName(addressCountry)} — we ship to 16 countries with DHL Express.`
+                    : intlFetching
+                    ? "Checking international delivery…"
+                    : `We don't ship to ${countryName(addressCountry)} yet — we're adding countries as fast as our courier partners do.`}
+                </p>
+              )}
+
+              {/* Divisions follow the destination country: Indian states cascade
+                  into districts, listed territories pick from the country's own
+                  first-level divisions, everything else is free text. */}
+              {domesticDelivery ? (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <SelectInput name="state" label="State" form={form} data={states} />
+                  <SelectInput name="district" label="District" form={form} data={districts} />
+                </div>
+              ) : territory.regionHidden ? (
+                cityField
+              ) : (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {territory.regions ? (
+                    <SelectInput
+                      name="state"
+                      label={territory.regionLabel}
+                      form={form}
+                      data={territory.regions.map((r) => ({ name: r, id: r }))}
+                    />
+                  ) : (
+                    <TextInput
+                      name="state"
+                      label={territory.regionLabel}
+                      form={form}
+                      placeholder={territory.cityExample}
+                    />
+                  )}
+                  {cityField}
+                </div>
+              )}
               <div className="grid gap-3 sm:grid-cols-2">
                 <TextInput
                   name="pincode"
-                  label="Delivery pincode"
+                  label={territory.postalLabel}
+                  placeholder={territory.postalExample}
                   form={form}
-                  inputProps={{ maxLength: 6, inputMode: "numeric" }}
+                  inputProps={{
+                    maxLength: territory.postalMax ?? 10,
+                    inputMode: territory.postalNumeric ? "numeric" : "text",
+                  }}
                 />
                 <TextInput
                   name="phoneNumber"
-                  label="Mobile number (optional)"
+                  label="Phone number (optional)"
                   form={form}
                   type="tel"
-                  inputProps={{ maxLength: 10, inputMode: "numeric" }}
+                  placeholder={territory.phoneExample}
+                  inputProps={{ maxLength: 15, inputMode: "tel" }}
                 />
               </div>
               <TextInput
@@ -658,7 +893,11 @@ function Checkout() {
             step={2}
             title="Delivery method"
             subtitle={
-              pincodeValid && hasShippingQuote
+              !domesticDelivery
+                ? hasIntlQuote
+                  ? `${intlQuote?.carrier} · quoted for ${countryName(addressCountry)}`
+                  : "International delivery"
+                : pincodeValid && hasShippingQuote
                 ? "Rate quoted for your pincode"
                 : "Flat rate — free over ₹500"
             }
@@ -729,9 +968,9 @@ function Checkout() {
             subtitle="Coupons, gift wrap and loyalty in one place"
             icon={RedeemOutlinedIcon}
           >
-            <div className="space-y-4">
+            <div className="space-y-5">
               {isLoggedIn ? (
-                <div className="space-y-4">
+                <div className="space-y-5">
                   {coupon ? (
                     <div className="flex items-center justify-between gap-3 border border-state-success/30 bg-state-success-soft px-4 py-3">
                       <span className="min-w-0">
@@ -807,11 +1046,11 @@ function Checkout() {
               className="flex w-full items-center justify-between gap-3 py-5 text-left"
             >
               <span className="flex items-center gap-3">
-                <span className="flex h-8 w-8 items-center justify-center border border-line font-display text-sm text-ink">
+                <span className="flex h-8 w-8 items-center justify-center border border-line font-heading text-sm text-ink">
                   {itemCount}
                 </span>
                 <span>
-                  <span className="block font-display text-xl text-ink">
+                  <span className="block font-heading text-lg font-bold text-ink">
                     Review items
                   </span>
                   <span className="text-xs text-ink-muted">
@@ -851,12 +1090,12 @@ function Checkout() {
         {/* ══ right: sticky summary ═══════════════════════════════════ */}
         <aside className="lg:sticky lg:top-24 lg:h-fit">
           <div className="border-t border-ink py-5">
-            <h2 className="mb-5 font-display text-2xl font-normal">Order summary</h2>
+            <h2 className="mb-5 font-heading text-xl font-extrabold tracking-tight">Order summary</h2>
             {summaryRows}
             <Divider className="!my-4" />
             <div className="flex items-baseline justify-between">
               <span className="font-medium">{t("checkout.total")}</span>
-              <span className="font-display text-3xl">{formatPrice(total)}</span>
+              <span className="font-heading text-3xl font-extrabold">{formatPrice(total)}</span>
             </div>
             <LoadingButton
               form={FORM_ID}
@@ -865,6 +1104,7 @@ function Checkout() {
               variant="contained"
               size="large"
               loading={busy}
+              disabled={!canPay}
               className="!mt-5 !hidden !py-3 lg:!flex"
             >
               {paymentProvider === "CASH" ? "Place order (Cash on delivery)" : `Pay ${formatPrice(total)}`}
@@ -887,12 +1127,19 @@ function Checkout() {
         </aside>
       </div>
 
+      <AddressFormDialog
+        open={addressDialogOpen}
+        onClose={() => setAddressDialogOpen(false)}
+        onSaved={(created) => {
+          applyAddress(created);
+        }}
+      />
       {/* ══ mobile sticky pay bar ═════════════════════════════════════ */}
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper/95 p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur-md lg:hidden">
         <div className="mx-auto flex max-w-container items-center gap-3">
           <div className="min-w-0">
             <p className="text-[0.625rem] uppercase tracking-wide text-ink-muted">{t("checkout.total")}</p>
-            <p className="font-display text-xl leading-none">
+            <p className="font-heading text-lg font-bold leading-none">
               {formatPrice(total)}
             </p>
           </div>
@@ -901,6 +1148,7 @@ function Checkout() {
             type="submit"
             variant="contained"
             loading={busy}
+            disabled={!canPay}
             className="!ml-auto !flex-1 !py-3"
           >
             {paymentProvider === "CASH" ? "Place order (COD)" : t("checkout.pay")}

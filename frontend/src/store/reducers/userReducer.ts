@@ -46,6 +46,11 @@ const userReducer = (state: UserState = defaultState, action: UserAction) => {
         loading: false,
         data: { isLogedIn: false } as UserReducer,
       };
+    case "USER_NETWORK_ERROR":
+      // The API is unreachable — that says nothing about the session. End
+      // the loading state but keep the user signed in instead of bouncing
+      // them to /login on every navigation during an outage.
+      return { ...state, loading: false };
     case "REFRESH_TOKEN_ERROR":
       return {
         ...state,

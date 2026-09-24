@@ -3,6 +3,7 @@ import { State } from "./state";
 import { UPDATE_PROFILE, UPDATE_PROFILE_IMAGE } from "./profile";
 
 export interface User {
+  mfaEnabled?: boolean;
   userId: string;
   email: string;
   firstName: string;
@@ -12,6 +13,7 @@ export interface User {
 }
 
 export interface UserCredentials {
+  mfaEnabled?: boolean;
   id: string;
   firstName: string;
   lastName: string;
@@ -50,6 +52,7 @@ export interface Token {
 }
 
 export interface Login extends Token {
+  devCode?: string | null;
   role: string;
 }
 
@@ -77,6 +80,10 @@ interface USER_SUCCESS {
   payload: User;
 }
 
+interface USER_NETWORK_ERROR {
+  type: "USER_NETWORK_ERROR";
+}
+
 interface USER_ERROR {
   type: "USER_ERROR";
 }
@@ -101,6 +108,7 @@ export type UserAction =
   | USER_START
   | USER_SUCCESS
   | USER_ERROR
+  | USER_NETWORK_ERROR
   | REFRESHTOKEN_ERROR
   | UPDATE_PROFILE
   | UPDATE_PROFILE_IMAGE;

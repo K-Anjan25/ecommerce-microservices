@@ -3,6 +3,7 @@ package com.ecommerce.commerce_service.controller;
 import com.ecommerce.commerce_service.dto.Pagination;
 import com.ecommerce.commerce_service.dto.order.OrderDto;
 import com.ecommerce.commerce_service.dto.order.CreateOrderRequest;
+import com.ecommerce.commerce_service.dto.order.UpdateShipmentRequest;
 import com.ecommerce.commerce_service.dto.tracking.OrderStatusHistoryDto;
 import com.ecommerce.commerce_service.model.OrderStatus;
 import com.ecommerce.commerce_service.service.InvoiceService;
@@ -80,6 +81,16 @@ public class OrderController {
         UUID customerId = UUID.fromString(String.valueOf(
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal()));
         return ResponseEntity.ok(orderService.cancelPendingOrder(orderId, customerId, null));
+    }
+
+    /** Staff records the courier shipment (AWB + carrier); implies SHIPPED. */
+    @PutMapping("/{orderId}/shipment")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER')")
+    public ResponseEntity<OrderDto> updateShipment(
+            @PathVariable UUID orderId,
+            @Valid @RequestBody UpdateShipmentRequest request) {
+        return ResponseEntity.ok(orderService.updateShipment(
+                orderId, request.getAwb(), request.getCarrierName()));
     }
 
     @PutMapping("/{orderId}/status")

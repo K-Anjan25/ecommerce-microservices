@@ -9,6 +9,9 @@ export interface Order {
   address: OrderAdress;
   items: OrderItem[];
   orderStatus: OrderStatus;
+  /** Carrier waybill / tracking number once shipped. */
+  awb?: string;
+  carrierName?: string;
   createdDate: string;
   totalAmount: number;
   discountAmount?: number;
@@ -37,6 +40,8 @@ export interface CreateOrderRequest {
   giftCardCode?: string;
   loyaltyPoints?: number;
   phoneNumber?: string;
+  /** UI language at checkout — localizes the confirmation email. */
+  locale?: string;
 }
 
 interface OrderAdress {
@@ -44,6 +49,8 @@ interface OrderAdress {
   district: string;
   addressDetail: string;
   phoneNumber?: string;
+  /** ISO-3166 alpha-2 destination country; "IN" is the home market. */
+  country?: string;
 }
 
 export interface OrderItem {
@@ -56,6 +63,9 @@ enum OrderStatus {
   PENDING = "PENDING",
   PAID = "PAID",
   APPROVED = "APPROVED",
+  SHIPPED = "SHIPPED",
+  OUT_FOR_DELIVERY = "OUT_FOR_DELIVERY",
+  DELIVERED = "DELIVERED",
   CANCELLING = "CANCELLING",
   CANCELLED = "CANCELLED",
   REFUNDED = "REFUNDED",
@@ -80,6 +90,7 @@ export interface DashboardStats {
 }
 
 export interface OrderForm {
+  country: string;
   state: string;
   district: string;
   addressDetail: string;

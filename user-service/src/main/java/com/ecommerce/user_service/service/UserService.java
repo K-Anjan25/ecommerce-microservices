@@ -62,7 +62,11 @@ public class UserService implements UserDetailsService {
     }
 
     public User register(RegisterUserRequest user)  {
+        user.validatePhoneNumber();
         validateEmail( user.getEmail());
+        if (user.hasPhoneNumber() && userRepository.findByPhoneNumber(user.getPhoneNumber().trim()).isPresent()) {
+            throw new IllegalArgumentException("An account with this phone number already exists");
+        }
         User newUser = new User();
         newUser.setFirstName(user.getFirstName());
         newUser.setLastName(user.getLastName());
@@ -75,9 +79,44 @@ public class UserService implements UserDetailsService {
         newUser.setAuthorities(ROLE_USER.getAuthorities());
         newUser.setProfileImageUrl(getTemporaryProfileImageUrl(user.getEmail()));
         newUser.setReferralCode(generateUniqueReferralCode());
+        if (user.hasPhoneNumber()) {
+            newUser.setPhoneNumber(user.getPhoneNumber().trim());
+        }
         if (user.getReferralCode() != null && !user.getReferralCode().isBlank()) {
             newUser.setReferredBy(user.getReferralCode());
         }
+        userRepository.save(newUser);
+        return newUser;
+    }
+
+    /**
+     * Account creation for phone sign-up: the number already proved ownership
+     * of a one-time code (PhoneOtpService), so email and password are optional.
+     */
+    public User registerPhone(com.ecommerce.user_service.dto.PhoneRegisterRequest request) {
+        String phone = request.getPhone().trim();
+        if (userRepository.findByPhoneNumber(phone).isPresent()) {
+            throw new IllegalArgumentException("An account with this phone number already exists");
+        }
+        String email = request.hasEmail() ? request.getEmail().trim() : null;
+        if (request.hasEmail()) {
+            validateEmail(email);
+        }
+        User newUser = new User();
+        newUser.setFirstName(request.getFirstName().trim());
+        newUser.setLastName(request.getLastName().trim());
+        newUser.setEmail(email);
+        newUser.setJoinDate(new Date());
+        // Phone-only accounts get an unguessable password they never use.
+        newUser.setPassword(encodePassword(request.hasPassword()
+                ? request.getPassword() : UUID.randomUUID().toString()));
+        newUser.setActive(true);
+        newUser.setNotLocked(true);
+        newUser.setRole(ROLE_USER.name());
+        newUser.setAuthorities(ROLE_USER.getAuthorities());
+        newUser.setProfileImageUrl(getTemporaryProfileImageUrl(email != null ? email : phone));
+        newUser.setReferralCode(generateUniqueReferralCode());
+        newUser.setPhoneNumber(phone);
         userRepository.save(newUser);
         return newUser;
     }

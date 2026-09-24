@@ -1,4 +1,5 @@
 import { Typography } from "@mui/material";
+import { MenuItem, TextField } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useFormik } from "formik";
 import AuthLayout from "../../components/AuthLayout";
@@ -10,20 +11,31 @@ import { RegisterForm } from "../../types/user";
 import { api } from "../../api/client";
 import { useState } from "react";
 import { showError } from "../../utils/showError";
+import { COUNTRIES } from "../../formdata/countries";
+import Flag from "../../components/Flag";
+import { isValidLocalNumber, toE164 } from "../../utils/phone";
 
 function Register() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  // Optional phone (E.164 with country code) — enables passwordless phone sign-in.
+  const [dial, setDial] = useState("+91");
+  const [localNumber, setLocalNumber] = useState("");
 
   const form = useFormik({
     ...registerForm,
     onSubmit: (values) => {
       const { passwordConfirm, ...registerValues } = values;
-      register(registerValues);
+      const phoneNumber = localNumber.trim() ? toE164(dial, localNumber) : undefined;
+      if (phoneNumber && !isValidLocalNumber(dial, localNumber)) {
+        showError(dial === "+91" ? "Enter a valid 10-digit mobile number" : "Enter a valid phone number");
+        return;
+      }
+      register({ ...registerValues, phoneNumber });
     },
   });
 
-  const register = async (creds: RegisterForm) => {
+  const register = async (creds: RegisterForm & { phoneNumber?: string }) => {
     setLoading(true);
     try {
       await api.post("/user/register", creds);
@@ -37,19 +49,47 @@ function Register() {
   };
   return (
     <AuthLayout>
-      <Typography variant="h4" component="h1" className="!font-display !text-4xl !font-normal !tracking-[-0.02em]">
+      <Typography variant="h4" component="h1" className="!font-heading !text-3xl !font-extrabold !tracking-tight sm:!text-4xl">
         Create your account
       </Typography>
       <Typography className="mt-1 text-ink-soft">
         Join Cartly to shop and track orders.
       </Typography>
 
-      <form onSubmit={form.handleSubmit} className="mt-8 space-y-4">
-        <div className="grid gap-4 sm:grid-cols-2">
+      <form onSubmit={form.handleSubmit} className="mt-10 space-y-5">
+        <div className="grid gap-5 sm:grid-cols-2">
           <TextInput name="firstName" label="First Name" form={form} />
           <TextInput name="lastName" label="Last Name" form={form} />
         </div>
         <TextInput name="email" label="Email" form={form} />
+        <div>
+          <div className="flex gap-2">
+            <TextField
+              select
+              value={dial}
+              onChange={(e) => setDial(e.target.value)}
+              aria-label="Country code"
+              sx={{ width: 104, flexShrink: 0 }}
+              className="[&_.MuiOutlinedInput-root]:!rounded-xl"
+            >
+              {COUNTRIES.map((c) => (
+                <MenuItem key={c.code} value={c.dial}>
+                  <Flag code={c.code} size={19} />
+                  <span className="ml-2 text-sm font-semibold">{c.dial}</span>
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              label="Phone number (optional)"
+              value={localNumber}
+              onChange={(e) => setLocalNumber(e.target.value.replace(/[^\d\s-]/g, ""))}
+              placeholder={dial === "+91" ? "98765 43210" : "201 555 0123"}
+              inputProps={{ inputMode: "numeric", maxLength: 14, autoComplete: "tel-national" }}
+              fullWidth
+              className="[&_.MuiOutlinedInput-root]:!rounded-xl"
+            />
+          </div>
+        </div>
         <TextInput
           name="password"
           label="Password"
@@ -72,7 +112,7 @@ function Register() {
         </LoadingButton>
       </form>
 
-      <Typography className="mt-6 text-center text-ink-soft">
+      <Typography className="mt-8 text-center text-ink-soft">
         Already have an account?{" "}
         <Link to="/login" className="font-semibold text-brand hover:underline">
           Sign in

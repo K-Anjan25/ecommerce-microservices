@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Rating, Tooltip } from "@mui/material";
@@ -17,7 +17,9 @@ import CardGiftcardOutlinedIcon from "@mui/icons-material/CardGiftcardOutlined";
 import BoltOutlinedIcon from "@mui/icons-material/BoltOutlined";
 
 import Comments from "../../Comments";
+import Questions from "../../Questions";
 import PriceWatch from "../../PriceWatch";
+import StockWatch from "../../StockWatch";
 import Card from "../index";
 import { ProductApi } from "../../../api/productApi";
 import { CommentApi } from "../../../api/comment";
@@ -36,12 +38,15 @@ import { formatPrice } from "../../../utils/cart";
 import { addToCompare, isInCompare } from "../../../utils/compare";
 import useCountdown from "../../../hooks/useCountdown";
 import { useI18n } from "../../../features/i18n";
+import { trackEvent } from "../../../utils/analytics";
+import { SubscriptionApi } from "../../../api/subscriptionApi";
+import { localizedDescription, localizedName } from "../../../utils/localizedEntity";
 
 type CardProps = {
   product: ProductAdmin | undefined;
 };
 
-const TABS = ["Description", "Specifications", "Reviews", "Shipping & returns"] as const;
+const TABS = ["Description", "Specifications", "Q&A", "Reviews", "Shipping & returns"] as const;
 type Tab = (typeof TABS)[number];
 
 /**
@@ -53,12 +58,22 @@ const ProductCard = ({ product }: CardProps) => {
   const { productId } = useParams();
   const queryClient = useQueryClient();
   const dispatch = useDispatch<any>();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const cartItems = useSelector((state: AppState) => state.cart);
+  const { data: user } = useSelector((state: AppState) => state.user);
+  const navigate = useNavigate();
 
   const [selectedVariantId, setSelectedVariantId] = useState<string>("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [tab, setTab] = useState<Tab>("Description");
+  const [subscribeInterval, setSubscribeInterval] = useState(30);
+  const [subscribing, setSubscribing] = useState(false);
+
+  // Funnel analytics: one product-view beacon per loaded product.
+  useEffect(() => {
+    if (product?.id) trackEvent("VIEW_PRODUCT", product.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product?.id]);
 
   const variants = product?.variants ?? [];
   const selectedVariant = variants.find((v) => v.id === selectedVariantId);
@@ -127,6 +142,7 @@ const ProductCard = ({ product }: CardProps) => {
   const handleAdd = () => {
     if (!product) return;
     if (quantity === 0) {
+      trackEvent("ADD_TO_CART", product.id);
       dispatch(
         addToCart({
           product,
@@ -218,7 +234,7 @@ const ProductCard = ({ product }: CardProps) => {
               {images.length > 0 ? (
                 <img
                   src={images[currentImageIndex]}
-                  alt={product?.name}
+                  alt={product ? localizedName(product, language) : ""}
                   className="h-full w-full object-cover"
                 />
               ) : (
@@ -241,7 +257,7 @@ const ProductCard = ({ product }: CardProps) => {
               {images.length > 1 && (
                 <>
                   <button
-                    aria-label="Previous image"
+                    aria-label={t("a11y.previousImage")}
                     onClick={() =>
                       setCurrentImageIndex((p) => (p - 1 + images.length) % images.length)
                     }
@@ -250,7 +266,7 @@ const ProductCard = ({ product }: CardProps) => {
                     <ChevronLeftIcon fontSize="small" />
                   </button>
                   <button
-                    aria-label="Next image"
+                    aria-label={t("a11y.nextImage")}
                     onClick={() => setCurrentImageIndex((p) => (p + 1) % images.length)}
                     className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-paper/90 text-ink backdrop-blur transition hover:bg-paper"
                   >
@@ -266,8 +282,8 @@ const ProductCard = ({ product }: CardProps) => {
                 <p className="eyebrow">
                   {product?.brand || product?.category?.name || "Cartly"}
                 </p>
-                <h1 className="mt-2 font-display text-4xl font-normal leading-[1.02] tracking-[-0.025em] text-ink sm:text-5xl">
-                  {product?.name}
+                <h1 className="mt-2 font-heading text-3xl font-extrabold leading-[1.05] tracking-tight text-ink sm:text-4xl">
+                  {product ? localizedName(product, language) : ""}
                 </h1>
                 {!!product?.ratingCount && (
                   <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
@@ -284,7 +300,7 @@ const ProductCard = ({ product }: CardProps) => {
               <div>
                 <div className="flex flex-wrap items-baseline gap-3">
                   <span
-                    className={`font-display text-3xl font-normal tracking-tight sm:text-4xl ${
+                    className={`font-heading text-2xl font-extrabold tracking-tight sm:text-3xl ${
                       isFlashSaleActive ? "text-state-danger" : "text-ink"
                     }`}
                   >
@@ -301,7 +317,7 @@ const ProductCard = ({ product }: CardProps) => {
                     </span>
                   )}
                 </div>
-                <p className="mt-1 text-xs text-ink-muted">Inclusive of all taxes</p>
+                <p className="mt-1 text-xs text-ink-muted">{t("product.taxesIncluded")}</p>
                 {isFlashSaleActive && flashCountdown && (
                   <p className="mt-2 text-sm font-bold text-state-danger">
                     Flash sale ends in {flashCountdown}
@@ -312,7 +328,7 @@ const ProductCard = ({ product }: CardProps) => {
               {/* variants as chips, not a dropdown */}
               {variants.length > 0 && (
                 <div>
-                  <p className="eyebrow mb-2">Variant</p>
+                  <p className="eyebrow mb-2">{t("product.variant")}</p>
                   <div className="flex flex-wrap gap-2">
                     {variants.map((variant: ProductVariant) => {
                       const active = variant.id === selectedVariantId;
@@ -345,18 +361,18 @@ const ProductCard = ({ product }: CardProps) => {
                   <div className="flex h-12 items-center rounded-sm border border-line bg-paper px-1 shadow-none transition focus-within:border-brand">
                     <button
                       onClick={handleRemove}
-                      aria-label="Decrease quantity"
+                      aria-label={t("product.decreaseQty")}
                       className="flex h-10 w-10 items-center justify-center rounded-xs text-ink transition hover:bg-sunken active:scale-95"
                     >
                       <RemoveIcon sx={{ fontSize: 18 }} />
                     </button>
-                    <span className="min-w-[2.25rem] select-none text-center font-display text-base font-bold text-ink">
+                    <span className="min-w-[2.25rem] select-none text-center font-heading text-base font-bold text-ink">
                       {quantity}
                     </span>
                     <button
                       onClick={handleAdd}
                       disabled={displayStock > 0 && quantity >= displayStock}
-                      aria-label="Increase quantity"
+                      aria-label={t("product.increaseQty")}
                       className="flex h-10 w-10 items-center justify-center rounded-xs text-ink transition hover:bg-sunken active:scale-95 disabled:cursor-not-allowed disabled:opacity-30"
                     >
                       <AddIcon sx={{ fontSize: 18 }} />
@@ -375,10 +391,10 @@ const ProductCard = ({ product }: CardProps) => {
                       : t("product.addMore")
                     : t("product.add")}
                 </button>
-                <Tooltip title="Compare">
+                <Tooltip title={t("product.compare")}>
                   <button
                     onClick={handleCompare}
-                    aria-label="Add to compare"
+                    aria-label={t("product.compare")}
                     className={`flex h-12 w-12 items-center justify-center rounded-sm border transition ${
                       product && isInCompare(product.id)
                         ? "border-brand bg-brand-soft text-brand"
@@ -391,6 +407,7 @@ const ProductCard = ({ product }: CardProps) => {
               </div>
 
               {productId && <PriceWatch productId={productId} />}
+              {productId && displayStock <= 0 && <StockWatch productId={productId} />}
 
               {/* delivery / trust panel */}
               <div className="divide-y divide-line border-y border-line">
@@ -451,7 +468,10 @@ const ProductCard = ({ product }: CardProps) => {
         <div className="py-7 sm:py-9">
           {tab === "Description" && (
             <p className="max-w-3xl whitespace-pre-line text-sm leading-relaxed text-ink-soft">
-              {product?.description || "No description has been added for this product yet."}
+              {product
+                ? localizedDescription(product, language) ||
+                  "No description has been added for this product yet."
+                : "No description has been added for this product yet."}
             </p>
           )}
 
@@ -466,6 +486,8 @@ const ProductCard = ({ product }: CardProps) => {
             </dl>
           )}
 
+          {tab === "Q&A" && productId && <Questions productId={productId} />}
+
           {tab === "Reviews" && (
             <Comments comments={comments ?? []} onCreateComment={handleCreateComment} />
           )}
@@ -473,18 +495,18 @@ const ProductCard = ({ product }: CardProps) => {
           {tab === "Shipping & returns" && (
             <div className="max-w-3xl space-y-4 text-sm leading-relaxed text-ink-soft">
               <p>
-                <span className="font-bold text-ink">Delivery.</span> Standard shipping is free
+                <span className="font-bold text-ink">{t("product.delivery")}</span> Standard shipping is free
                 over ₹999 and arrives in 4–6 working days. Express and same-day options are
                 priced by pincode at checkout, and the exact rate is shown before you pay.
               </p>
               <p>
-                <span className="font-bold text-ink">Returns.</span> Request a return on any
+                <span className="font-bold text-ink">{t("product.returns")}</span> Request a return on any
                 order item within 7 days of delivery from the order detail page. Once an admin
                 approves it, stock is restored and the refund is issued to the original payment
                 method — cash-on-delivery orders are refunded to your saved account details.
               </p>
               <p>
-                <span className="font-bold text-ink">Taxes.</span> GST is applied per line and on
+                <span className="font-bold text-ink">{t("product.taxes")}</span> GST is applied per line and on
                 shipping, at the rate configured for your delivery state, and appears on the
                 PDF invoice emailed on payment.
               </p>
@@ -493,12 +515,68 @@ const ProductCard = ({ product }: CardProps) => {
         </div>
       </section>
 
+      {/* ══ Subscribe & Save (auto-reorder) ════════════════════════ */}
+      {productId && (
+        <section className="rounded-2xl border border-line bg-brand-soft/30 p-5">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="font-heading text-base font-extrabold text-ink">
+                {t("subscribe.title")}
+              </p>
+              <p className="mt-0.5 text-xs text-ink-soft">{t("subscribe.subtitle")}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="text-xs font-semibold text-ink-soft" htmlFor="subscribe-interval">
+                {t("subscribe.every")}
+              </label>
+              <select
+                id="subscribe-interval"
+                value={subscribeInterval}
+                onChange={(e) => setSubscribeInterval(Number(e.target.value))}
+                className="h-9 rounded-lg border border-line bg-paper px-2 text-sm font-semibold text-ink outline-none focus:border-brand"
+              >
+                {[7, 14, 30, 60, 90].map((d) => (
+                  <option key={d} value={d}>
+                    {d} {t("subscribe.days")}
+                  </option>
+                ))}
+              </select>
+              <button
+                disabled={subscribing}
+                onClick={async () => {
+                  if (!user.isLogedIn) {
+                    navigate("/login", { state: { from: { pathname: `/products/${productId}` } } });
+                    return;
+                  }
+                  setSubscribing(true);
+                  try {
+                    await SubscriptionApi.createSubscription({
+                      productId,
+                      quantity: Math.max(1, quantity),
+                      intervalDays: subscribeInterval,
+                    });
+                    showSuccess(t("subscribe.success"));
+                  } catch (error: any) {
+                    showError(error?.response?.data?.message ?? t("subscribe.error"));
+                  } finally {
+                    setSubscribing(false);
+                  }
+                }}
+                className="h-9 rounded-full bg-brand px-4 text-xs font-bold text-white transition hover:bg-brand-dark disabled:opacity-60"
+              >
+                {subscribing ? "…" : t("subscribe.cta")}
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ══ related ═════════════════════════════════════════════════ */}
       {relatedProducts && relatedProducts.length > 0 && (
         <section>
           <div className="mb-5">
-            <p className="eyebrow">More like this</p>
-            <h2 className="section-title mt-1">You may also like</h2>
+            <p className="eyebrow">{t("product.moreLikeThis")}</p>
+            <h2 className="section-title mt-1">{t("product.youMayAlsoLike")}</h2>
           </div>
           <div className="product-grid">
             {relatedProducts.slice(0, 4).map((related) => (

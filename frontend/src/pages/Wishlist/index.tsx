@@ -25,7 +25,7 @@ function Wishlist() {
 
       <section className="border-t border-line pt-6">
         <div className="flex items-baseline justify-between gap-4 border-b border-line pb-4">
-          <h2 className="font-display text-3xl font-normal text-ink">Saved items</h2>
+          <h2 className="font-heading text-2xl font-extrabold tracking-tight text-ink">Saved items</h2>
           <div className="flex items-center gap-3">
             {!isLoading && <span className="text-xs text-ink-muted">{items.length} saved</span>}
             {items.length > 0 && (

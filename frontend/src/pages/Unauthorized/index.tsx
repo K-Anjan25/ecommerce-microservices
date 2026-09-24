@@ -14,7 +14,7 @@ function Unauthorized() {
         minHeight: "100vh",
       }}
     >
-      <Typography variant="h1" className="!font-display !text-ink">
+      <Typography variant="h1" className="!font-heading !text-ink">
         401
       </Typography>
       <Typography variant="h6" className="!text-ink-muted">

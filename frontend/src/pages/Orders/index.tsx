@@ -188,7 +188,7 @@ function Orders() {
                       )}
                     </div>
                     <div className="min-w-0">
-                      <p className="truncate font-display text-xl text-ink">
+                      <p className="truncate font-heading text-lg font-bold text-ink">
                         {known.length
                           ? known
                               .slice(0, 2)

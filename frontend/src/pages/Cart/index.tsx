@@ -12,6 +12,12 @@ import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined
 import ReplayOutlinedIcon from "@mui/icons-material/ReplayOutlined";
 
 import { OrderApi } from "../../api/orderApi";
+import { WishlistApi, WISHLIST_QUERY_KEY } from "../../hooks/useWishlist";
+import { useQueryClient } from "react-query";
+import BookmarkAddedOutlinedIcon from "@mui/icons-material/BookmarkAddedOutlined";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { loadSavedForLater, saveForLater, removeFromSaved } from "../../utils/saveForLater";
 import { PaymentApi } from "../../api/paymentApi";
 import { ProductApi } from "../../api/productApi";
 import CartLine from "../../components/CartLine";
@@ -22,7 +28,11 @@ import SelectInput from "../../components/SelectInput";
 import TextInput from "../../components/TextInput";
 import createOrderForm from "../../forms/orderForm";
 import { AppState } from "../../store";
-import { clearAllItems } from "../../store/actions/cartAction";
+import {
+  clearAllItems,
+  addToCart,
+  removeFromCart,
+} from "../../store/actions/cartAction";
 import { CreateOrderRequest } from "../../types/order";
 import {
   calculateCountOfCartItems,
@@ -43,8 +53,47 @@ function Cart() {
   const isLoggedIn = useSelector((state: AppState) => state.user.data.isLogedIn);
   const [modalOpen, setModalOpen] = useState(searchParams.get("order") === "true");
   const [districts, setDistricts] = useState<{ name: string; id: string }[]>([]);
+  const [savedItems, setSavedItems] = useState<{ product: { id: string; name?: string; unitPrice?: number }; quantity: number; variantId?: string; variantName?: string }[]>(loadSavedForLater);
   const dispatch = useDispatch<any>();
+  const queryClient = useQueryClient();
   const { t } = useI18n();
+
+  // Move a cart line to the wishlist (sign-in required — /v1/wishlist is
+  // behind the gateway AuthFilter).
+  const wishlistMutation = useMutation(WishlistApi.addItem, {
+    onSuccess: () => queryClient.invalidateQueries(WISHLIST_QUERY_KEY),
+    onError: () => showError("Could not move to wishlist"),
+  });
+
+  const parkForLater = (item: any) => {
+    setSavedItems((prev) => saveForLater(prev as any, item));
+    dispatch(removeFromCart(item.product.id, item.variantId));
+    showSuccess("Saved for later");
+  };
+
+  const moveToWishlist = (item: any) => {
+    if (!isLoggedIn) {
+      navigate("/login");
+      return;
+    }
+    wishlistMutation.mutate({
+      productId: item.product.id,
+      productName: item.product.name,
+      unitPrice: item.product.unitPrice ?? (item.product as any).price,
+    });
+    dispatch(removeFromCart(item.product.id, item.variantId));
+    showSuccess("Moved to wishlist");
+  };
+
+  const moveToCart = (saved: any) => {
+    dispatch(addToCart(saved));
+    setSavedItems((prev) => removeFromSaved(prev as any, { productId: saved.product.id, variantId: saved.variantId }));
+    showSuccess("Moved to cart");
+  };
+
+  const discardSaved = (saved: any) => {
+    setSavedItems((prev) => removeFromSaved(prev as any, { productId: saved.product.id, variantId: saved.variantId }));
+  };
 
   const form = useFormik({
     ...createOrderForm({ guest: !isLoggedIn }),
@@ -146,7 +195,14 @@ function Cart() {
 
   useEffect(() => {
     const savedFormData = sessionStorage.getItem("cart_form");
-    if (savedFormData) form.setValues(JSON.parse(savedFormData));
+    // (parsed inside try/catch — a corrupt draft must not crash the page)
+    if (savedFormData) {
+      try {
+        form.setValues(JSON.parse(savedFormData));
+      } catch {
+        sessionStorage.removeItem("cart_form");
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -180,10 +236,10 @@ function Cart() {
   }
 
   return (
-    <div className="page-shell pb-8">
+    <div className="page-shell pb-12">
       <CheckoutSteps current="cart" />
 
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="eyebrow">Step 1 of 3</p>
           <h1 className="page-title mt-1">{t("cart.title")}</h1>
@@ -197,11 +253,11 @@ function Cart() {
         </button>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_23rem]">
         {/* ── line items ─────────────────────────────────────────── */}
-        <div className="space-y-4">
+        <div className="space-y-6">
           {/* free-shipping nudge */}
-          <div className="border-y border-line py-4">
+          <div className="border-y border-line py-5">
             <div className="flex items-center gap-2 text-sm">
               <LocalShippingOutlinedIcon sx={{ fontSize: 18 }} className="text-brand" />
               {freeShippingGap > 0 ? (
@@ -224,10 +280,79 @@ function Cart() {
             </div>
           </div>
 
+          {/* ── saved for later ─────────────────────────────────────── */}
+          {savedItems.length > 0 && (
+            <section aria-label="Saved for later" className="border border-line">
+              <div className="border-b border-line px-5 py-3">
+                <h2 className="font-heading text-base font-extrabold tracking-tight">
+                  Saved for later{" "}
+                  <span className="ml-1 text-xs font-semibold text-ink-muted">
+                    ({savedItems.length})
+                  </span>
+                </h2>
+              </div>
+              <ul className="divide-y divide-line">
+                {savedItems.map((saved) => (
+                  <li
+                    key={`${saved.product.id}-${saved.variantId ?? "base"}`}
+                    className="flex items-center gap-4 px-5 py-4"
+                  >
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-sm font-bold text-ink">
+                        {saved.product.name}
+                      </span>
+                      {saved.variantName && (
+                        <span className="block text-xs text-ink-muted">{saved.variantName}</span>
+                      )}
+                      <span className="block text-xs text-ink-soft">
+                        {formatPrice(Number(saved.product.unitPrice ?? 0))}
+                      </span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => moveToCart(saved)}
+                      className="secondary-button !px-3 !py-1.5 !text-xs"
+                    >
+                      Move to cart
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => discardSaved(saved)}
+                      aria-label="Remove saved item"
+                      className="flex h-8 w-8 items-center justify-center text-ink-soft transition hover:text-state-danger"
+                    >
+                      <DeleteOutlineIcon sx={{ fontSize: 17 }} />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
           <div className="border-y border-line">
             <ul className="divide-y divide-line">
               {items.map((item) => (
-                <CartLine key={`${item.product.id}-${item.variantId ?? "base"}`} item={item} />
+                <div key={`${item.product.id}-${item.variantId ?? "base"}`}>
+                  <CartLine item={item} />
+                  <div className="mt-1.5 flex gap-4 pl-1 text-xs font-semibold">
+                    <button
+                      type="button"
+                      onClick={() => parkForLater(item)}
+                      className="inline-flex items-center gap-1 text-ink-soft transition hover:text-brand"
+                    >
+                      <BookmarkAddedOutlinedIcon sx={{ fontSize: 15 }} />
+                      Save for later
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => moveToWishlist(item)}
+                      className="inline-flex items-center gap-1 text-ink-soft transition hover:text-brand"
+                    >
+                      <FavoriteBorderIcon sx={{ fontSize: 15 }} />
+                      Wishlist
+                    </button>
+                  </div>
+                </div>
               ))}
             </ul>
           </div>
@@ -245,7 +370,7 @@ function Cart() {
         {/* ── sticky summary ─────────────────────────────────────── */}
         <aside className="lg:sticky lg:top-24 lg:h-fit">
           <div className="border-t border-ink py-5">
-            <h2 className="font-display text-2xl font-normal">Order summary</h2>
+            <h2 className="font-heading text-xl font-extrabold tracking-tight">Order summary</h2>
 
             <dl className="mt-4 space-y-2.5 text-sm">
               <div className="flex justify-between">
@@ -266,7 +391,7 @@ function Cart() {
 
             <div className="mt-4 flex items-baseline justify-between border-t border-line pt-4">
               <span className="font-medium">Total so far</span>
-              <span className="font-display text-2xl">{formatPrice(subtotal)}</span>
+              <span className="font-heading text-2xl font-extrabold">{formatPrice(subtotal)}</span>
             </div>
 
             <button onClick={() => navigate("/checkout")} className="primary-button mt-5 w-full !py-3">

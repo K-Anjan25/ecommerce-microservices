@@ -15,6 +15,7 @@ import { UserApi } from "../../../../api/userApi";
 import { ReturnApi } from "../../../../api/returnApi";
 import DataTable, { DataColumn, StatusPill } from "../../../../components/DataTable";
 import EmptyState from "../../../../components/EmptyState";
+import ShipmentForm from "./ShipmentForm";
 import PageHeader from "../../../../components/PageHeader";
 import { Order } from "../../../../types/order";
 import { ReturnRequest, ReturnStatus } from "../../../../types/returnRequest";
@@ -72,6 +73,21 @@ function OrderDetail() {
         refetchTracking();
       },
       onError: (e: any) => showError(e.response?.data?.message ?? "Could not update status"),
+    }
+  );
+
+  // Record courier shipment: stores AWB + carrier and moves the order to SHIPPED.
+  const shipmentMutation = useMutation(
+    ({ awb, carrierName }: { awb: string; carrierName?: string }) =>
+      OrderApi.updateShipment(resolvedOrder!.id, awb, carrierName),
+    {
+      onSuccess: () => {
+        showSuccess("Shipment recorded — customer notified");
+        queryClient.invalidateQueries(["admin:order", orderId]);
+        queryClient.invalidateQueries(["admin:orders"]);
+        refetchTracking();
+      },
+      onError: (e: any) => showError(e.response?.data?.message ?? "Could not record shipment"),
     }
   );
 
@@ -324,6 +340,12 @@ function OrderDetail() {
             <br />
             {resolvedOrder.address.district}, {resolvedOrder.address.state}
           </p>
+          {/* ── shipment tracking (staff) ──────────────────────────── */}
+          <ShipmentForm
+            order={resolvedOrder}
+            loading={shipmentMutation.isLoading}
+            onSubmit={(awb, carrierName) => shipmentMutation.mutate({ awb, carrierName })}
+          />
           {resolvedOrder.shippingMethod && (
             <p className="mt-2 text-xs text-ink-muted">
               {resolvedOrder.shippingMethod === "EXPRESS" ? "Express" : "Standard"} shipping

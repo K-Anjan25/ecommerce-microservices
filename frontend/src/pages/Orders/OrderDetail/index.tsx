@@ -34,7 +34,15 @@ import { formatPrice } from "../../../utils/cart";
 import { formatDate } from "../../../utils/date";
 
 /** Happy-path progression shown as a timeline; cancelled/refunded fall back. */
-const FLOW = ["PENDING", "PAID", "APPROVED"];
+const FLOW = ["PENDING", "PAID", "APPROVED", "SHIPPED", "OUT_FOR_DELIVERY", "DELIVERED"];
+const FLOW_LABELS: Record<string, string> = {
+  PENDING: "Placed",
+  PAID: "Paid",
+  APPROVED: "Confirmed",
+  SHIPPED: "Shipped",
+  OUT_FOR_DELIVERY: "Out for delivery",
+  DELIVERED: "Delivered",
+};
 
 function UserOrderDetail() {
   const { orderId } = useParams();
@@ -171,6 +179,7 @@ function UserOrderDetail() {
 
   const currentStep = FLOW.indexOf(order.orderStatus);
   const terminal = ["CANCELLED", "REFUNDED"].includes(order.orderStatus);
+  const shipped = Boolean(order.awb);
 
   return (
     <div className="page-shell space-y-6">
@@ -215,6 +224,19 @@ function UserOrderDetail() {
           <p className="eyebrow">Status</p>
           <StatusPill value={order.orderStatus} />
         </div>
+        {shipped && (
+          <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-1 rounded-xl border border-line bg-canvas px-4 py-3">
+            <span className="text-sm font-bold text-ink">
+              {order.carrierName ?? "Courier"} shipment
+            </span>
+            <span className="text-xs text-ink-soft">
+              AWB / tracking number:{" "}
+              <span className="font-heading font-extrabold tracking-wide text-ink">
+                {order.awb}
+              </span>
+            </span>
+          </div>
+        )}
         {terminal ? (
           <p className="text-sm text-ink-soft">
             This order was {order.orderStatus.toLowerCase()}. Any refund is issued to the
@@ -222,7 +244,7 @@ function UserOrderDetail() {
           </p>
         ) : (
           <ol className="flex items-center gap-2">
-            {["Placed", "Paid", "Approved", "Delivered"].map((label, i) => {
+            {FLOW.map((status) => FLOW_LABELS[status]).map((label, i) => {
               const done = i <= currentStep;
               return (
                 <li key={label} className="flex flex-1 items-center gap-2">
@@ -238,7 +260,7 @@ function UserOrderDetail() {
                       {label}
                     </span>
                   </span>
-                  {i < 3 && (
+                  {i < FLOW.length - 1 && (
                     <span
                       className={`mb-5 h-px flex-1 ${i < currentStep ? "bg-action" : "bg-line"}`}
                     />
@@ -274,7 +296,7 @@ function UserOrderDetail() {
         <div className="space-y-4">
           <section className="border-t border-ink">
             <div className="border-b border-line py-4">
-              <h2 className="font-display text-2xl font-normal">
+              <h2 className="font-heading text-xl font-extrabold tracking-tight">
                 Items · {order.items.length}
               </h2>
             </div>
@@ -308,7 +330,7 @@ function UserOrderDetail() {
 
                     <div className="flex min-w-0 flex-1 flex-wrap items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="truncate font-display text-xl text-ink">
+                        <p className="truncate font-heading text-lg font-bold text-ink">
                           {nameOf(item.productId)}
                         </p>
                         <p className="mt-0.5 text-xs text-ink-muted">
@@ -348,7 +370,7 @@ function UserOrderDetail() {
 
           {productReturns.length > 0 && (
             <section className="border-t border-ink py-5">
-              <h2 className="mb-4 font-display text-2xl font-normal">Returns on this order</h2>
+              <h2 className="mb-4 font-heading text-xl font-extrabold tracking-tight">Returns on this order</h2>
               <ul className="space-y-2.5">
                 {productReturns.map((r: ReturnRequest) => (
                   <li
@@ -375,7 +397,7 @@ function UserOrderDetail() {
         {/* ── summary + address ─────────────────────────────────────── */}
         <aside className="space-y-4 lg:sticky lg:top-24 lg:h-fit">
           <section className="border-t border-ink py-5">
-            <h2 className="mb-4 font-display text-2xl font-normal">Payment summary</h2>
+            <h2 className="mb-4 font-heading text-xl font-extrabold tracking-tight">Payment summary</h2>
             <dl className="space-y-2.5 text-sm">
               {!!subtotal && (
                 <div className="flex justify-between">
@@ -424,14 +446,14 @@ function UserOrderDetail() {
             </dl>
             <div className="mt-4 flex items-baseline justify-between border-t border-line pt-4">
               <span className="font-medium">Amount charged</span>
-              <span className="font-display text-2xl">
+              <span className="font-heading text-2xl font-extrabold">
                 {formatPrice(order.totalAmount)}
               </span>
             </div>
           </section>
 
           <section className="border-t border-line py-5">
-            <h2 className="mb-3 flex items-center gap-2 font-display text-xl">
+            <h2 className="mb-3 flex items-center gap-2 font-heading text-lg font-bold">
               <PlaceOutlinedIcon sx={{ fontSize: 17 }} className="text-ink-muted" />
               Delivery address
             </h2>
@@ -453,7 +475,7 @@ function UserOrderDetail() {
 
       {/* ── return dialog ───────────────────────────────────────────── */}
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="xs" fullWidth>
-        <DialogTitle className="!font-display !text-2xl !font-normal">Request a return</DialogTitle>
+        <DialogTitle className="!font-heading !text-xl !font-extrabold !tracking-tight">Request a return</DialogTitle>
         <DialogContent dividers>
           <div className="space-y-4 py-1">
             <FormControl fullWidth size="small">

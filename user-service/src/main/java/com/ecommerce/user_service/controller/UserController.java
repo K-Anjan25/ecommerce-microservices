@@ -9,6 +9,14 @@ import com.ecommerce.user_service.exception.HttpResponse;
 import com.ecommerce.user_service.model.User;
 import com.ecommerce.user_service.model.UserPrincipal;
 import com.ecommerce.user_service.service.PasswordResetService;
+import com.ecommerce.user_service.dto.PhoneOtpSentResponse;
+import com.ecommerce.user_service.service.PhoneOtpService;
+import com.ecommerce.user_service.service.EmailMfaService;
+import com.ecommerce.user_service.dto.MfaVerifyRequest;
+import com.ecommerce.user_service.dto.MfaToggleRequest;
+import com.ecommerce.user_service.dto.PhoneOtpRequest;
+import com.ecommerce.user_service.dto.PhoneOtpVerifyRequest;
+import com.ecommerce.user_service.dto.PhoneRegisterRequest;
 import com.ecommerce.user_service.service.UserService;
 import com.ecommerce.user_service.util.AuthenticationHelper;
 import lombok.RequiredArgsConstructor;
@@ -44,19 +52,66 @@ public class UserController {
     private final AuthenticationHelper authenticationHelper;
     private final AuditLogService auditLogService;
     private final PasswordResetService passwordResetService;
+    private final PhoneOtpService phoneOtpService;
+    private final EmailMfaService emailMfaService;
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterUserRequest user)  {
         userService.register(user);
         return ResponseEntity.ok(REGISTER_RES);
     }
 
+    /** Phone sign-in step 1: text a one-time code to the phone. */
+    @PostMapping("/otp/request")
+    public ResponseEntity<PhoneOtpSentResponse> requestPhoneOtp(
+            @Valid @RequestBody PhoneOtpRequest request) {
+        return ResponseEntity.ok(phoneOtpService.request(request.getPhone()));
+    }
+
+    /** Phone sign-in step 2: exchange the code for the standard token pair. */
+    @PostMapping("/otp/verify")
+    public ResponseEntity<LoginResponse> verifyPhoneOtp(
+            @Valid @RequestBody PhoneOtpVerifyRequest request) {
+        return ResponseEntity.ok(phoneOtpService.verify(request.getPhone(), request.getCode()));
+    }
+
+    /** Phone sign-up: complete account creation for a verified number. */
+    @PostMapping("/phone/register")
+    public ResponseEntity<LoginResponse> registerPhone(
+            @Valid @RequestBody PhoneRegisterRequest request) {
+        return ResponseEntity.ok(phoneOtpService.completeSignUp(request));
+    }
+
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginUserRequest user) {
         authenticationHelper.authenticate(user.getEmail(), user.getPassword());
         User loginUser = userService.findUserByEmail(user.getEmail());
+        // Step-up: MFA accounts get an e-mailed code instead of tokens.
+        // The password check above has already happened — identity proven.
+        if (loginUser.isMfaEnabled()) {
+            String devCode = emailMfaService.issueCode(loginUser.getEmail());
+            LoginResponse challenge = new LoginResponse(null, null, "MFA_REQUIRED", null);
+            challenge.setDevCode(devCode);
+            return ResponseEntity.ok(challenge);
+        }
         UserPrincipal userPrincipal = new UserPrincipal(loginUser);
         LoginResponse loginResponse = authenticationHelper.getLoginResponse(userPrincipal);
         return ResponseEntity.ok(loginResponse);
+    }
+
+    /** Step 2 of MFA sign-in: exchange the e-mailed code for tokens. */
+    @PostMapping("/mfa/verify")
+    public ResponseEntity<LoginResponse> verifyMfa(@Valid @RequestBody MfaVerifyRequest request) {
+        return ResponseEntity.ok(emailMfaService.verify(request.getEmail(), request.getCode()));
+    }
+
+    /** Enable/disable two-step verification for the signed-in account. */
+    @PostMapping("/mfa")
+    public ResponseEntity<java.util.Map<String, Object>> toggleMfa(@Valid @RequestBody MfaToggleRequest request) {
+        java.util.UUID userId = java.util.UUID.fromString(
+                org.springframework.security.core.context.SecurityContextHolder.getContext()
+                        .getAuthentication().getPrincipal().toString());
+        boolean enabled = emailMfaService.setMfaEnabled(userId, request.getEnabled());
+        return ResponseEntity.ok(java.util.Map.of("mfaEnabled", enabled));
     }
 
     @GetMapping("/token/refresh")

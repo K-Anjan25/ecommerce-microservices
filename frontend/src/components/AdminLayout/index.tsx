@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,6 +16,8 @@ import PercentOutlinedIcon from "@mui/icons-material/PercentOutlined";
 import AssignmentReturnIcon from "@mui/icons-material/AssignmentReturn";
 import WebOutlinedIcon from "@mui/icons-material/WebOutlined";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
+import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
+import InsightsOutlinedIcon from "@mui/icons-material/InsightsOutlined";
 import MarkEmailUnreadOutlinedIcon from "@mui/icons-material/MarkEmailUnreadOutlined";
 import SyncProblemOutlinedIcon from "@mui/icons-material/SyncProblemOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -38,6 +41,8 @@ const NAV = [
   { path: "/admin/tax-rules", label: "Tax rules", icon: PercentOutlinedIcon, exact: false },
   { path: "/admin/returns", label: "Returns", icon: AssignmentReturnIcon, exact: false },
   { path: "/admin/storefront", label: "Storefront", icon: WebOutlinedIcon, exact: false },
+  { path: "/admin/questions", label: "Questions", icon: HelpOutlineOutlinedIcon, exact: false },
+  { path: "/admin/analytics", label: "Analytics", icon: InsightsOutlinedIcon, exact: false },
   { path: "/admin/audit-log", label: "Audit log", icon: HistoryOutlinedIcon, exact: false },
   { path: "/admin/payment-reconciliation", label: "Payment review", icon: SyncProblemOutlinedIcon, exact: false },
   { path: "/admin/email-retries", label: "Email delivery", icon: MarkEmailUnreadOutlinedIcon, exact: false },
@@ -186,7 +191,7 @@ function AdminLayout() {
             <MenuIcon />
           </button>
           <div className="min-w-0">
-            <p className="truncate font-display text-2xl text-ink">{current.label}</p>
+            <p className="truncate font-heading text-xl font-extrabold tracking-tight text-ink">{current.label}</p>
             <p className="truncate text-xs text-ink-muted">
               Admin console · {new Date().toLocaleDateString("en-IN", { dateStyle: "medium" })}
             </p>
@@ -194,7 +199,15 @@ function AdminLayout() {
         </div>
 
         <main id="admin-main" tabIndex={-1} className="px-4 py-6 sm:px-6 lg:px-8">
+          <Suspense
+          fallback={
+            <div className="flex min-h-[50vh] items-center justify-center">
+              <span className="h-8 w-8 animate-spin rounded-full border-2 border-line border-t-brand" />
+            </div>
+          }
+        >
           <Outlet />
+        </Suspense>
         </main>
       </div>
     </div>

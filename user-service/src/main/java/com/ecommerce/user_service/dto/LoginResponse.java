@@ -14,4 +14,8 @@ public class LoginResponse {
     private String accessToken;
     private String refreshToken;
     private String role;
+
+    /** MFA step-up only: echoed verification code in dev/preview (no SMTP). */
+    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+    private String devCode;
 }

@@ -34,6 +34,23 @@ const suggestProducts = async (term: string) => {
   return data;
 };
 
+// ----- Back-in-stock watchlist ("notify me when available") -----
+const isWatchingStock = async (productId: string, email: string) => {
+  const { data } = await api.get<{ watching: boolean }>(
+    `/v1/products/${productId}/stock-watch`,
+    { params: { email } }
+  );
+  return data.watching;
+};
+
+const watchStock = async (productId: string, email: string, locale?: string) => {
+  await api.post(`/v1/products/${productId}/stock-watch`, { email, locale });
+};
+
+const unwatchStock = async (productId: string, email: string) => {
+  await api.delete(`/v1/products/${productId}/stock-watch`, { params: { email } });
+};
+
 // ----- Price-drop watchlist (Phase 8) -----
 const isWatchingPrice = async (productId: string, email: string) => {
   const { data } = await api.get<{ watching: boolean }>(
@@ -43,8 +60,8 @@ const isWatchingPrice = async (productId: string, email: string) => {
   return data.watching;
 };
 
-const watchPrice = async (productId: string, email: string) => {
-  await api.post(`/v1/products/${productId}/watch`, { email });
+const watchPrice = async (productId: string, email: string, locale?: string) => {
+  await api.post(`/v1/products/${productId}/watch`, { email, locale });
 };
 
 const unwatchPrice = async (productId: string, email: string) => {
@@ -142,6 +159,22 @@ const deleteProduct = async (id: string) => {
   return data;
 };
 
+// ----- Bulk admin operations (Requires ROLE_ADMIN) -----
+const bulkMoveToCategory = async (ids: string[], categoryId: number) => {
+  const { data } = await api.put<{ updated: number }>("/v1/products/bulk/category", { ids, categoryId });
+  return data;
+};
+
+const bulkAdjustPrice = async (ids: string[], percent: number) => {
+  const { data } = await api.put<{ updated: number }>("/v1/products/bulk/price", { ids, percent });
+  return data;
+};
+
+const bulkDelete = async (ids: string[]) => {
+  const { data } = await api.delete<{ deleted: number }>("/v1/products/bulk", { data: { ids } });
+  return data;
+};
+
 export const ProductApi = {
   getProducts,
   getProductBrands,
@@ -149,6 +182,9 @@ export const ProductApi = {
   isWatchingPrice,
   watchPrice,
   unwatchPrice,
+  isWatchingStock,
+  watchStock,
+  unwatchStock,
   getProductsByPagination,
   deleteProduct,
   getProductById,
@@ -160,4 +196,7 @@ export const ProductApi = {
   getBestsellers,
   getBoughtTogether,
   getFlashSales,
+  bulkMoveToCategory,
+  bulkAdjustPrice,
+  bulkDelete,
 };

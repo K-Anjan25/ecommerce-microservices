@@ -1,11 +1,16 @@
+import { useEffect } from "react";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import { trackEvent } from "../../utils/analytics";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import HourglassTopOutlinedIcon from "@mui/icons-material/HourglassTopOutlined";
 import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
 import { useLocation, useNavigate } from "react-router-dom";
+
 import { useQuery } from "react-query";
 
 import { PaymentApi } from "../../api/paymentApi";
+import { ProductApi } from "../../api/productApi";
+import Card from "../../components/Card";
 import CheckoutSteps from "../../components/CheckoutSteps";
 import EmptyState from "../../components/EmptyState";
 import { formatPrice } from "../../utils/cart";
@@ -33,6 +38,18 @@ function OrderConfirmation() {
     ["order-confirmation-payment", confirmation?.orderId],
     () => PaymentApi.getPaymentForOrder(confirmation?.orderId ?? ""),
     { enabled: canPollPayment, refetchInterval: 5000, retry: false }
+  );
+
+  // Funnel analytics: a real conversion happened.
+  useEffect(() => {
+    if (confirmation?.orderId) trackEvent("ORDER_COMPLETED");
+  }, [confirmation?.orderId]);
+
+  // "You may also like" — bestsellers strip for the thank-you page.
+  const { data: upsellProducts } = useQuery(
+    "order-confirmation-upsell",
+    () => ProductApi.getBestsellers(),
+    { enabled: Boolean(confirmation?.orderId), staleTime: 5 * 60 * 1000 }
   );
 
   if (!confirmation?.orderId) {
@@ -80,7 +97,7 @@ function OrderConfirmation() {
           </span>
           <div className="min-w-0 flex-1">
             <p className="eyebrow">Order received</p>
-            <h1 className="mt-2 font-display text-4xl font-normal text-ink sm:text-5xl">{title}</h1>
+            <h1 className="mt-2 font-heading text-3xl font-black tracking-tight text-ink sm:text-4xl">{title}</h1>
             <p className="mt-4 max-w-2xl text-sm leading-relaxed text-ink-soft">{copy}</p>
           </div>
         </div>
@@ -145,6 +162,31 @@ function OrderConfirmation() {
           </p>
         )}
       </section>
+
+      {/* You may also like — concept-style product strip */}
+      {upsellProducts && upsellProducts.length > 0 && (
+        <section className="mx-auto max-w-5xl px-4 pb-14 sm:px-6">
+          <div className="mb-5 flex items-end justify-between border-t border-line pt-8">
+            <div>
+              <p className="eyebrow !text-accent">While you wait</p>
+              <h2 className="mt-1 font-heading text-xl font-extrabold tracking-tight text-ink sm:text-2xl">
+                You may also like
+              </h2>
+            </div>
+            <button
+              onClick={() => navigate("/", { replace: true })}
+              className="text-xs font-bold text-brand hover:underline"
+            >
+              Browse all →
+            </button>
+          </div>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
+            {upsellProducts.slice(0, 5).map((product) => (
+              <Card key={`upsell-${product.id}`} product={product} />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

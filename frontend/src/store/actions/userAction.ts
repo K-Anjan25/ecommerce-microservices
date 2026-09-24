@@ -24,6 +24,13 @@ export const login = (creds: LoginForm) => async (dispatch: UserDispatch) => {
   dispatch({ type: "LOGIN_START" });
   try {
     const { data } = await api.post<Login>("/user/login", creds);
+
+    // Two-step verification: identity is proven, but no tokens yet — the
+    // login page switches to the e-mailed-code step instead.
+    if (data.role === "MFA_REQUIRED") {
+      return { mfaRequired: true as const, devCode: data.devCode ?? null };
+    }
+
     setToken(data);
 
     // Do not mark the session ready from the login response alone. Hydrating
@@ -57,6 +64,13 @@ export const userMe = () => async (dispatch: UserDispatch) => {
   try {
     return await loadCurrentUser(dispatch);
   } catch (error) {
+    // An unreachable API (no HTTP response at all) must never end a session:
+    // keep the user signed in and let the screens show their own errors.
+    const hasTokens = Boolean(localStorage.getItem("access-token"));
+    if (hasTokens && !isAuthFailure(error)) {
+      dispatch({ type: "USER_NETWORK_ERROR" });
+      return false;
+    }
     if (isAuthFailure(error) && localStorage.getItem("refresh-token")) {
       try {
         await refreshAuthTokens();

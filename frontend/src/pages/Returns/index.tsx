@@ -100,7 +100,7 @@ function Returns() {
                 <li key={req.id} className="border-b border-line py-6">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="font-display text-xl text-ink">
+                      <p className="font-heading text-lg font-bold text-ink">
                         Return{" "}
                         <span className="font-mono text-xs text-ink-soft">#{req.id}</span>
                       </p>

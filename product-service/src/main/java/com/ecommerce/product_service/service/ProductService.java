@@ -11,6 +11,7 @@ import com.ecommerce.product_service.model.Category;
 import com.ecommerce.product_service.model.Product;
 import com.ecommerce.product_service.model.ProductImage;
 import com.ecommerce.product_service.model.ProductVariant;
+import com.ecommerce.product_service.audit.AuditLogService;
 import com.ecommerce.product_service.repository.ProductRepository;
 import com.ecommerce.product_service.repository.ProductImageRepository;
 import com.ecommerce.product_service.repository.ProductVariantRepository;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
+    private final AuditLogService auditLogService;
     private final CategoryService categoryService;
     private final ProductMapper productMapper;
     private final CommentMapper commentMapper;
@@ -96,6 +98,7 @@ public class ProductService {
                 .name(createProductRequest.getName())
                 .unitPrice(createProductRequest.getUnitPrice())
                 .description(createProductRequest.getDescription())
+                .translations(createProductRequest.getTranslations())
                 .category(category)
                 .imageUrl(createProductRequest.getImageUrl())
                 .brand(createProductRequest.getBrand())
@@ -131,6 +134,10 @@ public class ProductService {
 
         product.setCategory(category);
         product.setDescription(updateProductRequest.getDescription());
+        if (updateProductRequest.getTranslations() != null) {
+            product.setTranslations(updateProductRequest.getTranslations().isBlank()
+                    ? null : updateProductRequest.getTranslations().trim());
+        }
         product.setName(updateProductRequest.getName());
         product.setUnitPrice(updateProductRequest.getUnitPrice());
         product.setImageUrl(updateProductRequest.getImageUrl());
@@ -323,5 +330,41 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-}
+    /**
+     * Bulk: move every product to the given category. Audited in one entry
+     * with the count (individual entries would flood the log).
+     */
+    @org.springframework.transaction.annotation.Transactional
+    public int bulkMoveToCategory(java.util.List<java.util.UUID> ids, Long categoryId) {
+        Category category = categoryService.getCategoryById(categoryId);
+        java.util.List<Product> products = productRepository.findAllById(ids);
+        products.forEach(product -> product.setCategory(category));
+        productRepository.saveAll(products);
+        auditLogService.record("PRODUCT_BULK_MOVED", "CATEGORY", categoryId.toString(),
+                products.size() + " product(s) moved");
+        return products.size();
+    }
 
+    /** Bulk: adjust unit prices by a percent (-90 .. +100), rounded to 2dp. */
+    @org.springframework.transaction.annotation.Transactional
+    public int bulkAdjustPrice(java.util.List<java.util.UUID> ids, double percent) {
+        java.util.List<Product> products = productRepository.findAllById(ids);
+        java.math.BigDecimal factor = java.math.BigDecimal.valueOf(1 + percent / 100.0);
+        products.forEach(product -> product.setUnitPrice(
+                product.getUnitPrice().multiply(factor).setScale(2, java.math.RoundingMode.HALF_UP)));
+        productRepository.saveAll(products);
+        auditLogService.record("PRODUCT_BULK_REPRICED", "PRODUCT", null,
+                products.size() + " product(s) adjusted by " + percent + "%");
+        return products.size();
+    }
+
+    /** Bulk: soft-delete, matching single product deletion behaviour. */
+    @org.springframework.transaction.annotation.Transactional
+    public int bulkDelete(java.util.List<java.util.UUID> ids) {
+        java.util.List<Product> products = productRepository.findAllById(ids);
+        products.forEach(product -> product.setDeleted(true));
+        productRepository.saveAll(products);
+        auditLogService.record("PRODUCT_BULK_DELETED", "PRODUCT", null, products.size() + " product(s)");
+        return products.size();
+    }
+}

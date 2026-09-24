@@ -1,5 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112" fill="#F4F0E8"/>
-  <circle cx="256" cy="256" r="176" fill="none" stroke="#A4472D" stroke-width="10"/>
-  <text x="256" y="340" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="250" fill="#221A16">C</text>
+  <!-- Cartly mark: brand-blue tile, white geometric "C", action-orange dot.
+       Pure paths (no fonts) so it renders identically everywhere. -->
+  <rect width="512" height="512" rx="112" fill="#0052CC"/>
+  <path d="M 341.8 328 A 112 112 0 1 1 341.8 184" fill="none" stroke="#FFFFFF" stroke-width="70" stroke-linecap="round"/>
+  <circle cx="372" cy="256" r="26" fill="#FF5722"/>
 </svg>

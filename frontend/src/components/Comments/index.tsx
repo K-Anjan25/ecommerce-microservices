@@ -47,7 +47,7 @@ function Comments({ comments, onCreateComment }: CommentsProps) {
       <div className="mb-7 flex flex-wrap items-end justify-between gap-3 border-b border-line pb-5">
         <div>
           <p className="eyebrow">Reviews</p>
-          <h3 className="mt-1 font-display text-3xl font-normal tracking-tight text-ink">
+          <h3 className="mt-1 font-heading text-xl font-extrabold tracking-tight text-ink">
             What customers say
           </h3>
         </div>

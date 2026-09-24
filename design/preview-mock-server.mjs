@@ -11,24 +11,123 @@ import { createServer } from "node:http";
 
 const PORT = Number(process.env.MOCK_PORT ?? 8889);
 
-const CATEGORIES = [
-  "Electronics", "Home", "Fashion", "Beauty", "Sports", "Grocery", "Toys", "Books",
+const QUESTIONS = [
+  {
+    id: "q-1001",
+    productId: "p-1001",
+    text: "Does this come with a carrying case?",
+    askedBy: "Priya S.",
+    createdDate: "2026-09-20T10:00:00Z",
+    answer: "Yes — every unit ships with a hard-shell case, in the box.",
+    answeredBy: "Cartly Staff",
+    answeredAt: "2026-09-20T14:30:00Z",
+  },
+  {
+    id: "q-1002",
+    productId: "p-1003",
+    text: "Is the blender jug dishwasher safe?",
+    askedBy: "Arjun M.",
+    createdDate: "2026-09-22T09:00:00Z",
+    answer: null,
+    answeredBy: null,
+    answeredAt: null,
+  },
+];
+
+const ANALYTICS_EVENTS = [];
+
+let PRICE_WATCHES = [];
+let STOCK_WATCHES = [];
+
+let CATEGORIES = [
+  "Electronics", "Home", "Fashion", "Beauty", "Kitchen", "Sports", "Grocery", "Toys & Games", "Books",
 ].map((name, i) => ({ id: i + 1, name, slug: name.toLowerCase(), parentId: null, sortOrder: i }));
 
 const BRANDS = ["Acme", "Northwind", "Lumen", "Kite", "Orbit", "Cobalt"];
 
+const MOCK_USER = {
+  accessToken: "mock-access-token",
+  refreshToken: "mock-refresh-token",
+  userId: "user-1",
+  email: "admin@cartly.com",
+  firstName: "Admin",
+  lastName: "User",
+  roles: ["ROLE_ADMIN"],
+  mfaEnabled: false,
+};
+
+const MFA_PENDING = new Map();
+
+let SUBSCRIPTIONS = [];
+
 let STORE_SETTINGS = {
   announcementEnabled: true,
-  announcementText: "Free shipping over ₹999",
+  announcementText: "*FLASH SALE! Up to 40% OFF Electronics & Home! Ends Midnight!*",
   announcementLinkText: "Flash sale live",
   announcementLinkUrl: "/flash-sales",
-  heroEyebrow: "The seasonal edit",
-  heroTitle: "Curated finds",
-  heroEmphasis: "for home & life.",
-  heroDescription: "Thoughtful objects, honest materials and everyday essentials selected to last.",
-  primaryCtaLabel: "Shop the collection",
-  secondaryCtaLabel: "Explore the edit",
+  heroEyebrow: "Fresh drops every week",
+  heroTitle: "Explore. Shop.",
+  heroEmphasis: "Everyday essentials, delivered fast.",
+  heroDescription: "One modern multi-category marketplace for high quality tech, home & everyday essentials.",
+  primaryCtaLabel: "Shop Now",
+  secondaryCtaLabel: "See today's deals",
   freeShippingThreshold: 999,
+};
+
+/* Local Concept B product photography — keyword-matched per demo product. */
+const STORE_IMAGES = {
+  electronics: "/images/store/tile-electronics.jpg",
+  beauty: "/images/store/tile-beauty.jpg",
+  kitchen: "/images/store/tile-kitchen.jpg",
+  fashion: "/images/store/tile-fashion.jpg",
+  home: "/images/store/tile-home.jpg",
+  sports: "/images/store/tile-sports.jpg",
+  grocery: "/images/store/tile-grocery.jpg",
+  toys: "/images/store/tile-toys.jpg",
+  gadgets: "/images/store/hero-gadgets.jpg",
+  speaker: "/images/store/demo-speaker.jpg",
+  textile: "/images/store/demo-textile.jpg",
+  productHeadphones: "/images/store/product-headphones.jpg",
+  productEarbuds: "/images/store/product-earbuds.jpg",
+  productKeyboard: "/images/store/product-keyboard.jpg",
+  productWatch: "/images/store/product-watch.jpg",
+  productSerum: "/images/store/product-serum.jpg",
+  productSkillet: "/images/store/product-skillet.jpg",
+  productSneaker: "/images/store/product-sneaker.jpg",
+  productYogamat: "/images/store/product-yogamat.jpg",
+  productDuffel: "/images/store/product-duffel.jpg",
+  productLamp: "/images/store/product-lamp.jpg",
+};
+
+/* Priority exact-match rules first, then broad category rules. */
+const IMAGE_KEYWORDS = [
+  // dedicated product shots
+  [/headphone/i, "productHeadphones"],
+  [/earbud/i, "productEarbuds"],
+  [/keyboard/i, "productKeyboard"],
+  [/watch/i, "productWatch"],
+  [/(serum|lip|spf|balm|skincare|cream|lotion|shampoo|makeup)/i, "productSerum"],
+  [/(skillet|carafe|kettle|board|tamper|espresso|blender|storage|mug|pour|cook|knife|pan)/i, "productSkillet"],
+  [/(runner|sneaker|shoe)/i, "productSneaker"],
+  [/(yoga|mat\b|foam roller)/i, "productYogamat"],
+  [/(duffel|backpack|bag\b|luggage)/i, "productDuffel"],
+  [/(lamp\b|desk lamp)/i, "productLamp"],
+  [/speaker/i, "speaker"],
+  [/(blanket|linen|bedding|towel|textile|duvet)/i, "textile"],
+  // category tiles as fallback
+  [/(laptop|phone|camera|drone|console|electronics)/i, "electronics"],
+  [/(sweater|shirt|jacket|denim|apparel|scarf|clothing|wear)/i, "fashion"],
+  [/(lamp|table|vase|decor|candle|rug|curtain)/i, "home"],
+  [/(band|bottle|gym|fitness|trail|bike|gear)/i, "sports"],
+  [/(coffee|tea|snack|produce|organic|grocery|oil|spice)/i, "grocery"],
+  [/(lego|brick|toy|puzzle|game|plush|play)/i, "toys"],
+];
+
+const imageForName = (name, index) => {
+  const hit = IMAGE_KEYWORDS.find(([re]) => re.test(name));
+  if (hit) return STORE_IMAGES[hit[1]];
+  const pool = Object.values(STORE_IMAGES);
+  return pool[index % pool.length];
 };
 
 const NAMES = [
@@ -38,7 +137,79 @@ const NAMES = [
   "Espresso Tamper", "Wool Runners", "Noise-Free Earbuds", "Walnut Side Table",
   "Matte Lip Balm", "Resistance Band Set", "Bamboo Cutting Board", "Analog Watch 38",
   "Canvas Backpack", "Glass Storage Set", "Sun Shield SPF50", "Foam Roller",
+  "Smart Speaker Mini",
 ];
+
+
+/* ── localized catalog content (multi-locale preview dataset) ─────────── */
+const GENERIC_DESC = {
+  hi: "बेहतरीन क्वालिटी, ईमानदार कीमत और भरोसेमंद वारंटी। 24 घंटे में सुरक्षित पैकेजिंग में शिपिंग।",
+  de: "Hochwertige Verarbeitung, ehrlicher Preis und eine Garantie, die etwas bedeutet. Versand in Schutzverpackung innerhalb von 24 Stunden.",
+  fr: "Fabrication de qualité, prix honnête et une garantie qui compte. Expédié sous 24 h emballé avec soin.",
+  nl: "Topkwaliteit, eerlijke prijs en een garantie die telt. Binnen 24 uur verzonden in beschermende verpakking.",
+  es: "Calidad superior, precio honesto y una garantía de verdad. Envío en 24 h con embalaje protector.",
+  sv: "Toppkvalitet, ärligt pris och en garanti som betyder något. Skickas inom 24 timmar i skyddande förpackning.",
+  ar: "جودة عالية وسعر عادل وضمان حقيقي. يُشحن خلال 24 ساعة بتغليف واقٍ.",
+  ja: "高品質なつくり、正直な価格、そして安心の保証。24時間以内に保護包装で出荷します。",
+  ko: "탁월한 품질, 정직한 가격, 그리고 확실한 보증. 24시간 안에 보호 포장으로 배송됩니다.",
+};
+
+const PRODUCT_NAME_T = {
+  "Studio Pro Headphones": { hi: "स्टूडियो प्रो हेडफ़ोन", de: "Studio Pro Kopfhörer", fr: "Casque Studio Pro", nl: "Studio Pro Koptelefoon", es: "Auriculares Studio Pro", sv: "Studio Pro Hörlurar", ar: "سماعات ستوديو برو", ja: "スタジオプロヘッドホン", ko: "스튜디오 프로 헤드폰" },
+  "Linen Throw Blanket": { hi: "लिनेन थ्रो कंबल", de: "Leinens Tagesdecke", fr: "Plaid en lin", nl: "Linnen Sprei", es: "Manta de lino", sv: "Linnepläd", ar: "بطانية كتان", ja: "リネンスローブランケット", ko: "리넨 담요" },
+  "Trail Runner 3": { hi: "ट्रेल रनर 3", de: "Trail Runner 3", fr: "Trail Runner 3", nl: "Trail Runner 3", es: "Trail Runner 3", sv: "Trail Runner 3", ar: "تريل رانر 3", ja: "トレイルランナー3", ko: "트레일 러너 3" },
+  "Ceramic Pour-Over": { hi: "सिरेमिक पोर-ओवर", de: "Keramik Pour-Over", fr: "Cafetière céramique", nl: "Keramische Pour-Over", es: "Pourover de cerámica", sv: "Keramisk Pour-Over", ar: "قمع قهوة سيراميك", ja: "セラミックドリッパー", ko: "세라믹 드리퍼" },
+  "Merino Crew Sweater": { hi: "मेरिनो क्रू स्वेटर", de: "Merino Pullover", fr: "Pull en mérinos", nl: "Merino Trui", es: "Suéter de merino", sv: "Merino Tröja", ar: "كنزة ميرينو", ja: "メリニークルーセーター", ko: "메리노 크루 스웨터" },
+  "Desk Lamp Arc": { hi: "डेस्क लैंप आर्क", de: "Schreibtischlampe Arc", fr: "Lampe de bureau Arc", nl: "Bureaulamp Arc", es: "Lámpara de escritorio Arc", sv: "Skrivbordslampa Arc", ar: "مصباح مكتب آرك", ja: "アークデスクランプ", ko: "아크 데스크 램프" },
+  "Vitamin C Serum": { hi: "विटामिन सी सीरम", de: "Vitamin C Serum", fr: "Sérum Vitamine C", nl: "Vitamine C Serum", es: "Sérum de vitamina C", sv: "C-vitamin Serum", ar: "سيروم فيتامين سي", ja: "ビタミンCセラム", ko: "비타민C 세럼" },
+  "Cast Iron Skillet": { hi: "कास्ट आयरन स्किलेट", de: "Gusseiserne Pfanne", fr: "Poêle en fonte", nl: "Gietijzeren Pan", es: "Sartén de hierro fundido", sv: "Gjutjärnspanna", ar: "مقلاة حديد زهر", ja: "鋳鉄スキレット", ko: "주철 팬" },
+  "Weekender Duffel": { hi: "वीकेंडर डफल", de: "Wochenend-Reisetasche", fr: "Sac de week-end", nl: "Weekendtas", es: "Bolsa de fin de semana", sv: "Helgveska", ar: "حقيبة نهاية الأسبوع", ja: "ウィークエンダーバッグ", ko: "주말 여행가방" },
+  "Mechanical Keyboard": { hi: "मैकेनिकल कीबोर्ड", de: "Mechanische Tastatur", fr: "Clavier mécanique", nl: "Mechanisch Toetsenbord", es: "Teclado mecánico", sv: "Mekaniskt Tangentbord", ar: "لوحة مفاتيح ميكانيكية", ja: "メカニカルキーボード", ko: "기계식 키보드" },
+  "Cold Brew Carafe": { hi: "कोल्ड ब्रू कैराफ़", de: "Cold-Brew-Karaffe", fr: "Carafe Cold Brew", nl: "Cold Brew Karaf", es: "Jarra de cold brew", sv: "Cold Brew Karaff", ar: "دلة قهوة باردة", ja: "コールドブリューカラフェ", ko: "콜드브루 카라페" },
+  "Yoga Mat Pro": { hi: "योगा मैट प्रो", de: "Yogamatte Pro", fr: "Tapis de yoga Pro", nl: "Yogamat Pro", es: "Esterilla de yoga Pro", sv: "Yogamatta Pro", ar: "سجادة يوغا برو", ja: "ヨガマットプロ", ko: "요가매트 프로" },
+  "Espresso Tamper": { hi: "एस्प्रेसो टैम्पर", de: "Espresso Tamper", fr: "Tamper à espresso", nl: "Espresso Tamper", es: "Tamper de espresso", sv: "Espresso Tamper", ar: "مكبس إسبريسو", ja: "エスプレッソタンパー", ko: "에스프레소 탬퍼" },
+  "Wool Runners": { hi: "ऊन रनर्स", de: "Woll-Sneaker", fr: "Baskets en laine", nl: "Wol Sneakers", es: "Zapatillas de lana", sv: "Ull Sneakers", ar: "أحذية صوف", ja: "ウールランナー", ko: "울 러너스" },
+  "Noise-Free Earbuds": { hi: "नॉइज़-फ्री ईयरबड्स", de: "Noise-Free Earbuds", fr: "Écouteurs antibruit", nl: "Ruisonderdrukkende Earbuds", es: "Auriculares sin ruido", sv: "Brusfria Earbuds", ar: "سماعات بدون ضوضاء", ja: "ノイズフリーイヤホン", ko: "노이즈프리 이어버드" },
+  "Walnut Side Table": { hi: "वॉलनट साइड टेबल", de: "Nussbaum Beistelltisch", fr: "Table d'appoint en noyer", nl: "Walnoot Bijzettafel", es: "Mesa auxiliar de nogal", sv: "Sidobord i valnöt", ar: "طاولة جانبية من الجوز", ja: "ウォールナットサイドテーブル", ko: "월넛 사이드 테이블" },
+  "Matte Lip Balm": { hi: "मैट लिप बाम", de: "Matt Lippenbalsam", fr: "Baume à lèvres mat", nl: "Matte Lipbalsem", es: "Bálsamo labial mate", sv: "Matt läppbalsam", ar: "بلسم شفاه مطفي", ja: "マットリップバーム", ko: "매트 립밤" },
+  "Resistance Band Set": { hi: "रेजिस्टेंस बैंड सेट", de: "Widerstandsband-Set", fr: "Set de bandes élastiques", nl: "Weerstandsband Set", es: "Set de bandas de resistencia", sv: "Motståndsband Set", ar: "طقم أحزمة مقاومة", ja: "レジスタンスバンドセット", ko: "저항 밴드 세트" },
+  "Bamboo Cutting Board": { hi: "बांस कटिंग बोर्ड", de: "Bambus Schneidebrett", fr: "Planche en bambou", nl: "Bamboe Snijplank", es: "Tabla de cortar de bambú", sv: "Bambu Skärbräda", ar: "لوح تقطيع من الخيزران", ja: "バンブーまな板", ko: "대나무 도마" },
+  "Analog Watch 38": { hi: "एनालॉग वॉच 38", de: "Analoguhr 38", fr: "Montre analogique 38", nl: "Analoog Horloge 38", es: "Reloj analógico 38", sv: "Analog Klocka 38", ar: "ساعة تناظرية 38", ja: "アナログウォッチ38", ko: "아날로그 시계 38" },
+  "Canvas Backpack": { hi: "कैनवास बैकपैक", de: "Canvas Rucksack", fr: "Sac à dos en toile", nl: "Canvas Rugtas", es: "Mochila de lona", sv: "Canvas Ryggsäck", ar: "حقيبة ظهر قماشية", ja: "キャンバスバックパック", ko: "캔버스 백팩" },
+  "Glass Storage Set": { hi: "ग्लास स्टोरेज सेट", de: "Glas Aufbewahrungsset", fr: "Set de conservation en verre", nl: "Glas Voorraadset", es: "Set de almacenamiento de vidrio", sv: "Glas Förvaringsset", ar: "طقم تخزين زجاجي", ja: "ガラス保存容器セット", ko: "유리 보관 용기 세트" },
+  "Sun Shield SPF50": { hi: "सन शील्ड SPF50", de: "Sonnenschutz SPF50", fr: "Écran solaire SPF50", nl: "Zonnebrand SPF50", es: "Protector solar SPF50", sv: "Solskydd SPF50", ar: "واقٍ شمسي SPF50", ja: "サンシールドSPF50", ko: "선실드 SPF50" },
+  "Foam Roller": { hi: "फोम रोलर", de: "Faszienrolle", fr: "Rouleau de massage", nl: "Foamroller", es: "Rodillo de espuma", sv: "Foamroller", ar: "أسطوانة تدليك", ja: "フォームローラー", ko: "폼롤러" },
+  "Smart Speaker Mini": { hi: "स्मार्ट स्पीकर मिनी", de: "Smart Speaker Mini", fr: "Enceinte connectée Mini", nl: "Smart Speaker Mini", es: "Altavoz inteligente Mini", sv: "Smart Högtalare Mini", ar: "مكبر صوت ذكي مصغر", ja: "スマートスピーカーミニ", ko: "스마트 스피커 미니" },
+};
+
+const CATEGORY_NAME_T = {
+  "Electronics": { hi: "इलेक्ट्रॉनिक्स", de: "Elektronik", fr: "Électronique", nl: "Elektronica", es: "Electrónica", sv: "Elektronik", ar: "إلكترونيات", ja: "エレクトロニクス", ko: "전자제품" },
+  "Home": { hi: "घर", de: "Wohnen", fr: "Maison", nl: "Wonen", es: "Hogar", sv: "Hem", ar: "المنزل", ja: "ホーム", ko: "홈" },
+  "Fashion": { hi: "फैशन", de: "Mode", fr: "Mode", nl: "Mode", es: "Moda", sv: "Mode", ar: "أزياء", ja: "ファッション", ko: "패션" },
+  "Beauty": { hi: "सौंदर्य", de: "Schönheit", fr: "Beauté", nl: "Schoonheid", es: "Belleza", sv: "Skönhet", ar: "الجمال", ja: "ビューティー", ko: "뷰티" },
+  "Kitchen": { hi: "रसोई", de: "Küche", fr: "Cuisine", nl: "Keuken", es: "Cocina", sv: "Kök", ar: "المطبخ", ja: "キッチン", ko: "주방" },
+  "Sports": { hi: "खेल", de: "Sport", fr: "Sport", nl: "Sport", es: "Deportes", sv: "Sport", ar: "رياضة", ja: "スポーツ", ko: "스포츠" },
+  "Grocery": { hi: "किराना", de: "Lebensmittel", fr: "Épicerie", nl: "Boodschappen", es: "Supermercado", sv: "Livs", ar: "بقالة", ja: "食品", ko: "식품" },
+  "Toys & Games": { hi: "खिलौने", de: "Spielzeug", fr: "Jouets", nl: "Speelgoed", es: "Juguetes", sv: "Leksaker", ar: "ألعاب", ja: "おもちゃ", ko: "장난감" },
+  "Books": { hi: "किताबें", de: "Bücher", fr: "Livres", nl: "Boeken", es: "Libros", sv: "Böcker", ar: "كتب", ja: "本", ko: "책" },
+};
+
+const productTranslations = (name) => {
+  const names = PRODUCT_NAME_T[name];
+  if (!names) return null;
+  const out = {};
+  for (const lang of Object.keys(names)) {
+    out[lang] = { name: names[lang], description: GENERIC_DESC[lang] };
+  }
+  return JSON.stringify(out);
+};
+
+const categoryTranslations = (name) => {
+  const names = CATEGORY_NAME_T[name];
+  return names ? JSON.stringify(names) : null;
+};
+
+CATEGORIES.forEach((c) => { c.translations = categoryTranslations(c.name); });
 
 const PRODUCTS = NAMES.map((name, i) => {
   const unitPrice = 499 + ((i * 733) % 6500);
@@ -51,9 +222,9 @@ const PRODUCTS = NAMES.map((name, i) => {
     unitPrice,
     originalPrice: onSale ? Math.round(unitPrice * 1.45) : undefined,
     description:
-      "Considered materials, honest pricing and a warranty that means something. Ships in recyclable packaging within 24 hours.",
-    imageUrl: `https://picsum.photos/seed/cartly${i + 7}/800/600`,
-    images: [`https://picsum.photos/seed/cartly${i + 7}/800/600`],
+      "Top-quality build, honest pricing and a warranty that means something. Ships in protective packaging within 24 hours.",
+    imageUrl: imageForName(name, i),
+    images: [imageForName(name, i)],
     brand: BRANDS[i % BRANDS.length],
     badge: i % 8 === 0 ? "NEW" : undefined,
     featured: i < 4,
@@ -62,6 +233,7 @@ const PRODUCTS = NAMES.map((name, i) => {
     quantityInStock: stock,
     categoryName: category.name,
     category,
+    translations: productTranslations(name),
     comments: [],
     variants: [],
     createdDate: new Date(Date.now() - i * 86400000).toISOString(),
@@ -69,7 +241,7 @@ const PRODUCTS = NAMES.map((name, i) => {
 });
 
 /* ── orders (so the order screens can be reviewed too) ──────────────────── */
-const ORDER_STATUSES = ["APPROVED", "PAID", "PENDING"];
+const ORDER_STATUSES = ["SHIPPED", "APPROVED", "PAID", "PENDING"];
 const ORDERS = ORDER_STATUSES.map((status, i) => {
   const items = PRODUCTS.slice(i * 2, i * 2 + 2 + i).map((p) => ({
     productId: p.id,
@@ -101,6 +273,9 @@ const ORDERS = ORDER_STATUSES.map((status, i) => {
     shippingMethod: i === 1 ? "EXPRESS" : "STANDARD",
     giftWrap: i === 0,
     giftWrapFee: i === 0 ? 50 : 0,
+    ...(status === "SHIPPED"
+      ? { awb: "DLV-8492135770", carrierName: "Delhivery" }
+      : {}),
   };
 });
 
@@ -112,10 +287,12 @@ const COMMENTS = [
     createdDate: new Date(Date.now() - 3 * 86400000).toISOString(),
     text: "Beautifully made and it arrived exactly as pictured. The materials feel far better than the price suggests.",
     rating: 5,
+    verifiedPurchase: true,
   },
   {
     id: "cmt-2",
     productId: "p-1",
+    verifiedPurchase: false,
     creator: "Sana K.",
     createdDate: new Date(Date.now() - 9 * 86400000).toISOString(),
     text: "Lovely finish and quick dispatch. Would happily buy from this collection again.",
@@ -158,6 +335,71 @@ const json = (res, body, status = 200) => {
   res.end(JSON.stringify(body));
 };
 
+/* Support tickets raised from the contact form during this preview session. */
+const SUPPORT_TICKETS = [];
+
+/* In-memory phone OTP state for the preview session. */
+const PHONE_OTPS = new Map(); // phone → { code, expiresAt }
+const REGISTERED_PHONES = new Set(["+919876543210"]);
+
+/* Saved addresses for the preview session (mutable across POSTs). */
+const ADDRESSES = [
+  {
+    id: "addr-1",
+    state: "Telangana",
+    district: "Hyderabad",
+    addressDetail: "12 Rose Lane, Uppal",
+    country: "IN",
+    pincode: "500039",
+    phoneNumber: "9876543210",
+    defaultAddress: true,
+  },
+  {
+    id: "addr-2",
+    state: "Karnataka",
+    district: "Bengaluru Urban",
+    addressDetail: "8 Curie Road, Indiranagar",
+    country: "IN",
+    pincode: "560038",
+    defaultAddress: false,
+  },
+  {
+    id: "addr-3",
+    state: "California",
+    district: "San Jose",
+    addressDetail: "221 Bounty St, Apt 5",
+    country: "US",
+    pincode: "95014",
+    defaultAddress: false,
+  },
+];
+
+/* Mirrors commerce-service ShippingZoneSeeder (Zone 1). */
+const INTERNATIONAL_ZONE = {
+  id: "zone-1",
+  name: "International — Zone 1",
+  countries: "US,CA,GB,DE,FR,NL,BE,ES,SE,CH,AE,SG,AU,NZ,JP,KR",
+  cost: 2499,
+  freeAbove: 25000,
+  estimatedDaysMin: 7,
+  estimatedDaysMax: 14,
+  carrier: "DHL Express",
+  dutyRate: 0.15,
+  dutyName: "Import duty & VAT",
+  active: true,
+};
+
+/* Collect and parse a JSON request body. */
+const readBody = (req, cb) => {
+  let raw = "";
+  req.on("data", (chunk) => { raw += chunk; });
+  req.on("end", () => {
+    let body = {};
+    try { body = JSON.parse(raw); } catch { /* empty object */ }
+    cb(body);
+  });
+};
+
 createServer((req, res) => {
   const url = new URL(req.url, "http://x");
   const p = url.pathname;
@@ -169,26 +411,118 @@ createServer((req, res) => {
     return json(res, { message: "Mock password reset accepted" });
   }
 
+  /* ── phone sign-in / sign-up (OTP flows) ─────────────────────────────── */
+
+  if (p === "/user/otp/request" && req.method === "POST") {
+    return readBody(req, (body) => {
+      const phone = String(body.phone ?? "").trim();
+      if (!/^\+\d{7,15}$/.test(phone)) {
+        return json(res, { message: "Phone must include the country code, e.g. +919876543210" }, 400);
+      }
+      const code = String(Math.floor(100000 + Math.random() * 900000));
+      PHONE_OTPS.set(phone, { code, expiresAt: Date.now() + 5 * 60 * 1000 });
+      // No SMS provider in preview: the code is echoed back and logged.
+      console.log(`[mock] OTP for ${phone}: ${code}`);
+      json(res, { expiresInSeconds: 300, devCode: code });
+    });
+  }
+
+  if (p === "/user/otp/verify" && req.method === "POST") {
+    return readBody(req, (body) => {
+      const phone = String(body.phone ?? "").trim();
+      const code = String(body.code ?? "").trim();
+      const record = PHONE_OTPS.get(phone);
+      if (!record) return json(res, { message: "Request a code first" }, 400);
+      if (record.expiresAt < Date.now()) return json(res, { message: "This code has expired — request a new one" }, 400);
+      if (record.code !== code) return json(res, { message: "Incorrect code — please try again" }, 400);
+      if (!REGISTERED_PHONES.has(phone)) {
+        return json(res, { message: "NO_ACCOUNT" }, 400);
+      }
+      PHONE_OTPS.delete(phone);
+      json(res, {
+        accessToken: "mock-access-token",
+        refreshToken: "mock-refresh-token",
+        userId: "user-1",
+        email: "admin@cartly.com",
+        firstName: "Admin",
+        lastName: "User",
+        roles: ["ROLE_ADMIN"],
+      });
+    });
+  }
+
+  if (p === "/user/phone/register" && req.method === "POST") {
+    return readBody(req, (body) => {
+      const phone = String(body.phone ?? "").trim();
+      const code = String(body.code ?? "").trim();
+      const record = PHONE_OTPS.get(phone);
+      if (!record || record.code !== code || record.expiresAt < Date.now()) {
+        return json(res, { message: "Verify the code sent to this phone before creating the account" }, 400);
+      }
+      const first = String(body.firstName ?? "").trim();
+      const last = String(body.lastName ?? "").trim();
+      if (!first || !last) return json(res, { message: "Enter your first and last name" }, 400);
+      REGISTERED_PHONES.add(phone);
+      PHONE_OTPS.delete(phone);
+      json(res, {
+        accessToken: "mock-access-token",
+        refreshToken: "mock-refresh-token",
+        userId: "user-1",
+        email: body.email ?? null,
+        firstName: first,
+        lastName: last,
+        roles: ["ROLE_USER"],
+      });
+    });
+  }
+
+  // ── Two-step verification (MFA) demo: sign in with any email starting
+  //    with "mfa" (e.g. mfa@cartly.com) to trigger the e-mailed-code step.
+  if (p === "/user/mfa/verify" && req.method === "POST") {
+    return readBody(req, (body) => {
+      const pending = MFA_PENDING.get(String(body.email ?? "").toLowerCase());
+      if (!pending) return json(res, { message: "No verification code was issued for this email" }, 400);
+      if (pending.consumed) return json(res, { message: "This code was already used" }, 400);
+      if (String(body.code ?? "") !== pending.code) {
+        pending.attempts += 1;
+        return json(res, { message: "Incorrect verification code" }, 400);
+      }
+      pending.consumed = true;
+      return json(res, {
+        accessToken: "mock-access-token",
+        refreshToken: "mock-refresh-token",
+        userId: "user-1",
+        email: "admin@cartly.com",
+        firstName: "Admin",
+        lastName: "User",
+        roles: ["ROLE_ADMIN"],
+      });
+    });
+  }
+
+  if (p === "/user/mfa" && req.method === "POST") {
+    return readBody(req, (body) => {
+      MOCK_USER.mfaEnabled = Boolean(body.enabled);
+      return json(res, { mfaEnabled: MOCK_USER.mfaEnabled });
+    });
+  }
+
   if (p === "/user/login" && req.method === "POST") {
-    return json(res, {
-      accessToken: "mock-access-token",
-      refreshToken: "mock-refresh-token",
-      userId: "user-1",
-      email: "admin@cartly.com",
-      firstName: "Admin",
-      lastName: "User",
-      roles: ["ROLE_ADMIN"],
+    return readBody(req, (body) => {
+      const email = String(body?.email ?? "admin@cartly.com").toLowerCase();
+      if (email.startsWith("mfa") || MOCK_USER.mfaEnabled) {
+        const code = String(Math.floor(100000 + Math.random() * 900000));
+        MFA_PENDING.set(email, { code, attempts: 0, consumed: false });
+        return json(res, { accessToken: null, refreshToken: null, role: "MFA_REQUIRED", devCode: code });
+      }
+      return json(res, { ...MOCK_USER });
     });
   }
 
   if (p === "/user/me" && req.method === "GET") {
     return json(res, {
       id: "user-1",
-      userId: "user-1",
-      email: "admin@cartly.com",
-      firstName: "Admin",
-      lastName: "User",
-      roles: ["ROLE_ADMIN"],
+      ...MOCK_USER,
     });
   }
 
@@ -203,12 +537,109 @@ createServer((req, res) => {
     return json(res, { active: true, cost: 50 });
   }
 
+  /* ── international shipping zones ─────────────────────────────────────── */
+
+  if (p === "/v1/shipping/zones" && req.method === "GET") {
+    return json(res, [INTERNATIONAL_ZONE]);
+  }
+
+  if (p === "/v1/shipping/zones/quote" && req.method === "POST") {
+    return readBody(req, (body) => {
+      const country = String(body.country ?? "").trim().toUpperCase();
+      const subtotal = Number(body.subtotal ?? 0);
+      const inZone = INTERNATIONAL_ZONE.countries.split(",").includes(country);
+      if (!inZone) {
+        return json(res, { available: false, cost: 0, estimatedDaysMin: 0, estimatedDaysMax: 0, carrier: "N/A", dutyRate: 0, dutyName: "Import duty & VAT" });
+      }
+      const freeShipping = subtotal >= INTERNATIONAL_ZONE.freeAbove;
+      json(res, {
+        available: true,
+        zoneName: INTERNATIONAL_ZONE.name,
+        cost: freeShipping ? 0 : INTERNATIONAL_ZONE.cost,
+        freeAbove: INTERNATIONAL_ZONE.freeAbove,
+        estimatedDaysMin: INTERNATIONAL_ZONE.estimatedDaysMin,
+        estimatedDaysMax: INTERNATIONAL_ZONE.estimatedDaysMax,
+        carrier: INTERNATIONAL_ZONE.carrier,
+        dutyRate: INTERNATIONAL_ZONE.dutyRate,
+        dutyName: INTERNATIONAL_ZONE.dutyName,
+      });
+    });
+  }
+
   if (p.startsWith("/v1/tax/rule")) {
     return json(res, { taxName: "GST", rate: 0.18 });
   }
 
-  if (p === "/v1/store-settings" && req.method === "GET") return json(res, STORE_SETTINGS);
-  if (p === "/v1/store-settings" && req.method === "PUT") {
+  /* ── support tickets (Help/Contact surface) ─────────────────────────── */
+  if (p === "/v1/support/tickets" && req.method === "POST") {
+    let raw = "";
+    req.on("data", (chunk) => { raw += chunk; });
+    req.on("end", () => {
+      let body = {};
+      try { body = JSON.parse(raw); } catch { /* handled below */ }
+      const fieldErrors = {};
+      if (!body.name || !String(body.name).trim()) fieldErrors.name = "Name is required";
+      if (!body.email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(body.email)) fieldErrors.email = "Enter a valid email address";
+      if (!body.topic) fieldErrors.topic = "Choose a topic";
+      if (!body.message || String(body.message).trim().length < 20) fieldErrors.message = "Please describe the issue in at least 20 characters";
+      if (Object.keys(fieldErrors).length) return json(res, fieldErrors, 400);
+
+      const ticket = {
+        ticketRef: `SUP-${Date.now().toString(36).toUpperCase().slice(-6)}`,
+        name: String(body.name).trim(),
+        email: String(body.email).trim().toLowerCase(),
+        topic: body.topic,
+        orderNumber: body.orderNumber || null,
+        message: String(body.message).trim(),
+        status: "OPEN",
+        createdAt: new Date().toISOString(),
+      };
+      SUPPORT_TICKETS.unshift(ticket);
+      json(res, ticket, 201);
+    });
+    return;
+  }
+
+  if (p === "/v1/support/tickets" && req.method === "GET") return json(res, SUPPORT_TICKETS);
+
+  const statusMatch = p.match(/^\/v1\/support\/tickets\/([^/]+)\/status$/);
+  if (statusMatch && req.method === "POST") {
+    let raw = "";
+    req.on("data", (chunk) => { raw += chunk; });
+    req.on("end", () => {
+      const ticket = SUPPORT_TICKETS.find((t) => t.ticketRef === decodeURIComponent(statusMatch[1]).toUpperCase());
+      if (!ticket) return json(res, { message: "Ticket not found" }, 404);
+      const next = String(JSON.parse(raw || "{}").status || "").toUpperCase();
+      if (!["OPEN", "IN_PROGRESS", "RESOLVED"].includes(next)) {
+        return json(res, { message: "Invalid status" }, 400);
+      }
+      ticket.status = next;
+      ticket.updatedAt = new Date().toISOString();
+      json(res, ticket);
+    });
+    return;
+  }
+
+  /* ── newsletter signup (footer form) — public and idempotent ────────── */
+  const NEWSLETTER = new Set();
+  if (p === "/v1/newsletter/subscribe" && req.method === "POST") {
+    let raw = "";
+    req.on("data", (chunk) => { raw += chunk; });
+    req.on("end", () => {
+      let body = {};
+      try { body = JSON.parse(raw); } catch { /* handled below */ }
+      const email = String(body.email ?? "").trim().toLowerCase();
+      if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+        return json(res, { email: "Enter a valid email address" }, 400);
+      }
+      const already = NEWSLETTER.has(email);
+      NEWSLETTER.add(email);
+      json(res, { status: already ? "ALREADY_SUBSCRIBED" : "SUBSCRIBED", email }, already ? 200 : 201);
+    });
+    return;
+  }
+
+  if (p === "/v1/store-settings" && req.method === "GET") return json(res, STORE_SETTINGS);  if (p === "/v1/store-settings" && req.method === "PUT") {
     let raw = "";
     req.on("data", (chunk) => { raw += chunk; });
     req.on("end", () => {
@@ -224,7 +655,315 @@ createServer((req, res) => {
 
   if (["/v1/product-audit", "/v1/commerce-audit", "/user/audit-logs"].includes(p)) return json(res, []);
 
+  if (p === "/v1/categories" && req.method === "POST") {
+    return readBody(req, (body) => {
+      const name = String(body?.name ?? "").trim();
+      if (!name) return json(res, { message: "Category name is required" }, 400);
+      const category = {
+        id: Math.max(0, ...CATEGORIES.map((c) => c.id)) + 1,
+        name,
+        slug: name.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
+        description: body.description ?? null,
+        imageUrl: body.imageUrl ?? null,
+        translations: body.translations ?? null,
+        parentId: body.parentId ?? null,
+        sortOrder: body.sortOrder ?? CATEGORIES.length,
+      };
+      CATEGORIES.push(category);
+      return json(res, category, 201);
+    });
+  }
+
+  const categoryMatch = p.match(/^\/v1\/categories\/(\d+)$/);
+  if (categoryMatch && req.method === "PUT") {
+    const id = Number(categoryMatch[1]);
+    const category = CATEGORIES.find((c) => c.id === id);
+    if (!category) return json(res, { message: `Category with id ${id} could not be found!` }, 404);
+    return readBody(req, (body) => {
+      const name = String(body?.name ?? category.name).trim();
+      if (!name) return json(res, { message: "Category name is required" }, 400);
+      category.name = name;
+      category.slug = name.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      if (body.description !== undefined) category.description = body.description;
+      if (body.imageUrl !== undefined) category.imageUrl = body.imageUrl;
+      if (body.translations !== undefined) category.translations = body.translations;
+      if (body.parentId !== undefined) category.parentId = body.parentId;
+      if (body.sortOrder !== undefined) category.sortOrder = body.sortOrder;
+      return json(res, category);
+    });
+  }
+  const positionMatch = p.match(/^\/v1\/categories\/(\d+)\/position$/);
+  if (positionMatch && req.method === "PUT") {
+    const id = Number(positionMatch[1]);
+    const category = CATEGORIES.find((c) => c.id === id);
+    if (!category) return json(res, { message: `Category with id ${id} could not be found!` }, 404);
+    return readBody(req, (body) => {
+      const newParentId = body.parentId ?? null;
+      if (newParentId === id) {
+        return json(res, { message: "A category cannot be moved under itself" }, 400);
+      }
+      if (newParentId != null) {
+        let cursor = CATEGORIES.find((c) => c.id === newParentId);
+        if (!cursor) return json(res, { message: "Target parent could not be found!" }, 404);
+        while (cursor?.parentId != null) {
+          if (cursor.parentId === id) {
+            return json(res, { message: "Cannot move a category under one of its own subcategories" }, 400);
+          }
+          cursor = CATEGORIES.find((c) => c.id === cursor.parentId);
+        }
+      }
+      category.parentId = newParentId;
+      const siblings = CATEGORIES
+        .filter((c) => (c.parentId ?? null) === newParentId && c.id !== id)
+        .sort((a, b) => (a.sortOrder ?? 1e9) - (b.sortOrder ?? 1e9) || a.name.localeCompare(b.name));
+      const index = Math.max(0, Math.min(body.position ?? siblings.length, siblings.length));
+      siblings.splice(index, 0, category);
+      siblings.forEach((c, i) => { c.sortOrder = i * 10; });
+      return json(res, category);
+    });
+  }
+
+  if (categoryMatch && req.method === "DELETE") {
+    const id = Number(categoryMatch[1]);
+    const category = CATEGORIES.find((c) => c.id === id);
+    if (!category) return json(res, { message: `Category with id ${id} could not be found!` }, 404);
+    if (CATEGORIES.some((c) => c.parentId === id)) {
+      return json(res, { message: "Category still has subcategories. Move or delete them first." }, 409);
+    }
+    if (PRODUCTS.some((x) => x.categoryName === category.name)) {
+      return json(res, { message: "Category still has product(s) assigned. Move or remove them first." }, 409);
+    }
+    CATEGORIES = CATEGORIES.filter((c) => c.id !== id);
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
   if (p === "/v1/categories") return json(res, CATEGORIES);
+
+  const stockWatchMatch = p.match(/^\/v1\/products\/([^/]+)\/stock-watch$/);
+  if (stockWatchMatch) {
+    const productId = stockWatchMatch[1];
+    if (req.method === "POST") {
+      return readBody(req, (body) => {
+        const email = String(body?.email ?? "").trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          return json(res, { message: "A valid email is required" }, 400);
+        }
+        STOCK_WATCHES = STOCK_WATCHES.filter((w) => !(w.productId === productId && w.email === email));
+        STOCK_WATCHES.push({ productId, email, locale: body.locale ?? "en", active: true, at: new Date().toISOString() });
+        res.writeHead(201);
+        res.end();
+        return;
+      });
+    }
+    if (req.method === "DELETE") {
+      const email = (q.get("email") ?? "").trim().toLowerCase();
+      STOCK_WATCHES = STOCK_WATCHES.filter((w) => !(w.productId === productId && w.email === email));
+      res.writeHead(204);
+      res.end();
+      return;
+    }
+    if (req.method === "GET") {
+      const email = (q.get("email") ?? "").trim().toLowerCase();
+      const watching = Boolean(email) && STOCK_WATCHES.some((w) => w.productId === productId && w.email === email && w.active);
+      return json(res, { watching });
+    }
+  }
+
+  if (p === "/v1/analytics/events" && req.method === "POST") {
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
+  if (p === "/v1/analytics/summary") {
+    const days = Number(q.get("days") ?? 30);
+    const daily = [];
+    let views = 0;
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(Date.now() - i * 86400000);
+      const weekend = [0, 6].includes(d.getDay());
+      const v = Math.round((weekend ? 140 : 90) + Math.sin(i / 3) * 25 + Math.random() * 10);
+      const c = Math.round(v * 0.22);
+      const ch = Math.round(c * 0.45);
+      const o = Math.round(ch * 0.6);
+      views += v;
+      daily.push({
+        date: d.toISOString().slice(0, 10),
+        views: v,
+        addToCarts: c,
+        checkouts: ch,
+        orders: o,
+      });
+    }
+    const addToCarts = daily.reduce((a, d) => a + d.addToCarts, 0);
+    const checkouts = daily.reduce((a, d) => a + d.checkouts, 0);
+    const orders = daily.reduce((a, d) => a + d.orders, 0);
+    return json(res, {
+      days,
+      funnel: {
+        viewedProducts: views,
+        addToCart: addToCarts,
+        checkoutStarted: checkouts,
+        orders,
+        realOrders: orders,
+        viewToCartPercent: 21.8,
+        cartToOrderPercent: 58.3,
+      },
+      daily,
+      topProducts: PRODUCTS.slice(0, 5).map((prod) => ({
+        productId: prod.id,
+        views: 120 + ((prod.id.charCodeAt(2) * 37) % 260),
+      })),
+    });
+  }
+
+  // ── Subscriptions (auto-reorder) ─────────────────────────────────────
+  if (p === "/v1/subscriptions" && req.method === "GET") {
+    return json(res, SUBSCRIPTIONS);
+  }
+
+  if (p === "/v1/subscriptions" && req.method === "POST") {
+    return readBody(req, (body) => {
+      const product = PRODUCTS.find((x) => x.id === body.productId);
+      if (!product) return json(res, { message: "Product could not be found" }, 400);
+      const intervalDays = Number(body.intervalDays ?? 30);
+      if (intervalDays < 7 || intervalDays > 180) {
+        return json(res, { message: "Delivery cadence must be between 7 and 180 days" }, 400);
+      }
+      const subscription = {
+        id: `sub-${Date.now()}`,
+        productId: product.id,
+        productName: product.name,
+        unitPrice: product.unitPrice,
+        quantity: Math.max(1, Math.min(20, Number(body.quantity ?? 1))),
+        intervalDays,
+        nextRunAt: new Date(Date.now() + intervalDays * 86400000).toISOString(),
+        active: true,
+        lastOrderId: null,
+        createdAt: new Date().toISOString(),
+      };
+      SUBSCRIPTIONS.unshift(subscription);
+      return json(res, subscription, 201);
+    });
+  }
+
+  const subscriptionMatch = p.match(/^\/v1\/subscriptions\/([^/]+)$/);
+  if (subscriptionMatch && req.method === "PUT") {
+    const subscription = SUBSCRIPTIONS.find((x) => x.id === subscriptionMatch[1]);
+    if (!subscription) return json(res, { message: "Subscription could not be found!" }, 404);
+    return readBody(req, (body) => {
+      if (body.active !== undefined) {
+        subscription.active = Boolean(body.active);
+        if (body.active) {
+          subscription.nextRunAt = new Date(Date.now() + subscription.intervalDays * 86400000).toISOString();
+        }
+      }
+      if (body.intervalDays !== undefined) subscription.intervalDays = Number(body.intervalDays);
+      if (body.quantity !== undefined) subscription.quantity = Number(body.quantity);
+      return json(res, subscription);
+    });
+  }
+  if (subscriptionMatch && req.method === "DELETE") {
+    const existed = SUBSCRIPTIONS.some((x) => x.id === subscriptionMatch[1]);
+    if (!existed) return json(res, { message: "Subscription could not be found!" }, 404);
+    SUBSCRIPTIONS = SUBSCRIPTIONS.filter((x) => x.id !== subscriptionMatch[1]);
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
+  if (p === "/v1/questions" && req.method === "POST") {
+    return readBody(req, (body) => {
+      const question = {
+        id: "q-" + (1000 + QUESTIONS.length + 1),
+        productId: String(body?.productId ?? ""),
+        text: String(body?.text ?? "").trim(),
+        askedBy: "You",
+        createdDate: new Date().toISOString(),
+        answer: null,
+        answeredBy: null,
+        answeredAt: null,
+      };
+      QUESTIONS.unshift(question);
+      return json(res, question, 201);
+    });
+  }
+
+  const questionMatch = p.match(/^\/v1\/questions\/([^/]+)\/answer$/);
+  if (questionMatch && req.method === "PUT") {
+    return readBody(req, (body) => {
+      const question = QUESTIONS.find((item) => item.id === questionMatch[1]);
+      if (!question) return json(res, { message: "Question could not be found!" }, 404);
+      question.answer = String(body?.answer ?? "").trim();
+      question.answeredBy = "Cartly Staff";
+      question.answeredAt = new Date().toISOString();
+      return json(res, question);
+    });
+  }
+
+  const questionDeleteMatch = p.match(/^\/v1\/questions\/([^/]+)$/);
+  if (questionDeleteMatch && req.method === "DELETE") {
+    const idx = QUESTIONS.findIndex((item) => item.id === questionDeleteMatch[1]);
+    if (idx === -1) return json(res, { message: "Question could not be found!" }, 404);
+    QUESTIONS.splice(idx, 1);
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
+  if (p === "/v1/questions" && req.method === "GET") {
+    const productId = q.get("productId");
+    const list = QUESTIONS.filter((item) => !productId || item.productId === productId);
+    return json(res, { content: list, totalElements: list.length });
+  }
+
+  if (p === "/v1/questions/all") {
+    return json(res, { content: QUESTIONS, totalElements: QUESTIONS.length });
+  }
+
+  if (p === "/v1/products/bulk/category" && req.method === "PUT") {
+    return readBody(req, (body) => {
+      const category = CATEGORIES.find((c) => c.id === Number(body?.categoryId));
+      if (!category) return json(res, { message: "Category could not be found!" }, 404);
+      let updated = 0;
+      PRODUCTS.forEach((prod) => {
+        if ((body.ids ?? []).includes(prod.id)) {
+          prod.categoryName = category.name;
+          updated += 1;
+        }
+      });
+      return json(res, { updated });
+    });
+  }
+
+  if (p === "/v1/products/bulk/price" && req.method === "PUT") {
+    return readBody(req, (body) => {
+      let updated = 0;
+      PRODUCTS.forEach((prod) => {
+        if ((body.ids ?? []).includes(prod.id)) {
+          prod.unitPrice = Math.max(1, Math.round(prod.unitPrice * (1 + Number(body?.percent ?? 0) / 100) * 100) / 100);
+          updated += 1;
+        }
+      });
+      return json(res, { updated });
+    });
+  }
+
+  if (p === "/v1/products/bulk" && req.method === "DELETE") {
+    return readBody(req, (body) => {
+      const ids = new Set(body.ids ?? []);
+      let deleted = 0;
+      for (let i = PRODUCTS.length - 1; i >= 0; i--) {
+        if (ids.has(PRODUCTS[i].id)) {
+          PRODUCTS.splice(i, 1);
+          deleted += 1;
+        }
+      }
+      return json(res, { deleted });
+    });
+  }
 
   if (p === "/v1/products") {
     const term = (q.get("searchTerm") ?? "").toLowerCase();
@@ -301,6 +1040,7 @@ createServer((req, res) => {
           createdDate: new Date().toISOString(),
           text: body.text,
           rating: body.rating ?? undefined,
+          verifiedPurchase: true,
         };
         COMMENTS.unshift(comment);
         json(res, comment, 201);
@@ -323,7 +1063,33 @@ createServer((req, res) => {
     return json(res, COMMENTS.filter((c) => c.productId === productId));
   }
   if (/^\/v1\/products\/[^/]+\/related$/.test(p)) return json(res, PRODUCTS.slice(4, 8));
-  if (/^\/v1\/products\/[^/]+\/watch$/.test(p)) return json(res, { watching: false });
+  const priceWatchMatch = p.match(/^\/v1\/products\/([^/]+)\/watch$/);
+  if (priceWatchMatch) {
+    const productId = priceWatchMatch[1];
+    if (req.method === "POST") {
+      return readBody(req, (body) => {
+        const email = String(body?.email ?? "").trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          return json(res, { message: "A valid email is required" }, 400);
+        }
+        PRICE_WATCHES = PRICE_WATCHES.filter((w) => !(w.productId === productId && w.email === email));
+        PRICE_WATCHES.push({ productId, email, locale: body.locale ?? "en", active: true });
+        res.writeHead(201);
+        res.end();
+        return;
+      });
+    }
+    if (req.method === "DELETE") {
+      const email = (q.get("email") ?? "").trim().toLowerCase();
+      PRICE_WATCHES = PRICE_WATCHES.filter((w) => !(w.productId === productId && w.email === email));
+      res.writeHead(204);
+      res.end();
+      return;
+    }
+    const email = (q.get("email") ?? "").trim().toLowerCase();
+    const watching = Boolean(email) && PRICE_WATCHES.some((w) => w.productId === productId && w.email === email && w.active);
+    return json(res, { watching });
+  }
   if (/^\/v1\/products\/[^/]+$/.test(p)) {
     const found = PRODUCTS.find((x) => x.id === p.split("/").pop());
     return found ? json(res, found) : json(res, { message: "not found" }, 404);
@@ -446,6 +1212,20 @@ createServer((req, res) => {
   if (p === "/v1/orders/my") return json(res, ORDERS);
   if (p === "/v1/orders")
     return json(res, { data: ORDERS, totalSize: ORDERS.length, totalPage: 1 });
+  if (/^\/v1\/orders\/[^/]+\/shipment$/.test(p) && req.method === "PUT") {
+    return readBody(req, (body) => {
+      const oid = p.split("/")[3];
+      const found = ORDERS.find((o) => o.id === oid);
+      if (!found) return json(res, { message: "not found" }, 404);
+      if (!body.awb || !String(body.awb).trim()) {
+        return json(res, { message: "AWB / tracking number is required" }, 400);
+      }
+      found.awb = String(body.awb).trim();
+      if (body.carrierName) found.carrierName = String(body.carrierName).trim();
+      found.orderStatus = "SHIPPED";
+      json(res, found);
+    });
+  }
   if (/^\/v1\/orders\/[^/]+\/status$/.test(p) && req.method === "PUT") {
     const oid = p.split("/")[3];
     const status = q.get("status");
@@ -459,10 +1239,27 @@ createServer((req, res) => {
   if (/^\/v1\/orders\/[^/]+\/track$/.test(p) && req.method === "GET") {
     const oid = p.split("/")[3];
     const found = ORDERS.find((o) => o.id === oid);
-    return json(res, [
-      { id: "trk-1", orderId: oid, status: "PENDING", note: "Order placed", changedAt: found?.createdDate ?? new Date().toISOString() },
-      ...(found?.orderStatus !== "PENDING" ? [{ id: "trk-2", orderId: oid, status: found?.orderStatus ?? "PAID", note: `Order ${found?.orderStatus?.toLowerCase()}`, changedAt: new Date().toISOString() }] : []),
-    ]);
+    const LIFECYCLE = [
+      ["PENDING", "Order placed"],
+      ["PAID", "Payment captured"],
+      ["APPROVED", "Confirmed for fulfillment"],
+      ["SHIPPED", found?.awb ? `Shipped via ${found.carrierName} · AWB ${found.awb}` : "Shipped"],
+      ["OUT_FOR_DELIVERY", "Arriving today"],
+      ["DELIVERED", "Delivered"],
+    ];
+    const reached = found ? LIFECYCLE.findIndex(([s]) => s === found.orderStatus) : 0;
+    const step = Math.max(reached, 0);
+    const history = LIFECYCLE.slice(0, step + 1).map(([status, note], i) => ({
+      id: `trk-${i + 1}`,
+      orderId: oid,
+      status,
+      note,
+      changedAt: new Date(
+        (found?.createdDate ? new Date(found.createdDate).getTime() : Date.now())
+        + i * 20 * 3600 * 1000
+      ).toISOString(),
+    }));
+    return json(res, history);
   }
   if (/^\/v1\/orders\/[^/]+\/invoice$/.test(p))
     return json(res, { message: "mock: invoices are not generated in the preview" }, 501);
@@ -500,35 +1297,36 @@ createServer((req, res) => {
   if (p.startsWith("/user/referral/validate/"))
     return json(res, p.split("/").pop() === "CARTLY7X4K2");
 
-  if (p === "/v1/addresses")
-    return json(res, [
-      {
-        id: "addr-1",
-        state: "Telangana",
-        district: "Hyderabad",
-        addressDetail: "12 Rose Lane, Uppal",
-        defaultAddress: true,
-      },
-      {
-        id: "addr-2",
-        state: "Karnataka",
-        district: "Bengaluru Urban",
-        addressDetail: "8 Curie Road, Indiranagar",
-        defaultAddress: false,
-      },
-    ]);
-  if (p === "/v1/addresses/default")
-    return json(res, {
-      id: "addr-1",
-      state: "Telangana",
-      district: "Hyderabad",
-      addressDetail: "12 Rose Lane, Uppal",
-      defaultAddress: true,
+  if (p === "/v1/addresses" && req.method === "POST") {
+    return readBody(req, (body) => {
+      const created = {
+        id: `addr-${Date.now()}`,
+        state: body.state ?? "",
+        district: body.district ?? "",
+        addressDetail: body.addressDetail ?? "",
+        country: body.country ?? "IN",
+        pincode: body.pincode ?? "",
+        phoneNumber: body.phoneNumber ?? "",
+        defaultAddress: Boolean(body.defaultAddress),
+      };
+      if (created.defaultAddress) {
+        ADDRESSES.forEach((a) => (a.defaultAddress = false));
+      }
+      ADDRESSES.unshift(created);
+      json(res, created, 201);
     });
+  }
+  if (p === "/v1/addresses")
+    return json(res, ADDRESSES);
+
+  if (p === "/v1/addresses/default")
+    return json(res, ADDRESSES.find((a) => a.defaultAddress) ?? ADDRESSES[0]);
 
   if (p === "/v1/coupons") return json(res, []);
 
   return json(res, { message: `mock: no handler for ${req.method} ${p}` }, 404);
-}).listen(PORT, "0.0.0.0", () =>
-  console.log(`mock gateway listening on http://0.0.0.0:${PORT}`)
+}).listen(PORT, () =>
+  // No explicit host: Node binds the dual-stack "::" wildcard, so both
+  // 127.0.0.1 and ::1 resolve (Windows proxies localhost → ::1 first).
+  console.log(`mock gateway listening on http://localhost:${PORT} (dual-stack)`)
 );

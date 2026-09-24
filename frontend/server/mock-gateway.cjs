@@ -14,17 +14,24 @@ const product = (id, name) => ({
   quantityInStock: 5,
   avgRating: 4.5,
   ratingCount: 12,
-  imageUrl: "/logo192.png",
-  images: ["/logo192.png"],
+  imageUrl: "/images/store/tile-home.jpg",
+  images: ["/images/store/tile-home.jpg"],
   variants: [],
 });
+
+const IMAGES = {
+  p1: "/images/store/tile-home.jpg",
+  p2: "/images/store/tile-home.jpg",
+  p3: "/images/store/tile-kitchen.jpg",
+  p4: "/images/store/tile-home.jpg",
+};
 
 const list = [
   product("p1", "Terra Ceramic Vase"),
   product("p2", "Linen Throw Blanket"),
   product("p3", "Oak Serving Board"),
   product("p4", "Brass Table Lamp"),
-];
+].map((p) => ({ ...p, imageUrl: IMAGES[p.id], images: [IMAGES[p.id]] }));
 
 const facets = {
   categories: [{ name: "Home", count: 4 }],

@@ -10,4 +10,6 @@ import javax.validation.constraints.NotBlank;
 public class WatchRequest {
     @NotBlank
     private String email;
+
+    private String locale;
 }

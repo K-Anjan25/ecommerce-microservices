@@ -18,6 +18,9 @@ import ProductViewPlaceholder from "../../components/ProductViewPlaceholder";
 import EmptyState from "../../components/EmptyState";
 import { useStoreSettings } from "../../features/storefront";
 import { useI18n } from "../../features/i18n";
+import { getRecentlyViewed, ViewedProductSnapshot } from "../../utils/recentlyViewed";
+import { localizedName } from "../../utils/localizedEntity";
+import { formatPrice } from "../../utils/currency";
 import usePageMetadata from "../../hooks/usePageMetadata";
 
 const SORTS = [
@@ -27,61 +30,52 @@ const SORTS = [
   { value: "PRICE_DESC", label: "Price: high → low" },
 ];
 
-/** Concept B category tile details */
+/** Concept B category tiles — names match real store categories so filters work. */
 const CONCEPT_B_CATEGORIES = [
   {
     name: "Electronics",
     subtitle: "MacBook",
-    image: "/images/editorial/category-electronics.jpg",
-    filterKey: "electronics",
+    image: "/images/store/tiles/tile-electronics.png",
   },
   {
     name: "Fashion",
     subtitle: "Apparel",
-    image: "/images/editorial/category-fashion.jpg",
-    filterKey: "fashion",
+    image: "/images/store/tiles/tile-fashion.png",
   },
   {
     name: "Home",
     subtitle: "Decor",
-    image: "/images/editorial/category-home.jpg",
-    filterKey: "home",
+    image: "/images/store/tiles/tile-home.png",
   },
   {
     name: "Electronics",
-    subtitle: "Audio",
-    image: "/images/editorial/category-sports.jpg",
-    filterKey: "electronics",
+    subtitle: "MacBook",
+    image: "/images/store/tiles/tile-electronics.png",
   },
   {
     name: "Beauty",
     subtitle: "Skincare",
-    image: "/images/editorial/category-beauty.jpg",
-    filterKey: "beauty",
+    image: "/images/store/tiles/tile-beauty.png",
   },
   {
     name: "Kitchen",
     subtitle: "Appliances",
-    image: "/images/editorial/hero.jpg",
-    filterKey: "home",
+    image: "/images/store/tiles/tile-kitchen.png",
   },
   {
     name: "Toys & Games",
     subtitle: "Lego",
-    image: "/images/editorial/category-sports.jpg",
-    filterKey: "sports",
+    image: "/images/store/tiles/tile-toys.png",
   },
   {
     name: "Sports",
     subtitle: "Gear",
-    image: "/images/editorial/category-sports.jpg",
-    filterKey: "sports",
+    image: "/images/store/tiles/tile-sports.png",
   },
   {
     name: "Grocery",
     subtitle: "Fresh produce",
-    image: "/images/editorial/category-grocery.jpg",
-    filterKey: "grocery",
+    image: "/images/store/tiles/tile-grocery.png",
   },
 ];
 
@@ -89,11 +83,24 @@ function Products() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const { ref, inView } = useInView();
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  const [sortBy, setSortBy] = useState("DATE_DESC");
+  const [sortBy, setSortByState] = useState(() => {
+    const sp =
+      typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("sort")
+        : null;
+    return SORTS.some((s) => s.value === sp) ? (sp as string) : "DATE_DESC";
+  });
+  const setSortBy = (value: string) => {
+    setSortByState(value);
+    const next = new URLSearchParams(searchParams);
+    if (value === "DATE_DESC") next.delete("sort");
+    else next.set("sort", value);
+    setSearchParams(next, { replace: true });
+  };
   const [filter, setFilter] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
 
@@ -144,6 +151,11 @@ function Products() {
     const q = searchParams.get("q");
     const categoryParam = searchParams.get("category");
 
+    const nextSort = searchParams.get("sort");
+    if (nextSort && SORTS.some((s) => s.value === nextSort)) {
+      setSortByState(nextSort);
+    }
+
     const nextSearch = q && q.trim() ? q : state?.search;
     if (typeof nextSearch === "string" && nextSearch.trim()) {
       setSearchTerm(nextSearch.trim());
@@ -179,10 +191,10 @@ function Products() {
   const { settings: storeSettings } = useStoreSettings();
   const homeMetadata = useMemo(
     () => ({
-      title: "Cartly — One modern multi-category marketplace",
-      description: "High quality products across electronics, fashion, home, and more.",
+      title: t("home.metaTitle"),
+      description: t("home.metaDescription"),
       canonicalPath: "/",
-      image: "/images/editorial/category-electronics.jpg",
+      image: "/images/store/tiles/hero-cluster.png",
       jsonLd: {
         "@context": "https://schema.org",
         "@type": "WebSite",
@@ -191,11 +203,13 @@ function Products() {
         description: "One modern multi-category marketplace",
       },
     }),
-    []
+    [, language ]
   );
   usePageMetadata(homeMetadata);
 
   const { data: bestsellers } = useQuery("bestsellers", ProductApi.getBestsellers);
+  // Read once per mount — the strip is a snapshot of browsing history.
+  const [recentlyViewed] = useState<ViewedProductSnapshot[]>(() => getRecentlyViewed().slice(0, 6));
 
   const activeFilters = [
     filter && { key: "category", label: filter, clear: () => applyCategory("") },
@@ -243,7 +257,7 @@ function Products() {
   const FacetPanel = (
     <div className="space-y-6">
       <section>
-        <p className="eyebrow mb-2">Sort by</p>
+        <p className="eyebrow mb-2">{t("filters.sortBy")}</p>
         <FormControl fullWidth size="small" variant="outlined">
           <Select
             value={sortBy}
@@ -262,7 +276,7 @@ function Products() {
       </section>
 
       <section>
-        <p className="eyebrow mb-3">Category</p>
+        <p className="eyebrow mb-3">{t("filters.category")}</p>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => applyCategory("")}
@@ -276,14 +290,14 @@ function Products() {
               onClick={() => applyCategory(c.name)}
               className={`chip ${filter === c.name ? "chip-active" : ""}`}
             >
-              {c.name}
+              {localizedName(c, language)}
             </button>
           ))}
         </div>
       </section>
 
       <section>
-        <p className="eyebrow mb-2">Brand</p>
+        <p className="eyebrow mb-2">{t("filters.brand")}</p>
         {facets?.brands?.length ? (
           <div className="max-h-52 space-y-0.5 overflow-y-auto pr-1">
             {facets.brands.map((b) => (
@@ -307,13 +321,13 @@ function Products() {
             ))}
           </div>
         ) : (
-          <p className="text-sm text-ink-muted">No brands yet</p>
+          <p className="text-sm text-ink-muted">{t("filters.noBrands")}</p>
         )}
       </section>
 
       <section>
         <div className="mb-3 flex items-center justify-between">
-          <p className="eyebrow !mb-0">Price</p>
+          <p className="eyebrow !mb-0">{t("filters.price")}</p>
           {(minPrice || maxPrice) && (
             <button
               type="button"
@@ -348,7 +362,7 @@ function Products() {
       </section>
 
       <section>
-        <p className="eyebrow mb-2">Rating</p>
+        <p className="eyebrow mb-2">{t("filters.rating")}</p>
         <div className="space-y-1">
           {["", "3", "4"].map((r) => (
             <button
@@ -373,131 +387,93 @@ function Products() {
   );
 
   return (
-    <div className="space-y-8 pb-10">
-      {/* ═══ CONCEPT B HERO & SHOWCASE GRID ════════════════════════════════ */}
+    <div className="space-y-10 pb-12">
+      <div className="space-y-5">
+      {/* ═══ CONCEPT B HERO & SHOWCASE GRID ════════════════════════════════
+          Row 1: hero (2 cols) + three feature tiles — one equal-height band.
+          Row 2: six category tiles. Product art bleeds off the card edges
+          (no inset frames), like the concept's embedded collage look. */}
       <section className="page-shell">
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
-          {/* Main Hero Card (span 2 cols) */}
-          <div className="relative flex flex-col justify-between overflow-hidden rounded-2xl bg-paper p-6 sm:p-8 shadow-sm border border-line lg:col-span-2">
-            <div>
-              <h1 className="font-heading text-3xl sm:text-5xl font-black tracking-tight text-ink leading-tight">
-                EXPLORE. SHOP.
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Main hero card (spans 2) — oversized headline, art to the right edge */}
+          <div className="group flex h-44 overflow-hidden rounded-2xl border border-line bg-paper p-5 shadow-sm transition hover:shadow-md sm:col-span-2 sm:h-[10.75rem]">
+            <div className="pointer-events-none relative hidden min-h-0 flex-1 self-stretch sm:block">
+              <img
+                src="/images/store/tiles/hero-cluster.png"
+                alt=""
+                className="absolute bottom-0 right-0 h-full w-full object-contain object-bottom-right drop-shadow-[0_14px_16px_rgba(15,23,42,0.20)] transition-transform duration-300 group-hover:-translate-y-1 dark:drop-shadow-[0_0_12px_rgba(255,255,255,0.14)] dark:brightness-110"
+                loading="eager"
+              />
+            </div>
+            <div className="relative z-10 flex h-full max-w-full flex-col justify-center sm:max-w-[52%]">
+              {storeSettings.heroEyebrow && (
+                <p className="eyebrow !text-accent mb-1.5">{storeSettings.heroEyebrow}</p>
+              )}
+              <h1 className="font-heading text-[1.9rem] font-black leading-[0.95] tracking-tight text-ink sm:text-4xl xl:text-[2.6rem]">
+                {storeSettings.heroTitle || t("home.heroTitle")}
               </h1>
-              <p className="mt-3 max-w-sm text-xs sm:text-sm font-medium text-ink-soft leading-relaxed">
-                One modern multi-category marketplace for high quality geometric design &amp; everyday essentials.
+              <p className="mt-2 max-w-xs text-[13px] font-medium leading-snug text-ink-soft">
+                {storeSettings.heroDescription || t("home.heroSubtitle")}
               </p>
-              <div className="mt-6">
-                <button
-                  onClick={() => resultsRef.current?.scrollIntoView({ behavior: "smooth" })}
-                  className="rounded-full bg-brand px-6 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-brand-dark"
-                >
-                  Shop Now
-                </button>
-              </div>
-            </div>
-
-            {/* Hero product imagery mock items matching Concept B */}
-            <div className="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-line/40">
-              <img
-                src="/images/editorial/category-electronics.jpg"
-                alt="Headphones"
-                className="h-16 w-16 sm:h-20 sm:w-20 rounded-xl object-cover shadow-xs"
-              />
-              <img
-                src="/images/editorial/category-sports.jpg"
-                alt="Smart gadget"
-                className="h-16 w-16 sm:h-20 sm:w-20 rounded-xl object-cover shadow-xs"
-              />
-              <img
-                src="/images/editorial/hero.jpg"
-                alt="Blender"
-                className="h-16 w-16 sm:h-20 sm:w-20 rounded-xl object-cover shadow-xs"
-              />
-            </div>
-          </div>
-
-          {/* Feature Tile 1: Electronics */}
-          <div className="relative flex flex-col justify-between overflow-hidden rounded-2xl bg-paper p-5 shadow-sm border border-line">
-            <div>
-              <h3 className="font-heading text-base font-bold text-ink">Electronics</h3>
-              <p className="text-xs text-ink-muted">MacBook</p>
-            </div>
-            <div className="my-3 flex items-center justify-center">
-              <img
-                src="/images/editorial/category-electronics.jpg"
-                alt="Electronics"
-                className="h-28 w-full object-contain"
-              />
-            </div>
-            <button
-              onClick={() => applyCategory("Electronics")}
-              className="text-xs font-bold text-ink hover:text-brand transition text-left"
-            >
-              Shop →
-            </button>
-          </div>
-
-          {/* Feature Tile 2: Fashion & Home */}
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-1">
-            <div className="relative flex flex-col justify-between overflow-hidden rounded-2xl bg-paper p-5 shadow-sm border border-line">
-              <div>
-                <h3 className="font-heading text-base font-bold text-ink">Fashion</h3>
-                <p className="text-xs text-ink-muted">Apparel</p>
-              </div>
-              <div className="my-2 flex items-center justify-center">
-                <img
-                  src="/images/editorial/category-fashion.jpg"
-                  alt="Fashion"
-                  className="h-20 w-full object-contain"
-                />
-              </div>
               <button
-                onClick={() => applyCategory("Fashion")}
-                className="text-xs font-bold text-ink hover:text-brand transition text-left"
+                onClick={() => resultsRef.current?.scrollIntoView({ behavior: "smooth" })}
+                className="mt-3 w-fit rounded-full bg-brand px-5 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-brand-dark"
               >
-                Shop →
-              </button>
-            </div>
-            <div className="relative flex flex-col justify-between overflow-hidden rounded-2xl bg-paper p-5 shadow-sm border border-line">
-              <div>
-                <h3 className="font-heading text-base font-bold text-ink">Home</h3>
-                <p className="text-xs text-ink-muted">Decor</p>
-              </div>
-              <div className="my-2 flex items-center justify-center">
-                <img
-                  src="/images/editorial/category-home.jpg"
-                  alt="Home"
-                  className="h-20 w-full object-contain"
-                />
-              </div>
-              <button
-                onClick={() => applyCategory("Home")}
-                className="text-xs font-bold text-ink hover:text-brand transition text-left"
-              >
-                Shop →
+                {storeSettings.primaryCtaLabel || t("home.heroCta")}
               </button>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* ═══ CONCEPT B CATEGORY TILES (2x4 Grid) ═══════════════════════════ */}
-      <section className="page-shell">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-          {CONCEPT_B_CATEGORIES.slice(3, 9).map((cat, index) => (
+          {/* Feature tiles: Electronics · Fashion · Home */}
+          {CONCEPT_B_CATEGORIES.slice(0, 3).map((tile) => (
             <div
-              key={`${cat.name}-${index}`}
-              className="flex flex-col justify-between rounded-2xl bg-paper p-4 border border-line shadow-sm hover:shadow-md transition"
+              key={`feature-${tile.name}`}
+              className="group flex h-44 flex-col overflow-hidden rounded-2xl border border-line bg-paper p-4 shadow-sm transition hover:shadow-md sm:h-[10.75rem]"
             >
-              <div>
-                <h4 className="font-heading text-sm font-bold text-ink">{cat.name}</h4>
-                <p className="text-[11px] text-ink-muted">{cat.subtitle}</p>
+              <div className="relative z-10">
+                <h3 className="font-heading text-lg font-bold leading-tight text-ink">{tile.name}</h3>
+                <p className="mt-0.5 text-[13px] text-ink-muted">{tile.subtitle}</p>
               </div>
-              <div className="my-3 flex h-24 items-center justify-center overflow-hidden rounded-lg bg-sunken/30">
+              {/* bounded art zone — text and image can never overlap */}
+              <div className="pointer-events-none relative -mx-4 mt-1 min-h-0 flex-1">
+                <img
+                  src={tile.image}
+                  alt=""
+                  className="absolute bottom-0 right-3 h-full w-[86%] object-contain object-bottom-right drop-shadow-[0_10px_12px_rgba(15,23,42,0.22)] transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-[1.03] dark:drop-shadow-[0_0_10px_rgba(255,255,255,0.16)] dark:brightness-110"
+                  loading="lazy"
+                />
+              </div>
+              <button
+                onClick={() => {
+                  applyCategory(tile.name);
+                  resultsRef.current?.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="relative z-10 mt-1 w-fit text-[13px] font-bold text-ink underline underline-offset-2 transition hover:text-brand"
+              >
+                {t("home.shop")}
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {/* Row 2: six category tiles — same anatomy, per the concept */}
+        <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">
+          {CONCEPT_B_CATEGORIES.slice(3, 9).map((cat) => (
+            <div
+              key={`tile-${cat.name}-${cat.subtitle}`}
+              className="group flex h-40 flex-col overflow-hidden rounded-2xl border border-line bg-paper p-4 shadow-sm transition hover:shadow-md"
+            >
+              <div className="relative z-10">
+                <h4 className="font-heading text-lg font-bold leading-tight text-ink">{cat.name}</h4>
+                <p className="mt-0.5 text-[13px] text-ink-muted">{cat.subtitle}</p>
+              </div>
+              {/* bounded art zone — text and image can never overlap */}
+              <div className="pointer-events-none relative -mx-4 mt-1 min-h-0 flex-1">
                 <img
                   src={cat.image}
-                  alt={cat.name}
-                  className="h-full w-full object-cover"
+                  alt=""
+                  className="absolute bottom-0 right-3 h-full w-[88%] object-contain object-bottom-right drop-shadow-[0_10px_12px_rgba(15,23,42,0.22)] transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-[1.03] dark:drop-shadow-[0_0_10px_rgba(255,255,255,0.16)] dark:brightness-110"
+                  loading="lazy"
                 />
               </div>
               <button
@@ -505,31 +481,63 @@ function Products() {
                   applyCategory(cat.name);
                   resultsRef.current?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="text-xs font-bold text-ink hover:text-brand transition text-left"
+                className="relative z-10 mt-1 w-fit text-[13px] font-bold text-ink underline underline-offset-2 transition hover:text-brand"
               >
-                Shop →
+                {t("home.shop")}
               </button>
             </div>
           ))}
         </div>
       </section>
+      </div>
+
+      {/* ═══ RECENTLY VIEWED (Amazon-style browsing history) ═══════════════ */}
+      {recentlyViewed.length > 0 && (
+        <section className="page-shell">
+          <h2 className="mb-4 font-heading text-xl sm:text-2xl font-black tracking-tight text-ink">
+            {t("home.recentlyViewed")}
+          </h2>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">
+            {recentlyViewed.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => navigate(`/products/${item.id}`)}
+                className="group flex flex-col items-start overflow-hidden rounded-2xl border border-line bg-paper p-3 text-left shadow-sm transition hover:shadow-md"
+              >
+                <div className="mb-2 flex h-24 w-full items-center justify-center overflow-hidden rounded-lg bg-white">
+                  {item.imageUrl ? (
+                    <img
+                      src={item.imageUrl}
+                      alt={item.name}
+                      loading="lazy"
+                      className="h-full w-full object-contain transition group-hover:scale-[1.03]"
+                    />
+                  ) : (
+                    <span className="text-xs text-ink-muted">{item.name}</span>
+                  )}
+                </div>
+                <p className="w-full truncate text-xs font-semibold text-ink">{item.name}</p>
+                <p className="text-xs font-bold text-ink-soft">{formatPrice(item.unitPrice)}</p>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ═══ TRENDING THIS WEEK (Concept B Product Grid) ═══════════════════ */}
       <section className="page-shell">
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-6 flex items-center justify-between">
           <h2 className="font-heading text-xl sm:text-2xl font-black tracking-tight text-ink">
-            Trending This Week
+            {t("home.trending")}
           </h2>
           <button
             onClick={() => resultsRef.current?.scrollIntoView({ behavior: "smooth" })}
             className="text-xs font-bold text-brand hover:underline"
-          >
-            See all →
-          </button>
+          >{t("home.seeAll")}</button>
         </div>
 
         {/* Carousel / horizontal cards or 5-col grid */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5 sm:gap-6">
           {(bestsellers && bestsellers.length > 0 ? bestsellers.slice(0, 5) : products.slice(0, 5)).map(
             (product) => (
               <Card
@@ -578,8 +586,8 @@ function Products() {
           {/* Facets desktop */}
           <aside className="hidden lg:block">
             <div className="sticky top-28 rounded-2xl border border-line bg-paper p-5 shadow-sm">
-              <div className="mb-4 flex items-center justify-between border-b border-line pb-3">
-                <h3 className="font-heading text-base font-bold text-ink">Filters</h3>
+              <div className="mb-6 flex items-center justify-between border-b border-line pb-3">
+                <h3 className="font-heading text-base font-bold text-ink">{t("filters.filters")}</h3>
                 {hasActiveSearch && (
                   <button onClick={clearAll} className="text-xs font-bold text-brand hover:underline">
                     Clear
@@ -668,8 +676,8 @@ function Products() {
         onClose={() => setFiltersOpen(false)}
         PaperProps={{ className: "!rounded-t-2xl max-h-[85vh] p-5 !bg-paper" }}
       >
-        <div className="mb-4 flex items-center justify-between border-b border-line pb-3">
-          <h3 className="font-heading text-lg font-bold">Filters</h3>
+        <div className="mb-6 flex items-center justify-between border-b border-line pb-3">
+          <h3 className="font-heading text-lg font-bold">{t("filters.filters")}</h3>
           <button onClick={() => setFiltersOpen(false)} className="icon-button">
             <CloseIcon />
           </button>

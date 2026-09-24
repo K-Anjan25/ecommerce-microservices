@@ -38,6 +38,10 @@ public class OrderDto {
     private BigDecimal loyaltyDiscountAmount;
     private String giftCardCodeLast4;
     private BigDecimal giftCardAmount;
+
+    private String awb;
+
+    private String carrierName;
     /** Returned only by order creation; never persisted in plaintext. */
     private String checkoutToken;
 }

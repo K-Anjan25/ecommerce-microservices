@@ -6,11 +6,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrderAddressMapper {
 
+    private static String normalizeCountry(String country) {
+        return (country == null || country.isBlank()) ? "IN" : country.trim().toUpperCase();
+    }
+
     public OrderAddressDto orderAddressToOrderAddressDto(OrderAddress orderAddress){
         return OrderAddressDto.builder()
                 .state(orderAddress.getState())
                 .addressDetail(orderAddress.getAddressDetail())
                 .district(orderAddress.getDistrict())
+                .country(normalizeCountry(orderAddress.getCountry()))
                 .build();
     }
 
@@ -19,6 +24,7 @@ public class OrderAddressMapper {
                 .state(createOrderAddressRequest.getState())
                 .addressDetail(createOrderAddressRequest.getAddressDetail())
                 .district(createOrderAddressRequest.getDistrict())
+                .country(normalizeCountry(createOrderAddressRequest.getCountry()))
                 .build();
     }
 }

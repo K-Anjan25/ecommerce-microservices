@@ -5,6 +5,8 @@ export interface Comment {
   text: string;
   creator: string;
   rating?: number;
+  /** Server-verified: the reviewer has an active order for this product. */
+  verifiedPurchase?: boolean;
 }
 
 export interface CreateCommentRequest {

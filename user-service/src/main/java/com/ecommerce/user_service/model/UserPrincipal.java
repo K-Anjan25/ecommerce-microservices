@@ -28,7 +28,9 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        // Phone-only accounts (phone sign-up) have no email; the phone keeps
+        // the JWT subject non-null for them.
+        return user.getEmail() != null ? user.getEmail() : user.getPhoneNumber();
     }
 
     public UUID getUserId(){

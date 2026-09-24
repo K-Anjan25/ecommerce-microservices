@@ -47,6 +47,12 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errors, BAD_REQUEST);
     }
 
+    /** Validation errors (phone formats, OTP mismatches) are client errors. */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<?> illegalArgumentHandler(IllegalArgumentException exception) {
+        return new ResponseEntity<>(Map.of("message", exception.getMessage()), BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> generalExceptionHandler(Exception exception) {
         log.error("Unhandled exception in user-service: ", exception);

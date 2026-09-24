@@ -1,6 +1,12 @@
-# Cartly Editorial — design kit
+# Cartly design kit
 
-This directory documents the **currently shipped Editorial Warmth direction** for the React platform. The canonical visual system is warm cream, espresso, rust and muted brass with image-led layouts and restrained commerce controls.
+> **Status update (2026-09-21):** the React platform in `frontend/` now ships the
+> **Concept B — Bold Market** direction (cobalt `#0052CC` actions, flash-orange
+> `#FF5722` announcement, white cards on a clean slate canvas, bold Inter Tight
+> display type, rounded-xl controls). Canonical tokens: `tokens.json` v4.0.0 →
+> `frontend/src/tokens.css`. Storefront imagery lives in
+> `frontend/public/images/store/`. The Editorial Warmth documents below are kept
+> as decision history and no longer describe the shipped UI.
 
 ## Canonical sources
 

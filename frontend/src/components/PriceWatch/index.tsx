@@ -6,6 +6,7 @@ import NotificationsActiveOutlinedIcon from "@mui/icons-material/NotificationsAc
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import { ProductApi } from "../../api/productApi";
 import { AppState } from "../../store";
+import { useI18n } from "../../features/i18n";
 import { showError } from "../../utils/showError";
 import { showSuccess } from "../../utils/showSuccess";
 
@@ -20,6 +21,7 @@ type PriceWatchProps = {
  */
 function PriceWatch({ productId }: PriceWatchProps) {
   const queryClient = useQueryClient();
+  const { language } = useI18n();
   const userEmail = useSelector((state: AppState) => state.user.data.email);
   const isLoggedIn = useSelector(
     (state: AppState) => state.user.data.isLogedIn
@@ -36,7 +38,7 @@ function PriceWatch({ productId }: PriceWatchProps) {
   );
 
   const watchMutation = useMutation(
-    () => ProductApi.watchPrice(productId, email as string),
+    () => ProductApi.watchPrice(productId, email as string, language),
     {
       onSuccess: () => {
         showSuccess("We'll email you when the price drops");

@@ -65,6 +65,7 @@ public class OrderService {
     private final RabbitMQMessageProducer rabbitMQMessageProducer;
     private final OrderItemRepository orderItemRepository;
     private final ShippingRateService shippingRateService;
+    private final ShippingZoneService shippingZoneService;
     private final TaxRuleService taxRuleService;
     private final CheckoutTokenService checkoutTokenService;
     private final ProductCatalogClient productCatalogClient;
@@ -89,6 +90,7 @@ public class OrderService {
     public OrderDto createOrder(CreateOrderRequest createOrderRequest){
 
         Order order = orderMapper.orderRequestToOrder(createOrderRequest);
+        order.setLocale(InvoiceService.normalizeLocale(createOrderRequest.getLocale()));
         order.getAddress().setOrder(order);
         order.getItems().forEach(item -> item.setOrder(order));
         applyAuthoritativePrices(order);
@@ -111,7 +113,10 @@ public class OrderService {
                 .map(item -> item.getPrice() == null ? BigDecimal.ZERO : item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        BigDecimal shipping = calculateShipping(subtotal, createOrderRequest.getShippingMethod(), createOrderRequest.getPincode());
+        String destinationCountry = order.getAddress() == null || order.getAddress().getCountry() == null
+                ? "IN" : order.getAddress().getCountry();
+        BigDecimal shipping = calculateShipping(subtotal, createOrderRequest.getShippingMethod(),
+                createOrderRequest.getPincode(), destinationCountry);
         BigDecimal discount = BigDecimal.ZERO;
 
         if (createOrderRequest.getCouponCode() != null && !createOrderRequest.getCouponCode().isBlank()) {
@@ -134,7 +139,8 @@ public class OrderService {
 
         BigDecimal taxableAmount = subtotal.add(shipping).add(giftWrapFee)
                 .subtract(discount).subtract(loyaltyDiscount).max(BigDecimal.ZERO);
-        BigDecimal tax = calculateTax(taxableAmount, createOrderRequest.getState()).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal tax = calculateTax(taxableAmount, createOrderRequest.getState(), destinationCountry)
+                .setScale(2, RoundingMode.HALF_UP);
         BigDecimal totalBeforeGiftCard = taxableAmount.add(tax).setScale(2, RoundingMode.HALF_UP);
         BigDecimal giftCardAmount = BigDecimal.ZERO;
 
@@ -243,7 +249,16 @@ public class OrderService {
         });
     }
 
-    private BigDecimal calculateShipping(BigDecimal subtotal, ShippingMethod method, String pincode) {
+    private BigDecimal calculateShipping(BigDecimal subtotal, ShippingMethod method, String pincode, String country) {
+        // International orders price off shipping zones; an unserviceable
+        // destination is rejected outright instead of silently mispricing.
+        if (country != null && !"IN".equals(country)) {
+            var zone = shippingZoneService.requireZone(country);
+            if (zone.getFreeAbove() != null && subtotal.compareTo(zone.getFreeAbove()) >= 0) {
+                return BigDecimal.ZERO;
+            }
+            return zone.getCost();
+        }
         if (pincode != null && !pincode.isBlank()) {
             var rate = shippingRateService.calculateShipping(
                     new com.ecommerce.commerce_service.dto.shippingRate.ShippingCalculationRequest(pincode, subtotal));
@@ -263,7 +278,12 @@ public class OrderService {
         return new BigDecimal("50.00");
     }
 
-    private BigDecimal calculateTax(BigDecimal taxableAmount, String state) {
+    private BigDecimal calculateTax(BigDecimal taxableAmount, String state, String country) {
+        // International: the zone's import duty/VAT rate replaces GST.
+        if (country != null && !"IN".equals(country)) {
+            var zone = shippingZoneService.requireZone(country);
+            return taxableAmount.multiply(zone.getDutyRate());
+        }
         if (state != null && !state.isBlank()) {
             return taxRuleService.getTaxRuleForState(state)
                     .map(rule -> taxableAmount.multiply(rule.getRate()).setScale(2, RoundingMode.HALF_UP))
@@ -321,7 +341,41 @@ public class OrderService {
         order.setOrderStatus(newStatus);
         Order saved = orderRepository.save(order);
         recordStatus(orderId, newStatus, note != null && !note.isBlank() ? note : "Status updated to " + newStatus);
+        sendStatusEmail(saved, newStatus);
         return orderMapper.orderToOrderDto(saved);
+    }
+
+    /**
+     * Staff records the courier shipment: stores AWB + carrier, moves the
+     * order to SHIPPED when it hasn't shipped yet, and emails the customer.
+     */
+    @Transactional
+    public OrderDto updateShipment(UUID orderId, String awb, String carrierName) {
+        Order order = orderRepository.findLockedById(orderId);
+        if (order == null) throw new OrderNotFoundException("Order not found: " + orderId);
+        order.setAwb(awb.trim());
+        if (carrierName != null && !carrierName.isBlank()) {
+            order.setCarrierName(carrierName.trim());
+        }
+        boolean newlyShipped = order.getOrderStatus() == OrderStatus.PENDING
+                || order.getOrderStatus() == OrderStatus.PAID
+                || order.getOrderStatus() == OrderStatus.APPROVED;
+        if (newlyShipped) {
+            order.setOrderStatus(OrderStatus.SHIPPED);
+        }
+        Order saved = orderRepository.save(order);
+        recordStatus(orderId, saved.getOrderStatus(),
+                "Shipped via " + saved.getCarrierName() + " · AWB " + saved.getAwb());
+        if (newlyShipped) {
+            sendStatusEmail(saved, OrderStatus.SHIPPED);
+        }
+        return orderMapper.orderToOrderDto(saved);
+    }
+
+    /** Verified-purchase check for product-service review badges. */
+    @Transactional(readOnly = true)
+    public boolean isVerifiedPurchase(UUID customerId, UUID productId) {
+        return orderRepository.existsActivePurchase(customerId, productId);
     }
 
     public void applyPaymentStatus(UUID orderId, String paymentStatus) {
@@ -468,6 +522,61 @@ public class OrderService {
                         "CARTLY - Order placed #" + order.getId()),
                 notificationExchange,
                 sendEmailRoutingKey);
+    }
+
+    /** Order milestone emails: shipped / out for delivery / delivered / cancelled / refunded. */
+    private void sendStatusEmail(Order order, OrderStatus status) {
+        if (order.getCustomerEmail() == null || order.getCustomerEmail().isBlank()) {
+            return;
+        }
+        String subject;
+        String body;
+        switch (status) {
+            case SHIPPED:
+                subject = "CARTLY - Order shipped #" + order.getId();
+                body = buildShippedText(order);
+                break;
+            case OUT_FOR_DELIVERY:
+                subject = "CARTLY - Out for delivery #" + order.getId();
+                body = "Good news — your order " + order.getId()
+                        + " is out for delivery and will arrive today.";
+                break;
+            case DELIVERED:
+                subject = "CARTLY - Delivered #" + order.getId();
+                body = "Your order " + order.getId()
+                        + " has been delivered. We hope you love it! Leave a review to help other shoppers.";
+                break;
+            case CANCELLED:
+                subject = "CARTLY - Order cancelled #" + order.getId();
+                body = "Your order " + order.getId()
+                        + " has been cancelled. Any held amount is released per the payment method's timeline.";
+                break;
+            case REFUNDED:
+                subject = "CARTLY - Refund processed #" + order.getId();
+                body = "A refund for order " + order.getId()
+                        + " has been processed to your original payment method.";
+                break;
+            default:
+                return;
+        }
+        rabbitMQMessageProducer.publish(
+                new com.ecommerce.event_bus.dto.EmailRequest(body, order.getCustomerEmail(), subject),
+                notificationExchange,
+                sendEmailRoutingKey);
+    }
+
+    private String buildShippedText(Order order) {
+        StringBuilder sb = new StringBuilder("Your order is on its way!\n\nOrder id: ")
+                .append(order.getId())
+                .append("\n");
+        if (order.getCarrierName() != null) {
+            sb.append("Courier: ").append(order.getCarrierName()).append("\n");
+        }
+        if (order.getAwb() != null) {
+            sb.append("Tracking number (AWB): ").append(order.getAwb()).append("\n");
+        }
+        sb.append("\nTrack it any time from your orders page.\n");
+        return sb.toString();
     }
 
     private String buildOrderPlacedText(Order order, String guestTrackingToken) {
