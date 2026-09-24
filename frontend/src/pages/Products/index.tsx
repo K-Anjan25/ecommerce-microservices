@@ -18,7 +18,6 @@ import ProductViewPlaceholder from "../../components/ProductViewPlaceholder";
 import EmptyState from "../../components/EmptyState";
 import { useStoreSettings } from "../../features/storefront";
 import { useI18n } from "../../features/i18n";
-import CategoryArt, { ArtVariant } from "../../components/CategoryArt";
 import { getRecentlyViewed, ViewedProductSnapshot } from "../../utils/recentlyViewed";
 import { localizedName } from "../../utils/localizedEntity";
 import { formatPrice } from "../../utils/currency";
@@ -36,47 +35,47 @@ const CONCEPT_B_CATEGORIES = [
   {
     name: "Electronics",
     subtitle: "MacBook",
-    art: "electronics" as ArtVariant,
+    image: "/images/store/tiles/tile-electronics.png",
   },
   {
     name: "Fashion",
     subtitle: "Apparel",
-    art: "fashion" as ArtVariant,
+    image: "/images/store/tiles/tile-fashion.png",
   },
   {
     name: "Home",
     subtitle: "Decor",
-    art: "home" as ArtVariant,
+    image: "/images/store/tiles/tile-home.png",
   },
   {
     name: "Electronics",
     subtitle: "MacBook",
-    art: "electronics" as ArtVariant,
+    image: "/images/store/tiles/tile-electronics.png",
   },
   {
     name: "Beauty",
     subtitle: "Skincare",
-    art: "beauty" as ArtVariant,
+    image: "/images/store/tiles/tile-beauty.png",
   },
   {
     name: "Kitchen",
     subtitle: "Appliances",
-    art: "kitchen" as ArtVariant,
+    image: "/images/store/tiles/tile-kitchen.png",
   },
   {
     name: "Toys & Games",
     subtitle: "Lego",
-    art: "toys" as ArtVariant,
+    image: "/images/store/tiles/tile-toys.png",
   },
   {
     name: "Sports",
     subtitle: "Gear",
-    art: "sports" as ArtVariant,
+    image: "/images/store/tiles/tile-sports.png",
   },
   {
     name: "Grocery",
     subtitle: "Fresh produce",
-    art: "grocery" as ArtVariant,
+    image: "/images/store/tiles/tile-grocery.png",
   },
 ];
 
@@ -398,9 +397,11 @@ function Products() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {/* Main hero card (spans 2) — oversized headline, art to the right edge */}
           <div className="relative h-44 overflow-hidden rounded-2xl border border-line bg-paper p-5 shadow-sm sm:col-span-2 sm:h-[10.75rem]">
-            <CategoryArt
-              variant="hero"
-              className="pointer-events-none absolute bottom-1 right-2 hidden h-[92%] w-[46%] text-ink sm:block"
+            <img
+              src="/images/store/tiles/hero-cluster.png"
+              alt=""
+              className="pointer-events-none absolute bottom-1 right-2 hidden h-[88%] w-[44%] object-contain object-bottom-right sm:block"
+              loading="eager"
             />
             <div className="relative flex h-full max-w-[60%] flex-col justify-center">
               {storeSettings.heroEyebrow && (
@@ -427,9 +428,11 @@ function Products() {
               key={`feature-${tile.name}`}
               className="relative h-44 overflow-hidden rounded-2xl border border-line bg-paper p-4 shadow-sm transition hover:shadow-md sm:h-[10.75rem]"
             >
-              <CategoryArt
-                variant={tile.art}
-                className="pointer-events-none absolute bottom-0 right-0 h-[72%] w-[72%] text-ink"
+              <img
+                src={tile.image}
+                alt=""
+                className="pointer-events-none absolute bottom-0 right-0 h-[70%] w-[72%] object-contain object-bottom-right"
+                loading="lazy"
               />
               <div className="relative">
                 <h3 className="font-heading text-lg font-bold leading-tight text-ink">{tile.name}</h3>
@@ -455,9 +458,11 @@ function Products() {
               key={`tile-${cat.name}-${cat.subtitle}`}
               className="relative h-40 overflow-hidden rounded-2xl border border-line bg-paper p-4 shadow-sm transition hover:shadow-md"
             >
-              <CategoryArt
-                variant={cat.art}
-                className="pointer-events-none absolute bottom-0 right-0 h-[68%] w-[80%] text-ink"
+              <img
+                src={cat.image}
+                alt=""
+                className="pointer-events-none absolute bottom-0 right-0 h-[66%] w-[78%] object-contain object-bottom-right"
+                loading="lazy"
               />
               <div className="relative">
                 <h4 className="font-heading text-lg font-bold leading-tight text-ink">{cat.name}</h4>
