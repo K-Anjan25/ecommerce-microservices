@@ -116,7 +116,7 @@ public class EmailMfaService {
     /** Enable/disable MFA for the signed-in account. */
     @Transactional
     public boolean setMfaEnabled(UUID userId, boolean enabled) {
-        User user = userRepository.findUserByUserId(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
         user.setMfaEnabled(enabled);
         userRepository.save(user);
