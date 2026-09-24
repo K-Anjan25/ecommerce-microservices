@@ -397,12 +397,14 @@ function Products() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {/* Main hero card (spans 2) — oversized headline, art to the right edge */}
           <div className="relative h-44 overflow-hidden rounded-2xl border border-line bg-paper p-5 shadow-sm sm:col-span-2 sm:h-[10.75rem]">
-            <img
-              src="/images/store/hero-gadgets.jpg"
-              alt="Headphones, smart speaker and blender"
-              className="pointer-events-none absolute bottom-0 right-0 hidden h-[96%] w-[46%] object-contain object-right-bottom mix-blend-multiply sm:block"
-              loading="eager"
-            />
+            <div className="pointer-events-none absolute bottom-0 right-0 hidden h-[96%] w-[46%] overflow-hidden rounded-xl bg-white ring-1 ring-black/5 sm:block">
+              <img
+                src="/images/store/tiles/hero-cluster.png"
+                alt="Headphones, smart speaker and blender"
+                className="h-full w-full object-contain object-right-bottom"
+                loading="eager"
+              />
+            </div>
             <div className="relative flex h-full max-w-[60%] flex-col justify-center">
               {storeSettings.heroEyebrow && (
                 <p className="eyebrow !text-accent mb-1.5">{storeSettings.heroEyebrow}</p>
@@ -428,12 +430,14 @@ function Products() {
               key={`feature-${tile.name}`}
               className="relative h-44 overflow-hidden rounded-2xl border border-line bg-paper p-4 shadow-sm transition hover:shadow-md sm:h-[10.75rem]"
             >
-              <img
-                src={tile.image}
-                alt={tile.name}
-                loading="lazy"
-                className="pointer-events-none absolute bottom-0 right-0 h-[68%] w-[70%] object-contain object-right-bottom mix-blend-multiply"
-              />
+              <div className="pointer-events-none absolute bottom-0 right-0 h-[68%] w-[70%] overflow-hidden rounded-xl bg-white ring-1 ring-black/5">
+                <img
+                  src={tile.image}
+                  alt={tile.name}
+                  loading="lazy"
+                  className="h-full w-full object-contain object-right-bottom"
+                />
+              </div>
               <div className="relative">
                 <h3 className="font-heading text-lg font-bold leading-tight text-ink">{tile.name}</h3>
                 <p className="mt-0.5 text-[13px] text-ink-muted">{tile.subtitle}</p>
@@ -458,12 +462,14 @@ function Products() {
               key={`tile-${cat.name}-${cat.subtitle}`}
               className="relative h-40 overflow-hidden rounded-2xl border border-line bg-paper p-4 shadow-sm transition hover:shadow-md"
             >
-              <img
-                src={cat.image}
-                alt={cat.name}
-                loading="lazy"
-                className="pointer-events-none absolute bottom-0 right-0 h-[64%] w-[78%] object-contain object-right-bottom mix-blend-multiply"
-              />
+              <div className="pointer-events-none absolute bottom-0 right-0 h-[64%] w-[78%] overflow-hidden rounded-xl bg-white ring-1 ring-black/5">
+                <img
+                  src={cat.image}
+                  alt={cat.name}
+                  loading="lazy"
+                  className="h-full w-full object-contain object-right-bottom"
+                />
+              </div>
               <div className="relative">
                 <h4 className="font-heading text-lg font-bold leading-tight text-ink">{cat.name}</h4>
                 <p className="mt-0.5 text-[13px] text-ink-muted">{cat.subtitle}</p>
