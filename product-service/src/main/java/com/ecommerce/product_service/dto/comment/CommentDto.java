@@ -3,6 +3,7 @@ package com.ecommerce.product_service.dto.comment;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Builder

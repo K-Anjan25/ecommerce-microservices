@@ -23,4 +23,6 @@ public class FlashSaleDto {
     private LocalDateTime startsAt;
     private LocalDateTime endsAt;
     private boolean active;
+    /** True while only Cartly Plus members can see/buy it (24h early access). */
+    private boolean earlyAccess;
 }

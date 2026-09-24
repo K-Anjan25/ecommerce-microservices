@@ -20,6 +20,8 @@ public class ProductSummaryDto {
     private CategorySummaryDto category;
     private Boolean subscribeEligible;
     private String imageUrl;
+    /** Cartly Plus member-only deal percent (server-side pricing). */
+    private BigDecimal memberDealPercent;
 
     @Data
     @NoArgsConstructor

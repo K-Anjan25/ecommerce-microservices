@@ -70,4 +70,12 @@ public class Product extends AdvanceBaseModal{
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private List<Comment> comments;
+
+    /** Grouped specification tables as JSON: [{"group","items":[{"label","value"}]}]. */
+    @Column(name = "specifications", columnDefinition = "TEXT")
+    private String specifications;
+
+    /** Cartly Plus member-only deal (percent off list); priced server-side. */
+    @Column(name = "member_deal_percent", precision = 5, scale = 2)
+    private java.math.BigDecimal memberDealPercent;
 }

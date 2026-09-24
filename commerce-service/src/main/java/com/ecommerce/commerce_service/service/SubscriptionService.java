@@ -63,9 +63,13 @@ public class SubscriptionService {
     /** Amazon-style tiers. */
     public static final BigDecimal BASE_DISCOUNT_PERCENT = new BigDecimal("5");
     public static final BigDecimal TIER_DISCOUNT_PERCENT = new BigDecimal("15");
+    /** Cartly Plus members keep the same cadence but earn boosted S&S rates. */
+    public static final BigDecimal PLUS_BASE_DISCOUNT_PERCENT = new BigDecimal("10");
+    public static final BigDecimal PLUS_TIER_DISCOUNT_PERCENT = new BigDecimal("20");
     public static final int TIER_MIN_DELIVERIES = 5;
 
     private final SubscriptionRepository subscriptionRepository;
+    private final com.ecommerce.commerce_service.membership.MembershipService membershipService;
     private final OrderRepository orderRepository;
     private final OrderService orderService;
     private final PaymentService paymentService;
@@ -137,7 +141,8 @@ public class SubscriptionService {
                 .nextRunAt(LocalDateTime.now().plusDays(request.getIntervalDays()))
                 .active(true)
                 .status(SubscriptionStatus.ACTIVE)
-                .discountPercent(BASE_DISCOUNT_PERCENT)
+                .discountPercent(membershipService.isPlusActive(customerId)
+                        ? PLUS_BASE_DISCOUNT_PERCENT : BASE_DISCOUNT_PERCENT)
                 .skipNext(false)
                 .oosPolicy(SubscriptionOosPolicy.SKIP)
                 .build();
@@ -471,13 +476,19 @@ public class SubscriptionService {
 
     // ── Pricing ─────────────────────────────────────────────────────────────
 
-    /** 5% base; 15% when 5+ deliveries batch in the same calendar month. */
+    /**
+     * 5% base; 15% when 5+ deliveries batch in the same calendar month.
+     * Cartly Plus members earn the boosted rates: 10% base / 20% tier.
+     */
     private BigDecimal discountForRun(Subscription subscription) {
         LocalDateTime monthStart = subscription.getNextRunAt().withDayOfMonth(1).toLocalDate().atStartOfDay();
         LocalDateTime monthEnd = monthStart.plusMonths(1);
         long batched = subscriptionRepository.countByStatusAndNextRunAtBetween(
                 SubscriptionStatus.ACTIVE, monthStart, monthEnd);
-        return batched >= TIER_MIN_DELIVERIES ? TIER_DISCOUNT_PERCENT : BASE_DISCOUNT_PERCENT;
+        boolean plus = membershipService.isPlusActive(subscription.getCustomerId());
+        BigDecimal base = plus ? PLUS_BASE_DISCOUNT_PERCENT : BASE_DISCOUNT_PERCENT;
+        BigDecimal tier = plus ? PLUS_TIER_DISCOUNT_PERCENT : TIER_DISCOUNT_PERCENT;
+        return batched >= TIER_MIN_DELIVERIES ? tier : base;
     }
 
     private BigDecimal applyDiscount(BigDecimal listPrice, BigDecimal discountPercent) {

@@ -63,6 +63,10 @@ interface BaseProduct {
   flashSaleActive?: boolean;
   /** Subscribe & Save eligibility (auto-reorder offer on the buy box). */
   subscribeEligible?: boolean;
+  /** Grouped specification tables as JSON: [{"group","items":[{"label","value"}]}]. */
+  specifications?: string | null;
+  /** Cartly Plus member-only deal percent (priced server-side). */
+  memberDealPercent?: number | null;
 }
 
 export interface ProductAdminParam {

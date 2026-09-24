@@ -167,3 +167,10 @@ Link-rot guard — run on demand (CI-gateable, exits 1 on dead URLs):
 
     python3 tools/catalog-media/check_images.py           # report
     python3 tools/catalog-media/check_images.py --write   # stamp *_alive flags into the manifest
+
+## Cartly Plus & PDP depth
+
+- **Cartly Plus** (commerce-service `membership` package, `cartly_plus_memberships`, V8): MONTHLY ₹149 / ANNUAL ₹1,499, prices fixed server-side. Benefits are enforced server-side only — free express delivery (`OrderService.calculateShipping`), Subscribe & Save 10%/20% vs 5%/15% (`SubscriptionService.discountForRun`), member-only prices (`products.member_deal_percent`, applied in `OrderService.applyAuthoritativePrices`, never stacked on flash prices), 24h flash-sale early access (product-service `PlusMembershipGateway` → `/internal/memberships/active/{userId}`), priority support lane (`support_ticket.priority=HIGH`). Frontend: `/cartly-plus` page + navbar "Plus" chip + member-price badge on the PDP.
+- **Review photos**: `POST /v1/comments` accepts `images[]` (data URLs, max 8) → `comment_images` (product-service V7); the Reviews composer downscales client-side (~1200 px JPEG) and review cards render a thumbnail strip with a full-res lightbox.
+- **Grouped specifications**: `products.specifications` JSON (`[{"group","items":[{"label","value"}]}]`) seeded per product — computers get the deepest tables — rendered as grouped tables in the PDP Specifications tab.
+- **Subscribe & Save UI**: custom `StyledSelect` dropdowns everywhere (PDP cadence, subscription manager cadence/qty/OOS, payment provider) — no raw `<select>` menus remain. Pause/resume already flows through `PUT /v1/subscriptions/{id}`.

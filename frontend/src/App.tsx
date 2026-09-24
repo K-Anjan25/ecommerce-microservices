@@ -105,6 +105,7 @@ function App() {
   const Wishlist = React.lazy(() => import("./pages/Wishlist"));
   const GiftCards = React.lazy(() => import("./pages/GiftCards"));
   const FlashSales = React.lazy(() => import("./pages/FlashSales"));
+  const CartlyPlus = React.lazy(() => import("./pages/CartlyPlus"));
   const Referral = React.lazy(() => import("./pages/Referral"));
   const Returns = React.lazy(() => import("./pages/Returns"));
   const LoyaltyPoints = React.lazy(() => import("./pages/LoyaltyPoints"));
@@ -129,6 +130,7 @@ function App() {
             <Route path="forgetPassword" element={<ForgetPassword />} />
             <Route path="reset-password" element={<ResetPassword />} />
             <Route path="register" element={<Register />} />
+            <Route path="cartly-plus" element={<CartlyPlus />} />
             <Route path="about" element={<About />} />
             <Route path="help" element={<Help />} />
             <Route path="services" element={<Services />} />

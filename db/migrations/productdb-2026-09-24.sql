@@ -53,3 +53,16 @@ CREATE INDEX IF NOT EXISTS idx_product_images_product ON product_images (product
 
 -- V6 (thumbs): cards load thumb, gallery loads full-res.
 ALTER TABLE product_images ADD COLUMN IF NOT EXISTS thumb_url varchar(1024);
+
+-- ─── Catalog depth round (V7 parity): specs, member deals, review photos ────
+ALTER TABLE IF EXISTS products ADD COLUMN IF NOT EXISTS specifications TEXT;
+ALTER TABLE IF EXISTS products ADD COLUMN IF NOT EXISTS member_deal_percent NUMERIC(5, 2);
+CREATE TABLE IF NOT EXISTS comment_images (
+    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    comment_id   UUID         NOT NULL REFERENCES comments (id) ON DELETE CASCADE,
+    image_url    TEXT         NOT NULL,
+    alt_text     VARCHAR(255),
+    sort_order   INT          NOT NULL DEFAULT 0,
+    created_date TIMESTAMP    NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_comment_images_comment_id ON comment_images (comment_id);

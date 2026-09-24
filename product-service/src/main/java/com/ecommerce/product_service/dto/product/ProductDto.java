@@ -43,4 +43,8 @@ public class ProductDto {
     private BigDecimal flashPrice;
     private LocalDateTime flashSaleEndsAt;
     private boolean flashSaleActive;
+    /** Grouped specification tables as JSON: [{"group","items":[{"label","value"}]}]. */
+    private String specifications;
+    /** Cartly Plus member-only deal percent (server-side pricing). */
+    private BigDecimal memberDealPercent;
 }

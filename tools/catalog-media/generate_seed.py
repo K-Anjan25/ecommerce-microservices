@@ -11,6 +11,357 @@ import json, os, sys
 
 OUT = "docker/postgres/seed-catalog-data.sql"
 IMG = "/images/catalog"  # retired local-photo root (kept for reference only)
+# ── Rich grouped specifications (PDP "Specifications" tab) ───────────────────
+# JSON: [{"group": ..., "items": [{"label": ..., "value": ...}]}]. Computers get
+# the deepest tables (the user asked for much more detail there); everything
+# else 3-5 groups of attributes shoppers actually compare. Every value is
+# grounded in the product's own description above or its variant attributes —
+# never invented measurements.
+SPECS = {
+    "hp-pavilion-15": [
+        {"group": "Processor & Memory", "items": [
+            {"label": "Processor", "value": "AMD Ryzen 5 7530U (6 cores, up to 4.3 GHz, 12 threads, 16 MB L3 cache)"},
+            {"label": "Memory", "value": "16 GB DDR4-3200 MHz (2 x 8 GB, upgradeable)"},
+            {"label": "Storage", "value": "512 GB PCIe NVMe M.2 SSD (1 TB on the 16GB / 1TB variant)"},
+            {"label": "Graphics", "value": "Integrated AMD Radeon Graphics"}]},
+        {"group": "Display", "items": [
+            {"label": "Panel", "value": "39.6 cm (15.6\") diagonal, FHD (1920 x 1080), IPS, micro-edge"},
+            {"label": "Surface", "value": "Anti-glare, brightview"},
+            {"label": "Camera", "value": "HP Wide Vision 720p HD camera with integrated dual array digital microphones and privacy shutter"}]},
+        {"group": "Keyboard & audio", "items": [
+            {"label": "Keyboard", "value": "Full-size backlit keyboard with numeric keypad"},
+            {"label": "Audio", "value": "Audio by B&O, dual speakers, HP Audio Boost"}]},
+        {"group": "Connectivity & ports", "items": [
+            {"label": "Wireless", "value": "Wi-Fi 6 + Bluetooth 5.3"},
+            {"label": "Ports", "value": "1x USB Type-C (10 Gbps, DisplayPort 1.4, HP Sleep and Charge), 2x USB Type-A (5 Gbps), 1x HDMI 2.1, 1x headphone/microphone combo, 1x AC smart pin"}]},
+        {"group": "Battery & power", "items": [
+            {"label": "Battery", "value": "3-cell, 41 Wh Li-ion polymer with HP Fast Charge"}]},
+        {"group": "Software & security", "items": [
+            {"label": "Operating system", "value": "Windows 11 Home"},
+            {"label": "Office", "value": "Microsoft Office Home & Student 2021 included"}]},
+        {"group": "Physical", "items": [
+            {"label": "Weight", "value": "Approx. 1.74 kg"},
+            {"label": "In the box", "value": "Laptop, 65 W Smart AC adapter, documentation"}]},
+    ],
+    "lenovo-ideapad-slim-3": [
+        {"group": "Processor & Memory", "items": [
+            {"label": "Processor", "value": "13th Gen Intel Core i5-13420H (8 cores: 4 P-cores + 4 E-cores, 12 threads)"},
+            {"label": "Memory", "value": "16 GB LPDDR5"},
+            {"label": "Storage", "value": "512 GB PCIe NVMe SSD"},
+            {"label": "Graphics", "value": "Integrated Intel UHD Graphics"}]},
+        {"group": "Display & camera", "items": [
+            {"label": "Panel", "value": "39.6 cm (15.6\") FHD (1920 x 1080), anti-glare"},
+            {"label": "Webcam", "value": "HD 720p webcam with privacy shutter"}]},
+        {"group": "Build", "items": [
+            {"label": "Chassis", "value": "Slim 1.62 kg Arctic Grey body"},
+            {"label": "Keyboard", "value": "Full-size keyboard with numeric keypad"}]},
+        {"group": "Connectivity & ports", "items": [
+            {"label": "Wireless", "value": "Wi-Fi 6 + Bluetooth"},
+            {"label": "Ports", "value": "USB-C, USB-A, HDMI, SD card reader, headphone/mic combo"}]},
+        {"group": "Battery & power", "items": [
+            {"label": "Battery", "value": "All-day battery with rapid charge"}]},
+        {"group": "Software & in the box", "items": [
+            {"label": "Operating system", "value": "Windows 11 Home"},
+            {"label": "Office", "value": "Microsoft Office Home & Student 2021 included"},
+            {"label": "Package contents", "value": "Laptop, power adapter, documentation"}]},
+    ],
+    "sony-wh-1000xm5": [
+        {"group": "Noise cancelling", "items": [
+            {"label": "Processing", "value": "8 microphones with Auto NC Optimizer — two processors control them all"},
+            {"label": "Calls", "value": "Crystal-clear hands-free calling; speak-to-chat auto-pauses your music when you talk"}]},
+        {"group": "Sound", "items": [
+            {"label": "Upscaling", "value": "DSEE Extreme restores compressed music in real time"},
+            {"label": "Wireless", "value": "Multipoint Bluetooth — connect two devices at once"},
+            {"label": "Tuning", "value": "Adaptive Sound Control and EQ via Sony | Headphones Connect"}]},
+        {"group": "Battery & charging", "items": [
+            {"label": "Battery life", "value": "Up to 30 hours (noise cancelling on)"},
+            {"label": "Quick charge", "value": "3 minutes of charge gives approx. 3 hours of playback"}]},
+        {"group": "Design & comfort", "items": [
+            {"label": "Fit", "value": "Fold-flat soft-fit leather; approx. 250 g"},
+            {"label": "In the box", "value": "Carrying case, USB-C cable, headphone cable"}]},
+    ],
+    "jbl-flip-6": [
+        {"group": "Sound", "items": [
+            {"label": "Acoustics", "value": "JBL Original Pro Sound — racetrack-shaped woofer with a separate tweeter"},
+            {"label": "PartyBoost", "value": "Pair multiple JBL PartyBoost speakers for stereo or a bigger stage"}]},
+        {"group": "Durability", "items": [
+            {"label": "Rating", "value": "IP67 — waterproof and dustproof (submersible up to 1 m for 30 min)"},
+            {"label": "Body", "value": "Bold fabric wrap with rubber housing"}]},
+        {"group": "Battery & charging", "items": [
+            {"label": "Playtime", "value": "Up to 12 hours of playtime (varies by volume and track)"},
+            {"label": "Charging", "value": "USB-C quick charge; battery status indicator"}]},
+        {"group": "In the box", "items": [
+            {"label": "Package contents", "value": "JBL Flip 6, USB-C cable, quick start guide, warranty card"}]},
+    ],
+    "boat-airdopes-141": [
+        {"group": "Sound & calls", "items": [
+            {"label": "Drivers", "value": "13 mm dynamic drivers"},
+            {"label": "Calling", "value": "ENx noise cancellation with quad mics for clear calls"},
+            {"label": "Gaming", "value": "80 ms low-latency gaming mode"}]},
+        {"group": "Battery & charging", "items": [
+            {"label": "Playback", "value": "Up to 42 hours of total playback with the charging case"},
+            {"label": "ASAP Charge", "value": "Type-C ASAP charge — 5 minutes gives 75 minutes of playback"},
+            {"label": "Wake & pair", "value": "IWP instant wake-pair: open the lid and the earbuds connect"}]},
+        {"group": "Fit & durability", "items": [
+            {"label": "Rating", "value": "IPX4 sweat and water resistance"},
+            {"label": "Fit", "value": "In-ear design with touch controls"}]},
+        {"group": "In the box", "items": [
+            {"label": "Package contents", "value": "Airdopes 141 earbuds, charging case, Type-C cable, extra ear tips, user manual"}]},
+    ],
+    "logitech-mx-keys-s": [
+        {"group": "Keyboard", "items": [
+            {"label": "Keys", "value": "Low-profile Perfect Stroke keys with spherically-dished keycaps"},
+            {"label": "Backlight", "value": "Smart illumination — backlighting lights the keys up as your hands approach"},
+            {"label": "Automation", "value": "Smart Actions shortcuts automate repeated tasks"}]},
+        {"group": "Connectivity & power", "items": [
+            {"label": "Pairing", "value": "Easy-Switch across up to 3 devices via Bluetooth Low Energy or Logi Bolt USB receiver"},
+            {"label": "Charging", "value": "USB-C rechargeable"},
+            {"label": "Compatibility", "value": "macOS, Windows, iPadOS"}]},
+        {"group": "In the box", "items": [
+            {"label": "Package contents", "value": "MX Keys S keyboard, Logi Bolt receiver, USB-C charging cable, documentation"}]},
+    ],
+    "samsung-galaxy-s24": [
+        {"group": "Display & build", "items": [
+            {"label": "Display", "value": "15.6 cm (6.2\") Dynamic AMOLED 2X, 120 Hz adaptive refresh"},
+            {"label": "Protection", "value": "Corning Gorilla Glass Victus 2 front; armour aluminium frame"},
+            {"label": "Durability", "value": "IP68 water and dust resistance"}]},
+        {"group": "Performance & memory", "items": [
+            {"label": "Processor", "value": "Exynos 2400 (India) / Snapdragon 8 Gen 3 (select regions)"},
+            {"label": "Memory", "value": "8 GB RAM + 256 GB storage"}]},
+        {"group": "Camera & Galaxy AI", "items": [
+            {"label": "Rear", "value": "50 MP triple camera system"},
+            {"label": "Intelligence", "value": "Galaxy AI — Circle to Search, Live Translate and more"}]},
+        {"group": "Battery & charging", "items": [
+            {"label": "Battery", "value": "4000 mAh (typical) with 25 W charging"}]},
+        {"group": "In the box", "items": [
+            {"label": "Package contents", "value": "Handset, USB-C cable, SIM eject tool, quick start guide"}]},
+    ],
+    "redmi-note-13": [
+        {"group": "Display & design", "items": [
+            {"label": "Display", "value": "16.94 cm (6.67\") AMOLED, 120 Hz refresh, slim bezels"},
+            {"label": "Build", "value": "Slim-bezel design with side fingerprint sensor and IR blaster"}]},
+        {"group": "Performance & memory", "items": [
+            {"label": "Processor", "value": "MediaTek Dimensity 6080 (6 nm)"},
+            {"label": "Memory", "value": "6 GB RAM + 128 GB storage"}]},
+        {"group": "Camera", "items": [
+            {"label": "Rear", "value": "108 MP triple camera system"}]},
+        {"group": "Battery & charging", "items": [
+            {"label": "Battery", "value": "5000 mAh (typical) with 33 W fast charging"}]},
+        {"group": "Software & in the box", "items": [
+            {"label": "Operating system", "value": "Android 13 with MIUI 14"},
+            {"label": "Package contents", "value": "Handset, 33 W adapter, USB-C cable, SIM eject tool, case, quick start guide"}]},
+    ],
+    "noise-colorfit-pro-5": [
+        {"group": "Display & build", "items": [
+            {"label": "Display", "value": "46.99 mm (1.85\") AMOLED always-on display"},
+            {"label": "Calling", "value": "Bluetooth calling with built-in speaker and microphone"},
+            {"label": "Assistant", "value": "AI voice assistant"}]},
+        {"group": "Health & sports", "items": [
+            {"label": "Sensors", "value": "SpO2 and heart-rate tracking, sleep and stress monitoring"},
+            {"label": "Sports", "value": "100+ sports modes"}]},
+        {"group": "Battery & durability", "items": [
+            {"label": "Battery", "value": "Up to 7 days of battery life"},
+            {"label": "Rating", "value": "IP68 water resistant"}]},
+        {"group": "In the box", "items": [
+            {"label": "Package contents", "value": "ColorFit Pro 5 smartwatch, magnetic charging cable, user manual"}]},
+    ],
+    "fire-boltt-ninja-call-pro-plus": [
+        {"group": "Display & build", "items": [
+            {"label": "Display", "value": "46.48 mm (1.83\") HD display, 240 x 280 resolution"},
+            {"label": "Calling", "value": "Bluetooth calling with AI voice assistant"}]},
+        {"group": "Health & sports", "items": [
+            {"label": "Sensors", "value": "SpO2 and heart-rate monitoring"},
+            {"label": "Sports", "value": "100+ sports modes with smart notifications"}]},
+        {"group": "Battery & durability", "items": [
+            {"label": "Battery", "value": "Up to 5 days of battery life; built-in games"},
+            {"label": "Rating", "value": "IP67 water and dust resistance"}]},
+        {"group": "In the box", "items": [
+            {"label": "Package contents", "value": "Ninja Call Pro Plus smartwatch, magnetic charger, manual"}]},
+    ],
+    "nike-pegasus-40": [
+        {"group": "Cushioning & ride", "items": [
+            {"label": "Midsole", "value": "React foam with forefoot and heel Air Zoom units"},
+            {"label": "Drop", "value": "10 mm heel-to-toe drop; neutral support"}]},
+        {"group": "Upper & outsole", "items": [
+            {"label": "Upper", "value": "Engineered mesh"},
+            {"label": "Outsole", "value": "Waffle rubber outsole"}]},
+        {"group": "Fit & use", "items": [
+            {"label": "Sizing", "value": "Men's sizing UK 6-12 (stocked UK 8-10)"},
+            {"label": "Best for", "value": "Versatile daily trainer for 5K to marathon"}]},
+        {"group": "Care", "items": [
+            {"label": "Care", "value": "Spot clean; air dry away from direct heat"}]},
+    ],
+    "adidas-ultraboost-light": [
+        {"group": "Cushioning & ride", "items": [
+            {"label": "Midsole", "value": "BOOST Light — 30% lighter than standard BOOST"},
+            {"label": "Support", "value": "Linear Energy Push system; 10 mm drop"}]},
+        {"group": "Upper & outsole", "items": [
+            {"label": "Upper", "value": "adidas Primeknit+ textile upper"},
+            {"label": "Outsole", "value": "Continental Natural Grip rubber"}]},
+        {"group": "Fit & use", "items": [
+            {"label": "Sizing", "value": "Men's sizing UK 6-12 (stocked UK 8-10)"},
+            {"label": "Best for", "value": "Race-day comfort for daily runs"}]},
+        {"group": "Care", "items": [
+            {"label": "Care", "value": "Spot clean; air dry away from direct heat"}]},
+    ],
+    "puma-rs-x": [
+        {"group": "Upper & sole", "items": [
+            {"label": "Upper", "value": "Mixed mesh and suede upper with bold colour-blocking"},
+            {"label": "Midsole", "value": "RS (Running System) cushioning midsole"},
+            {"label": "Outsole", "value": "Durable rubber outsole"}]},
+        {"group": "Fit & styling", "items": [
+            {"label": "Sizing", "value": "Unisex sizing; stocked UK 9-10"},
+            {"label": "Colourway", "value": "PUMA White-Vapor Gray with pink and blue accents"}]},
+        {"group": "Care", "items": [
+            {"label": "Care", "value": "Wipe clean with a damp cloth; air dry"}]},
+    ],
+    "levis-511": [
+        {"group": "Fit & construction", "items": [
+            {"label": "Fit", "value": "Slim fit through the hip and thigh with a mid rise"},
+            {"label": "Fabric", "value": "Stretch denim for comfort"},
+            {"label": "Sizes", "value": "Waist 30-34 (stocked 32 and 34)"}]},
+        {"group": "Details", "items": [
+            {"label": "Styling", "value": "Classic 5-pocket styling, signature leather patch and red tab"},
+            {"label": "Washes", "value": "Shown in dark and medium stonewash"}]},
+        {"group": "Care", "items": [
+            {"label": "Care", "value": "Machine wash cold inside out; tumble dry low"}]},
+    ],
+    "american-tourister-duffel": [
+        {"group": "Capacity & build", "items": [
+            {"label": "Capacity", "value": "55 cm (55 L) travel duffel"},
+            {"label": "Material", "value": "Durable polyester build"},
+            {"label": "Cabin size", "value": "Cabin-size friendly on most airlines"}]},
+        {"group": "Storage & carry", "items": [
+            {"label": "Compartments", "value": "Spacious main compartment with front zip pocket"},
+            {"label": "Carry", "value": "Padded carry handles and detachable shoulder strap"}]},
+        {"group": "Colours", "items": [
+            {"label": "Options", "value": "Stocked in Black and Red (55 cm)"}]},
+    ],
+    "hawkins-contura": [
+        {"group": "Body & capacity", "items": [
+            {"label": "Capacity", "value": "3 Litre ideal for 3-4 people (5 Litre variant stocked)"},
+            {"label": "Material", "value": "Hard-anodised / plain aluminium with a rounded Contura body for easy stirring"},
+            {"label": "Lid", "value": "Inner-lid design"}]},
+        {"group": "Safety & handles", "items": [
+            {"label": "Safety", "value": "Gasket-release system for safe pressure cooking"},
+            {"label": "Handles", "value": "Stay-cool handle"}]},
+        {"group": "Cooking & care", "items": [
+            {"label": "Cooktops", "value": "Gas and induction compatible base"},
+            {"label": "Care", "value": "Hand wash; do not use metal spoons on anodised finishes"}]},
+        {"group": "In the box", "items": [
+            {"label": "Package contents", "value": "Pressure cooker body, lid, gasket"}]},
+    ],
+    "prestige-cookware-set": [
+        {"group": "Set contents", "items": [
+            {"label": "Pieces", "value": "5 pieces — fry pan, kadai with glass lid, sauce pan with lid, tawa"},
+            {"label": "Family", "value": "From the Omega/Eco non-stick families"}]},
+        {"group": "Material & cooking", "items": [
+            {"label": "Coating", "value": "Granite/Eco non-stick coating"},
+            {"label": "Cooktops", "value": "Induction and gas compatible"},
+            {"label": "Handles", "value": "Soft-touch handles"}]},
+        {"group": "Care", "items": [
+            {"label": "Cleaning", "value": "Dishwasher friendly; hand wash recommended for a longer coating life"}]},
+    ],
+    "philips-air-lamp": [
+        {"group": "Light", "items": [
+            {"label": "LED", "value": "5 W energy-efficient LED"},
+            {"label": "Modes", "value": "Cool-daylight and warm modes with touch dimmer"},
+            {"label": "Eye comfort", "value": "Flicker-free light"}]},
+        {"group": "Design & power", "items": [
+            {"label": "Dimensions", "value": "34.4 cm tall (approx. 34.4 x 27 cm footprint) — desk and bedside friendly"},
+            {"label": "Arm", "value": "Flexible arm"},
+            {"label": "Power", "value": "USB-powered"}]},
+        {"group": "Colours & care", "items": [
+            {"label": "Colours", "value": "Stocked in White and Black"},
+            {"label": "Care", "value": "Wipe clean with a dry cloth"}]},
+    ],
+    "loreal-revitalift-serum": [
+        {"group": "Formula", "items": [
+            {"label": "Actives", "value": "1.5% pure hyaluronic acid (Revitalift Filler)"},
+            {"label": "Results", "value": "Intensely hydrates and replumps skin in 1 hour; reduces fine lines over 4 weeks"},
+            {"label": "Texture", "value": "Fragrance-free, non-greasy serum"}]},
+        {"group": "Use & size", "items": [
+            {"label": "Routine", "value": "Morning and night on clean skin, before moisturiser"},
+            {"label": "Size", "value": "30 ml dropper bottle"}]},
+        {"group": "In the box", "items": [
+            {"label": "Package contents", "value": "Revitalift 1.5% Hyaluronic Acid serum 30 ml with dropper"}]},
+    ],
+    "mamaearth-vitamin-c-face-wash": [
+        {"group": "Formula", "items": [
+            {"label": "Actives", "value": "Vitamin C with turmeric and saffron"},
+            {"label": "Free from", "value": "Toxin-free and SLS-free"},
+            {"label": "Applicator", "value": "Built-in silicone brush applicator"}]},
+        {"group": "Use & size", "items": [
+            {"label": "Benefits", "value": "Gently cleanses and brightens, removes dirt and excess oil, evens skin tone"},
+            {"label": "Skin type", "value": "Suits all skin types"},
+            {"label": "Sizes", "value": "150 ml (stocked 150 ml and 250 ml)"}]},
+        {"group": "In the box", "items": [
+            {"label": "Package contents", "value": "Vitamin C foaming face wash with brush applicator"}]},
+    ],
+    "boldfit-yoga-mat": [
+        {"group": "Material & comfort", "items": [
+            {"label": "Thickness", "value": "6 mm high-density anti-skid foam (4 mm purple variant also stocked)"},
+            {"label": "Cushioning", "value": "Soft foam cushioning for knees and joints"},
+            {"label": "Surface", "value": "Alignment lines; moisture-resistant and easy to clean"}]},
+        {"group": "Size & use", "items": [
+            {"label": "Dimensions", "value": "183 x 61 cm"},
+            {"label": "Best for", "value": "Yoga, Pilates and home workouts"}]},
+        {"group": "Care & carry", "items": [
+            {"label": "Carry", "value": "Includes carry strap"},
+            {"label": "Care", "value": "Wipe clean; roll up for storage"}]},
+    ],
+    "kore-dumbbell-set": [
+        {"group": "Set options", "items": [
+            {"label": "Weight sets", "value": "PVC home gym combo in 10 kg and 20 kg sets"},
+            {"label": "Rods", "value": "Dumbbell rods with curl rod options"}]},
+        {"group": "Material & safety", "items": [
+            {"label": "Plates", "value": "PVC-coated weight plates — floor-safe coating"},
+            {"label": "Grip", "value": "Non-slip grip"}]},
+        {"group": "Accessories & use", "items": [
+            {"label": "Extras", "value": "Gym bag and gloves in selected sets"},
+            {"label": "Best for", "value": "Home strength training — presses, curls and squats"}]},
+    ],
+    "nivia-skipping-rope": [
+        {"group": "Cable & rotation", "items": [
+            {"label": "Cable", "value": "Spring-loaded anti-tangle cable with adjustable height and speed"},
+            {"label": "Rotation", "value": "Ball-bearing smooth rotation for freestyle"}]},
+        {"group": "Handles & use", "items": [
+            {"label": "Handles", "value": "Comfortable foam grip handles"},
+            {"label": "Best for", "value": "Cardio, boxing training and warm-ups — men, women and children"}]},
+        {"group": "Care", "items": [
+            {"label": "Care", "value": "Wipe handles clean; store untangled"}]},
+    ],
+    "canon-eos-1500d": [
+        {"group": "Sensor & imaging", "items": [
+            {"label": "Sensor", "value": "24.1 MP APS-C CMOS sensor"},
+            {"label": "Processor", "value": "DIGIC 4+"},
+            {"label": "Kit lens", "value": "EF-S 18-55mm f/3.5-5.6 III"}]},
+        {"group": "Shooting & video", "items": [
+            {"label": "Autofocus", "value": "9-point AF with centre cross-type point"},
+            {"label": "Burst", "value": "Up to 3 fps continuous shooting"},
+            {"label": "Video", "value": "Full HD 1080p video recording"}]},
+        {"group": "Display & sharing", "items": [
+            {"label": "Screen", "value": "7.5 cm (3.0-inch) LCD"},
+            {"label": "Wireless", "value": "Wi-Fi + NFC sharing to the Canon Camera Connect app"},
+            {"label": "Guidance", "value": "Guided UI for beginners"}]},
+        {"group": "Lens mount & power", "items": [
+            {"label": "Mount", "value": "Canon EF / EF-S mount — body + kit lens included"},
+            {"label": "In the box", "value": "EOS 1500D body, EF-S 18-55mm III lens, battery, charger, strap, documentation"}]},
+    ],
+}
+
+# Cartly Plus member-only deals (percent off list; priced server-side).
+MEMBER_DEALS = {
+    "sony-wh-1000xm5": "8",
+    "boat-airdopes-141": "10",
+    "noise-colorfit-pro-5": "7.5",
+    "logitech-mx-keys-s": "6",
+    "levis-511": "12",
+    "hawkins-contura": "5",
+    "samsung-galaxy-s24": "5",
+    "redmi-note-13": "5",
+}
+
 PLACEHOLDER = "/images/store/product-placeholder.svg"  # shared fallback for slugs with no brand-CDN set
 
 # v2: brand-studio showcase photography, hotlinked from brand-owned CDNs
@@ -296,14 +647,19 @@ def sql_product(p):
     out = []
     rows = images_for(slug, imgs)
     hero = hero_for(slug, rows)
+    spec = SPECS.get(slug)
+    specs_sql = f"'{esc(json.dumps(spec, ensure_ascii=False))}'" if spec else "NULL"
+    deal = MEMBER_DEALS.get(slug)
+    deal_sql = deal if deal else "NULL"
     out.append(f"-- {name}")
     out.append(
-        "INSERT INTO products (id, name, unit_price, original_price, brand, badge, featured, description, category_id, image_url, deleted, created_date, subscribe_eligible)\n"
+        "INSERT INTO products (id, name, unit_price, original_price, brand, badge, featured, description, category_id, image_url, deleted, created_date, subscribe_eligible, specifications, member_deal_percent)\n"
         f"SELECT gen_random_uuid(), '{esc(name)}', {price}, {mrp}, '{esc(brand)}', '{badge}', {'true' if feat else 'false'},\n"
         f"       '{esc(desc)}',\n"
-        f"       (SELECT id FROM categories WHERE slug = '{cat}'), '{hero}', false, now(), true\n"
+        f"       (SELECT id FROM categories WHERE slug = '{cat}'), '{hero}', false, now(), true,\n"
+        f"       {specs_sql}, {deal_sql}\n"
         f"WHERE NOT EXISTS (SELECT 1 FROM products WHERE name = '{esc(name)}');\n"
-        f"UPDATE products SET image_url = '{hero}', subscribe_eligible = true WHERE name = '{esc(name)}';")
+        f"UPDATE products SET image_url = '{hero}', subscribe_eligible = true, specifications = {specs_sql}, member_deal_percent = {deal_sql} WHERE name = '{esc(name)}';")
     # gallery refresh (idempotent rebuild per product)
     pid = f"(SELECT id FROM products WHERE name = '{esc(name)}')"
     out.append(f"DELETE FROM product_images WHERE product_id = {pid};")

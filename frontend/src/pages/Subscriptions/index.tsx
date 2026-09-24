@@ -18,6 +18,7 @@ import { toLocalDateTimePayload } from "../../utils/date";
 import { formatPrice } from "../../utils/cart";
 import { useI18n } from "../../features/i18n";
 import PageHeader from "../../components/PageHeader";
+import StyledSelect from "../../components/StyledSelect";
 
 const INTERVALS = [14, 30, 60, 90, 180];
 
@@ -166,36 +167,31 @@ const Subscriptions = () => {
             <PlayCircleOutlineIcon sx={{ fontSize: 14 }} /> {t("subscription.resume")}
           </button>
         )}
-        <select
-          aria-label="Delivery frequency"
-          value={s.intervalDays}
-          onChange={(e) => update.mutate({ id: s.id, data: { intervalDays: Number(e.target.value) } })}
-          className="h-8 rounded-lg border border-line bg-paper px-2 text-xs font-semibold text-ink outline-none focus:border-brand"
-        >
-          {INTERVALS.map((d) => (
-            <option key={d} value={d}>{`every ${d} days`}</option>
-          ))}
-        </select>
-        <select
-          aria-label="Quantity per delivery"
-          value={s.quantity}
-          onChange={(e) => update.mutate({ id: s.id, data: { quantity: Number(e.target.value) } })}
-          className="h-8 rounded-lg border border-line bg-paper px-2 text-xs font-semibold text-ink outline-none focus:border-brand"
-        >
-          {Array.from({ length: 10 }, (_, i) => i + 1).map((q) => (
-            <option key={q} value={q}>{`qty ${q}`}</option>
-          ))}
-        </select>
-        <select
-          aria-label="Out-of-stock policy"
+        <StyledSelect
+          ariaLabel="Delivery frequency"
+          value={String(s.intervalDays)}
+          onChange={(v) => update.mutate({ id: s.id, data: { intervalDays: Number(v) } })}
+          options={INTERVALS.map((d) => ({ value: String(d), label: `every ${d} days` }))}
+        />
+        <StyledSelect
+          ariaLabel="Quantity per delivery"
+          value={String(s.quantity)}
+          onChange={(v) => update.mutate({ id: s.id, data: { quantity: Number(v) } })}
+          options={Array.from({ length: 10 }, (_, i) => i + 1).map((q) => ({
+            value: String(q),
+            label: `qty ${q}`,
+          }))}
+        />
+        <StyledSelect
+          ariaLabel="Out-of-stock policy"
           value={s.oosPolicy}
-          onChange={(e) => update.mutate({ id: s.id, data: { oosPolicy: e.target.value as any } })}
-          className="h-8 rounded-lg border border-line bg-paper px-2 text-xs font-semibold text-ink outline-none focus:border-brand"
-        >
-          <option value="SKIP">OOS: skip cycle</option>
-          <option value="WAIT">OOS: wait &amp; retry</option>
-          <option value="CANCEL">OOS: cancel</option>
-        </select>
+          onChange={(v) => update.mutate({ id: s.id, data: { oosPolicy: v as any } })}
+          options={[
+            { value: "SKIP", label: "OOS: skip cycle" },
+            { value: "WAIT", label: "OOS: wait & retry" },
+            { value: "CANCEL", label: "OOS: cancel" },
+          ]}
+        />
         <button onClick={() => cancel.mutate(s.id)}
           className="chip !py-1.5 !text-state-danger" title="Cancel subscription (history kept)">
           <DeleteOutlineIcon sx={{ fontSize: 14 }} /> {t("subscription.cancel")}
@@ -310,15 +306,16 @@ const Subscriptions = () => {
           <div className="rounded-2xl border border-dashed border-line bg-sunken/40 p-4">
             <p className="mb-2 text-xs font-bold text-ink-soft">Add a payment method (provider token)</p>
             <div className="flex flex-wrap items-end gap-2 text-xs">
-              <select
-                aria-label="Provider"
+              <StyledSelect
+                ariaLabel="Provider"
+                size="md"
                 value={pmForm.provider}
-                onChange={(e) => setPmForm({ ...pmForm, provider: e.target.value })}
-                className="h-9 rounded-lg border border-line bg-paper px-2 text-xs font-semibold text-ink outline-none focus:border-brand"
-              >
-                <option value="RAZORPAY">Razorpay</option>
-                <option value="STRIPE">Stripe</option>
-              </select>
+                onChange={(v) => setPmForm({ ...pmForm, provider: v })}
+                options={[
+                  { value: "RAZORPAY", label: "Razorpay" },
+                  { value: "STRIPE", label: "Stripe" },
+                ]}
+              />
               <input
                 placeholder="Provider token (vault ref)"
                 value={pmForm.token}

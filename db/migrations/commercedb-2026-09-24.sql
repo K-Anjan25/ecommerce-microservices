@@ -63,3 +63,18 @@ CREATE TABLE IF NOT EXISTS saved_payment_methods (
     CONSTRAINT pk_saved_payment_methods PRIMARY KEY (id)
 );
 CREATE INDEX IF NOT EXISTS idx_saved_payment_methods_user ON saved_payment_methods (user_id);
+
+-- ─── Cartly Plus membership (V8 parity) ─────────────────────────────────────
+CREATE TABLE IF NOT EXISTS cartly_plus_memberships (
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id             UUID         NOT NULL UNIQUE,
+    status              VARCHAR(16)  NOT NULL DEFAULT 'ACTIVE',
+    plan                VARCHAR(16)  NOT NULL,
+    price_paid          NUMERIC(10, 2) NOT NULL,
+    started_at          TIMESTAMP    NOT NULL,
+    current_period_end  TIMESTAMP    NOT NULL,
+    auto_renew          BOOLEAN      NOT NULL DEFAULT TRUE,
+    updated_at          TIMESTAMP    NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_cartly_plus_memberships_user_id ON cartly_plus_memberships (user_id);
+ALTER TABLE IF EXISTS support_ticket ADD COLUMN IF NOT EXISTS priority VARCHAR(10) NOT NULL DEFAULT 'NORMAL';

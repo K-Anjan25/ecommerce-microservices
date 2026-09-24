@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 public class FlashSaleService {
     private final FlashSaleRepository flashSaleRepository;
     private final ProductRepository productRepository;
+    private final com.ecommerce.product_service.service.PlusMembershipGateway plusMembershipGateway;
 
     public FlashSaleDto createFlashSale(FlashSaleDto flashSaleDto) {
         Product product = productRepository.findById(flashSaleDto.getProductId())
@@ -61,10 +62,22 @@ public class FlashSaleService {
 
     public List<FlashSaleDto> getActiveFlashSales() {
         LocalDateTime now = LocalDateTime.now();
-        return flashSaleRepository.findByActiveTrueAndStartsAtBeforeAndEndsAtAfterOrderByStartsAtDesc(now, now)
-                .stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
+        java.util.LinkedHashMap<Long, FlashSale> sales = new java.util.LinkedHashMap<>();
+        flashSaleRepository.findByActiveTrueAndStartsAtBeforeAndEndsAtAfterOrderByStartsAtDesc(now, now)
+                .forEach(s -> sales.put(s.getId(), s));
+        // Cartly Plus 24h early access: members also see sales that start
+        // within the next day (flagged earlyAccess so the UI can badge them).
+        if (plusMembershipGateway.isCurrentUserPlus()) {
+            flashSaleRepository.findAllByOrderByStartsAtDesc().stream()
+                    .filter(s -> s.isActive()
+                            && s.getStartsAt() != null
+                            && s.getStartsAt().isAfter(now)
+                            && !s.getStartsAt().isAfter(now.plusHours(24))
+                            && s.getEndsAt() != null
+                            && s.getEndsAt().isAfter(now))
+                    .forEach(s -> sales.put(s.getId(), s));
+        }
+        return sales.values().stream().map(this::toDto).collect(Collectors.toList());
     }
 
     public FlashSaleDto getFlashSaleByProductId(UUID productId) {
@@ -73,6 +86,8 @@ public class FlashSaleService {
     }
 
     private FlashSaleDto toDto(FlashSale flashSale) {
+        LocalDateTime now = LocalDateTime.now();
+        boolean started = flashSale.getStartsAt() == null || !flashSale.getStartsAt().isAfter(now);
         return FlashSaleDto.builder()
                 .id(flashSale.getId())
                 .productId(flashSale.getProduct().getId())
@@ -82,6 +97,7 @@ public class FlashSaleService {
                 .startsAt(flashSale.getStartsAt())
                 .endsAt(flashSale.getEndsAt())
                 .active(flashSale.isActive())
+                .earlyAccess(!started)
                 .build();
     }
 }

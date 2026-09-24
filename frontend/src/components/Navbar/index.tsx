@@ -18,6 +18,7 @@ import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import WorkspacePremiumOutlinedIcon from "@mui/icons-material/WorkspacePremiumOutlined";
 import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -426,8 +427,16 @@ const Navbar = () => {
               </span>
             </button>
 
-            {/* Wishlist */}
+            {/* Cartly Plus */}
             <button
+                onClick={() => navigate("/cartly-plus")}
+                aria-label="Cartly Plus membership"
+                className="ml-1 flex items-center gap-1 rounded-full border border-brand/40 bg-brand-soft px-2.5 py-1 text-[0.6875rem] font-bold text-brand transition hover:bg-brand-soft/70"
+              >
+                <WorkspacePremiumOutlinedIcon sx={{ fontSize: 15 }} /> Plus
+              </button>
+              {/* Wishlist */}
+              <button
               aria-label={t("nav.wishlist")}
               onClick={() => navigate(user.isLogedIn ? "/wishlist" : "/login")}
               className="flex flex-col items-center text-ink transition hover:text-brand"

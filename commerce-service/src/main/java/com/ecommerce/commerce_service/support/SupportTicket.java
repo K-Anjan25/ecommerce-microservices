@@ -77,4 +77,8 @@ public class SupportTicket {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    /** NORMAL | HIGH — Cartly Plus members get the priority support lane. */
+    @Column(nullable = false, length = 10)
+    private String priority = "NORMAL";
 }

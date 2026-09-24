@@ -69,6 +69,7 @@ public class OrderService {
     private final RabbitMQMessageProducer rabbitMQMessageProducer;
     private final OrderItemRepository orderItemRepository;
     private final ShippingRateService shippingRateService;
+    private final com.ecommerce.commerce_service.membership.MembershipService membershipService;
     private final ShippingZoneService shippingZoneService;
     private final TaxRuleService taxRuleService;
     private final CheckoutTokenService checkoutTokenService;
@@ -141,7 +142,7 @@ public class OrderService {
         String destinationCountry = order.getAddress() == null || order.getAddress().getCountry() == null
                 ? "IN" : order.getAddress().getCountry();
         BigDecimal shipping = calculateShipping(subtotal, createOrderRequest.getShippingMethod(),
-                createOrderRequest.getPincode(), destinationCountry);
+                createOrderRequest.getPincode(), destinationCountry, order.getCustomerId());
         BigDecimal discount = BigDecimal.ZERO;
 
         if (createOrderRequest.getCouponCode() != null && !createOrderRequest.getCouponCode().isBlank()) {
@@ -252,20 +253,35 @@ public class OrderService {
         Map<UUID, ProductSummaryDto> catalog = productCatalogClient.findByIds(ids).stream()
                 .collect(Collectors.toMap(ProductSummaryDto::getId, item -> item));
 
+        boolean plus = order.getCustomerId() != null
+                && membershipService.isPlusActive(order.getCustomerId());
         order.getItems().forEach(item -> {
             ProductSummaryDto product = catalog.get(item.getProductId());
             if (product == null) throw new ProductNotInStockException("Product is unavailable: " + item.getProductId());
             BigDecimal price;
+            boolean flashUsed;
             if (Boolean.TRUE.equals(product.getFlashSaleActive()) && product.getFlashPrice() != null
                     && product.getFlashPrice().compareTo(BigDecimal.ZERO) > 0) {
                 price = product.getFlashPrice();
+                flashUsed = true;
             } else if (item.getVariantId() != null) {
                 price = (product.getVariants() == null ? List.<ProductSummaryDto.VariantSummaryDto>of() : product.getVariants())
                         .stream().filter(variant -> item.getVariantId().equals(variant.getId()))
                         .map(ProductSummaryDto.VariantSummaryDto::getPrice).findFirst()
                         .orElseThrow(() -> new ProductNotInStockException("Variant is unavailable: " + item.getVariantId()));
+                flashUsed = false;
             } else {
                 price = product.getUnitPrice();
+                flashUsed = false;
+            }
+            // Cartly Plus member-only prices (products.member_deal_percent):
+            // applied server-side only, never stacked on top of a flash price.
+            if (plus && !flashUsed
+                    && product.getMemberDealPercent() != null
+                    && product.getMemberDealPercent().signum() > 0) {
+                price = price.multiply(BigDecimal.ONE.subtract(
+                        product.getMemberDealPercent().divide(new BigDecimal("100"), 4, RoundingMode.HALF_UP)))
+                        .setScale(2, RoundingMode.HALF_UP);
             }
             if (price == null || price.compareTo(BigDecimal.ZERO) <= 0) {
                 throw new IllegalArgumentException("Catalog price is invalid for product " + item.getProductId());
@@ -274,7 +290,12 @@ public class OrderService {
         });
     }
 
-    private BigDecimal calculateShipping(BigDecimal subtotal, ShippingMethod method, String pincode, String country) {
+    private BigDecimal calculateShipping(BigDecimal subtotal, ShippingMethod method, String pincode, String country, java.util.UUID customerId) {
+        // Cartly Plus: free express delivery on every order — shipping is on
+        // us regardless of zone, method or basket size.
+        if (customerId != null && membershipService.isPlusActive(customerId)) {
+            return BigDecimal.ZERO;
+        }
         // International orders price off shipping zones; an unserviceable
         // destination is rejected outright instead of silently mispricing.
         if (country != null && !"IN".equals(country)) {
