@@ -112,6 +112,12 @@ const hi: Messages = {
   "a11y.nextImage": "अगली छवि",
   "a11y.primaryNav": "प्राथमिक",
 
+  "stock.notifyCta": "दुबारा आने पर बताएँ",
+  "stock.emailLabel": "स्टॉक अलर्ट के लिए ईमेल",
+  "stock.watching": "स्टॉक अलर्ट चालू",
+  "stock.success": "स्टॉक होते ही हम ईमेल करेंगे",
+  "stock.removed": "स्टॉक अलर्ट हटाया गया",
+  "stock.error": "स्टॉक अलर्ट सेट नहीं हो सका",
   "newsletter.placeholder": "ईमेल साइनअप",
   "newsletter.tryValidEmail": "सही ईमेल डालें",
   "newsletter.error": "अभी साइन अप नहीं हो सका — कृपया फिर कोशिश करें।",

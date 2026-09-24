@@ -7,8 +7,11 @@ import com.ecommerce.product_service.inventory.model.Inventory;
 import com.ecommerce.product_service.inventory.model.InventoryMutation;
 import com.ecommerce.product_service.inventory.repository.InventoryRepository;
 import com.ecommerce.product_service.inventory.repository.InventoryMutationRepository;
+import com.ecommerce.product_service.model.Product;
 import com.ecommerce.product_service.model.ProductVariant;
+import com.ecommerce.product_service.repository.ProductRepository;
 import com.ecommerce.product_service.repository.ProductVariantRepository;
+import com.ecommerce.product_service.service.StockWatchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,10 +29,13 @@ public class InventoryService {
     private final InventoryRepository inventoryRepository;
     private final ProductVariantRepository productVariantRepository;
     private final InventoryMutationRepository inventoryMutationRepository;
+    private final ProductRepository productRepository;
+    private final StockWatchService stockWatchService;
 
     @Transactional
     public void upsertStock(UUID productId, Integer quantity) {
         Inventory inventory = inventoryRepository.getByProductId(productId);
+        Integer previousQuantity = inventory == null ? null : inventory.getQuantity();
         if (inventory == null) {
             inventory = Inventory.builder()
                     .productId(productId)
@@ -39,6 +45,20 @@ public class InventoryService {
             inventory.setQuantity(quantity);
         }
         inventoryRepository.save(inventory);
+
+        // "Notify me when back in stock": stock crossed from sold out back
+        // into available — queue one-shot alerts for every active watcher.
+        boolean wasSoldOut = previousQuantity == null || previousQuantity <= 0;
+        boolean nowAvailable = quantity != null && quantity > 0;
+        if (wasSoldOut && nowAvailable) {
+            try {
+                String productName = productRepository.findById(productId)
+                        .map(Product::getName).orElse("Product");
+                stockWatchService.notifyBackInStock(productId, productName);
+            } catch (Exception e) {
+                log.error("Back-in-stock notification failed for product {}", productId, e);
+            }
+        }
     }
 
     @Transactional

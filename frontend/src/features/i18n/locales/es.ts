@@ -112,6 +112,12 @@ const es: Messages = {
   "a11y.nextImage": "Imagen siguiente",
   "a11y.primaryNav": "Navegación principal",
 
+  "stock.notifyCta": "Avísame cuando vuelva",
+  "stock.emailLabel": "Email para aviso de stock",
+  "stock.watching": "Stock vigilado",
+  "stock.success": "Te escribiremos en cuanto vuelva",
+  "stock.removed": "Aviso de stock eliminado",
+  "stock.error": "No se pudo crear el aviso de stock",
   "newsletter.placeholder": "Suscríbete con tu email",
   "newsletter.tryValidEmail": "Introduce un email válido",
   "newsletter.error": "No se pudo completar el registro — inténtalo de nuevo.",

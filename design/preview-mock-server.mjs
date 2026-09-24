@@ -36,6 +36,8 @@ const QUESTIONS = [
 
 const ANALYTICS_EVENTS = [];
 
+let STOCK_WATCHES = [];
+
 let CATEGORIES = [
   "Electronics", "Home", "Fashion", "Beauty", "Kitchen", "Sports", "Grocery", "Toys & Games", "Books",
 ].map((name, i) => ({ id: i + 1, name, slug: name.toLowerCase(), parentId: null, sortOrder: i }));
@@ -665,6 +667,36 @@ createServer((req, res) => {
   }
 
   if (p === "/v1/categories") return json(res, CATEGORIES);
+
+  const stockWatchMatch = p.match(/^\/v1\/products\/([^/]+)\/stock-watch$/);
+  if (stockWatchMatch) {
+    const productId = stockWatchMatch[1];
+    if (req.method === "POST") {
+      return readBody(req, (body) => {
+        const email = String(body?.email ?? "").trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          return json(res, { message: "A valid email is required" }, 400);
+        }
+        STOCK_WATCHES = STOCK_WATCHES.filter((w) => !(w.productId === productId && w.email === email));
+        STOCK_WATCHES.push({ productId, email, active: true, at: new Date().toISOString() });
+        res.writeHead(201);
+        res.end();
+        return;
+      });
+    }
+    if (req.method === "DELETE") {
+      const email = (q.get("email") ?? "").trim().toLowerCase();
+      STOCK_WATCHES = STOCK_WATCHES.filter((w) => !(w.productId === productId && w.email === email));
+      res.writeHead(204);
+      res.end();
+      return;
+    }
+    if (req.method === "GET") {
+      const email = (q.get("email") ?? "").trim().toLowerCase();
+      const watching = Boolean(email) && STOCK_WATCHES.some((w) => w.productId === productId && w.email === email && w.active);
+      return json(res, { watching });
+    }
+  }
 
   if (p === "/v1/analytics/events" && req.method === "POST") {
     res.writeHead(204);

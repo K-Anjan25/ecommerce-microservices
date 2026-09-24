@@ -19,6 +19,7 @@ import BoltOutlinedIcon from "@mui/icons-material/BoltOutlined";
 import Comments from "../../Comments";
 import Questions from "../../Questions";
 import PriceWatch from "../../PriceWatch";
+import StockWatch from "../../StockWatch";
 import Card from "../index";
 import { ProductApi } from "../../../api/productApi";
 import { CommentApi } from "../../../api/comment";
@@ -406,6 +407,7 @@ const ProductCard = ({ product }: CardProps) => {
               </div>
 
               {productId && <PriceWatch productId={productId} />}
+              {productId && displayStock <= 0 && <StockWatch productId={productId} />}
 
               {/* delivery / trust panel */}
               <div className="divide-y divide-line border-y border-line">

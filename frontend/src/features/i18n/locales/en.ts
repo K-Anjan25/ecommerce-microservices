@@ -117,6 +117,12 @@ export const en = {
   "a11y.nextImage": "Next image",
   "a11y.primaryNav": "Primary",
 
+  "stock.notifyCta": "Notify me when it's back",
+  "stock.emailLabel": "Email for stock alert",
+  "stock.watching": "Watching stock",
+  "stock.success": "We'll email you the moment it's back",
+  "stock.removed": "Stock alert removed",
+  "stock.error": "Could not set up the stock alert",
   "newsletter.placeholder": "Email signup",
   "newsletter.tryValidEmail": "Try a valid email",
   "newsletter.error": "Couldn't sign you up right now — please try again.",

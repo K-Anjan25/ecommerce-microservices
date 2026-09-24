@@ -112,6 +112,12 @@ const ar: Messages = {
   "a11y.nextImage": "الصورة التالية",
   "a11y.primaryNav": "التنقل الرئيسي",
 
+  "stock.notifyCta": "أبلغني عند التوفر",
+  "stock.emailLabel": "البريد الإلكتروني لتنبيه التوفر",
+  "stock.watching": "جارٍ مراقبة التوفر",
+  "stock.success": "سنراسلك فور توفره مجدداً",
+  "stock.removed": "تم إلغاء تنبيه التوفر",
+  "stock.error": "تعذّر إنشاء تنبيه التوفر",
   "newsletter.placeholder": "التسجيل بالبريد الإلكتروني",
   "newsletter.tryValidEmail": "أدخل بريداً إلكترونياً صحيحاً",
   "newsletter.error": "تعذّر التسجيل الآن — حاول مرة أخرى.",

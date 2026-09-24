@@ -112,6 +112,12 @@ const ja: Messages = {
   "a11y.nextImage": "次の画像",
   "a11y.primaryNav": "メインナビゲーション",
 
+  "stock.notifyCta": "入荷したら通知する",
+  "stock.emailLabel": "入荷通知用メールアドレス",
+  "stock.watching": "入荷を監視中",
+  "stock.success": "入荷次第すぐメールでお知らせします",
+  "stock.removed": "入荷通知を解除しました",
+  "stock.error": "入荷通知を設定できませんでした",
   "newsletter.placeholder": "メール登録",
   "newsletter.tryValidEmail": "有効なメールアドレスを入力してください",
   "newsletter.error": "ただいま登録できません — もう一度お試しください。",

@@ -56,6 +56,14 @@ public class EmailMfaService {
         String normalized = email.trim().toLowerCase();
         String code = String.format("%06d", random.nextInt(1_000_000));
         EmailMfaCode mfa = mfaRepository.findByEmail(normalized).orElseGet(EmailMfaCode::new);
+        // Throttle re-issues: a still-valid, unconsumed code younger than a
+        // minute means a code was just sent — block email bombing.
+        if (mfa.getId() != null && !mfa.isConsumed()
+                && mfa.getExpiresAt() != null
+                && mfa.getExpiresAt().isAfter(LocalDateTime.now().plusMinutes(TTL_MINUTES - 1))) {
+            throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,
+                    "A verification code was just sent — wait a minute before requesting another");
+        }
         mfa.setEmail(normalized);
         mfa.setCodeHash(hash(normalized, code));
         mfa.setExpiresAt(LocalDateTime.now().plusMinutes(TTL_MINUTES));

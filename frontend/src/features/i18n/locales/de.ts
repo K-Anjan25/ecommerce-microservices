@@ -112,6 +112,12 @@ const de: Messages = {
   "a11y.nextImage": "Nächstes Bild",
   "a11y.primaryNav": "Hauptnavigation",
 
+  "stock.notifyCta": "Benachrichtigen, wenn verfügbar",
+  "stock.emailLabel": "E-Mail für Verfügbarkeits-Alarm",
+  "stock.watching": "Verfügbarkeit wird beobachtet",
+  "stock.success": "Wir melden uns, sobald es wieder da ist",
+  "stock.removed": "Verfügbarkeits-Alarm entfernt",
+  "stock.error": "Verfügbarkeits-Alarm fehlgeschlagen",
   "newsletter.placeholder": "E-Mail-Anmeldung",
   "newsletter.tryValidEmail": "Gültige E-Mail eingeben",
   "newsletter.error": "Anmeldung derzeit nicht möglich — bitte erneut versuchen.",

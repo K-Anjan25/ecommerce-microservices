@@ -112,6 +112,12 @@ const nl: Messages = {
   "a11y.nextImage": "Volgende afbeelding",
   "a11y.primaryNav": "Hoofdnavigatie",
 
+  "stock.notifyCta": "Waarschuw mij bij retour",
+  "stock.emailLabel": "E-mail voor voorraadmelding",
+  "stock.watching": "Voorraad in de gaten",
+  "stock.success": "We mailen je zodra hij weer leverbaar is",
+  "stock.removed": "Voorraadmelding verwijderd",
+  "stock.error": "Voorraadmelding mislukt",
   "newsletter.placeholder": "E-mail aanmelden",
   "newsletter.tryValidEmail": "Vul een geldig e-mailadres in",
   "newsletter.error": "Aanmelden lukt nu niet — probeer het opnieuw.",

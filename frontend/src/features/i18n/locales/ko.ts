@@ -112,6 +112,12 @@ const ko: Messages = {
   "a11y.nextImage": "다음 이미지",
   "a11y.primaryNav": "기본 탐색",
 
+  "stock.notifyCta": "재입고 알림 받기",
+  "stock.emailLabel": "재입고 알림 받을 이메일",
+  "stock.watching": "재입고 알림 중",
+  "stock.success": "재입고되면 바로 이메일로 알려드립니다",
+  "stock.removed": "재입고 알림이 해제되었습니다",
+  "stock.error": "재입고 알림을 설정할 수 없습니다",
   "newsletter.placeholder": "이메일 구독",
   "newsletter.tryValidEmail": "올바른 이메일을 입력하세요",
   "newsletter.error": "지금은 구독할 수 없습니다 — 다시 시도해 주세요.",

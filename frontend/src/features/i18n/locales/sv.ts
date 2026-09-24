@@ -112,6 +112,12 @@ const sv: Messages = {
   "a11y.nextImage": "Nästa bild",
   "a11y.primaryNav": "Huvudnavigation",
 
+  "stock.notifyCta": "Meddela mig när den är tillbaka",
+  "stock.emailLabel": "E-post för lagerlarm",
+  "stock.watching": "Bevakar lagret",
+  "stock.success": "Vi mailar dig så snart den är tillbaka",
+  "stock.removed": "Lagerlarm borttaget",
+  "stock.error": "Kunde inte skapa lagerlarm",
   "newsletter.placeholder": "E-postanmälan",
   "newsletter.tryValidEmail": "Ange en giltig e-postadress",
   "newsletter.error": "Det gick inte att registrera just nu — försök igen.",

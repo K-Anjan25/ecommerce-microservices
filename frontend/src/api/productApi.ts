@@ -34,6 +34,23 @@ const suggestProducts = async (term: string) => {
   return data;
 };
 
+// ----- Back-in-stock watchlist ("notify me when available") -----
+const isWatchingStock = async (productId: string, email: string) => {
+  const { data } = await api.get<{ watching: boolean }>(
+    `/v1/products/${productId}/stock-watch`,
+    { params: { email } }
+  );
+  return data.watching;
+};
+
+const watchStock = async (productId: string, email: string) => {
+  await api.post(`/v1/products/${productId}/stock-watch`, { email });
+};
+
+const unwatchStock = async (productId: string, email: string) => {
+  await api.delete(`/v1/products/${productId}/stock-watch`, { params: { email } });
+};
+
 // ----- Price-drop watchlist (Phase 8) -----
 const isWatchingPrice = async (productId: string, email: string) => {
   const { data } = await api.get<{ watching: boolean }>(
@@ -165,6 +182,9 @@ export const ProductApi = {
   isWatchingPrice,
   watchPrice,
   unwatchPrice,
+  isWatchingStock,
+  watchStock,
+  unwatchStock,
   getProductsByPagination,
   deleteProduct,
   getProductById,

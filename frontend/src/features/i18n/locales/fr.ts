@@ -112,6 +112,12 @@ const fr: Messages = {
   "a11y.nextImage": "Image suivante",
   "a11y.primaryNav": "Navigation principale",
 
+  "stock.notifyCta": "Me prévenir au retour en stock",
+  "stock.emailLabel": "E-mail pour l'alerte stock",
+  "stock.watching": "Stock surveillé",
+  "stock.success": "Nous vous écrirons dès son retour",
+  "stock.removed": "Alerte stock supprimée",
+  "stock.error": "Impossible de créer l'alerte stock",
   "newsletter.placeholder": "Inscription e-mail",
   "newsletter.tryValidEmail": "Saisissez un e-mail valide",
   "newsletter.error": "Inscription impossible pour le moment — veuillez réessayer.",
