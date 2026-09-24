@@ -84,7 +84,7 @@ function Product() {
   const crumbs: { label: string; to?: string }[] = [
     { label: "Home", to: "/" },
     ...(product?.category?.name ? [{ label: product.category.name, to: "/" }] : []),
-    { label: product?.name ?? "Product" },
+    { label: product ? localizedName(product, language) : "Product" },
   ];
 
   return (

@@ -405,7 +405,7 @@ function Products() {
                 loading="eager"
               />
             </div>
-            <div className="relative z-10 flex h-full max-w-[58%] flex-col justify-center sm:max-w-[52%]">
+            <div className="relative z-10 flex h-full max-w-full flex-col justify-center sm:max-w-[52%]">
               {storeSettings.heroEyebrow && (
                 <p className="eyebrow !text-accent mb-1.5">{storeSettings.heroEyebrow}</p>
               )}

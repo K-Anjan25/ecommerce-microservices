@@ -140,6 +140,77 @@ const NAMES = [
   "Smart Speaker Mini",
 ];
 
+
+/* ── localized catalog content (multi-locale preview dataset) ─────────── */
+const GENERIC_DESC = {
+  hi: "बेहतरीन क्वालिटी, ईमानदार कीमत और भरोसेमंद वारंटी। 24 घंटे में सुरक्षित पैकेजिंग में शिपिंग।",
+  de: "Hochwertige Verarbeitung, ehrlicher Preis und eine Garantie, die etwas bedeutet. Versand in Schutzverpackung innerhalb von 24 Stunden.",
+  fr: "Fabrication de qualité, prix honnête et une garantie qui compte. Expédié sous 24 h emballé avec soin.",
+  nl: "Topkwaliteit, eerlijke prijs en een garantie die telt. Binnen 24 uur verzonden in beschermende verpakking.",
+  es: "Calidad superior, precio honesto y una garantía de verdad. Envío en 24 h con embalaje protector.",
+  sv: "Toppkvalitet, ärligt pris och en garanti som betyder något. Skickas inom 24 timmar i skyddande förpackning.",
+  ar: "جودة عالية وسعر عادل وضمان حقيقي. يُشحن خلال 24 ساعة بتغليف واقٍ.",
+  ja: "高品質なつくり、正直な価格、そして安心の保証。24時間以内に保護包装で出荷します。",
+  ko: "탁월한 품질, 정직한 가격, 그리고 확실한 보증. 24시간 안에 보호 포장으로 배송됩니다.",
+};
+
+const PRODUCT_NAME_T = {
+  "Studio Pro Headphones": { hi: "स्टूडियो प्रो हेडफ़ोन", de: "Studio Pro Kopfhörer", fr: "Casque Studio Pro", nl: "Studio Pro Koptelefoon", es: "Auriculares Studio Pro", sv: "Studio Pro Hörlurar", ar: "سماعات ستوديو برو", ja: "スタジオプロヘッドホン", ko: "스튜디오 프로 헤드폰" },
+  "Linen Throw Blanket": { hi: "लिनेन थ्रो कंबल", de: "Leinens Tagesdecke", fr: "Plaid en lin", nl: "Linnen Sprei", es: "Manta de lino", sv: "Linnepläd", ar: "بطانية كتان", ja: "リネンスローブランケット", ko: "리넨 담요" },
+  "Trail Runner 3": { hi: "ट्रेल रनर 3", de: "Trail Runner 3", fr: "Trail Runner 3", nl: "Trail Runner 3", es: "Trail Runner 3", sv: "Trail Runner 3", ar: "تريل رانر 3", ja: "トレイルランナー3", ko: "트레일 러너 3" },
+  "Ceramic Pour-Over": { hi: "सिरेमिक पोर-ओवर", de: "Keramik Pour-Over", fr: "Cafetière céramique", nl: "Keramische Pour-Over", es: "Pourover de cerámica", sv: "Keramisk Pour-Over", ar: "قمع قهوة سيراميك", ja: "セラミックドリッパー", ko: "세라믹 드리퍼" },
+  "Merino Crew Sweater": { hi: "मेरिनो क्रू स्वेटर", de: "Merino Pullover", fr: "Pull en mérinos", nl: "Merino Trui", es: "Suéter de merino", sv: "Merino Tröja", ar: "كنزة ميرينو", ja: "メリニークルーセーター", ko: "메리노 크루 스웨터" },
+  "Desk Lamp Arc": { hi: "डेस्क लैंप आर्क", de: "Schreibtischlampe Arc", fr: "Lampe de bureau Arc", nl: "Bureaulamp Arc", es: "Lámpara de escritorio Arc", sv: "Skrivbordslampa Arc", ar: "مصباح مكتب آرك", ja: "アークデスクランプ", ko: "아크 데스크 램프" },
+  "Vitamin C Serum": { hi: "विटामिन सी सीरम", de: "Vitamin C Serum", fr: "Sérum Vitamine C", nl: "Vitamine C Serum", es: "Sérum de vitamina C", sv: "C-vitamin Serum", ar: "سيروم فيتامين سي", ja: "ビタミンCセラム", ko: "비타민C 세럼" },
+  "Cast Iron Skillet": { hi: "कास्ट आयरन स्किलेट", de: "Gusseiserne Pfanne", fr: "Poêle en fonte", nl: "Gietijzeren Pan", es: "Sartén de hierro fundido", sv: "Gjutjärnspanna", ar: "مقلاة حديد زهر", ja: "鋳鉄スキレット", ko: "주철 팬" },
+  "Weekender Duffel": { hi: "वीकेंडर डफल", de: "Wochenend-Reisetasche", fr: "Sac de week-end", nl: "Weekendtas", es: "Bolsa de fin de semana", sv: "Helgveska", ar: "حقيبة نهاية الأسبوع", ja: "ウィークエンダーバッグ", ko: "주말 여행가방" },
+  "Mechanical Keyboard": { hi: "मैकेनिकल कीबोर्ड", de: "Mechanische Tastatur", fr: "Clavier mécanique", nl: "Mechanisch Toetsenbord", es: "Teclado mecánico", sv: "Mekaniskt Tangentbord", ar: "لوحة مفاتيح ميكانيكية", ja: "メカニカルキーボード", ko: "기계식 키보드" },
+  "Cold Brew Carafe": { hi: "कोल्ड ब्रू कैराफ़", de: "Cold-Brew-Karaffe", fr: "Carafe Cold Brew", nl: "Cold Brew Karaf", es: "Jarra de cold brew", sv: "Cold Brew Karaff", ar: "دلة قهوة باردة", ja: "コールドブリューカラフェ", ko: "콜드브루 카라페" },
+  "Yoga Mat Pro": { hi: "योगा मैट प्रो", de: "Yogamatte Pro", fr: "Tapis de yoga Pro", nl: "Yogamat Pro", es: "Esterilla de yoga Pro", sv: "Yogamatta Pro", ar: "سجادة يوغا برو", ja: "ヨガマットプロ", ko: "요가매트 프로" },
+  "Espresso Tamper": { hi: "एस्प्रेसो टैम्पर", de: "Espresso Tamper", fr: "Tamper à espresso", nl: "Espresso Tamper", es: "Tamper de espresso", sv: "Espresso Tamper", ar: "مكبس إسبريسو", ja: "エスプレッソタンパー", ko: "에스프레소 탬퍼" },
+  "Wool Runners": { hi: "ऊन रनर्स", de: "Woll-Sneaker", fr: "Baskets en laine", nl: "Wol Sneakers", es: "Zapatillas de lana", sv: "Ull Sneakers", ar: "أحذية صوف", ja: "ウールランナー", ko: "울 러너스" },
+  "Noise-Free Earbuds": { hi: "नॉइज़-फ्री ईयरबड्स", de: "Noise-Free Earbuds", fr: "Écouteurs antibruit", nl: "Ruisonderdrukkende Earbuds", es: "Auriculares sin ruido", sv: "Brusfria Earbuds", ar: "سماعات بدون ضوضاء", ja: "ノイズフリーイヤホン", ko: "노이즈프리 이어버드" },
+  "Walnut Side Table": { hi: "वॉलनट साइड टेबल", de: "Nussbaum Beistelltisch", fr: "Table d'appoint en noyer", nl: "Walnoot Bijzettafel", es: "Mesa auxiliar de nogal", sv: "Sidobord i valnöt", ar: "طاولة جانبية من الجوز", ja: "ウォールナットサイドテーブル", ko: "월넛 사이드 테이블" },
+  "Matte Lip Balm": { hi: "मैट लिप बाम", de: "Matt Lippenbalsam", fr: "Baume à lèvres mat", nl: "Matte Lipbalsem", es: "Bálsamo labial mate", sv: "Matt läppbalsam", ar: "بلسم شفاه مطفي", ja: "マットリップバーム", ko: "매트 립밤" },
+  "Resistance Band Set": { hi: "रेजिस्टेंस बैंड सेट", de: "Widerstandsband-Set", fr: "Set de bandes élastiques", nl: "Weerstandsband Set", es: "Set de bandas de resistencia", sv: "Motståndsband Set", ar: "طقم أحزمة مقاومة", ja: "レジスタンスバンドセット", ko: "저항 밴드 세트" },
+  "Bamboo Cutting Board": { hi: "बांस कटिंग बोर्ड", de: "Bambus Schneidebrett", fr: "Planche en bambou", nl: "Bamboe Snijplank", es: "Tabla de cortar de bambú", sv: "Bambu Skärbräda", ar: "لوح تقطيع من الخيزران", ja: "バンブーまな板", ko: "대나무 도마" },
+  "Analog Watch 38": { hi: "एनालॉग वॉच 38", de: "Analoguhr 38", fr: "Montre analogique 38", nl: "Analoog Horloge 38", es: "Reloj analógico 38", sv: "Analog Klocka 38", ar: "ساعة تناظرية 38", ja: "アナログウォッチ38", ko: "아날로그 시계 38" },
+  "Canvas Backpack": { hi: "कैनवास बैकपैक", de: "Canvas Rucksack", fr: "Sac à dos en toile", nl: "Canvas Rugtas", es: "Mochila de lona", sv: "Canvas Ryggsäck", ar: "حقيبة ظهر قماشية", ja: "キャンバスバックパック", ko: "캔버스 백팩" },
+  "Glass Storage Set": { hi: "ग्लास स्टोरेज सेट", de: "Glas Aufbewahrungsset", fr: "Set de conservation en verre", nl: "Glas Voorraadset", es: "Set de almacenamiento de vidrio", sv: "Glas Förvaringsset", ar: "طقم تخزين زجاجي", ja: "ガラス保存容器セット", ko: "유리 보관 용기 세트" },
+  "Sun Shield SPF50": { hi: "सन शील्ड SPF50", de: "Sonnenschutz SPF50", fr: "Écran solaire SPF50", nl: "Zonnebrand SPF50", es: "Protector solar SPF50", sv: "Solskydd SPF50", ar: "واقٍ شمسي SPF50", ja: "サンシールドSPF50", ko: "선실드 SPF50" },
+  "Foam Roller": { hi: "फोम रोलर", de: "Faszienrolle", fr: "Rouleau de massage", nl: "Foamroller", es: "Rodillo de espuma", sv: "Foamroller", ar: "أسطوانة تدليك", ja: "フォームローラー", ko: "폼롤러" },
+  "Smart Speaker Mini": { hi: "स्मार्ट स्पीकर मिनी", de: "Smart Speaker Mini", fr: "Enceinte connectée Mini", nl: "Smart Speaker Mini", es: "Altavoz inteligente Mini", sv: "Smart Högtalare Mini", ar: "مكبر صوت ذكي مصغر", ja: "スマートスピーカーミニ", ko: "스마트 스피커 미니" },
+};
+
+const CATEGORY_NAME_T = {
+  "Electronics": { hi: "इलेक्ट्रॉनिक्स", de: "Elektronik", fr: "Électronique", nl: "Elektronica", es: "Electrónica", sv: "Elektronik", ar: "إلكترونيات", ja: "エレクトロニクス", ko: "전자제품" },
+  "Home": { hi: "घर", de: "Wohnen", fr: "Maison", nl: "Wonen", es: "Hogar", sv: "Hem", ar: "المنزل", ja: "ホーム", ko: "홈" },
+  "Fashion": { hi: "फैशन", de: "Mode", fr: "Mode", nl: "Mode", es: "Moda", sv: "Mode", ar: "أزياء", ja: "ファッション", ko: "패션" },
+  "Beauty": { hi: "सौंदर्य", de: "Schönheit", fr: "Beauté", nl: "Schoonheid", es: "Belleza", sv: "Skönhet", ar: "الجمال", ja: "ビューティー", ko: "뷰티" },
+  "Kitchen": { hi: "रसोई", de: "Küche", fr: "Cuisine", nl: "Keuken", es: "Cocina", sv: "Kök", ar: "المطبخ", ja: "キッチン", ko: "주방" },
+  "Sports": { hi: "खेल", de: "Sport", fr: "Sport", nl: "Sport", es: "Deportes", sv: "Sport", ar: "رياضة", ja: "スポーツ", ko: "스포츠" },
+  "Grocery": { hi: "किराना", de: "Lebensmittel", fr: "Épicerie", nl: "Boodschappen", es: "Supermercado", sv: "Livs", ar: "بقالة", ja: "食品", ko: "식품" },
+  "Toys & Games": { hi: "खिलौने", de: "Spielzeug", fr: "Jouets", nl: "Speelgoed", es: "Juguetes", sv: "Leksaker", ar: "ألعاب", ja: "おもちゃ", ko: "장난감" },
+  "Books": { hi: "किताबें", de: "Bücher", fr: "Livres", nl: "Boeken", es: "Libros", sv: "Böcker", ar: "كتب", ja: "本", ko: "책" },
+};
+
+const productTranslations = (name) => {
+  const names = PRODUCT_NAME_T[name];
+  if (!names) return null;
+  const out = {};
+  for (const lang of Object.keys(names)) {
+    out[lang] = { name: names[lang], description: GENERIC_DESC[lang] };
+  }
+  return JSON.stringify(out);
+};
+
+const categoryTranslations = (name) => {
+  const names = CATEGORY_NAME_T[name];
+  return names ? JSON.stringify(names) : null;
+};
+
+CATEGORIES.forEach((c) => { c.translations = categoryTranslations(c.name); });
+
 const PRODUCTS = NAMES.map((name, i) => {
   const unitPrice = 499 + ((i * 733) % 6500);
   const onSale = i % 3 === 0;
@@ -162,6 +233,7 @@ const PRODUCTS = NAMES.map((name, i) => {
     quantityInStock: stock,
     categoryName: category.name,
     category,
+    translations: productTranslations(name),
     comments: [],
     variants: [],
     createdDate: new Date(Date.now() - i * 86400000).toISOString(),
