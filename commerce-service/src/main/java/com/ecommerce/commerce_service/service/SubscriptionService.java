@@ -2,7 +2,7 @@ package com.ecommerce.commerce_service.service;
 
 import com.ecommerce.commerce_service.client.ProductCatalogClient;
 import com.ecommerce.commerce_service.dto.catalog.ProductSummaryDto;
-import com.ecommerce.commerce_service.dto.order.CreateOrderAddressRequest;
+import com.ecommerce.commerce_service.dto.orderAddress.CreateOrderAddressRequest;
 import com.ecommerce.commerce_service.dto.order.CreateOrderRequest;
 import com.ecommerce.commerce_service.dto.orderItem.CreateOrderItemRequest;
 import com.ecommerce.commerce_service.dto.payment.PaymentRequest;
