@@ -83,7 +83,7 @@ const ProductCard = ({ product }: CardProps) => {
   const displayStock = selectedVariant?.quantityInStock ?? product?.quantityInStock ?? 0;
   // Gallery: rich (variant/angle-aware) when available, plain URL list otherwise.
   const galleryImages = useMemo(() => {
-    const rich: { url: string; angle?: string | null; variantId?: string | null; altText?: string | null }[] =
+    const rich: { url: string; thumbUrl?: string | null; angle?: string | null; variantId?: string | null; altText?: string | null }[] =
       product?.imageGallery && product.imageGallery.length > 0
         ? product.imageGallery
         : (product?.images ?? []).map((u) => ({ url: u }));
@@ -99,7 +99,7 @@ const ProductCard = ({ product }: CardProps) => {
     let list = galleryImages;
     if (selectedVariant) {
       const hero = selectedVariant.imageUrl
-        ? [{ url: selectedVariant.imageUrl, angle: "variant", variantId: selectedVariant.id }]
+        ? [{ url: selectedVariant.imageUrl, thumbUrl: selectedVariant.imageUrl, angle: "variant", variantId: selectedVariant.id }]
         : [];
       const variantShots = galleryImages.filter((i) => i.variantId === selectedVariant.id);
       const shared = galleryImages.filter((i) => !i.variantId);
@@ -270,7 +270,15 @@ const ProductCard = ({ product }: CardProps) => {
                       : "border-line opacity-70 hover:opacity-100"
                   }`}
                 >
-                  <img src={img.url} alt={img.altText ?? ""} className="h-full w-full object-cover" />
+                  <img
+                    src={img.thumbUrl ?? img.url}
+                    alt={img.altText ?? ""}
+                    loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.src = "/images/store/product-placeholder.svg";
+                    }}
+                    className="h-full w-full object-cover"
+                  />
                 </button>
               ))}
             </div>
@@ -290,6 +298,10 @@ const ProductCard = ({ product }: CardProps) => {
                     visibleImages[currentImageIndex]?.altText ??
                     (product ? localizedName(product, language) : "")
                   }
+                  loading="lazy"
+                  onError={(e) => {
+                    e.currentTarget.src = "/images/store/product-placeholder.svg";
+                  }}
                   className="h-full w-full object-cover"
                 />
               ) : (

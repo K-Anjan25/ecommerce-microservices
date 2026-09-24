@@ -50,3 +50,6 @@ ALTER TABLE product_variants ADD COLUMN IF NOT EXISTS image_url VARCHAR(500);
 ALTER TABLE products ADD COLUMN IF NOT EXISTS subscribe_eligible BOOLEAN NOT NULL DEFAULT FALSE;
 CREATE INDEX IF NOT EXISTS idx_product_images_variant ON product_images (variant_id);
 CREATE INDEX IF NOT EXISTS idx_product_images_product ON product_images (product_id);
+
+-- V6 (thumbs): cards load thumb, gallery loads full-res.
+ALTER TABLE product_images ADD COLUMN IF NOT EXISTS thumb_url varchar(1024);

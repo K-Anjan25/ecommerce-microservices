@@ -40,6 +40,9 @@ public class ProductImage {
 
     private String url;
 
+    /** Card/thumbnail-size URL (source-CDN resize param). Null → use {@code url}. */
+    private String thumbUrl;
+
     private Integer sortOrder;
 
     /** When set, the shot is of this specific variant (colourway/config). */

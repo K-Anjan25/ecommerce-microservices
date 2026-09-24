@@ -56,6 +56,7 @@ public class ProductMapper {
                 .map(img -> ProductImageDto.builder()
                         .id(img.getId())
                         .url(img.getUrl())
+                        .thumbUrl(img.getThumbUrl())
                         .sortOrder(img.getSortOrder())
                         .variantId(img.getVariantId())
                         .angle(img.getAngle() == null ? "gallery" : img.getAngle())

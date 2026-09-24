@@ -1,703 +1,157 @@
 {
-  "note": "Cartly catalog media manifest. Images gathered from public web sources (manufacturer, retailer CDN, media reviews). Brand product photography is copyrighted and used here for a demo storefront \u2014 re-license before production. See README.md in this folder.",
+  "note": "Cartly catalog media manifest v2 \u2014 brand-studio showcase photography, hotlinked from brand-owned CDNs (no local copies). Every image records full + thumb URL (source-CDN resize params where supported), angle, variant SKU and source page. Brand product photography is copyrighted and used here for a demo storefront \u2014 re-license before production. Verify links with tools/catalog-media/check_images.py.",
   "gathered_at": "2026-09-24",
+  "policy": {
+    "style": "studio-only",
+    "hosts": "brand-owned / brand-controlled storefront CDNs only",
+    "sizing": "thumb ~600-800px for cards, full 1400px+ for gallery/zoom"
+  },
   "products": {
     "sony-wh-1000xm5": {
       "product": "Sony WH-1000XM5 Wireless Headphones",
-      "sources": [
+      "source_page": "https://www.sony.co.in/electronics/headband-headphones/wh-1000xm5",
+      "cdn": "sony.co.in/image (Scene7-style: fmt/wid/hei params)",
+      "images": [
         {
-          "url": "https://www.ebay.com/itm/234808307232",
-          "title": "Sony WH-1000XM5 (Black, Silver) listing",
-          "files": [
-            "01.jpg"
-          ]
+          "angle": "front",
+          "sku": null,
+          "alt": "Sony WH-1000XM5 studio product view",
+          "full": "https://www.sony.co.in/image/1aefe3317d479050cfa77837cba7e9d5?fmt=png-alpha&wid=2000&hei=1400&bgcolor=F6F9FF",
+          "thumb": "https://www.sony.co.in/image/1aefe3317d479050cfa77837cba7e9d5?fmt=png-alpha&wid=700&hei=500&bgcolor=F6F9FF"
         },
         {
-          "url": "https://www.ebay.com/p/22054478105",
-          "title": "Sony WH-1000XM5 YY2954 Black",
-          "files": [
-            "02.jpg",
-            "03.jpg"
-          ]
+          "angle": "side",
+          "sku": null,
+          "alt": "Sony WH-1000XM5 side profile studio view",
+          "full": "https://www.sony.co.in/image/623af7b9b246c988fc3f3264a4de278c?fmt=png-alpha&wid=2000&hei=1400&bgcolor=F6F9FF",
+          "thumb": "https://www.sony.co.in/image/623af7b9b246c988fc3f3264a4de278c?fmt=png-alpha&wid=700&hei=500&bgcolor=F6F9FF"
         },
         {
-          "url": "https://www.dell.com/en-us/shop/sony-wh-1000xm5-premium-wireless-noise-canceling-headphones-silver/apd/ac097779/audio",
-          "title": "Dell \u2014 WH-1000XM5 Silver",
-          "files": [
-            "04.jpg"
-          ]
-        },
-        {
-          "url": "https://www.soundguys.com/sony-wh-1000xm5-review-71783/",
-          "title": "SoundGuys XM5 review (headband detail)",
-          "files": [
-            "05.jpg"
-          ]
-        },
-        {
-          "url": "https://recordingnow.com/blog/sony-wh-1000xm5-review/",
-          "title": "RecordingNow XM5 in hand",
-          "files": [
-            "06.jpg"
-          ]
-        }
-      ]
-    },
-    "boat-airdopes-141": {
-      "product": "boAt Airdopes 141 TWS Earbuds",
-      "sources": [
-        {
-          "url": "https://amazon.com/boAt-Airdopes-141-Bluetooth-Earphones/dp/B0DGTT1NGW",
-          "title": "boAt Airdopes 141 Pro (Obsidian Black)",
-          "files": [
-            "01.jpg"
-          ]
-        },
-        {
-          "url": "https://manuals.plus/asin/B0C7QH7L36",
-          "title": "boAt Airdopes 141 media gallery (ENx)",
-          "files": [
-            "02.jpg",
-            "03.jpg"
-          ]
-        },
-        {
-          "url": "https://www.flipkart.com/ebit-trebel-airdopes-141-bluetooth-headset/p/itm21fccdf05d666",
-          "title": "Flipkart \u2014 Airdopes 141 (black)",
-          "files": [
-            "04.jpg"
-          ]
-        },
-        {
-          "url": "https://dukandwar.com/product/boat-airdopes-141-true-wireless-earbuds/",
-          "title": "boAt Airdopes 141 White Purity",
-          "files": [
-            "05.jpg",
-            "06.jpg",
-            "07.jpg"
-          ]
-        },
-        {
-          "url": "https://fabgizmoz.com/products/boat-airdopes-141",
-          "title": "Airdopes 141 open-box",
-          "files": [
-            "08.jpg"
-          ]
+          "angle": "detail",
+          "sku": null,
+          "alt": "Sony WH-1000XM5 earcup and headband detail",
+          "full": "https://www.sony.co.in/image/ce0f6885ec1d1701f08d7b522e4f4ca3?fmt=png-alpha&wid=2000&hei=1400&bgcolor=F6F9FF",
+          "thumb": "https://www.sony.co.in/image/ce0f6885ec1d1701f08d7b522e4f4ca3?fmt=png-alpha&wid=700&hei=500&bgcolor=F6F9FF"
         }
       ]
     },
     "jbl-flip-6": {
       "product": "JBL Flip 6 Portable Bluetooth Speaker",
-      "sources": [
+      "source_page": "https://in.jbl.com/FLIP-6-.html",
+      "cdn": "in.jbl.com Demandware (sw/sh resize params)",
+      "note_colorway": "Blue (JBLFLIP6BLU) studio set \u2014 official default colourway",
+      "images": [
         {
-          "url": "https://www.techradar.com/reviews/jbl-flip-6",
-          "title": "TechRadar JBL Flip 6 review (Red)",
-          "files": [
-            "01.jpg",
-            "03.jpg",
-            "04.jpg"
-          ]
+          "angle": "front",
+          "sku": "JBL-FLIP6-BLU",
+          "alt": "JBL Flip 6 in Blue, three-quarter hero view",
+          "full": "https://in.jbl.com/dw/image/v2/BFND_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dw561380a8/1_JBL_FLIP6_HERO_BLUE_29399_x1.png?sw=1400&sh=1400&sfrm=png",
+          "thumb": "https://in.jbl.com/dw/image/v2/BFND_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dw561380a8/1_JBL_FLIP6_HERO_BLUE_29399_x1.png?sw=600&sh=600&sfrm=png"
         },
         {
-          "url": "https://www.ebay.com/p/21051401316",
-          "title": "JBL Flip 6 colour lineup listing",
-          "files": [
-            "02.jpg",
-            "08.jpg"
-          ]
+          "angle": "detail",
+          "sku": "JBL-FLIP6-BLU",
+          "alt": "JBL Flip 6 in Blue, three-quarter right detail",
+          "full": "https://in.jbl.com/dw/image/v2/BFND_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dwf0f285ee/2_JBL_FLIP6_3_4_RIGHT_BLUE_30192_x1.png?sw=1400&sh=1400&sfrm=png",
+          "thumb": "https://in.jbl.com/dw/image/v2/BFND_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dwf0f285ee/2_JBL_FLIP6_3_4_RIGHT_BLUE_30192_x1.png?sw=600&sh=600&sfrm=png"
         },
         {
-          "url": "https://ebay.com/p/22057363265",
-          "title": "JBL Flip 6 Squad (camo)",
-          "files": [
-            "05.jpg",
-            "06.jpg"
-          ]
+          "angle": "front",
+          "sku": "JBL-FLIP6-BLU",
+          "alt": "JBL Flip 6 in Blue, front view",
+          "full": "https://in.jbl.com/dw/image/v2/BFND_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dwbee1078a/3_JBL_FLIP6_FRONT_BLUE_29503_x1.png?sw=1400&sh=1400&sfrm=png",
+          "thumb": "https://in.jbl.com/dw/image/v2/BFND_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dwbee1078a/3_JBL_FLIP6_FRONT_BLUE_29503_x1.png?sw=600&sh=600&sfrm=png"
         },
         {
-          "url": "https://www.amazon.com/JBL-Flip-Bluetooth-Waterproof-PartyBoost/dp/B09GJMPRYW",
-          "title": "Amazon \u2014 JBL Flip 6 (Grey)",
-          "files": [
-            "07.jpg",
-            "09.jpg"
-          ]
-        }
-      ]
-    },
-    "logitech-mx-keys-s": {
-      "product": "Logitech MX Keys S Wireless Keyboard",
-      "sources": [
-        {
-          "url": "https://ebay.com/p/19036315921",
-          "title": "Logitech MX Keys Graphite listing",
-          "files": [
-            "01.jpg",
-            "02.jpg",
-            "03.jpg",
-            "04.jpg"
-          ]
-        }
-      ]
-    },
-    "hp-pavilion-15": {
-      "product": "HP Pavilion 15 Laptop (Ryzen 5 7530U, 16GB, 512GB)",
-      "sources": [
-        {
-          "url": "https://www.amazon.in/HP-Pavilion-Graphics-Backlit-15-eh2050au/dp/B0CFLMMWY2",
-          "title": "Amazon.in HP Pavilion 15 eh2050au",
-          "files": [
-            "01.jpg"
-          ]
+          "angle": "side",
+          "sku": "JBL-FLIP6-BLU",
+          "alt": "JBL Flip 6 in Blue, right side view",
+          "full": "https://in.jbl.com/dw/image/v2/BFND_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dw6a024ffa/4_JBL_FLIP6_RIGHT_BLUE_29528_x1.png?sw=1400&sh=1400&sfrm=png",
+          "thumb": "https://in.jbl.com/dw/image/v2/BFND_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dw6a024ffa/4_JBL_FLIP6_RIGHT_BLUE_29528_x1.png?sw=600&sh=600&sfrm=png"
         },
         {
-          "url": "https://europc.com/us/hp-pavilion-15-eh3011na-laptop-silver-amd-ryzen-5-7530u-8gb-ram-512gb-ssd-15-1920x1080-fhd-hp-1-yr-wty-166687.html",
-          "title": "EuroPC HP Pavilion 15-eh3011na",
-          "files": [
-            "02.jpg"
-          ]
+          "angle": "back",
+          "sku": "JBL-FLIP6-BLU",
+          "alt": "JBL Flip 6 in Blue, back view",
+          "full": "https://in.jbl.com/dw/image/v2/BFND_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dw64be1c94/5_JBL_FLIP6_BACK_BLUE_29415_x1.png?sw=1400&sh=1400&sfrm=png",
+          "thumb": "https://in.jbl.com/dw/image/v2/BFND_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dw64be1c94/5_JBL_FLIP6_BACK_BLUE_29415_x1.png?sw=600&sh=600&sfrm=png"
         },
         {
-          "url": "https://www.amazon.com/HP-Pavilion-Touchscreen-Graphics-15-eh3010nr/dp/B0BWK8QQ1W",
-          "title": "Amazon HP Pavilion 15-eh3010nr",
-          "files": [
-            "03.jpg",
-            "04.jpg"
-          ]
+          "angle": "top",
+          "sku": "JBL-FLIP6-BLU",
+          "alt": "JBL Flip 6 in Blue, top view",
+          "full": "https://in.jbl.com/dw/image/v2/BFND_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dwa65f4384/JBL_FLIP6_TOP_BLUE_29543_x2.png?sw=1400&sh=1400&sfrm=png",
+          "thumb": "https://in.jbl.com/dw/image/v2/BFND_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dwa65f4384/JBL_FLIP6_TOP_BLUE_29543_x2.png?sw=600&sh=600&sfrm=png"
         },
         {
-          "url": "https://www.walmart.com/ip/HP-Pavilion-15-6-Touchscreen-Laptop-AMD-Ryzen3-5300U-8GB-256GB-SSD-Windows-11-Home-Natural-silver-15-EH1074NR/1310288465",
-          "title": "Walmart HP Pavilion 15",
-          "files": [
-            "05.jpg"
-          ]
-        }
-      ]
-    },
-    "lenovo-ideapad-slim-3": {
-      "product": "Lenovo IdeaPad Slim 3 (i5 13th Gen, 16GB, 512GB)",
-      "sources": [
-        {
-          "url": "https://www.myg.in/laptop-desktops/lenovo/lenovo-ideapad-slim-3-thin-and-light-laptop-intel-core-i5-12th-gen-8-gb-512-gb-ssd-arctic-grey/",
-          "title": "MYG.in IdeaPad Slim 3 i5",
-          "files": [
-            "01.jpg",
-            "04.jpg"
-          ]
+          "angle": "gallery",
+          "sku": "JBL-FLIP6-BLU",
+          "alt": "JBL Flip 6 in Blue, left side view",
+          "full": "https://in.jbl.com/dw/image/v2/BFND_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dw4eb7cd77/JBL_FLIP6_LEFT_BLUE_29518_x1.png?sw=1400&sh=1400&sfrm=png",
+          "thumb": "https://in.jbl.com/dw/image/v2/BFND_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dw4eb7cd77/JBL_FLIP6_LEFT_BLUE_29518_x1.png?sw=600&sh=600&sfrm=png"
         },
         {
-          "url": "https://www.walmart.com/ip/Lenovo-IdeaPad-Slim-3i-15-6-inch-Laptop-Intel-Core-i3-N305-8GB-RAM-256GB-SSD-Arctic-Grey/5526976684",
-          "title": "Walmart IdeaPad Slim 3i",
-          "files": [
-            "02.jpg",
-            "03.jpg"
-          ]
-        },
-        {
-          "url": "https://www.amazon.com/ideapad-3i-intel-15-arctic-grey/s?k=ideapad+3i+intel+15+-+arctic+grey",
-          "title": "Amazon IdeaPad Slim 3i",
-          "files": [
-            "05.jpg"
-          ]
-        }
-      ]
-    },
-    "samsung-galaxy-s24": {
-      "product": "Samsung Galaxy S24 5G (8GB, 256GB)",
-      "sources": [
-        {
-          "url": "https://www.att.com/buy/phones/samsung-galaxy-s24-128gb-onyx-black.html",
-          "title": "AT&T Galaxy S24 Onyx Black",
-          "files": [
-            "01.jpg"
-          ]
-        },
-        {
-          "url": "https://www.techradar.com/phones/samsung-galaxy-phones/samsung-galaxy-s24-colors",
-          "title": "TechRadar S24 colours",
-          "files": [
-            "02.jpg",
-            "03.jpg"
-          ]
-        },
-        {
-          "url": "https://www.ebay.com/p/26064927885",
-          "title": "eBay Galaxy S24 Onyx Black",
-          "files": [
-            "03.jpg"
-          ]
-        },
-        {
-          "url": "https://www.androidcentral.com/phones/what-color-galaxy-s24-should-you-buy",
-          "title": "Android Central \u2014 official S24 renders",
-          "files": [
-            "04.jpg"
-          ]
-        },
-        {
-          "url": "https://www.samsung.com/levant/smartphones/galaxy-s/galaxy-s24-marble-gray-256gb-sm-s921bzacmea/buy/",
-          "title": "Samsung.com Galaxy S24 Marble Gray",
-          "files": [
-            "05.jpg"
-          ]
-        }
-      ]
-    },
-    "redmi-note-13": {
-      "product": "Redmi Note 13 5G (6GB, 128GB)",
-      "sources": [
-        {
-          "url": "https://phonesdata.com/en/smartphones/xiaomi/redmi-note-13-5464263",
-          "title": "phonesdata \u2014 Xiaomi Redmi Note 13 5G gallery",
-          "files": [
-            "01.jpg",
-            "02.jpg",
-            "03.jpg",
-            "04.jpg",
-            "05.jpg"
-          ]
-        }
-      ]
-    },
-    "noise-colorfit-pro-5": {
-      "product": "Noise ColorFit Pro 5 Smartwatch",
-      "sources": [
-        {
-          "url": "https://www.smartprix.com/smartwatches/noise-colorfit-pro-5-smartwatch-ppd1gu4q9ddb",
-          "title": "Smartprix ColorFit Pro 5",
-          "files": [
-            "01.jpg"
-          ]
-        },
-        {
-          "url": "https://www.croma.com/noise-colorfit-pro-5-smartwatch-with-bluetooth-calling-46-99mm-amoled-display-ip68-water-resistant-elite-black-strap-/p/302638",
-          "title": "Croma \u2014 ColorFit Pro 5 Elite Black",
-          "files": [
-            "02.jpg"
-          ]
-        },
-        {
-          "url": "https://www.croma.com/noise-colorfit-pro-5-smartwatch-with-bluetooth-calling-46-99mm-amoled-display-ip68-water-resistant-vintage-brown-strap-/p/302648",
-          "title": "Croma \u2014 ColorFit Pro 5 Vintage Brown",
-          "files": [
-            "03.jpg",
-            "04.jpg"
-          ]
-        },
-        {
-          "url": "https://www.croma.com/noise-colorfit-pro-5-smartwatch-with-bluetooth-calling-46-99mm-amoled-display-ip68-water-resistant-midnight-black-strap-/p/302645",
-          "title": "Croma \u2014 ColorFit Pro 5 Midnight Black",
-          "files": [
-            "05.jpg"
-          ]
-        }
-      ]
-    },
-    "fire-boltt-ninja-call-pro-plus": {
-      "product": "Fire-Boltt Ninja Call Pro Plus Smartwatch",
-      "sources": [
-        {
-          "url": "https://www.reliancedigital.in/product/fireboltt-ninja-call-pro-plus-smart-watch-with-bluetooth-calling-black-ld1682",
-          "title": "Reliance Digital \u2014 Fire-Boltt Ninja Call Pro Plus",
-          "files": [
-            "01.jpg",
-            "03.jpg"
-          ]
-        },
-        {
-          "url": "https://amazon.com/Fire-Boltt-46-48mm-Bluetooth-Assistance-Resolution/dp/B0BF54972T",
-          "title": "Amazon Fire-Boltt Ninja Call Pro Plus",
-          "files": [
-            "02.jpg"
-          ]
-        },
-        {
-          "url": "https://www.amazon.com/Fire-Boltt-Bluetooth-Calling-Assistance-Resolution/dp/B0BF57RN3K",
-          "title": "Amazon Fire-Boltt (features)",
-          "files": [
-            "04.jpg"
-          ]
-        },
-        {
-          "url": "https://finebuy.co.in/product/fire-boltt-ninja-call-pro-plus-1-83-smart-watch-with-bluetooth-calling/",
-          "title": "Finebuy Fire-Boltt Ninja Call Pro Plus",
-          "files": [
-            "05.jpg"
-          ]
-        }
-      ]
-    },
-    "nike-pegasus-40": {
-      "product": "Nike Air Zoom Pegasus 40 Running Shoes",
-      "sources": [
-        {
-          "url": "https://www.misterrunning.com/en/nike-air-zoom-pegasus-40-mens-running-shoes-black-white-dv3853-001.html",
-          "title": "MisterRunning Pegasus 40 DV3853-001",
-          "files": [
-            "01.jpg"
-          ]
-        },
-        {
-          "url": "https://amazon.com/Nike-Air-Zoom-Pegasus-40/s?k=Nike+Air+Zoom+Pegasus+40",
-          "title": "Amazon Pegasus 40 gallery",
-          "files": [
-            "02.jpg",
-            "03.jpg"
-          ]
-        },
-        {
-          "url": "https://kickscrew.com/products/nike-air-zoom-pegasus-40-wolf-grey-volt-dv3853-004",
-          "title": "KicksCrew Pegasus 40 Wolf Grey Volt",
-          "files": [
-            "04.jpg"
-          ]
-        },
-        {
-          "url": "https://www.amazon.com/Nike-Pegasus-Running-DV3853-006-Platinum/dp/B0CT62MNTB",
-          "title": "Amazon Pegasus 40 Platinum Tint DV3853-006",
-          "files": [
-            "05.jpg"
-          ]
-        }
-      ]
-    },
-    "adidas-ultraboost-light": {
-      "product": "Adidas Ultraboost Light Running Shoes",
-      "sources": [
-        {
-          "url": "https://ebay.com/p/7059485450",
-          "title": "adidas Ultraboost Light GY9351 listing",
-          "files": [
-            "01.jpg",
-            "02.jpg",
-            "04.jpg"
-          ]
-        },
-        {
-          "url": "https://ebay.com/p/22059476107",
-          "title": "adidas Ultraboost Light Black/White GY9351",
-          "files": [
-            "03.jpg"
-          ]
-        }
-      ]
-    },
-    "puma-rs-x": {
-      "product": "Puma RS-X Reinvention Sneakers",
-      "sources": [
-        {
-          "url": "https://us.puma.com/us/en/pd/rs-x-reinvention-mens-sneakers/369579",
-          "title": "PUMA.com RS-X Reinvention (official)",
-          "files": [
-            "01.jpg",
-            "02.jpg",
-            "03.jpg"
-          ]
-        },
-        {
-          "url": "https://realry.com/products/681b6e159a398b6cc20d874d",
-          "title": "Realry RS-X Reinvention",
-          "files": [
-            "04.jpg"
-          ]
-        },
-        {
-          "url": "https://www.ebay.com/itm/157156614542",
-          "title": "eBay RS-X Reinvention (red colourway)",
-          "files": [
-            "05.jpg"
-          ]
-        }
-      ]
-    },
-    "levis-511": {
-      "product": "Levi's 511 Slim Fit Mid-Rise Jeans",
-      "sources": [
-        {
-          "url": "https://www.ebay.com/b/Levis-511-Jeans-for-Men/11483/bn_120463222",
-          "title": "eBay Levi's 511 gallery (dark wash)",
-          "files": [
-            "01.jpg"
-          ]
-        },
-        {
-          "url": "https://ebay.com/p/9097358461",
-          "title": "Levi's 511 medium wash 31x32",
-          "files": [
-            "02.jpg"
-          ]
-        },
-        {
-          "url": "https://ebay.com/p/1142419144",
-          "title": "Levi's 511 dark wash (model)",
-          "files": [
-            "03.jpg"
-          ]
-        },
-        {
-          "url": "https://ebay.com/p/1101302398",
-          "title": "Levi's 511 dark blue",
-          "files": [
-            "04.jpg"
-          ]
-        },
-        {
-          "url": "https://ebay.com/p/4059473203",
-          "title": "Levi's Flex 511 light blue",
-          "files": [
-            "05.jpg"
-          ]
-        }
-      ]
-    },
-    "american-tourister-duffel": {
-      "product": "American Tourister 55cm Travel Duffel Bag",
-      "sources": [
-        {
-          "url": "https://www.flipkart.com/american-tourister-21-inch-55-cm-x-cess-duffle-55cm-duffel-without-wheels/p/itm9050815ad91ba",
-          "title": "Flipkart Am. Tourister X-CESS 55cm duffel",
-          "files": [
-            "01.jpg",
-            "02.jpg",
-            "03.jpg"
-          ]
-        },
-        {
-          "url": "https://www.amazon.com/American-Tourister-Duffel-Bag/s?k=American+Tourister+Duffel+Bag",
-          "title": "Amazon Am. Tourister duffel (grey, wheeled)",
-          "files": [
-            "04.jpg"
-          ]
-        },
-        {
-          "url": "https://www.ebay.co.uk/itm/166585907574",
-          "title": "Am. Tourister Urban Track duffel (green)",
-          "files": [
-            "05.jpg"
-          ]
-        }
-      ]
-    },
-    "hawkins-contura": {
-      "product": "Hawkins Contura Aluminium Pressure Cooker",
-      "sources": [
-        {
-          "url": "https://www.amazon.in/Hawkins-Contura-Anodised-Aluminium-Pressure/dp/B00SX03I80",
-          "title": "Amazon.in Hawkins Contura HC30 3L",
-          "files": [
-            "01.jpg"
-          ]
-        },
-        {
-          "url": "https://www.amazon.com/Hawkins-Contura-Pressure-Cooker-3-0-Litre/dp/B0047T6KZ4",
-          "title": "Amazon Hawkins Contura 3.0L new shape",
-          "files": [
-            "02.jpg",
-            "04.jpg"
-          ]
-        },
-        {
-          "url": "https://nativesweetsandsnacks.com/product/hawkins-contura-hard-anodized-aluminum-pressure-cooker-3-litres-black/",
-          "title": "Hawkins Contura hard anodised CB30 (black)",
-          "files": [
-            "03.jpg"
-          ]
-        }
-      ]
-    },
-    "prestige-cookware-set": {
-      "product": "Prestige Non-Stick Cookware Set (5 Pieces)",
-      "sources": [
-        {
-          "url": "https://www.ebay.co.uk/p/3053361222",
-          "title": "Prestige Eco Pan non-stick 5-piece set",
-          "files": [
-            "01.jpg"
-          ]
-        },
-        {
-          "url": "https://www.myg.in/home-and-kitchen/crockery/prestige-omega-granite-byk-induction-bottom-non-stick-coated-cookware-set-aluminium-4-piece/",
-          "title": "Prestige Omega Granite BYK set",
-          "files": [
-            "02.jpg"
-          ]
-        },
-        {
-          "url": "https://spicerange.com/products/prestige-omega-deluxe-granite-3-piece-set",
-          "title": "Prestige Omega Deluxe Granite set",
-          "files": [
-            "03.jpg"
-          ]
-        },
-        {
-          "url": "https://www.amazon.in/Prestige-Induction-Non-Stick-Kitchen-3-Pieces/dp/B00EICJA0M",
-          "title": "Amazon.in Prestige Omega Deluxe Granite Alpha",
-          "files": [
-            "04.jpg"
-          ]
-        }
-      ]
-    },
-    "philips-air-lamp": {
-      "product": "Philips Air LED Table Lamp 5W",
-      "sources": [
-        {
-          "url": "https://www.zepto.com/pn/philips-air-5w-table-lamp-cool-day-light/pvid/9aedadaa-c867-4965-bdb1-985fee339f0d",
-          "title": "Zepto Philips Air 5W Table Lamp",
-          "files": [
-            "01.jpg",
-            "02.jpg",
-            "03.jpg"
-          ]
-        }
-      ]
-    },
-    "loreal-revitalift-serum": {
-      "product": "L'Oreal Paris Revitalift Hyaluronic Acid Serum 30ml",
-      "sources": [
-        {
-          "url": "https://www.lookfantastic.com/p/l-oreal-paris-1.5-hyaluronic-acid-revitalift-filler-serum-30ml/12430126/",
-          "title": "Lookfantastic Revitalift Filler serum 30ml",
-          "files": [
-            "01.jpg"
-          ]
-        },
-        {
-          "url": "https://www.priceline.com.au/product/56278/l-oreal-paris-revitalift-filler-1-5-hyaluronic-acid-serum-30ml",
-          "title": "Priceline Revitalift Filler 1.5% HA serum",
-          "files": [
-            "02.jpg",
-            "04.jpg"
-          ]
-        },
-        {
-          "url": "https://www.boots.com/loreal-paris-revitalift-filler-serum-30ml-10274580",
-          "title": "Boots Revitalift Filler serum 30ml",
-          "files": [
-            "03.jpg"
-          ]
-        }
-      ]
-    },
-    "mamaearth-vitamin-c-face-wash": {
-      "product": "Mamaearth Vitamin C Foaming Face Wash 150ml",
-      "sources": [
-        {
-          "url": "https://mumzworld.com/global-en/mamaearth-vitamin-c-foaming-face-wash-150ml",
-          "title": "Mumzworld Mamaearth Vit-C face wash 150ml",
-          "files": [
-            "01.jpg",
-            "05.jpg"
-          ]
-        },
-        {
-          "url": "https://ebay.com/itm/285278055281",
-          "title": "eBay Mamaearth Vit-C foaming face wash",
-          "files": [
-            "02.jpg"
-          ]
-        },
-        {
-          "url": "https://www.pinterest.com/pin/4596064242625267712/",
-          "title": "Mamaearth Vit-C face wash (pack shot)",
-          "files": [
-            "03.jpg"
-          ]
-        },
-        {
-          "url": "https://www.daraz.com.np/products/mamaearth-vitamin-c-foaming-face-wash-150ml-i105492871.html",
-          "title": "Daraz Mamaearth Vit-C face wash",
-          "files": [
-            "04.jpg"
-          ]
-        }
-      ]
-    },
-    "boldfit-yoga-mat": {
-      "product": "Boldfit Anti-Skid Yoga Mat 6mm with Strap",
-      "sources": [
-        {
-          "url": "https://www.flipkart.com/exercise-fitness/yoga/yoga-mats/boldfit~brand/pr?sid=qoc%2Cs1h%2Cfco",
-          "title": "Flipkart Boldfit FK-BYM06 yoga mat",
-          "files": [
-            "01.jpg"
-          ]
-        },
-        {
-          "url": "https://www.indiamart.com/proddetail/boldfit-yoga-mats-anti-slip-anki-skid-gym-mats-exercise-mat-6mm-2852141475873.html",
-          "title": "IndiaMART Boldfit yoga mat 6mm",
-          "files": [
-            "02.jpg",
-            "03.jpg",
-            "04.jpg"
-          ]
-        }
-      ]
-    },
-    "kore-dumbbell-set": {
-      "product": "Kore PVC Dumbbell Set for Home Gym",
-      "sources": [
-        {
-          "url": "https://amazon.in/Kore-20-50-Home-Curl-Dumbbell/dp/B0BYT878SH",
-          "title": "Amazon.in Kore PVC home gym set",
-          "files": [
-            "01.jpg"
-          ]
-        },
-        {
-          "url": "https://www.amazon.in/Kore-PVC-Home-Accessories-Multicolor/dp/B0GMR4KJZR",
-          "title": "Amazon.in Kore PVC set + accessories",
-          "files": [
-            "02.jpg"
-          ]
-        },
-        {
-          "url": "https://www.amazon.in/Kore-20-100-Home-Plain-Dumbbell/dp/B09NB325NQ",
-          "title": "Amazon.in Kore PVC dumbbell rods set",
-          "files": [
-            "03.jpg"
-          ]
-        }
-      ]
-    },
-    "nivia-skipping-rope": {
-      "product": "Nivia Trainer Adjustable Skipping Rope",
-      "sources": [
-        {
-          "url": "https://www.amazon.in/Nivia-Skipping-Children-Exercise-Training/dp/B0BXF43591",
-          "title": "Amazon.in Nivia Trainer jump rope",
-          "files": [
-            "01.jpg",
-            "03.jpg"
-          ]
-        },
-        {
-          "url": "https://www.flipkart.com/exercise-fitness/fitness-accessories/skipping-ropes/nivia~brand/pr?sid=qoc%2Cacb%2C0xb",
-          "title": "Flipkart Nivia Trainer jump rope",
-          "files": [
-            "02.jpg"
-          ]
+          "angle": "gallery",
+          "sku": "JBL-FLIP6-BLU",
+          "alt": "JBL Flip 6 in Blue, bottom view",
+          "full": "https://in.jbl.com/dw/image/v2/BFND_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dwf0ba514f/JBL_FLIP6_BOTTOM_BLUE_29541_x1.png?sw=1400&sh=1400&sfrm=png",
+          "thumb": "https://in.jbl.com/dw/image/v2/BFND_PRD/on/demandware.static/-/Sites-masterCatalog_Harman/default/dwf0ba514f/JBL_FLIP6_BOTTOM_BLUE_29541_x1.png?sw=600&sh=600&sfrm=png"
         }
       ]
     },
     "canon-eos-1500d": {
       "product": "Canon EOS 1500D DSLR Camera with 18-55mm Lens",
-      "sources": [
+      "source_page": "https://in.canon/en/consumer/eos-1500d-kit-ef-s18-55-is-ii/main/product",
+      "cdn": "in.canon/media/image (no resize params \u2014 single size)",
+      "images": [
         {
-          "url": "https://www.jbhifi.com.au/products/canon-eos-1500d-dslr-camera-with-18-55mm-lens",
-          "title": "JB Hi-Fi Canon EOS 1500D + 18-55mm",
-          "files": [
-            "01.jpg"
-          ]
+          "angle": "front",
+          "sku": "CAN-1500D-KIT",
+          "alt": "Canon EOS 1500D with 18-55mm lens, front three-quarter studio view",
+          "full": "https://in.canon/media/image/2018/03/25/937d6225816f49538c9dac956e8b8a8c_eos-1500d_b1.png",
+          "thumb": "https://in.canon/media/image/2018/03/25/937d6225816f49538c9dac956e8b8a8c_eos-1500d_b1.png"
         },
         {
-          "url": "https://imaginext.co.in/products/canon-eos-1500d-dslr-camera-with-18-55-mm",
-          "title": "Imaginext Canon EOS 1500D gallery",
-          "files": [
-            "02.jpg",
-            "03.jpg",
-            "04.jpg",
-            "05.jpg"
-          ]
+          "angle": "side",
+          "sku": "CAN-1500D-KIT",
+          "alt": "Canon EOS 1500D side view with lens",
+          "full": "https://in.canon/media/image/2018/03/25/53849be12b66400498ed3b55bc9fae12_eos-1500d_b2.png",
+          "thumb": "https://in.canon/media/image/2018/03/25/53849be12b66400498ed3b55bc9fae12_eos-1500d_b2.png"
+        },
+        {
+          "angle": "back",
+          "sku": "CAN-1500D-KIT",
+          "alt": "Canon EOS 1500D rear LCD and controls",
+          "full": "https://in.canon/media/image/2018/03/25/5bd81d2e86004305a162df34fdd002fd_eos-1500d_b3.png",
+          "thumb": "https://in.canon/media/image/2018/03/25/5bd81d2e86004305a162df34fdd002fd_eos-1500d_b3.png"
+        },
+        {
+          "angle": "detail",
+          "sku": null,
+          "alt": "Canon EOS 1500D top view with mode dial",
+          "full": "https://in.canon/media/image/2018/03/25/ad995a75baf74a4ba7e55c8641815528_eos-1500d_b4.png",
+          "thumb": "https://in.canon/media/image/2018/03/25/ad995a75baf74a4ba7e55c8641815528_eos-1500d_b4.png"
+        },
+        {
+          "angle": "gallery",
+          "sku": null,
+          "alt": "Canon EOS 1500D with 18-55mm kit lens, studio angle 5",
+          "full": "https://in.canon/media/image/2018/03/25/51f0aacb2b82477b8909ca7502aa409a_eos-1500d_b5.png",
+          "thumb": "https://in.canon/media/image/2018/03/25/51f0aacb2b82477b8909ca7502aa409a_eos-1500d_b5.png"
+        },
+        {
+          "angle": "gallery",
+          "sku": null,
+          "alt": "Canon EOS 1500D with 18-55mm kit lens, studio angle 6",
+          "full": "https://in.canon/media/image/2018/03/25/f180c378197745fab4a5adbc0f6bd0ed_eos-1500d_b6.png",
+          "thumb": "https://in.canon/media/image/2018/03/25/f180c378197745fab4a5adbc0f6bd0ed_eos-1500d_b6.png"
+        },
+        {
+          "angle": "gallery",
+          "sku": null,
+          "alt": "Canon EOS 1500D with 18-55mm kit lens, studio angle 7",
+          "full": "https://in.canon/media/image/2018/03/25/a9465645bd2b45c587dd70f1381d33d2_eos-1500d_b7.png",
+          "thumb": "https://in.canon/media/image/2018/03/25/a9465645bd2b45c587dd70f1381d33d2_eos-1500d_b7.png"
         }
       ]
     }

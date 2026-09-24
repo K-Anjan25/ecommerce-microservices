@@ -17,6 +17,8 @@ import java.util.UUID;
 public class ProductImageDto {
     private UUID id;
     private String url;
+    /** Card-size URL (source-CDN resize). Null → use url. */
+    private String thumbUrl;
     private Integer sortOrder;
     /** Null for product-level shots. */
     private UUID variantId;

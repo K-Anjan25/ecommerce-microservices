@@ -204,6 +204,7 @@ public class ProductService {
                 productImages.add(ProductImage.builder()
                         .product(product)
                         .url(img.getUrl())
+                        .thumbUrl(img.getThumbUrl())
                         .sortOrder(img.getSortOrder() != null ? img.getSortOrder() : i)
                         .variantId(img.getVariantId())
                         .angle(img.getAngle() == null || img.getAngle().isBlank() ? "gallery" : img.getAngle())

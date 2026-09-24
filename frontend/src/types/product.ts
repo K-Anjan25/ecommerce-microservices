@@ -17,11 +17,14 @@ export interface ProductVariant {
 /** Gallery image with variant/angle metadata (imageGallery entries). */
 export interface ProductImage {
   id?: string;
+  /** Full-resolution URL (brand CDN original) — gallery/zoom. */
   url: string;
+  /** Card/thumbnail-size URL (source-CDN resize). Null → use url. */
+  thumbUrl?: string | null;
   sortOrder?: number;
   /** Null/undefined for product-level shots. */
   variantId?: string | null;
-  /** front | side | back | detail | box | lifestyle | gallery */
+  /** front | side | back | top | detail | variant | gallery */
   angle?: string | null;
   altText?: string | null;
 }
