@@ -74,6 +74,7 @@ const ko: Messages = {
   "home.heroSubtitle":
     "프리미엄 테크, 홈, 생활용품을 한자리에 모은 modern 멀티 카테고리 마켓플레이스.",
   "home.heroCta": "지금 쇼핑하기",
+  "home.recentlyViewed": "최근 본 상품",
   "home.trending": "이번 주 트렌드",
   "home.seeAll": "전체 보기",
   "home.shop": "쇼핑",

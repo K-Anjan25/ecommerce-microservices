@@ -74,6 +74,7 @@ const de: Messages = {
   "home.heroSubtitle":
     "Ein moderner Marktplatz für hochwertige Technik, Wohnen und Alltagsprodukte.",
   "home.heroCta": "Jetzt shoppen",
+  "home.recentlyViewed": "Kürzlich von Ihnen angesehen",
   "home.trending": "Diese Woche im Trend",
   "home.seeAll": "Alle ansehen",
   "home.shop": "Shoppen",

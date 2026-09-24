@@ -10,6 +10,7 @@ import { currentOrigin } from "../../../utils/origin";
 import ProductDetail from "../../../components/Card/ProductCard";
 import EmptyState from "../../../components/EmptyState";
 import usePageMetadata from "../../../hooks/usePageMetadata";
+import { recordRecentlyViewed } from "../../../utils/recentlyViewed";
 
 function Product() {
   const { productId } = useParams();
@@ -23,6 +24,19 @@ function Product() {
   } = useQuery(["products:product", productId], () =>
     ProductApi.getProductById(productId ?? "")
   );
+
+  // Amazon-style "recently viewed": snapshot this product once loaded.
+  React.useEffect(() => {
+    if (product) {
+      recordRecentlyViewed({
+        id: product.id,
+        name: product.name,
+        unitPrice: product.unitPrice,
+        imageUrl: product.images?.[0] || product.imageUrl,
+        brand: product.brand,
+      });
+    }
+  }, [product]);
 
   const metadata = React.useMemo(() => {
     const cover = product?.images?.[0] || product?.imageUrl;

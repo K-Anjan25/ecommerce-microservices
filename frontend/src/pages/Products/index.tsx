@@ -18,6 +18,8 @@ import ProductViewPlaceholder from "../../components/ProductViewPlaceholder";
 import EmptyState from "../../components/EmptyState";
 import { useStoreSettings } from "../../features/storefront";
 import { useI18n } from "../../features/i18n";
+import { getRecentlyViewed, ViewedProductSnapshot } from "../../utils/recentlyViewed";
+import { formatPrice } from "../../utils/currency";
 import usePageMetadata from "../../hooks/usePageMetadata";
 
 const SORTS = [
@@ -205,6 +207,8 @@ function Products() {
   usePageMetadata(homeMetadata);
 
   const { data: bestsellers } = useQuery("bestsellers", ProductApi.getBestsellers);
+  // Read once per mount — the strip is a snapshot of browsing history.
+  const [recentlyViewed] = useState<ViewedProductSnapshot[]>(() => getRecentlyViewed().slice(0, 6));
 
   const activeFilters = [
     filter && { key: "category", label: filter, clear: () => applyCategory("") },
@@ -477,6 +481,39 @@ function Products() {
         </div>
       </section>
       </div>
+
+      {/* ═══ RECENTLY VIEWED (Amazon-style browsing history) ═══════════════ */}
+      {recentlyViewed.length > 0 && (
+        <section className="page-shell">
+          <h2 className="mb-4 font-heading text-xl sm:text-2xl font-black tracking-tight text-ink">
+            {t("home.recentlyViewed")}
+          </h2>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">
+            {recentlyViewed.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => navigate(`/products/${item.id}`)}
+                className="group flex flex-col items-start overflow-hidden rounded-2xl border border-line bg-paper p-3 text-left shadow-sm transition hover:shadow-md"
+              >
+                <div className="mb-2 flex h-24 w-full items-center justify-center overflow-hidden rounded-lg bg-white">
+                  {item.imageUrl ? (
+                    <img
+                      src={item.imageUrl}
+                      alt={item.name}
+                      loading="lazy"
+                      className="h-full w-full object-contain transition group-hover:scale-[1.03]"
+                    />
+                  ) : (
+                    <span className="text-xs text-ink-muted">{item.name}</span>
+                  )}
+                </div>
+                <p className="w-full truncate text-xs font-semibold text-ink">{item.name}</p>
+                <p className="text-xs font-bold text-ink-soft">{formatPrice(item.unitPrice)}</p>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ═══ TRENDING THIS WEEK (Concept B Product Grid) ═══════════════════ */}
       <section className="page-shell">

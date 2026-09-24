@@ -74,6 +74,7 @@ const ja: Messages = {
   "home.heroSubtitle":
     "高品質なテクノロジー・ホーム・日用品をそろえたモダンなマルチカテゴリーマーケット。",
   "home.heroCta": "今すぐショップ",
+  "home.recentlyViewed": "最近見た商品",
   "home.trending": "今週のトレンド",
   "home.seeAll": "すべて見る",
   "home.shop": "ショップ",

@@ -74,6 +74,7 @@ const es: Messages = {
   "home.heroSubtitle":
     "Un marketplace moderno multidisciplina para tecnología, hogar y esenciales de calidad.",
   "home.heroCta": "Comprar ahora",
+  "home.recentlyViewed": "Vistos recientemente por ti",
   "home.trending": "Tendencias de esta semana",
   "home.seeAll": "Ver todo",
   "home.shop": "Comprar",

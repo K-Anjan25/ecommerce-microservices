@@ -74,6 +74,7 @@ const fr: Messages = {
   "home.heroSubtitle":
     "Une place de marché multi-catégories moderne pour la tech, la maison et l'essentiel du quotidien.",
   "home.heroCta": "Acheter maintenant",
+  "home.recentlyViewed": "Vus récemment pour vous",
   "home.trending": "Tendance cette semaine",
   "home.seeAll": "Tout voir",
   "home.shop": "Acheter",

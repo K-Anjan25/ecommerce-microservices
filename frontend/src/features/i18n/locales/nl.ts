@@ -74,6 +74,7 @@ const nl: Messages = {
   "home.heroSubtitle":
     "Eén moderne multi-categorie marktplaats voor kwaliteit in techniek, woningen en dagelijkse essentials.",
   "home.heroCta": "Nu shoppen",
+  "home.recentlyViewed": "Onlangs door u bekeken",
   "home.trending": "Trending deze week",
   "home.seeAll": "Alles bekijken",
   "home.shop": "Shoppen",

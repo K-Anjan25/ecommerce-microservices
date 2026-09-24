@@ -79,6 +79,7 @@ export const en = {
   "home.heroSubtitle":
     "One modern multi-category marketplace for high quality tech, home & everyday essentials.",
   "home.heroCta": "Shop Now",
+  "home.recentlyViewed": "Your recently viewed items",
   "home.trending": "Trending This Week",
   "home.seeAll": "See all",
   "home.shop": "Shop",

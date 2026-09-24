@@ -74,6 +74,7 @@ const sv: Messages = {
   "home.heroSubtitle":
     "En modern marknadsplats med många kategorier för kvalitet inom teknik, hem och vardagsprodukter.",
   "home.heroCta": "Handla nu",
+  "home.recentlyViewed": "Nyligen visade för dig",
   "home.trending": "Trendar denna vecka",
   "home.seeAll": "Visa alla",
   "home.shop": "Handla",

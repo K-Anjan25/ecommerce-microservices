@@ -3,6 +3,7 @@ package com.ecommerce.product_service.service;
 import com.ecommerce.product_service.dto.category.CategoryDto;
 import com.ecommerce.product_service.dto.category.CategoryMapper;
 import com.ecommerce.product_service.dto.category.CreateCategoryRequest;
+import com.ecommerce.product_service.audit.AuditLogService;
 import com.ecommerce.product_service.dto.category.UpdateCategoryRequest;
 import com.ecommerce.product_service.exception.CategoryInUseException;
 import com.ecommerce.product_service.exception.CategoryNotFoundException;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+    private final AuditLogService auditLogService;
 
     public Category getCategoryById(Long id){
         return categoryRepository.findById(id)
@@ -52,7 +54,9 @@ public class CategoryService {
                 .sortOrder(createCategoryRequest.getSortOrder())
                 .build();
 
-        return categoryMapper.categoryToCategoryDto(categoryRepository.save(category));
+        CategoryDto saved = categoryMapper.categoryToCategoryDto(categoryRepository.save(category));
+        auditLogService.record("CATEGORY_CREATED", "CATEGORY", saved.getId().toString(), saved.getName());
+        return saved;
     }
 
     /**
@@ -86,7 +90,9 @@ public class CategoryService {
         if (request.getImageUrl() != null) {
             category.setImageUrl(request.getImageUrl().isBlank() ? null : request.getImageUrl().trim());
         }
-        return categoryMapper.categoryToCategoryDto(categoryRepository.save(category));
+        CategoryDto saved = categoryMapper.categoryToCategoryDto(categoryRepository.save(category));
+        auditLogService.record("CATEGORY_UPDATED", "CATEGORY", saved.getId().toString(), saved.getName());
+        return saved;
     }
 
     /**
@@ -95,7 +101,7 @@ public class CategoryService {
      * category's own subtree, so the tree can never cycle.
      */
     @Transactional
-    public CategoryDto moveCategory(Long id, Long newParentId, Integer position) {
+    public CategoryDto moveCategory(Long id, Long newParentId, Integer position_) {
         Category category = getCategoryById(id);
         if (newParentId != null) {
             if (newParentId.equals(id)) {
@@ -113,7 +119,10 @@ public class CategoryService {
         }
         category.setParentId(newParentId);
         categoryMapper.categoryToCategoryDto(categoryRepository.save(category));
-        reorder(id, newParentId, position == null ? Integer.MAX_VALUE : position);
+        int position = position_ == null ? Integer.MAX_VALUE : position_;
+        reorder(id, newParentId, position);
+        auditLogService.record("CATEGORY_MOVED", "CATEGORY", id.toString(),
+                (newParentId == null ? "top level" : "parent " + newParentId) + ", position " + position);
         return categoryMapper.categoryToCategoryDto(getCategoryById(id));
     }
 
@@ -152,6 +161,7 @@ public class CategoryService {
             throw new CategoryInUseException(
                     "Category still has " + inUse + " product(s) assigned. Move or remove them first.");
         }
+        auditLogService.record("CATEGORY_DELETED", "CATEGORY", id.toString(), category.getName());
         categoryRepository.delete(category);
     }
 

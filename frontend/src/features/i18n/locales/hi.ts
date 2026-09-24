@@ -74,6 +74,7 @@ const hi: Messages = {
   "home.heroSubtitle":
     "बेहतरीन टेक, घर और रोज़मर्रा के ज़रूरी सामान के लिए एक आधुनिक मल्टी-कैटेगरी मार्केटप्लेस।",
   "home.heroCta": "अभी खरीदें",
+  "home.recentlyViewed": "आपने हाल में जो देखे",
   "home.trending": "इस हफ़्ते ट्रेंडिंग",
   "home.seeAll": "सभी देखें",
   "home.shop": "खरीदें",

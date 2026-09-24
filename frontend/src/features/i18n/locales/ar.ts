@@ -74,6 +74,7 @@ const ar: Messages = {
   "home.heroSubtitle":
     "سوق عصري متعدد الفئات لتقنية ومستلزمات المنزل والحياة اليومية عالية الجودة.",
   "home.heroCta": "تسوّق الآن",
+  "home.recentlyViewed": "شاهدتها مؤخراً",
   "home.trending": "الأكثر رواجاً هذا الأسبوع",
   "home.seeAll": "عرض الكل",
   "home.shop": "تسوّق",
