@@ -35,7 +35,7 @@ public class StockWatchController {
     @PostMapping("/{productId}/stock-watch")
     public ResponseEntity<Void> watch(@PathVariable UUID productId,
                                       @Valid @RequestBody WatchRequest request) {
-        stockWatchService.watchProduct(productId, request.getEmail());
+        stockWatchService.watchProduct(productId, request.getEmail(), request.getLocale());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

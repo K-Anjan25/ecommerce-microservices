@@ -85,6 +85,8 @@ const sv: Messages = {
   "home.trending": "Trendar denna vecka",
   "home.seeAll": "Visa alla",
   "home.shop": "Handla",
+  "home.metaTitle": "Cartly — En modern flerkategori-marknadsplats",
+  "home.metaDescription": "Kvalitetsprodukter inom elektronik, mode, hem och mer.",
   "home.announcement": "FLASHREA! Upp till 40 % rabatt på elektronik & hem! Slutar vid midnatt!",
 
   "filters.sortBy": "Sortera efter",

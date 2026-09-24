@@ -36,6 +36,7 @@ const QUESTIONS = [
 
 const ANALYTICS_EVENTS = [];
 
+let PRICE_WATCHES = [];
 let STOCK_WATCHES = [];
 
 let CATEGORIES = [
@@ -678,7 +679,7 @@ createServer((req, res) => {
           return json(res, { message: "A valid email is required" }, 400);
         }
         STOCK_WATCHES = STOCK_WATCHES.filter((w) => !(w.productId === productId && w.email === email));
-        STOCK_WATCHES.push({ productId, email, active: true, at: new Date().toISOString() });
+        STOCK_WATCHES.push({ productId, email, locale: body.locale ?? "en", active: true, at: new Date().toISOString() });
         res.writeHead(201);
         res.end();
         return;
@@ -990,7 +991,33 @@ createServer((req, res) => {
     return json(res, COMMENTS.filter((c) => c.productId === productId));
   }
   if (/^\/v1\/products\/[^/]+\/related$/.test(p)) return json(res, PRODUCTS.slice(4, 8));
-  if (/^\/v1\/products\/[^/]+\/watch$/.test(p)) return json(res, { watching: false });
+  const priceWatchMatch = p.match(/^\/v1\/products\/([^/]+)\/watch$/);
+  if (priceWatchMatch) {
+    const productId = priceWatchMatch[1];
+    if (req.method === "POST") {
+      return readBody(req, (body) => {
+        const email = String(body?.email ?? "").trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          return json(res, { message: "A valid email is required" }, 400);
+        }
+        PRICE_WATCHES = PRICE_WATCHES.filter((w) => !(w.productId === productId && w.email === email));
+        PRICE_WATCHES.push({ productId, email, locale: body.locale ?? "en", active: true });
+        res.writeHead(201);
+        res.end();
+        return;
+      });
+    }
+    if (req.method === "DELETE") {
+      const email = (q.get("email") ?? "").trim().toLowerCase();
+      PRICE_WATCHES = PRICE_WATCHES.filter((w) => !(w.productId === productId && w.email === email));
+      res.writeHead(204);
+      res.end();
+      return;
+    }
+    const email = (q.get("email") ?? "").trim().toLowerCase();
+    const watching = Boolean(email) && PRICE_WATCHES.some((w) => w.productId === productId && w.email === email && w.active);
+    return json(res, { watching });
+  }
   if (/^\/v1\/products\/[^/]+$/.test(p)) {
     const found = PRODUCTS.find((x) => x.id === p.split("/").pop());
     return found ? json(res, found) : json(res, { message: "not found" }, 404);

@@ -22,7 +22,7 @@ type StockWatchProps = {
  */
 function StockWatch({ productId }: StockWatchProps) {
   const queryClient = useQueryClient();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const userEmail = useSelector((state: AppState) => state.user.data.email);
   const isLoggedIn = useSelector((state: AppState) => state.user.data.isLogedIn);
   const [guestEmail, setGuestEmail] = useState("");
@@ -37,7 +37,7 @@ function StockWatch({ productId }: StockWatchProps) {
   );
 
   const watchMutation = useMutation(
-    () => ProductApi.watchStock(productId, email as string),
+    () => ProductApi.watchStock(productId, email as string, language),
     {
       onSuccess: () => {
         showSuccess(t("stock.success"));

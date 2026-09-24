@@ -85,6 +85,8 @@ const ko: Messages = {
   "home.trending": "이번 주 트렌드",
   "home.seeAll": "전체 보기",
   "home.shop": "쇼핑",
+  "home.metaTitle": "Cartly — 모던 멀티 카테고리 마켓플레이스",
+  "home.metaDescription": "전자제품, 패션, 홈 등 다양한 분야의 프리미엄 상품을 만나보세요.",
   "home.announcement": "플래시 세일! 전자제품·홈 최대 40% 할인! 자정까지!",
 
   "filters.sortBy": "정렬 기준",

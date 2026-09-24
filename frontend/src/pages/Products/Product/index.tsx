@@ -11,10 +11,13 @@ import ProductDetail from "../../../components/Card/ProductCard";
 import EmptyState from "../../../components/EmptyState";
 import usePageMetadata from "../../../hooks/usePageMetadata";
 import { recordRecentlyViewed } from "../../../utils/recentlyViewed";
+import { localizedName, localizedDescription } from "../../../utils/localizedEntity";
+import { useI18n } from "../../../features/i18n";
 
 function Product() {
   const { productId } = useParams();
   const navigate = useNavigate();
+  const { language } = useI18n();
 
   const {
     data: product,
@@ -39,13 +42,15 @@ function Product() {
   }, [product]);
 
   const metadata = React.useMemo(() => {
+    const displayName = product ? localizedName(product, language) : undefined;
+    const localized = product ? localizedDescription(product, language) : undefined;
     const cover = product?.images?.[0] || product?.imageUrl;
-    const description = product?.description?.slice(0, 160) || "Discover top-quality products across every category on Cartly.";
+    const description = (localized || product?.description || "Discover top-quality products across every category on Cartly.").slice(0, 160);
     const rating = product?.ratingCount
       ? { "@type": "AggregateRating", ratingValue: product.avgRating ?? 0, reviewCount: product.ratingCount }
       : undefined;
     return {
-      title: product ? `${product.name} — Cartly` : "Product — Cartly",
+      title: displayName ? `${displayName} — Cartly` : "Product — Cartly",
       description,
       canonicalPath: productId ? `/products/${productId}` : undefined,
       image: cover,
@@ -54,7 +59,7 @@ function Product() {
         ? {
             "@context": "https://schema.org",
             "@type": "Product",
-            name: product.name,
+            name: displayName,
             description,
             image: product.images?.length ? product.images : cover ? [cover] : undefined,
             sku: product.id,
@@ -73,7 +78,7 @@ function Product() {
           }
         : undefined,
     };
-  }, [product, productId]);
+  }, [product, productId, language]);
   usePageMetadata(metadata);
 
   const crumbs: { label: string; to?: string }[] = [

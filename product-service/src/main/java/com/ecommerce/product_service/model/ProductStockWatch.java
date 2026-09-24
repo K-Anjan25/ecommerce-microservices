@@ -33,4 +33,8 @@ public class ProductStockWatch extends AdvanceBaseModal {
 
     @Column(nullable = false)
     private boolean active = true;
+
+    /** UI language at subscribe time — localizes the alert email (fallback en). */
+    @Column(length = 8)
+    private String locale;
 }

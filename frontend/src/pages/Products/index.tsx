@@ -191,8 +191,8 @@ function Products() {
   const { settings: storeSettings } = useStoreSettings();
   const homeMetadata = useMemo(
     () => ({
-      title: "Cartly — One modern multi-category marketplace",
-      description: "High quality products across electronics, fashion, home, and more.",
+      title: t("home.metaTitle"),
+      description: t("home.metaDescription"),
       canonicalPath: "/",
       image: "/images/store/tiles/hero-cluster.png",
       jsonLd: {
@@ -203,7 +203,7 @@ function Products() {
         description: "One modern multi-category marketplace",
       },
     }),
-    []
+    [, language ]
   );
   usePageMetadata(homeMetadata);
 

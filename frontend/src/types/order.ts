@@ -40,6 +40,8 @@ export interface CreateOrderRequest {
   giftCardCode?: string;
   loyaltyPoints?: number;
   phoneNumber?: string;
+  /** UI language at checkout — localizes the confirmation email. */
+  locale?: string;
 }
 
 interface OrderAdress {

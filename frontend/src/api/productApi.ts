@@ -43,8 +43,8 @@ const isWatchingStock = async (productId: string, email: string) => {
   return data.watching;
 };
 
-const watchStock = async (productId: string, email: string) => {
-  await api.post(`/v1/products/${productId}/stock-watch`, { email });
+const watchStock = async (productId: string, email: string, locale?: string) => {
+  await api.post(`/v1/products/${productId}/stock-watch`, { email, locale });
 };
 
 const unwatchStock = async (productId: string, email: string) => {
@@ -60,8 +60,8 @@ const isWatchingPrice = async (productId: string, email: string) => {
   return data.watching;
 };
 
-const watchPrice = async (productId: string, email: string) => {
-  await api.post(`/v1/products/${productId}/watch`, { email });
+const watchPrice = async (productId: string, email: string, locale?: string) => {
+  await api.post(`/v1/products/${productId}/watch`, { email, locale });
 };
 
 const unwatchPrice = async (productId: string, email: string) => {

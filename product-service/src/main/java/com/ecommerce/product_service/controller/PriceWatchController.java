@@ -35,7 +35,7 @@ public class PriceWatchController {
     @PostMapping("/{productId}/watch")
     public ResponseEntity<Void> watch(@PathVariable UUID productId,
                                       @Valid @RequestBody WatchRequest request) {
-        priceWatchService.watchProduct(productId, request.getEmail());
+        priceWatchService.watchProduct(productId, request.getEmail(), request.getLocale());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

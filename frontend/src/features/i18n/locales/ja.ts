@@ -85,6 +85,8 @@ const ja: Messages = {
   "home.trending": "今週のトレンド",
   "home.seeAll": "すべて見る",
   "home.shop": "ショップ",
+  "home.metaTitle": "Cartly — モダンなマルチカテゴリーマーケット",
+  "home.metaDescription": "エレクトロニクス、ファッション、ホームなど、高品質な商品を取り揃えています。",
   "home.announcement": "タイムセール！エレクトロニクス・ホームが最大40%オフ！本日深夜まで！",
 
   "filters.sortBy": "並び替え",

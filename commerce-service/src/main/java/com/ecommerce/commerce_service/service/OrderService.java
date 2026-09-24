@@ -90,6 +90,7 @@ public class OrderService {
     public OrderDto createOrder(CreateOrderRequest createOrderRequest){
 
         Order order = orderMapper.orderRequestToOrder(createOrderRequest);
+        order.setLocale(InvoiceService.normalizeLocale(createOrderRequest.getLocale()));
         order.getAddress().setOrder(order);
         order.getItems().forEach(item -> item.setOrder(order));
         applyAuthoritativePrices(order);

@@ -85,6 +85,8 @@ const es: Messages = {
   "home.trending": "Tendencias de esta semana",
   "home.seeAll": "Ver todo",
   "home.shop": "Comprar",
+  "home.metaTitle": "Cartly — Un marketplace moderno multidisciplina",
+  "home.metaDescription": "Productos de calidad en electrónica, moda, hogar y más.",
   "home.announcement": "¡REBAJAS FLASH! ¡Hasta 40% de descuento en electrónica y hogar! ¡Solo hasta medianoche!",
 
   "filters.sortBy": "Ordenar por",

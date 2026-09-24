@@ -90,6 +90,8 @@ export const en = {
   "home.trending": "Trending This Week",
   "home.seeAll": "See all",
   "home.shop": "Shop",
+  "home.metaTitle": "Cartly — One modern multi-category marketplace",
+  "home.metaDescription": "High quality products across electronics, fashion, home, and more.",
   "home.announcement": "FLASH SALE! Up to 40% OFF Electronics & Home! Ends Midnight!",
 
   "filters.sortBy": "Sort by",

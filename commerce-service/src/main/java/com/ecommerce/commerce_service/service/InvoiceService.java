@@ -64,6 +64,54 @@ public class InvoiceService {
     }
 
     /** Best-effort: never fails the caller (payment flow) on invoice problems. */
+    /**
+     * Localized confirmation email per order locale (UI language at
+     * checkout). Index 0 = subject suffix, index 1 = body. English fallback.
+     */
+    static String[] orderEmailText(String locale, String orderId) {
+        switch (locale == null ? "en" : locale) {
+            case "hi": return new String[]{
+                    "ऑर्डर #" + orderId + " का इनवॉइस",
+                    "आपके ऑर्डर के लिए धन्यवाद! ऑर्डर " + orderId + " का इनवॉइस संलग्न है।"};
+            case "de": return new String[]{
+                    "Rechnung für Bestellung #" + orderId,
+                    "Danke für Ihre Bestellung! Die Rechnung für Bestellung " + orderId + " ist beigefügt."};
+            case "fr": return new String[]{
+                    "Facture pour la commande #" + orderId,
+                    "Merci pour votre commande ! La facture pour la commande " + orderId + " est jointe."};
+            case "nl": return new String[]{
+                    "Factuur voor bestelling #" + orderId,
+                    "Bedankt voor je bestelling! De factuur voor bestelling " + orderId + " zit erbij."};
+            case "es": return new String[]{
+                    "Factura del pedido #" + orderId,
+                    "¡Gracias por tu pedido! La factura del pedido " + orderId + " va adjunta."};
+            case "sv": return new String[]{
+                    "Faktura för order #" + orderId,
+                    "Tack för din beställning! Fakturan för order " + orderId + " finns bifogad."};
+            case "ar": return new String[]{
+                    "فاتورة الطلب #" + orderId,
+                    "شكراً لطلبك! فاتورة الطلب " + orderId + " مرفقة."};
+            case "ja": return new String[]{
+                    "注文 #" + orderId + " の請求書",
+                    "ご注文ありがとうございます！注文 #" + orderId + " の請求書を添付しました。"};
+            case "ko": return new String[]{
+                    "주문 #" + orderId + " 인보이스",
+                    "주문해 주셔서 감사합니다! 주문 #" + orderId + "의 인보이스가 첨부되었습니다."};
+            default: return new String[]{
+                    "Invoice for order #" + orderId,
+                    "Thank you for your order! The invoice for order " + orderId + " is attached."};
+        }
+    }
+
+    static String normalizeLocale(String locale) {
+        if (locale == null || locale.isBlank()) return "en";
+        String code = locale.trim().toLowerCase().split("[-_]", 2)[0];
+        return switch (code) {
+            case "hi", "de", "fr", "nl", "es", "sv", "ar", "ja", "ko" -> code;
+            default -> "en";
+        };
+    }
+
     public void emailInvoice(Order order) {
         if (order.getCustomerEmail() == null || order.getCustomerEmail().isBlank()) {
             return;
@@ -71,12 +119,12 @@ public class InvoiceService {
         try {
             StoreBrandDto brand = brand();
             byte[] pdf = generateInvoicePdf(order);
+            String[] text = orderEmailText(order.getLocale(), order.getId().toString());
             rabbitMQMessageProducer.publish(
                     new EmailRequest(
-                            "Thank you for your order! The invoice for order " + order.getId()
-                                    + " is attached.",
+                            text[1],
                             order.getCustomerEmail(),
-                            storeName(brand).toUpperCase() + " - Invoice for order #" + order.getId(),
+                            storeName(brand).toUpperCase() + " - " + text[0],
                             "invoice-" + order.getId() + ".pdf",
                             Base64.getEncoder().encodeToString(pdf)),
                     notificationExchange,

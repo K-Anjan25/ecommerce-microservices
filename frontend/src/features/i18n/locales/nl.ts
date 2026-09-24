@@ -85,6 +85,8 @@ const nl: Messages = {
   "home.trending": "Trending deze week",
   "home.seeAll": "Alles bekijken",
   "home.shop": "Shoppen",
+  "home.metaTitle": "Cartly — Eén moderne multi-categorie marktplaats",
+  "home.metaDescription": "Kwaliteitsproducten in elektronica, mode, woningen en meer.",
   "home.announcement": "FLASH SALE! Tot 40% korting op elektronica & wonen! Vandaag tot middernacht!",
 
   "filters.sortBy": "Sorteren op",

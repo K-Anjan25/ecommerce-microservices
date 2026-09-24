@@ -186,7 +186,7 @@ function OptionCard({
 function Checkout() {
   const navigate = useNavigate();
   const dispatch = useDispatch<any>();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const items = useSelector((state: AppState) => state.cart);
   const isLoggedIn = useSelector((state: AppState) => state.user.data.isLogedIn);
   const [districts, setDistricts] = useState<{ name: string; id: string }[]>([]);
@@ -263,6 +263,7 @@ function Checkout() {
         giftCardCode: giftCardCode.trim() || undefined,
         loyaltyPoints: appliedLoyaltyPoints || undefined,
         phoneNumber: values.phoneNumber || undefined,
+        locale: language,
       } as CreateOrderRequest;
 
       createOrderMutation.mutate(order);

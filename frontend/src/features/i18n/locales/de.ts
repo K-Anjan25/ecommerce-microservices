@@ -85,6 +85,8 @@ const de: Messages = {
   "home.trending": "Diese Woche im Trend",
   "home.seeAll": "Alle ansehen",
   "home.shop": "Shoppen",
+  "home.metaTitle": "Cartly — Ein moderner Multi-Kategorie-Marktplatz",
+  "home.metaDescription": "Hochwertige Produkte aus Technik, Mode, Wohnen und mehr.",
   "home.announcement": "FLASH-SALE! Bis zu 40 % Rabatt auf Elektronik & Wohnen! Nur heute Mitternacht!",
 
   "filters.sortBy": "Sortieren nach",
