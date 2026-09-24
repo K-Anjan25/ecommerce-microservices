@@ -18,6 +18,7 @@ import ProductViewPlaceholder from "../../components/ProductViewPlaceholder";
 import EmptyState from "../../components/EmptyState";
 import { useStoreSettings } from "../../features/storefront";
 import { useI18n } from "../../features/i18n";
+import CategoryArt, { ArtVariant } from "../../components/CategoryArt";
 import { getRecentlyViewed, ViewedProductSnapshot } from "../../utils/recentlyViewed";
 import { localizedName } from "../../utils/localizedEntity";
 import { formatPrice } from "../../utils/currency";
@@ -35,47 +36,47 @@ const CONCEPT_B_CATEGORIES = [
   {
     name: "Electronics",
     subtitle: "MacBook",
-    image: "/images/store/tiles/tile-electronics.png",
+    art: "electronics" as ArtVariant,
   },
   {
     name: "Fashion",
     subtitle: "Apparel",
-    image: "/images/store/tiles/tile-fashion.png",
+    art: "fashion" as ArtVariant,
   },
   {
     name: "Home",
     subtitle: "Decor",
-    image: "/images/store/tiles/tile-home.png",
+    art: "home" as ArtVariant,
   },
   {
     name: "Electronics",
     subtitle: "MacBook",
-    image: "/images/store/tiles/tile-electronics.png",
+    art: "electronics" as ArtVariant,
   },
   {
     name: "Beauty",
     subtitle: "Skincare",
-    image: "/images/store/tiles/tile-beauty.png",
+    art: "beauty" as ArtVariant,
   },
   {
     name: "Kitchen",
     subtitle: "Appliances",
-    image: "/images/store/tiles/tile-kitchen.png",
+    art: "kitchen" as ArtVariant,
   },
   {
     name: "Toys & Games",
     subtitle: "Lego",
-    image: "/images/store/tiles/tile-toys.png",
+    art: "toys" as ArtVariant,
   },
   {
     name: "Sports",
     subtitle: "Gear",
-    image: "/images/store/tiles/tile-sports.png",
+    art: "sports" as ArtVariant,
   },
   {
     name: "Grocery",
     subtitle: "Fresh produce",
-    image: "/images/store/tiles/tile-grocery.png",
+    art: "grocery" as ArtVariant,
   },
 ];
 
@@ -397,14 +398,10 @@ function Products() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {/* Main hero card (spans 2) — oversized headline, art to the right edge */}
           <div className="relative h-44 overflow-hidden rounded-2xl border border-line bg-paper p-5 shadow-sm sm:col-span-2 sm:h-[10.75rem]">
-            <div className="pointer-events-none absolute bottom-0 right-0 hidden h-[96%] w-[46%] overflow-hidden rounded-xl bg-white ring-1 ring-black/5 sm:block">
-              <img
-                src="/images/store/tiles/hero-cluster.png"
-                alt="Headphones, smart speaker and blender"
-                className="h-full w-full object-contain object-right-bottom"
-                loading="eager"
-              />
-            </div>
+            <CategoryArt
+              variant="hero"
+              className="pointer-events-none absolute bottom-1 right-2 hidden h-[92%] w-[46%] text-ink sm:block"
+            />
             <div className="relative flex h-full max-w-[60%] flex-col justify-center">
               {storeSettings.heroEyebrow && (
                 <p className="eyebrow !text-accent mb-1.5">{storeSettings.heroEyebrow}</p>
@@ -430,14 +427,10 @@ function Products() {
               key={`feature-${tile.name}`}
               className="relative h-44 overflow-hidden rounded-2xl border border-line bg-paper p-4 shadow-sm transition hover:shadow-md sm:h-[10.75rem]"
             >
-              <div className="pointer-events-none absolute bottom-0 right-0 h-[68%] w-[70%] overflow-hidden rounded-xl bg-white ring-1 ring-black/5">
-                <img
-                  src={tile.image}
-                  alt={tile.name}
-                  loading="lazy"
-                  className="h-full w-full object-contain object-right-bottom"
-                />
-              </div>
+              <CategoryArt
+                variant={tile.art}
+                className="pointer-events-none absolute bottom-0 right-0 h-[72%] w-[72%] text-ink"
+              />
               <div className="relative">
                 <h3 className="font-heading text-lg font-bold leading-tight text-ink">{tile.name}</h3>
                 <p className="mt-0.5 text-[13px] text-ink-muted">{tile.subtitle}</p>
@@ -462,14 +455,10 @@ function Products() {
               key={`tile-${cat.name}-${cat.subtitle}`}
               className="relative h-40 overflow-hidden rounded-2xl border border-line bg-paper p-4 shadow-sm transition hover:shadow-md"
             >
-              <div className="pointer-events-none absolute bottom-0 right-0 h-[64%] w-[78%] overflow-hidden rounded-xl bg-white ring-1 ring-black/5">
-                <img
-                  src={cat.image}
-                  alt={cat.name}
-                  loading="lazy"
-                  className="h-full w-full object-contain object-right-bottom"
-                />
-              </div>
+              <CategoryArt
+                variant={cat.art}
+                className="pointer-events-none absolute bottom-0 right-0 h-[68%] w-[80%] text-ink"
+              />
               <div className="relative">
                 <h4 className="font-heading text-lg font-bold leading-tight text-ink">{cat.name}</h4>
                 <p className="mt-0.5 text-[13px] text-ink-muted">{cat.subtitle}</p>
