@@ -5,6 +5,8 @@ import com.ecommerce.product_service.inventory.model.Inventory;
 import com.ecommerce.product_service.inventory.repository.InventoryRepository;
 import com.ecommerce.product_service.inventory.repository.InventoryMutationRepository;
 import com.ecommerce.product_service.repository.ProductVariantRepository;
+import com.ecommerce.product_service.repository.ProductRepository;
+import com.ecommerce.product_service.service.StockWatchService;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -19,7 +21,7 @@ class InventoryServiceTest {
         InventoryRepository repository = mock(InventoryRepository.class);
         Inventory stock = Inventory.builder().productId(UUID.randomUUID()).quantity(5).build();
         when(repository.findLockedByProductId(stock.getProductId())).thenReturn(stock);
-        InventoryService service = new InventoryService(repository, mock(ProductVariantRepository.class), mock(InventoryMutationRepository.class));
+        InventoryService service = new InventoryService(repository, mock(ProductVariantRepository.class), mock(InventoryMutationRepository.class), mock(ProductRepository.class), mock(StockWatchService.class));
 
         service.deductStock("test-deduct", List.of(new DeductStockRequest(stock.getProductId(), 3, null)));
 
@@ -32,7 +34,7 @@ class InventoryServiceTest {
         InventoryRepository repository = mock(InventoryRepository.class);
         Inventory stock = Inventory.builder().productId(UUID.randomUUID()).quantity(2).build();
         when(repository.findLockedByProductId(stock.getProductId())).thenReturn(stock);
-        InventoryService service = new InventoryService(repository, mock(ProductVariantRepository.class), mock(InventoryMutationRepository.class));
+        InventoryService service = new InventoryService(repository, mock(ProductVariantRepository.class), mock(InventoryMutationRepository.class), mock(ProductRepository.class), mock(StockWatchService.class));
 
         assertThatThrownBy(() -> service.deductStock("oversell-test",
                 List.of(new DeductStockRequest(stock.getProductId(), 3, null))))
@@ -48,7 +50,7 @@ class InventoryServiceTest {
         Inventory stock = Inventory.builder().productId(UUID.randomUUID()).quantity(5).build();
         when(repository.findLockedByProductId(stock.getProductId())).thenReturn(stock);
         when(mutations.existsById("same-operation")).thenReturn(false, true);
-        InventoryService service = new InventoryService(repository, mock(ProductVariantRepository.class), mutations);
+        InventoryService service = new InventoryService(repository, mock(ProductVariantRepository.class), mutations, mock(ProductRepository.class), mock(StockWatchService.class));
         var request = List.of(new DeductStockRequest(stock.getProductId(), 2, null));
 
         service.deductStock("same-operation", request);
