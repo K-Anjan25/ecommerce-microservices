@@ -51,6 +51,7 @@ public class CategoryService {
                 .description(createCategoryRequest.getDescription())
                 .imageUrl(createCategoryRequest.getImageUrl())
                 .translations(createCategoryRequest.getTranslations())
+                .translations(createCategoryRequest.getTranslations())
                 .parentId(createCategoryRequest.getParentId())
                 .sortOrder(createCategoryRequest.getSortOrder())
                 .build();
