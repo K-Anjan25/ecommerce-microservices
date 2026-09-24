@@ -28,6 +28,10 @@ import com.ecommerce.commerce_service.repository.OrderItemRepository;
 import com.ecommerce.commerce_service.dto.shippingRate.ShippingCalculationRequest;
 import com.ecommerce.event_bus.RabbitMQMessageProducer;
 import com.ecommerce.event_bus.dto.EmailRequest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -85,6 +89,27 @@ public class OrderService {
 
     @Value("${checkout.capability-ttl:PT720H}")
     private Duration checkoutCapabilityTtl = Duration.ofDays(30);
+
+    /**
+     * Internal entry point for the Subscribe &amp; Save scheduler: places an
+     * order on behalf of a customer without a live request authentication.
+     * (Replaces the old reflection-built request workaround.)
+     */
+    @Transactional
+    public OrderDto placeSubscriptionOrder(CreateOrderRequest createOrderRequest, UUID customerId,
+                                           String customerEmail) {
+        createOrderRequest.setCustomerEmail(customerEmail);
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(new UsernamePasswordAuthenticationToken(
+                customerId.toString(), null,
+                java.util.Collections.singletonList(new SimpleGrantedAuthority("ROLE_SUBSCRIPTION_SYSTEM"))));
+        SecurityContextHolder.setContext(context);
+        try {
+            return createOrder(createOrderRequest);
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
+    }
 
     @Transactional
     public OrderDto createOrder(CreateOrderRequest createOrderRequest){

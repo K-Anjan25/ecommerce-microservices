@@ -40,7 +40,7 @@ public class OrderController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_CS')")
     public ResponseEntity<Pagination<OrderDto>> getAll(@RequestParam(required = false,defaultValue = "0")  int pageNo,
                                                        @RequestParam(required = false,defaultValue = "10") int pageSize){
         return ResponseEntity.ok(orderService.getAllOrders(pageNo,pageSize));
@@ -85,7 +85,7 @@ public class OrderController {
 
     /** Staff records the courier shipment (AWB + carrier); implies SHIPPED. */
     @PutMapping("/{orderId}/shipment")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_CS')")
     public ResponseEntity<OrderDto> updateShipment(
             @PathVariable UUID orderId,
             @Valid @RequestBody UpdateShipmentRequest request) {
@@ -94,7 +94,7 @@ public class OrderController {
     }
 
     @PutMapping("/{orderId}/status")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_CS')")
     public ResponseEntity<OrderDto> updateOrderStatus(
             @PathVariable UUID orderId,
             @RequestParam OrderStatus status,
@@ -141,7 +141,7 @@ public class OrderController {
 
     /** Phase 9 analytics for the admin dashboard (admin-only). */
     @GetMapping("/stats/dashboard")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_CS')")
     public ResponseEntity<com.ecommerce.commerce_service.dto.stats.DashboardStatsDto> getDashboardStats(
             @org.springframework.web.bind.annotation.RequestParam(defaultValue = "7") int days) {
         return ResponseEntity.ok(orderService.getDashboardStats(days));

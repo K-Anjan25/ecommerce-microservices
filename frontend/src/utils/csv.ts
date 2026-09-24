@@ -82,7 +82,7 @@ const ITEM_SEP = "~";
 const IMAGE_SEP = "|";
 
 const regexEscape = (chars: string) => chars.replace(/[.*+?^${}()|[\]\\\-]/g, "\\$&");
-const sanitize = (value: string | undefined, forbidden: string) =>
+const sanitize = (value: string | null | undefined, forbidden: string) =>
   (value ?? "").replace(new RegExp(`[${regexEscape(forbidden)}]`, "g"), " ").trim();
 
 export const encodeImages = (images: string[] | undefined) =>
@@ -98,10 +98,12 @@ export const encodeVariants = (
   variants:
     | {
         name: string;
-        sku?: string;
-        price?: number;
-        quantityInStock?: number;
-        attributes?: string;
+        sku?: string | null;
+        price?: number | null;
+        quantityInStock?: number | null;
+        attributes?: string | null;
+        swatchHex?: string | null;
+        imageUrl?: string | null;
       }[]
     | undefined
 ) =>
@@ -113,6 +115,8 @@ export const encodeVariants = (
         variant.price ?? "",
         variant.quantityInStock ?? "",
         sanitize(variant.attributes, `${ITEM_SEP}${LIST_SEP}`),
+        sanitize(variant.swatchHex, `${ITEM_SEP}${LIST_SEP}`),
+        sanitize(variant.imageUrl, `${ITEM_SEP}${LIST_SEP}`),
       ].join(ITEM_SEP)
     )
     .filter((row) => row.replace(/~/g, "").trim() !== "")
@@ -124,6 +128,8 @@ export interface CsvVariant {
   price?: number;
   quantityInStock?: number;
   attributes?: string;
+  swatchHex?: string;
+  imageUrl?: string;
 }
 
 export const decodeVariants = (cell: string | undefined): CsvVariant[] =>
@@ -138,6 +144,8 @@ export const decodeVariants = (cell: string | undefined): CsvVariant[] =>
       quantityInStock:
         parts[3] !== undefined && parts[3] !== "" ? Number(parts[3]) : undefined,
       attributes: parts[4]?.trim() || undefined,
+      swatchHex: parts[5]?.trim() || undefined,
+      imageUrl: parts[6]?.trim() || undefined,
     }));
 
 /** Download text as a file (admin-side export helper). */

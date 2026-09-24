@@ -17,6 +17,7 @@ import Home from "./pages/Admin/Home";
 import ForgetPassword from "./pages/Login/ForgetPassword";
 import Profile from "./pages/Profile";
 import Account from "./pages/Account";
+import Subscriptions from "./pages/Subscriptions";
 
 /** SPA scroll restoration: a fresh navigation starts at the top (back/forward
  *  keep the browser's own positions for history entries). */
@@ -79,6 +80,7 @@ function App() {
   const AdminOrders = React.lazy(() => import("./pages/Admin/Orders"));
   const AdminCategories = React.lazy(() => import("./pages/Admin/Categories"));
   const AdminUsers = React.lazy(() => import("./pages/Admin/Users"));
+  const AdminSubscriptions = React.lazy(() => import("./pages/Admin/Subscriptions"));
   const AdminCoupons = React.lazy(() => import("./pages/Admin/Coupons"));
   const AdminGiftCardPurchases = React.lazy(() => import("./pages/Admin/GiftCardPurchases"));
   const AdminReturns = React.lazy(() => import("./pages/Admin/Returns"));
@@ -147,6 +149,7 @@ function App() {
               <Route path="referral" element={<Referral />} />
               <Route path="returns" element={<Returns />} />
               <Route path="loyalty" element={<LoyaltyPoints />} />
+              <Route path="subscriptions" element={<Subscriptions />} />
               <Route path="profile/:id" element={<Profile />} />
               <Route path="account" element={<Account />} />
             </Route>
@@ -168,6 +171,7 @@ function App() {
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<Home />} />
                 <Route path="orders" element={<AdminOrders />} />
+                <Route path="subscriptions" element={<AdminSubscriptions />} />
                 <Route path="questions" element={<AdminQuestions />} />
                 <Route path="analytics" element={<AdminAnalytics />} />
                 <Route path="orderDetail/:orderId" element={<OrderDetail />} />

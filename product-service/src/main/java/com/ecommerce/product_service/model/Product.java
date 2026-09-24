@@ -58,6 +58,10 @@ public class Product extends AdvanceBaseModal{
 
     private boolean featured;
 
+    /** Subscribe & Save eligibility (Amazon-style auto-reorder offer on the buy box). */
+    @Column(nullable=false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean subscribeEligible;
+
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ProductImage> images;
 

@@ -29,9 +29,11 @@ public class CreateProductRequest {
     private Integer quantityInStock;
     private String imageUrl;
     private List<String> images;
+    private List<ProductImageDto> imageGallery;
     private List<ProductVariantDto> variants;
     private String brand;
     private BigDecimal originalPrice;
     private String badge;
     private Boolean featured;
+    private Boolean subscribeEligible;
 }

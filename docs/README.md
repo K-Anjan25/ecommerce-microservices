@@ -90,6 +90,22 @@ Design kit (wireframes, tokens, mock preview server): [`design/`](../design/).
 WordPress/WooCommerce theme: separate repo `cartly-wp-theme`; tokens stay
 canonical here.
 
+Recently delivered (September 2026): **real catalog photography + variant
+media model** — 24 exact products photographed from web sources
+(`tools/catalog-media/manifest.json` records every source URL); per-variant
+images + swatches + angle-tagged galleries (`product_images.variant_id/angle/
+alt_text`, `product_variants.swatch_hex/image_url`). **Subscribe & Save v2
+(Amazon parity)**: variant-level subscriptions, buy-box "One-time / Subscribe &
+Save — Save 5%" offer, 5% base / 15% when 5+ deliveries batch in one calendar
+month, ship-day floating pricing, pre-delivery reminder emails with
+skip/change/cancel links, skip-next / reschedule / pause-until / soft-cancel
+lifecycle, per-subscription OOS policy (skip/wait/cancel), hybrid renewal
+payment (saved provider token auto-charged, otherwise the order waits for
+manual payment), the "Your Subscriptions" hub, and an admin subscriptions
+console with an 8-week demand forecast. Commerce roles: `ROLE_CS`
+(customer-service agent) joins USER/MANAGER/ADMIN/SUPER_ADMIN; `ROLE_HR` is
+legacy-only — kept for old accounts, no longer assignable via the admin UI.
+
 ## Next development phases
 
 1. **P12 — Production certification** (in progress; tooling ready):

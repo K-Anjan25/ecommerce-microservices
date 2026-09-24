@@ -1,5 +1,7 @@
 
 import LockResetOutlinedIcon from "@mui/icons-material/LockResetOutlined";
+import AutorenewIcon from "@mui/icons-material/Autorenew";
+import { Link } from "react-router-dom";
 import * as yup from "yup";
 import { useMutation } from "react-query";
 import { useFormik } from "formik";
@@ -169,10 +171,18 @@ function Account() {
 
         {/* ── Subscriptions (auto-reorder) ──────────────────────────── */}
         <div className="mt-10 border-t border-line pt-8">
-          <p className="font-heading text-2xl font-extrabold text-ink">Subscriptions</p>
+          <div className="flex items-center justify-between">
+            <p className="font-heading text-2xl font-extrabold text-ink">Subscriptions</p>
+            <Link
+              to="/subscriptions"
+              className="text-xs font-bold text-brand hover:underline"
+            >
+              Manage all →
+            </Link>
+          </div>
           <p className="mt-1 text-sm text-ink-soft">
-            Auto-reorders we place for you. They arrive as unpaid orders — pay from Orders when
-            you're ready.
+            Subscribe &amp; Save auto-reorders. We remind you before each delivery — with a saved
+            payment method it's charged automatically, otherwise pay from Orders when you're ready.
           </p>
           {subsLoading ? (
             <p className="mt-4 text-sm text-ink-muted">Loading…</p>

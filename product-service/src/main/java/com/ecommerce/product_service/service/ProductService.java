@@ -105,6 +105,7 @@ public class ProductService {
                 .originalPrice(createProductRequest.getOriginalPrice())
                 .badge(createProductRequest.getBadge() == null ? "NONE" : createProductRequest.getBadge())
                 .featured(Boolean.TRUE.equals(createProductRequest.getFeatured()))
+                .subscribeEligible(Boolean.TRUE.equals(createProductRequest.getSubscribeEligible()))
                 .build();
 
         Product savedProduct = productRepository.save(product);
@@ -145,6 +146,9 @@ public class ProductService {
         product.setOriginalPrice(updateProductRequest.getOriginalPrice());
         product.setBadge(updateProductRequest.getBadge() == null ? "NONE" : updateProductRequest.getBadge());
         product.setFeatured(Boolean.TRUE.equals(updateProductRequest.getFeatured()));
+        if (updateProductRequest.getSubscribeEligible() != null) {
+            product.setSubscribeEligible(updateProductRequest.getSubscribeEligible());
+        }
 
         boolean hasVariantRequest = updateProductRequest.getVariants() != null
                 && !updateProductRequest.getVariants().isEmpty();
@@ -180,20 +184,41 @@ public class ProductService {
     }
 
     private void applyImages(Product product, Object request) {
-        List<String> images = request instanceof CreateProductRequest
-                ? ((CreateProductRequest) request).getImages()
-                : ((UpdateProductRequest) request).getImages();
-        if (images == null) {
+        java.util.List<com.ecommerce.product_service.dto.product.ProductImageDto> gallery;
+        java.util.List<String> plain;
+        if (request instanceof CreateProductRequest) {
+            gallery = ((CreateProductRequest) request).getImageGallery();
+            plain = ((CreateProductRequest) request).getImages();
+        } else {
+            gallery = ((UpdateProductRequest) request).getImageGallery();
+            plain = ((UpdateProductRequest) request).getImages();
+        }
+        if (gallery == null && plain == null) {
             return;
         }
         productImageRepository.deleteByProductId(product.getId());
         List<ProductImage> productImages = new ArrayList<>();
-        for (int i = 0; i < images.size(); i++) {
-            productImages.add(ProductImage.builder()
-                    .product(product)
-                    .url(images.get(i))
-                    .sortOrder(i)
-                    .build());
+        if (gallery != null && !gallery.isEmpty()) {
+            for (int i = 0; i < gallery.size(); i++) {
+                var img = gallery.get(i);
+                productImages.add(ProductImage.builder()
+                        .product(product)
+                        .url(img.getUrl())
+                        .sortOrder(img.getSortOrder() != null ? img.getSortOrder() : i)
+                        .variantId(img.getVariantId())
+                        .angle(img.getAngle() == null || img.getAngle().isBlank() ? "gallery" : img.getAngle())
+                        .altText(img.getAltText())
+                        .build());
+            }
+        } else if (plain != null) {
+            for (int i = 0; i < plain.size(); i++) {
+                productImages.add(ProductImage.builder()
+                        .product(product)
+                        .url(plain.get(i))
+                        .sortOrder(i)
+                        .angle("gallery")
+                        .build());
+            }
         }
         productImageRepository.saveAll(productImages);
         product.setImages(new HashSet<>(productImages));
@@ -236,6 +261,8 @@ public class ProductService {
             variant.setPrice(v.getPrice());
             variant.setQuantityInStock(v.getQuantityInStock());
             variant.setAttributes(v.getAttributes());
+            variant.setSwatchHex(v.getSwatchHex());
+            variant.setImageUrl(v.getImageUrl());
             productVariants.add(productVariantRepository.save(variant));
         }
         product.setVariants(new HashSet<>(productVariants));

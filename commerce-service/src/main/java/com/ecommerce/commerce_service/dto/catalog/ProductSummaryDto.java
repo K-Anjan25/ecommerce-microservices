@@ -18,6 +18,8 @@ public class ProductSummaryDto {
     private List<VariantSummaryDto> variants;
     /** Present in product-service responses; used for dashboard analytics. */
     private CategorySummaryDto category;
+    private Boolean subscribeEligible;
+    private String imageUrl;
 
     @Data
     @NoArgsConstructor
@@ -32,7 +34,10 @@ public class ProductSummaryDto {
     @AllArgsConstructor
     public static class VariantSummaryDto {
         private UUID id;
+        private String name;
         private BigDecimal price;
         private Integer quantityInStock;
+        private String swatchHex;
+        private String imageUrl;
     }
 }

@@ -8,6 +8,22 @@ export interface ProductVariant {
   price: number;
   quantityInStock: number;
   attributes: string;
+  /** Swatch chip colour for the variant selector, e.g. "#1c1c1c". */
+  swatchHex?: string | null;
+  /** Primary shot of this variant; the gallery swaps to variant images when selected. */
+  imageUrl?: string | null;
+}
+
+/** Gallery image with variant/angle metadata (imageGallery entries). */
+export interface ProductImage {
+  id?: string;
+  url: string;
+  sortOrder?: number;
+  /** Null/undefined for product-level shots. */
+  variantId?: string | null;
+  /** front | side | back | detail | box | lifestyle | gallery */
+  angle?: string | null;
+  altText?: string | null;
 }
 
 export interface ProductParam {
@@ -29,6 +45,8 @@ interface BaseProduct {
   description: string;
   imageUrl: string;
   images?: string[];
+  /** Rich gallery (variant/angle metadata). Falls back to `images` when absent. */
+  imageGallery?: ProductImage[];
   brand?: string;
   originalPrice?: number;
   badge?: string;
@@ -40,6 +58,8 @@ interface BaseProduct {
   flashPrice?: number;
   flashSaleEndsAt?: string;
   flashSaleActive?: boolean;
+  /** Subscribe & Save eligibility (auto-reorder offer on the buy box). */
+  subscribeEligible?: boolean;
 }
 
 export interface ProductAdminParam {
@@ -93,6 +113,10 @@ export interface ProductVariantForm {
   price?: string;
   quantityInStock?: string;
   attributes?: string;
+  /** Swatch chip colour, e.g. "#1c1c1c". */
+  swatchHex?: string;
+  /** Primary shot of this variant. */
+  imageUrl?: string;
 }
 
 export interface ProductVariantPayload {
@@ -102,6 +126,8 @@ export interface ProductVariantPayload {
   price?: number;
   quantityInStock?: number;
   attributes?: string;
+  swatchHex?: string;
+  imageUrl?: string;
 }
 
 /** Wire format for POST/PUT /v1/products. */
@@ -126,4 +152,6 @@ export interface ProductForm {
   images: string[];
   /** Send always: `[]` clears variants, rows with `id` keep their identity. */
   variants: ProductVariantForm[];
+  /** Subscribe & Save eligibility (auto-reorder offer on the buy box). */
+  subscribeEligible?: boolean;
 }

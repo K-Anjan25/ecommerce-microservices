@@ -45,6 +45,25 @@ public class ProductMapper {
                 .collect(Collectors.toList());
     }
 
+    private List<ProductImageDto> imageDtos(Product product) {
+        if (product.getImages() == null || product.getImages().isEmpty()) {
+            return product.getImageUrl() == null ? List.of()
+                    : java.util.Collections.singletonList(ProductImageDto.builder()
+                            .url(product.getImageUrl()).sortOrder(0).angle("front").build());
+        }
+        return product.getImages().stream()
+                .sorted(Comparator.comparing(img -> img.getSortOrder() == null ? 0 : img.getSortOrder()))
+                .map(img -> ProductImageDto.builder()
+                        .id(img.getId())
+                        .url(img.getUrl())
+                        .sortOrder(img.getSortOrder())
+                        .variantId(img.getVariantId())
+                        .angle(img.getAngle() == null ? "gallery" : img.getAngle())
+                        .altText(img.getAltText())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
     private List<ProductVariantDto> variantDtos(Product product) {
         if (product.getVariants() == null) {
             return List.of();
@@ -58,6 +77,8 @@ public class ProductMapper {
                     dto.setPrice(v.getPrice());
                     dto.setQuantityInStock(v.getQuantityInStock());
                     dto.setAttributes(v.getAttributes());
+                    dto.setSwatchHex(v.getSwatchHex());
+                    dto.setImageUrl(v.getImageUrl());
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -95,7 +116,9 @@ public class ProductMapper {
         dto.setCreatedDate(product.getCreatedDate());
         dto.setImageUrl(product.getImageUrl());
         dto.setImages(imageUrls(product));
+        dto.setImageGallery(imageDtos(product));
         dto.setVariants(variantDtos(product));
+        dto.setSubscribeEligible(product.isSubscribeEligible());
         dto.setQuantityInStock(stockOf(product));
         dto.setAvgRating(avgRating(product));
         dto.setRatingCount(ratingCount(product));
@@ -126,6 +149,7 @@ public class ProductMapper {
                 .createdDate(product.getCreatedDate() == null ? null : product.getCreatedDate().toLocalDate())
                 .imageUrl(product.getImageUrl())
                 .images(imageUrls(product))
+                .subscribeEligible(product.isSubscribeEligible())
                 .quantityInStock(stockOf(product))
                 .avgRating(avgRating(product))
                 .ratingCount(ratingCount(product));

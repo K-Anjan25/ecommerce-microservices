@@ -15,6 +15,7 @@ import ReplayOutlinedIcon from "@mui/icons-material/ReplayOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import CardGiftcardOutlinedIcon from "@mui/icons-material/CardGiftcardOutlined";
 import BoltOutlinedIcon from "@mui/icons-material/BoltOutlined";
+import AutorenewIcon from "@mui/icons-material/Autorenew";
 
 import Comments from "../../Comments";
 import Questions from "../../Questions";
@@ -68,6 +69,7 @@ const ProductCard = ({ product }: CardProps) => {
   const [tab, setTab] = useState<Tab>("Description");
   const [subscribeInterval, setSubscribeInterval] = useState(30);
   const [subscribing, setSubscribing] = useState(false);
+  const [purchaseMode, setPurchaseMode] = useState<"one-time" | "subscribe">("one-time");
 
   // Funnel analytics: one product-view beacon per loaded product.
   useEffect(() => {
@@ -79,12 +81,34 @@ const ProductCard = ({ product }: CardProps) => {
   const selectedVariant = variants.find((v) => v.id === selectedVariantId);
   const displayPrice = selectedVariant?.price ?? product?.unitPrice ?? 0;
   const displayStock = selectedVariant?.quantityInStock ?? product?.quantityInStock ?? 0;
-  const images =
-    product?.images && product.images.length > 0
-      ? product.images
-      : product?.imageUrl
-      ? [product.imageUrl]
-      : [];
+  // Gallery: rich (variant/angle-aware) when available, plain URL list otherwise.
+  const galleryImages = useMemo(() => {
+    const rich: { url: string; angle?: string | null; variantId?: string | null; altText?: string | null }[] =
+      product?.imageGallery && product.imageGallery.length > 0
+        ? product.imageGallery
+        : (product?.images ?? []).map((u) => ({ url: u }));
+    if (rich.length === 0 && product?.imageUrl) {
+      return [{ url: product.imageUrl, angle: "front" }];
+    }
+    return rich;
+  }, [product]);
+
+  // Selecting a variant swaps the gallery to that colourway's shots first,
+  // then shared product-level angles (Amazon PDP behaviour).
+  const visibleImages = useMemo(() => {
+    let list = galleryImages;
+    if (selectedVariant) {
+      const hero = selectedVariant.imageUrl
+        ? [{ url: selectedVariant.imageUrl, angle: "variant", variantId: selectedVariant.id }]
+        : [];
+      const variantShots = galleryImages.filter((i) => i.variantId === selectedVariant.id);
+      const shared = galleryImages.filter((i) => !i.variantId);
+      list = [...hero, ...variantShots, ...shared];
+    }
+    const seen = new Set<string>();
+    return list.filter((i) => (seen.has(i.url) ? false : (seen.add(i.url), true)));
+  }, [galleryImages, selectedVariant]);
+  const images = visibleImages.map((i) => i.url);
 
   const flashPrice = product?.flashPrice ?? 0;
   const isFlashSaleActive =
@@ -199,6 +223,33 @@ const ProductCard = ({ product }: CardProps) => {
       ? `Only ${displayStock} left`
       : `In stock · ${displayStock} available`;
 
+  // Subscribe & Save: 5% off each delivery's price (15% when 5+ subscriptions
+  // batch in one calendar month — applied server-side at placement).
+  const subscribeEligible = !!product?.subscribeEligible;
+  const ssPrice = Math.round(effectivePrice * 0.95);
+
+  const handleStartSubscription = async () => {
+    if (!product) return;
+    if (!user.isLogedIn) {
+      navigate("/login", { state: { from: { pathname: `/products/${productId}` } } });
+      return;
+    }
+    setSubscribing(true);
+    try {
+      await SubscriptionApi.createSubscription({
+        productId: product.id,
+        variantId: selectedVariantId || null,
+        quantity: Math.max(1, quantity || 1),
+        intervalDays: subscribeInterval,
+      });
+      showSuccess(t("subscribe.success"));
+    } catch (error: any) {
+      showError(error?.response?.data?.message ?? t("subscribe.error"));
+    } finally {
+      setSubscribing(false);
+    }
+  };
+
   return (
     <div className="space-y-10">
       <div>
@@ -207,18 +258,19 @@ const ProductCard = ({ product }: CardProps) => {
           {/* thumbnail rail */}
           {images.length > 1 && (
             <div className="no-scrollbar order-2 flex gap-2 overflow-x-auto md:order-1 md:flex-col md:overflow-y-auto">
-              {images.map((src, idx) => (
+              {visibleImages.map((img, idx) => (
                 <button
-                  key={src + idx}
+                  key={img.url + idx}
                   onClick={() => setCurrentImageIndex(idx)}
-                  aria-label={`View image ${idx + 1}`}
+                  title={img.angle ?? undefined}
+                  aria-label={`View ${img.angle ?? `image ${idx + 1}`}`}
                   className={`h-16 w-16 shrink-0 overflow-hidden rounded-sm border transition md:h-[4.5rem] md:w-full ${
                     idx === currentImageIndex
                       ? "border-ink ring-2 ring-ink/10"
                       : "border-line opacity-70 hover:opacity-100"
                   }`}
                 >
-                  <img src={src} alt="" className="h-full w-full object-cover" />
+                  <img src={img.url} alt={img.altText ?? ""} className="h-full w-full object-cover" />
                 </button>
               ))}
             </div>
@@ -234,7 +286,10 @@ const ProductCard = ({ product }: CardProps) => {
               {images.length > 0 ? (
                 <img
                   src={images[currentImageIndex]}
-                  alt={product ? localizedName(product, language) : ""}
+                  alt={
+                    visibleImages[currentImageIndex]?.altText ??
+                    (product ? localizedName(product, language) : "")
+                  }
                   className="h-full w-full object-cover"
                 />
               ) : (
@@ -342,6 +397,13 @@ const ProductCard = ({ product }: CardProps) => {
                             soldOut ? "!text-ink-faint line-through" : ""
                           }`}
                         >
+                          {variant.swatchHex && (
+                            <span
+                              aria-hidden
+                              className="mr-1.5 inline-block h-3.5 w-3.5 rounded-full border border-black/10 align-middle"
+                              style={{ background: variant.swatchHex }}
+                            />
+                          )}
                           {variant.name}
                           <span className={active ? "text-oncontrast/70" : "text-ink-muted"}>
                             {formatPrice(variant.price)}
@@ -354,6 +416,67 @@ const ProductCard = ({ product }: CardProps) => {
               )}
 
               <span className={stockChip}>{stockLabel}</span>
+
+              {/* purchase mode — one-time vs Subscribe & Save (Amazon buy box) */}
+              {subscribeEligible && (
+                <div className="space-y-2 rounded-xl border border-line p-3">
+                  <label
+                    className={`flex cursor-pointer items-start gap-2.5 rounded-lg p-1.5 ${
+                      purchaseMode === "one-time" ? "bg-sunken" : ""
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="purchase-mode"
+                      checked={purchaseMode === "one-time"}
+                      onChange={() => setPurchaseMode("one-time")}
+                      className="mt-1"
+                    />
+                    <span>
+                      <span className="block text-sm font-bold text-ink">
+                        {t("subscribe.oneTime")} — {formatPrice(effectivePrice)}
+                      </span>
+                    </span>
+                  </label>
+                  <label
+                    className={`flex cursor-pointer items-start gap-2.5 rounded-lg p-1.5 ${
+                      purchaseMode === "subscribe" ? "bg-brand-soft/50 ring-1 ring-brand/40" : ""
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="purchase-mode"
+                      checked={purchaseMode === "subscribe"}
+                      onChange={() => setPurchaseMode("subscribe")}
+                      className="mt-1"
+                    />
+                    <span>
+                      <span className="block text-sm font-bold text-ink">
+                        {t("subscribe.title")} — {formatPrice(ssPrice)}{" "}
+                        <span className="rounded-full bg-accent px-2 py-0.5 text-[11px] font-bold">
+                          {t("subscribe.saveBadge")}
+                        </span>
+                      </span>
+                      <span className="mt-1 flex flex-wrap items-center gap-2 text-xs text-ink-soft">
+                        <select
+                          id="subscribe-interval"
+                          value={subscribeInterval}
+                          onChange={(e) => setSubscribeInterval(Number(e.target.value))}
+                          onClick={(e) => e.stopPropagation()}
+                          className="h-8 rounded-lg border border-line bg-paper px-2 text-xs font-semibold text-ink outline-none focus:border-brand"
+                        >
+                          {[14, 30, 60, 90, 180].map((d) => (
+                            <option key={d} value={d}>
+                              {t("subscribe.deliverEvery")} {d} {t("subscribe.days")}
+                            </option>
+                          ))}
+                        </select>
+                        {t("subscribe.tierHint")}
+                      </span>
+                    </span>
+                  </label>
+                </div>
+              )}
 
               {/* CTA row — same eye-line as the price */}
               <div className="flex flex-wrap items-center gap-3">
@@ -380,16 +503,29 @@ const ProductCard = ({ product }: CardProps) => {
                   </div>
                 )}
                 <button
-                  onClick={handleAdd}
-                  disabled={displayStock <= 0 || (displayStock > 0 && quantity >= displayStock)}
+                  onClick={purchaseMode === "subscribe" ? handleStartSubscription : handleAdd}
+                  disabled={
+                    purchaseMode === "subscribe"
+                      ? subscribing
+                      : displayStock <= 0 || (displayStock > 0 && quantity >= displayStock)
+                  }
                   className="primary-button !h-12 min-w-[11rem] flex-1 sm:flex-none"
                 >
-                  <AddShoppingCartIcon sx={{ fontSize: 18 }} />
-                  {quantity
-                    ? displayStock > 0 && quantity >= displayStock
-                      ? "Max stock reached"
-                      : t("product.addMore")
-                    : t("product.add")}
+                  {purchaseMode === "subscribe" ? (
+                    <>
+                      <AutorenewIcon sx={{ fontSize: 18 }} />
+                      {subscribing ? "…" : `${t("subscribe.cta")} · ${formatPrice(ssPrice)}`}
+                    </>
+                  ) : (
+                    <>
+                      <AddShoppingCartIcon sx={{ fontSize: 18 }} />
+                      {quantity
+                        ? displayStock > 0 && quantity >= displayStock
+                          ? "Max stock reached"
+                          : t("product.addMore")
+                        : t("product.add")}
+                    </>
+                  )}
                 </button>
                 <Tooltip title={t("product.compare")}>
                   <button
@@ -515,59 +651,13 @@ const ProductCard = ({ product }: CardProps) => {
         </div>
       </section>
 
-      {/* ══ Subscribe & Save (auto-reorder) ════════════════════════ */}
-      {productId && (
+      {/* ══ Subscribe & Save explainer (controls live in the buy box) ══ */}
+      {productId && subscribeEligible && (
         <section className="rounded-2xl border border-line bg-brand-soft/30 p-5">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="font-heading text-base font-extrabold text-ink">
-                {t("subscribe.title")}
-              </p>
-              <p className="mt-0.5 text-xs text-ink-soft">{t("subscribe.subtitle")}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <label className="text-xs font-semibold text-ink-soft" htmlFor="subscribe-interval">
-                {t("subscribe.every")}
-              </label>
-              <select
-                id="subscribe-interval"
-                value={subscribeInterval}
-                onChange={(e) => setSubscribeInterval(Number(e.target.value))}
-                className="h-9 rounded-lg border border-line bg-paper px-2 text-sm font-semibold text-ink outline-none focus:border-brand"
-              >
-                {[7, 14, 30, 60, 90].map((d) => (
-                  <option key={d} value={d}>
-                    {d} {t("subscribe.days")}
-                  </option>
-                ))}
-              </select>
-              <button
-                disabled={subscribing}
-                onClick={async () => {
-                  if (!user.isLogedIn) {
-                    navigate("/login", { state: { from: { pathname: `/products/${productId}` } } });
-                    return;
-                  }
-                  setSubscribing(true);
-                  try {
-                    await SubscriptionApi.createSubscription({
-                      productId,
-                      quantity: Math.max(1, quantity),
-                      intervalDays: subscribeInterval,
-                    });
-                    showSuccess(t("subscribe.success"));
-                  } catch (error: any) {
-                    showError(error?.response?.data?.message ?? t("subscribe.error"));
-                  } finally {
-                    setSubscribing(false);
-                  }
-                }}
-                className="h-9 rounded-full bg-brand px-4 text-xs font-bold text-white transition hover:bg-brand-dark disabled:opacity-60"
-              >
-                {subscribing ? "…" : t("subscribe.cta")}
-              </button>
-            </div>
-          </div>
+          <p className="font-heading text-base font-extrabold text-ink">{t("subscribe.title")}</p>
+          <p className="mt-1 text-xs text-ink-soft">
+            {t("subscribe.subtitle")} {t("subscribe.reminderNote")}
+          </p>
         </section>
       )}
 

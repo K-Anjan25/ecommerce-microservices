@@ -20,6 +20,7 @@ import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import InsightsOutlinedIcon from "@mui/icons-material/InsightsOutlined";
 import MarkEmailUnreadOutlinedIcon from "@mui/icons-material/MarkEmailUnreadOutlined";
 import SyncProblemOutlinedIcon from "@mui/icons-material/SyncProblemOutlined";
+import AutorenewIcon from "@mui/icons-material/Autorenew";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
@@ -32,6 +33,7 @@ import { BrandMark } from "../../brand";
 const NAV = [
   { path: "/admin", label: "Dashboard", icon: SpaceDashboardOutlinedIcon, exact: true },
   { path: "/admin/orders", label: "Orders", icon: ReceiptLongIcon, exact: false },
+  { path: "/admin/subscriptions", label: "Subscriptions", icon: AutorenewIcon, exact: false },
   { path: "/admin/products", label: "Products", icon: Inventory2Icon, exact: false },
   { path: "/admin/categories", label: "Categories", icon: CategoryIcon, exact: false },
   { path: "/admin/flash-sales", label: "Flash sales", icon: LocalOfferOutlinedIcon, exact: false },

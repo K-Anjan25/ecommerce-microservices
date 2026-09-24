@@ -75,7 +75,10 @@ const enableUser = async (userId: string) => {
   return data;
 };
 
-const updateStaffRole = async (userId: string, role: "ROLE_USER" | "ROLE_MANAGER") => {
+const updateStaffRole = async (
+  userId: string,
+  role: "ROLE_USER" | "ROLE_MANAGER" | "ROLE_CS"
+) => {
   const { data } = await api.put<AdminUser>(`/user/role/${userId}`, undefined, {
     params: { role },
   });
