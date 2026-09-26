@@ -119,4 +119,6 @@ cd frontend && npm run build               # frontend type-check, build, sitemap
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Copyright (c) 2026 Anjan Kumar. All rights reserved.
+
+This software is proprietary and confidential. Unauthorized copying, modification, or distribution is strictly prohibited. See the [LICENSE](LICENSE) file for details.

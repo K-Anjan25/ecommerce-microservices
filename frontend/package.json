@@ -2,7 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "license": "MIT",
+  "license": "UNLICENSED",
   "dependencies": {
     "@emotion/cache": "^11.14.0",
     "@emotion/css": "^11.13.5",
