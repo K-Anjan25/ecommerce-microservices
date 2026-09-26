@@ -26,6 +26,14 @@
         <relativePath/>
     </parent>
 
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <properties>
         <maven-complier-plugin.version>3.10.1</maven-complier-plugin.version>
     </properties>

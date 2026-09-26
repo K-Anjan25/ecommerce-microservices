@@ -116,3 +116,7 @@ mvn test                                   # all modules (unit tests, no infra n
 mvn -pl product-service test               # per service
 cd frontend && npm run build               # frontend type-check, build, sitemap + robots generation
 ```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
