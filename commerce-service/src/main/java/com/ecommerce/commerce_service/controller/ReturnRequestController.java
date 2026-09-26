@@ -52,13 +52,13 @@ public class ReturnRequestController {
 
     /** Admin refund/returns queue: every return request, newest first. */
     @GetMapping("/all")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_CS')")
     public ResponseEntity<List<ReturnRequestDto>> getAllReturnRequests(){
         return ResponseEntity.ok(returnRequestService.getAllReturnRequests());
     }
 
     @PostMapping("/{returnRequestId}/approve")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_CS')")
     public ResponseEntity<ReturnRequestDto> approveReturnRequest(@PathVariable UUID returnRequestId){
         ReturnRequestDto result = returnRequestService.approveReturnRequest(returnRequestId);
         auditLogService.record("RETURN_APPROVED", "RETURN", returnRequestId.toString(), null);
@@ -66,7 +66,7 @@ public class ReturnRequestController {
     }
 
     @PostMapping("/{returnRequestId}/reject")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_CS')")
     public ResponseEntity<ReturnRequestDto> rejectReturnRequest(@PathVariable UUID returnRequestId, @RequestParam String reason){
         ReturnRequestDto result = returnRequestService.rejectReturnRequest(returnRequestId, reason);
         auditLogService.record("RETURN_REJECTED", "RETURN", returnRequestId.toString(), reason);
@@ -74,7 +74,7 @@ public class ReturnRequestController {
     }
 
     @PostMapping("/{returnRequestId}/refund")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_CS')")
     public ResponseEntity<ReturnRequestDto> refundReturnRequest(@PathVariable UUID returnRequestId){
         ReturnRequestDto result = returnRequestService.refundReturnRequest(returnRequestId);
         auditLogService.record("RETURN_REFUNDED", "RETURN", returnRequestId.toString(),

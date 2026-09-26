@@ -4,12 +4,14 @@ import com.ecommerce.commerce_service.dto.orderAddress.CreateOrderAddressRequest
 import com.ecommerce.commerce_service.dto.orderItem.CreateOrderItemRequest;
 import com.ecommerce.commerce_service.model.ShippingMethod;
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter
+@Setter
 public class CreateOrderRequest {
     @NotNull
     private CreateOrderAddressRequest address;

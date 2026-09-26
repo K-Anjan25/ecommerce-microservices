@@ -160,6 +160,8 @@ function rowsToImport(text: string): { rows: ImportRow[]; errors: string[] } {
           price: variant.price,
           quantityInStock: variant.quantityInStock,
           attributes: variant.attributes,
+          swatchHex: variant.swatchHex,
+          imageUrl: variant.imageUrl,
         })),
       },
     });

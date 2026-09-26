@@ -48,4 +48,10 @@ public class ProductVariant {
     private Integer quantityInStock;
 
     private String attributes;
+
+    /** Swatch chip colour, e.g. "#1c1c1c". Drives the variant selector UI. */
+    private String swatchHex;
+
+    /** Primary shot of THIS variant (colourway/config); falls back to product images. */
+    private String imageUrl;
 }

@@ -116,3 +116,9 @@ mvn test                                   # all modules (unit tests, no infra n
 mvn -pl product-service test               # per service
 cd frontend && npm run build               # frontend type-check, build, sitemap + robots generation
 ```
+
+## License
+
+Copyright (c) 2026 Anjan Kumar. All rights reserved.
+
+This software is proprietary and confidential. Unauthorized copying, modification, or distribution is strictly prohibited. See the [LICENSE](LICENSE) file for details.

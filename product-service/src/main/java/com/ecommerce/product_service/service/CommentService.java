@@ -5,6 +5,7 @@ import com.ecommerce.product_service.dto.comment.CommentDto;
 import com.ecommerce.product_service.dto.comment.CommentMapper;
 import com.ecommerce.product_service.dto.comment.CreateCommentRequest;
 import com.ecommerce.product_service.model.Comment;
+import com.ecommerce.product_service.model.CommentImage;
 import com.ecommerce.product_service.model.Product;
 import com.ecommerce.product_service.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -26,6 +29,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 public class CommentService {
+    /** Photos of the received product, Amazon-style. */
+    public static final int MAX_REVIEW_IMAGES = 8;
+    /** ~2.5 MB of base64 per photo after the client's canvas downscale. */
+    public static final int MAX_IMAGE_CHARS = 3_500_000;
+
     private final CommentRepository commentRepository;
     private final ProductService productService;
     private final CommentMapper commentMapper;
@@ -57,7 +65,34 @@ public class CommentService {
                 // from the order service, never from client input.
                 .verifiedPurchase(userId != null
                         && isVerifiedPurchase(userId, createCommentDto.getProductId()))
+                .images(new ArrayList<>())
                 .build();
+
+        // Review photos of the received product (data:/https URLs, max 8).
+        if (createCommentDto.getImages() != null && !createCommentDto.getImages().isEmpty()) {
+            if (createCommentDto.getImages().size() > MAX_REVIEW_IMAGES) {
+                throw new IllegalArgumentException("At most " + MAX_REVIEW_IMAGES + " photos per review");
+            }
+            List<CommentImage> images = new ArrayList<>();
+            int order = 0;
+            for (String url : createCommentDto.getImages()) {
+                if (url == null || url.isBlank()) continue;
+                String trimmed = url.trim();
+                if (!(trimmed.startsWith("data:image/") || trimmed.startsWith("https://"))) {
+                    throw new IllegalArgumentException("Review photos must be image uploads");
+                }
+                if (trimmed.length() > MAX_IMAGE_CHARS) {
+                    throw new IllegalArgumentException("Review photo is too large");
+                }
+                images.add(CommentImage.builder()
+                        .comment(comment)
+                        .imageUrl(trimmed)
+                        .altText("Customer photo of the received product")
+                        .sortOrder(order++)
+                        .build());
+            }
+            comment.setImages(images);
+        }
 
         return commentMapper.commentToCommentDto(commentRepository.save(comment));
     }

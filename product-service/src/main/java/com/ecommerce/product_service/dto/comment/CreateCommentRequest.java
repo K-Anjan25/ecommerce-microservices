@@ -1,19 +1,21 @@
 package com.ecommerce.product_service.dto.comment;
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.UUID;
 
-@Getter
+@Data
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreateCommentRequest {
-    @NotNull
     private UUID productId;
-    @NotNull
     private String text;
-    @Min(value = 1, message = "Rating must be between 1 and 5")
-    @Max(value = 5, message = "Rating must be between 1 and 5")
     private Integer rating;
+    /** Optional review photos as data:/https URLs (max 8, server-validated). */
+    private List<String> images;
 }

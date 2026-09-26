@@ -32,7 +32,10 @@ public class ProductDto {
     private LocalDateTime createdDate;
     private String imageUrl;
     private List<String> images;
+    /** Rich gallery: per-variant / per-angle metadata (null-safe; falls back to images). */
+    private List<ProductImageDto> imageGallery;
     private List<ProductVariantDto> variants;
+    private boolean subscribeEligible;
     private List<CommentDto> comments;
     private Integer quantityInStock;
     private Double avgRating;
@@ -40,4 +43,8 @@ public class ProductDto {
     private BigDecimal flashPrice;
     private LocalDateTime flashSaleEndsAt;
     private boolean flashSaleActive;
+    /** Grouped specification tables as JSON: [{"group","items":[{"label","value"}]}]. */
+    private String specifications;
+    /** Cartly Plus member-only deal percent (server-side pricing). */
+    private BigDecimal memberDealPercent;
 }

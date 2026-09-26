@@ -3,6 +3,7 @@ package com.ecommerce.product_service.dto.comment;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Builder
@@ -18,4 +19,6 @@ public class CommentDto {
     private Integer rating;
 
     private Boolean verifiedPurchase;
+    /** Photos the customer attached of the product they received. */
+    private List<CommentImageDto> images;
 }

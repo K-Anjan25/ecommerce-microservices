@@ -40,3 +40,29 @@ CREATE TABLE IF NOT EXISTS questions (
     updated_date TIMESTAMP,
     CONSTRAINT pk_questions PRIMARY KEY (id)
 );
+
+-- ── Catalog media model: per-variant imagery, multi-angle galleries, S&S flag ──
+ALTER TABLE product_images ADD COLUMN IF NOT EXISTS variant_id UUID;
+ALTER TABLE product_images ADD COLUMN IF NOT EXISTS angle VARCHAR(20);
+ALTER TABLE product_images ADD COLUMN IF NOT EXISTS alt_text VARCHAR(500);
+ALTER TABLE product_variants ADD COLUMN IF NOT EXISTS swatch_hex VARCHAR(9);
+ALTER TABLE product_variants ADD COLUMN IF NOT EXISTS image_url VARCHAR(500);
+ALTER TABLE products ADD COLUMN IF NOT EXISTS subscribe_eligible BOOLEAN NOT NULL DEFAULT FALSE;
+CREATE INDEX IF NOT EXISTS idx_product_images_variant ON product_images (variant_id);
+CREATE INDEX IF NOT EXISTS idx_product_images_product ON product_images (product_id);
+
+-- V6 (thumbs): cards load thumb, gallery loads full-res.
+ALTER TABLE product_images ADD COLUMN IF NOT EXISTS thumb_url varchar(1024);
+
+-- ─── Catalog depth round (V7 parity): specs, member deals, review photos ────
+ALTER TABLE IF EXISTS products ADD COLUMN IF NOT EXISTS specifications TEXT;
+ALTER TABLE IF EXISTS products ADD COLUMN IF NOT EXISTS member_deal_percent NUMERIC(5, 2);
+CREATE TABLE IF NOT EXISTS comment_images (
+    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    comment_id   UUID         NOT NULL REFERENCES comments (id) ON DELETE CASCADE,
+    image_url    TEXT         NOT NULL,
+    alt_text     VARCHAR(255),
+    sort_order   INT          NOT NULL DEFAULT 0,
+    created_date TIMESTAMP    NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_comment_images_comment_id ON comment_images (comment_id);

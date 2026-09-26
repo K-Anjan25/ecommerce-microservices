@@ -9,6 +9,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import StarRoundedIcon from "@mui/icons-material/StarRounded";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
+import AutorenewIcon from "@mui/icons-material/Autorenew";
 
 import {
   addToCart,
@@ -95,6 +96,13 @@ const Card = ({ product, onClick, variantId, variantName }: CardProps) => {
       onClick={onClick}
       className="group relative flex h-full cursor-pointer flex-col rounded-2xl border border-line bg-paper p-4 shadow-sm transition hover:shadow-md"
     >
+      {/* Subscribe & Save eligibility badge */}
+      {product.subscribeEligible && (
+        <span className="absolute left-3 top-3 z-10 flex items-center gap-1 rounded-full bg-brand-soft/90 px-2 py-0.5 text-[10px] font-bold text-brand">
+          <AutorenewIcon sx={{ fontSize: 12 }} /> Subscribe &amp; save
+        </span>
+      )}
+
       {/* Top action: Wishlist */}
       <div className="absolute right-3 top-3 z-10">
         <button

@@ -114,6 +114,8 @@ function AddEditProduct() {
           ? undefined
           : Number(variant.quantityInStock),
       attributes: variant.attributes?.trim() || undefined,
+      swatchHex: variant.swatchHex?.trim() || undefined,
+      imageUrl: variant.imageUrl?.trim() || undefined,
     })),
   });
 
@@ -266,6 +268,19 @@ function AddEditProduct() {
               />
             }
             label="Feature on the homepage"
+            className="!text-sm !text-ink-soft"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                name="subscribeEligible"
+                checked={Boolean(form.values.subscribeEligible)}
+                onChange={(event) =>
+                  form.setFieldValue("subscribeEligible", event.target.checked)
+                }
+              />
+            }
+            label="Subscribe & Save eligible (auto-reorder offer on the buy box)"
             className="!text-sm !text-ink-soft"
           />
 
@@ -441,6 +456,28 @@ function AddEditProduct() {
                       }
                       helperText="Free text shown on the product page, e.g. Size: L, Color: Red"
                     />
+                    <div className="grid grid-cols-2 gap-3">
+                      <TextInput
+                        name={`variants.${index}.swatchHex`}
+                        label="Swatch colour (hex)"
+                        form={form}
+                        value={variant.swatchHex ?? ""}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                          setVariantField(index, "swatchHex", e.target.value)
+                        }
+                        helperText="e.g. #1c1c1c — selector chip colour."
+                      />
+                      <TextInput
+                        name={`variants.${index}.imageUrl`}
+                        label="Variant image URL"
+                        form={form}
+                        value={variant.imageUrl ?? ""}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                          setVariantField(index, "imageUrl", e.target.value)
+                        }
+                        helperText="Primary shot of this colourway/config."
+                      />
+                    </div>
                   </Box>
                 ))}
               </Box>

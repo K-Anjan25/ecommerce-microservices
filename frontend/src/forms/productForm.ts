@@ -7,6 +7,8 @@ export const emptyVariant: ProductVariantForm = {
   price: "",
   quantityInStock: "",
   attributes: "",
+  swatchHex: "",
+  imageUrl: "",
 };
 
 /** Fetched `ProductVariant` (numeric fields) → form-state strings. */
@@ -18,6 +20,8 @@ export const toVariantForm = (variant: any): ProductVariantForm => ({
   quantityInStock:
     variant.quantityInStock != null ? String(variant.quantityInStock) : "",
   attributes: variant.attributes ?? "",
+  swatchHex: variant.swatchHex ?? "",
+  imageUrl: variant.imageUrl ?? "",
 });
 
 const validationSchema = (isEdit: boolean) =>

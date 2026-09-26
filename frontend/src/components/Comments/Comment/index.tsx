@@ -1,13 +1,18 @@
 import React from "react";
 import { Avatar, Rating } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import AddAPhotoOutlinedIcon from "@mui/icons-material/AddAPhotoOutlined";
 import { Comment as CommentType } from "../../../types/comment";
 import { formatDate } from "../../../utils/date";
+import { ImageLightbox } from "../../ProductGallery";
 
 interface CommentProps {
   comment: CommentType;
 }
 
 function Comment({ comment }: CommentProps) {
+  const [lightboxIndex, setLightboxIndex] = React.useState<number | null>(null);
+  const images = comment?.images ?? [];
   const initials =
     (comment?.creator?.split(" ").map((p) => p[0]?.toUpperCase()).join("") ??
       "?") || "?";
@@ -38,8 +43,46 @@ function Comment({ comment }: CommentProps) {
           <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">
             {comment?.text}
           </p>
+
+          {/* customer photos of the received product */}
+          {images.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {images.map((img, idx) => (
+                <button
+                  key={img.id ?? idx}
+                  onClick={() => setLightboxIndex(idx)}
+                  aria-label={`Open customer photo ${idx + 1}`}
+                  className="h-16 w-16 overflow-hidden rounded-md border border-line transition hover:border-ink"
+                >
+                  <img
+                    src={img.imageUrl}
+                    alt={img.altText ?? "Customer photo of the received product"}
+                    loading="lazy"
+                    decoding="async"
+                    onError={(e) => {
+                      e.currentTarget.src = "/images/store/product-placeholder.svg";
+                    }}
+                    className="h-full w-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
+
+      {lightboxIndex != null && images.length > 0 && (
+        <ImageLightbox
+          images={images.map((img) => ({
+            url: img.imageUrl,
+            altText: img.altText ?? "Customer photo of the received product",
+          }))}
+          index={lightboxIndex}
+          onIndexChange={setLightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+          alt="Customer photo of the received product"
+        />
+      )}
     </article>
   );
 }

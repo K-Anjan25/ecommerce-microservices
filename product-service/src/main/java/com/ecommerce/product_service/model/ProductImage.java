@@ -40,5 +40,19 @@ public class ProductImage {
 
     private String url;
 
+    /** Card/thumbnail-size URL (source-CDN resize param). Null → use {@code url}. */
+    private String thumbUrl;
+
     private Integer sortOrder;
+
+    /** When set, the shot is of this specific variant (colourway/config). */
+    private UUID variantId;
+
+    /**
+     * Shot role: front | side | back | detail | box | lifestyle | gallery.
+     * Gallery rendering groups and labels thumbnails by this value.
+     */
+    private String angle;
+
+    private String altText;
 }

@@ -38,11 +38,11 @@ function Users() {
   );
 
   const roleMutation = useMutation(
-    (user: Row) =>
-      UserApi.updateStaffRole(
-        user.id,
-        user.role === "ROLE_MANAGER" ? "ROLE_USER" : "ROLE_MANAGER"
-      ),
+    (change: {
+      id: string;
+      role: "ROLE_USER" | "ROLE_MANAGER" | "ROLE_CS";
+    }) =>
+      UserApi.updateStaffRole(change.id, change.role),
     {
       onSuccess: () => {
         showSuccess("Staff role updated");
@@ -117,17 +117,44 @@ function Users() {
           caption={`${users?.length ?? 0} account${users?.length === 1 ? "" : "s"}`}
           actions={(u) => (
             <>
-              {(u.role === "ROLE_USER" || u.role === "ROLE_MANAGER") && (
-                <LoadingButton
-                  size="small"
-                  variant="outlined"
-                  loading={roleMutation.isLoading}
-                  disabled={roleMutation.isLoading}
-                  className="!py-1 normal-case"
-                  onClick={() => roleMutation.mutate(u)}
-                >
-                  {u.role === "ROLE_MANAGER" ? "Remove manager" : "Make manager"}
-                </LoadingButton>
+              {(u.role === "ROLE_USER" ||
+                u.role === "ROLE_MANAGER" ||
+                u.role === "ROLE_CS") && (
+                <>
+                  {u.role !== "ROLE_MANAGER" && (
+                    <LoadingButton
+                      size="small"
+                      variant="outlined"
+                      loading={roleMutation.isLoading}
+                      disabled={roleMutation.isLoading}
+                      className="!py-1 normal-case"
+                      onClick={() =>
+                        roleMutation.mutate({
+                          id: u.id,
+                          role: u.role === "ROLE_CS" ? "ROLE_USER" : "ROLE_CS",
+                        })
+                      }
+                    >
+                      {u.role === "ROLE_CS" ? "Remove CS" : "Make CS"}
+                    </LoadingButton>
+                  )}
+                  <LoadingButton
+                    size="small"
+                    variant="outlined"
+                    loading={roleMutation.isLoading}
+                    disabled={roleMutation.isLoading}
+                    className="!py-1 normal-case"
+                    onClick={() =>
+                      roleMutation.mutate({
+                        id: u.id,
+                        role:
+                          u.role === "ROLE_MANAGER" ? "ROLE_USER" : "ROLE_MANAGER",
+                      })
+                    }
+                  >
+                    {u.role === "ROLE_MANAGER" ? "Remove manager" : "Make manager"}
+                  </LoadingButton>
+                </>
               )}
               <LoadingButton
                 size="small"

@@ -17,6 +17,7 @@ import Home from "./pages/Admin/Home";
 import ForgetPassword from "./pages/Login/ForgetPassword";
 import Profile from "./pages/Profile";
 import Account from "./pages/Account";
+import Subscriptions from "./pages/Subscriptions";
 
 /** SPA scroll restoration: a fresh navigation starts at the top (back/forward
  *  keep the browser's own positions for history entries). */
@@ -79,6 +80,7 @@ function App() {
   const AdminOrders = React.lazy(() => import("./pages/Admin/Orders"));
   const AdminCategories = React.lazy(() => import("./pages/Admin/Categories"));
   const AdminUsers = React.lazy(() => import("./pages/Admin/Users"));
+  const AdminSubscriptions = React.lazy(() => import("./pages/Admin/Subscriptions"));
   const AdminCoupons = React.lazy(() => import("./pages/Admin/Coupons"));
   const AdminGiftCardPurchases = React.lazy(() => import("./pages/Admin/GiftCardPurchases"));
   const AdminReturns = React.lazy(() => import("./pages/Admin/Returns"));
@@ -103,6 +105,7 @@ function App() {
   const Wishlist = React.lazy(() => import("./pages/Wishlist"));
   const GiftCards = React.lazy(() => import("./pages/GiftCards"));
   const FlashSales = React.lazy(() => import("./pages/FlashSales"));
+  const CartlyPlus = React.lazy(() => import("./pages/CartlyPlus"));
   const Referral = React.lazy(() => import("./pages/Referral"));
   const Returns = React.lazy(() => import("./pages/Returns"));
   const LoyaltyPoints = React.lazy(() => import("./pages/LoyaltyPoints"));
@@ -127,6 +130,7 @@ function App() {
             <Route path="forgetPassword" element={<ForgetPassword />} />
             <Route path="reset-password" element={<ResetPassword />} />
             <Route path="register" element={<Register />} />
+            <Route path="cartly-plus" element={<CartlyPlus />} />
             <Route path="about" element={<About />} />
             <Route path="help" element={<Help />} />
             <Route path="services" element={<Services />} />
@@ -147,6 +151,7 @@ function App() {
               <Route path="referral" element={<Referral />} />
               <Route path="returns" element={<Returns />} />
               <Route path="loyalty" element={<LoyaltyPoints />} />
+              <Route path="subscriptions" element={<Subscriptions />} />
               <Route path="profile/:id" element={<Profile />} />
               <Route path="account" element={<Account />} />
             </Route>
@@ -168,6 +173,7 @@ function App() {
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<Home />} />
                 <Route path="orders" element={<AdminOrders />} />
+                <Route path="subscriptions" element={<AdminSubscriptions />} />
                 <Route path="questions" element={<AdminQuestions />} />
                 <Route path="analytics" element={<AdminAnalytics />} />
                 <Route path="orderDetail/:orderId" element={<OrderDetail />} />

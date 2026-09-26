@@ -31,3 +31,6 @@ backups/
 
 # WordPress theme build
 wordpress/cartly/node_modules/
+
+# image_search tool scratch output
+image-search/

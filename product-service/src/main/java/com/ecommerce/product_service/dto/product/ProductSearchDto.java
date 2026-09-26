@@ -27,6 +27,7 @@ public class ProductSearchDto{
     private String imageUrl;
     private List<String> images;
     private Integer quantityInStock;
+    private boolean subscribeEligible;
     private Double avgRating;
     private Long ratingCount;
     private BigDecimal flashPrice;

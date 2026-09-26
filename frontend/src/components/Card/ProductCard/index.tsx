@@ -15,8 +15,13 @@ import ReplayOutlinedIcon from "@mui/icons-material/ReplayOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import CardGiftcardOutlinedIcon from "@mui/icons-material/CardGiftcardOutlined";
 import BoltOutlinedIcon from "@mui/icons-material/BoltOutlined";
+import AutorenewIcon from "@mui/icons-material/Autorenew";
+import WorkspacePremiumOutlinedIcon from "@mui/icons-material/WorkspacePremiumOutlined";
 
 import Comments from "../../Comments";
+import ProductGallery from "../../ProductGallery";
+import StyledSelect from "../../StyledSelect";
+import { MembershipApi } from "../../../api/membershipApi";
 import Questions from "../../Questions";
 import PriceWatch from "../../PriceWatch";
 import StockWatch from "../../StockWatch";
@@ -68,6 +73,7 @@ const ProductCard = ({ product }: CardProps) => {
   const [tab, setTab] = useState<Tab>("Description");
   const [subscribeInterval, setSubscribeInterval] = useState(30);
   const [subscribing, setSubscribing] = useState(false);
+  const [purchaseMode, setPurchaseMode] = useState<"one-time" | "subscribe">("one-time");
 
   // Funnel analytics: one product-view beacon per loaded product.
   useEffect(() => {
@@ -79,12 +85,34 @@ const ProductCard = ({ product }: CardProps) => {
   const selectedVariant = variants.find((v) => v.id === selectedVariantId);
   const displayPrice = selectedVariant?.price ?? product?.unitPrice ?? 0;
   const displayStock = selectedVariant?.quantityInStock ?? product?.quantityInStock ?? 0;
-  const images =
-    product?.images && product.images.length > 0
-      ? product.images
-      : product?.imageUrl
-      ? [product.imageUrl]
-      : [];
+  // Gallery: rich (variant/angle-aware) when available, plain URL list otherwise.
+  const galleryImages = useMemo(() => {
+    const rich: { url: string; thumbUrl?: string | null; angle?: string | null; variantId?: string | null; altText?: string | null }[] =
+      product?.imageGallery && product.imageGallery.length > 0
+        ? product.imageGallery
+        : (product?.images ?? []).map((u) => ({ url: u }));
+    if (rich.length === 0 && product?.imageUrl) {
+      return [{ url: product.imageUrl, angle: "front" }];
+    }
+    return rich;
+  }, [product]);
+
+  // Selecting a variant swaps the gallery to that colourway's shots first,
+  // then shared product-level angles (Amazon PDP behaviour).
+  const visibleImages = useMemo(() => {
+    let list = galleryImages;
+    if (selectedVariant) {
+      const hero = selectedVariant.imageUrl
+        ? [{ url: selectedVariant.imageUrl, thumbUrl: selectedVariant.imageUrl, angle: "variant", variantId: selectedVariant.id }]
+        : [];
+      const variantShots = galleryImages.filter((i) => i.variantId === selectedVariant.id);
+      const shared = galleryImages.filter((i) => !i.variantId);
+      list = [...hero, ...variantShots, ...shared];
+    }
+    const seen = new Set<string>();
+    return list.filter((i) => (seen.has(i.url) ? false : (seen.add(i.url), true)));
+  }, [galleryImages, selectedVariant]);
+  const images = visibleImages.map((i) => i.url);
 
   const flashPrice = product?.flashPrice ?? 0;
   const isFlashSaleActive =
@@ -131,8 +159,13 @@ const ProductCard = ({ product }: CardProps) => {
       showError(error?.response?.data?.message ?? "Could not post your review"),
   });
 
-  const handleCreateComment = (comment: string, rating?: number) =>
-    createMutation.mutateAsync({ productId, text: comment, rating } as CreateCommentRequest);
+  const handleCreateComment = (comment: string, rating?: number, images?: string[]) =>
+    createMutation.mutateAsync({
+      productId,
+      text: comment,
+      rating,
+      images,
+    } as CreateCommentRequest);
 
   const handleVariantChange = (variantId: string) => {
     setSelectedVariantId(variantId === selectedVariantId ? "" : variantId);
@@ -199,82 +232,83 @@ const ProductCard = ({ product }: CardProps) => {
       ? `Only ${displayStock} left`
       : `In stock · ${displayStock} available`;
 
+  // Cartly Plus — member deals & boosted Subscribe & Save are priced
+  // server-side; this mirrors them for display only.
+  const { data: membership } = useQuery("my-membership", MembershipApi.status, {
+    enabled: !!user?.isLogedIn,
+  });
+
+  // Grouped specification tables (products.specifications JSON from the seed).
+  const specGroups: { group: string; items: { label: string; value: string }[] }[] =
+    React.useMemo(() => {
+      const raw = product?.specifications;
+      if (!raw) return [];
+      try {
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }, [product?.specifications]);
+  const isPlus = membership?.status === "ACTIVE";
+  const memberDealPercent = product?.memberDealPercent ?? 0;
+  const memberPrice =
+    memberDealPercent > 0
+      ? Math.round(effectivePrice * (1 - memberDealPercent / 100))
+      : null;
+
+  // Subscribe & Save: 5% off each delivery's price (15% when 5+ subscriptions
+  // batch in one calendar month). Cartly Plus members earn 10%/20% instead —
+  // applied server-side at placement.
+  const subscribeEligible = !!product?.subscribeEligible;
+  const ssPrice = Math.round(effectivePrice * (isPlus ? 0.9 : 0.95));
+
+  const handleStartSubscription = async () => {
+    if (!product) return;
+    if (!user.isLogedIn) {
+      navigate("/login", { state: { from: { pathname: `/products/${productId}` } } });
+      return;
+    }
+    setSubscribing(true);
+    try {
+      await SubscriptionApi.createSubscription({
+        productId: product.id,
+        variantId: selectedVariantId || null,
+        quantity: Math.max(1, quantity || 1),
+        intervalDays: subscribeInterval,
+      });
+      showSuccess(t("subscribe.success"));
+    } catch (error: any) {
+      showError(error?.response?.data?.message ?? t("subscribe.error"));
+    } finally {
+      setSubscribing(false);
+    }
+  };
+
   return (
     <div className="space-y-10">
       <div>
         {/* ══ editorial gallery + purchasing column ══════════════════ */}
-        <div className="grid gap-6 md:grid-cols-[5.5rem_minmax(0,1fr)] lg:grid-cols-[5rem_minmax(0,1fr)] xl:grid-cols-[5.5rem_minmax(0,1fr)]">
-          {/* thumbnail rail */}
-          {images.length > 1 && (
-            <div className="no-scrollbar order-2 flex gap-2 overflow-x-auto md:order-1 md:flex-col md:overflow-y-auto">
-              {images.map((src, idx) => (
-                <button
-                  key={src + idx}
-                  onClick={() => setCurrentImageIndex(idx)}
-                  aria-label={`View image ${idx + 1}`}
-                  className={`h-16 w-16 shrink-0 overflow-hidden rounded-sm border transition md:h-[4.5rem] md:w-full ${
-                    idx === currentImageIndex
-                      ? "border-ink ring-2 ring-ink/10"
-                      : "border-line opacity-70 hover:opacity-100"
-                  }`}
-                >
-                  <img src={src} alt="" className="h-full w-full object-cover" />
-                </button>
-              ))}
-            </div>
-          )}
-
-          <div
-            className={`order-1 grid items-start gap-8 md:order-2 lg:grid-cols-[minmax(0,1.12fr)_minmax(22rem,0.88fr)] xl:gap-12 ${
-              images.length > 1 ? "" : "md:col-span-2"
-            }`}
-          >
-            {/* main image */}
-            <div className="relative aspect-[4/5] overflow-hidden bg-sunken">
-              {images.length > 0 ? (
-                <img
-                  src={images[currentImageIndex]}
-                  alt={product ? localizedName(product, language) : ""}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="flex h-full items-center justify-center text-ink-faint">
-                  <ImageOutlinedIcon sx={{ fontSize: 64 }} />
-                </div>
-              )}
-
-              {!!discount && (
-                <span className="badge-sale absolute left-4 top-4 !px-3 !py-1.5 !text-xs">
-                  −{discount}%
-                </span>
-              )}
-              {isFlashSaleActive && (
-                <span className="badge-sale absolute right-4 top-4 !bg-action !px-3 !py-1.5 !text-xs">
-                  <BoltOutlinedIcon sx={{ fontSize: 13 }} /> Flash sale
-                </span>
-              )}
-
-              {images.length > 1 && (
-                <>
-                  <button
-                    aria-label={t("a11y.previousImage")}
-                    onClick={() =>
-                      setCurrentImageIndex((p) => (p - 1 + images.length) % images.length)
-                    }
-                    className="absolute left-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-paper/90 text-ink backdrop-blur transition hover:bg-paper"
-                  >
-                    <ChevronLeftIcon fontSize="small" />
-                  </button>
-                  <button
-                    aria-label={t("a11y.nextImage")}
-                    onClick={() => setCurrentImageIndex((p) => (p + 1) % images.length)}
-                    className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-paper/90 text-ink backdrop-blur transition hover:bg-paper"
-                  >
-                    <ChevronRightIcon fontSize="small" />
-                  </button>
-                </>
-              )}
-            </div>
+        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.12fr)_minmax(22rem,0.88fr)] xl:gap-12">
+          {/* carousel gallery: swipe/arrow slides, thumbs, dots, full-res lightbox */}
+          <ProductGallery
+            images={visibleImages}
+            name={product ? localizedName(product, language) : ""}
+            overlays={
+              <>
+                {!!discount && (
+                  <span className="pointer-events-auto rounded-full bg-accent px-2.5 py-1 text-xs font-bold text-ink shadow-sm">
+                    −{discount}%
+                  </span>
+                )}
+                {isFlashSaleActive && (
+                  <span className="pointer-events-auto rounded-full bg-action px-2.5 py-1 text-xs font-bold text-white shadow-sm">
+                    <BoltOutlinedIcon sx={{ fontSize: 13 }} /> Flash sale
+                  </span>
+                )}
+              </>
+            }
+          />
 
             {/* ── buy box ─────────────────────────────────────────── */}
             <div className="space-y-6 lg:sticky lg:top-24">
@@ -318,6 +352,15 @@ const ProductCard = ({ product }: CardProps) => {
                   )}
                 </div>
                 <p className="mt-1 text-xs text-ink-muted">{t("product.taxesIncluded")}</p>
+                {isPlus && memberPrice != null && (
+                  <p className="mt-2 flex flex-wrap items-center gap-2 text-sm font-bold text-brand">
+                    <WorkspacePremiumOutlinedIcon sx={{ fontSize: 16 }} />
+                    Cartly Plus price {formatPrice(memberPrice)}
+                    <span className="rounded-full bg-brand-soft px-2 py-0.5 text-[11px] font-bold">
+                      −{memberDealPercent}% member deal
+                    </span>
+                  </p>
+                )}
                 {isFlashSaleActive && flashCountdown && (
                   <p className="mt-2 text-sm font-bold text-state-danger">
                     Flash sale ends in {flashCountdown}
@@ -342,6 +385,13 @@ const ProductCard = ({ product }: CardProps) => {
                             soldOut ? "!text-ink-faint line-through" : ""
                           }`}
                         >
+                          {variant.swatchHex && (
+                            <span
+                              aria-hidden
+                              className="mr-1.5 inline-block h-3.5 w-3.5 rounded-full border border-black/10 align-middle"
+                              style={{ background: variant.swatchHex }}
+                            />
+                          )}
                           {variant.name}
                           <span className={active ? "text-oncontrast/70" : "text-ink-muted"}>
                             {formatPrice(variant.price)}
@@ -354,6 +404,63 @@ const ProductCard = ({ product }: CardProps) => {
               )}
 
               <span className={stockChip}>{stockLabel}</span>
+
+              {/* purchase mode — one-time vs Subscribe & Save (Amazon buy box) */}
+              {subscribeEligible && (
+                <div className="space-y-2 rounded-xl border border-line p-3">
+                  <label
+                    className={`flex cursor-pointer items-start gap-2.5 rounded-lg p-1.5 ${
+                      purchaseMode === "one-time" ? "bg-sunken" : ""
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="purchase-mode"
+                      checked={purchaseMode === "one-time"}
+                      onChange={() => setPurchaseMode("one-time")}
+                      className="mt-1"
+                    />
+                    <span>
+                      <span className="block text-sm font-bold text-ink">
+                        {t("subscribe.oneTime")} — {formatPrice(effectivePrice)}
+                      </span>
+                    </span>
+                  </label>
+                  <label
+                    className={`flex cursor-pointer items-start gap-2.5 rounded-lg p-1.5 ${
+                      purchaseMode === "subscribe" ? "bg-brand-soft/50 ring-1 ring-brand/40" : ""
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="purchase-mode"
+                      checked={purchaseMode === "subscribe"}
+                      onChange={() => setPurchaseMode("subscribe")}
+                      className="mt-1"
+                    />
+                    <span>
+                      <span className="block text-sm font-bold text-ink">
+                        {t("subscribe.title")} — {formatPrice(ssPrice)}{" "}
+                        <span className="rounded-full bg-accent px-2 py-0.5 text-[11px] font-bold">
+                          {t("subscribe.saveBadge")}
+                        </span>
+                      </span>
+                      <span className="mt-1 flex flex-wrap items-center gap-2 text-xs text-ink-soft">
+                        <StyledSelect
+                          ariaLabel="Subscribe & Save delivery frequency"
+                          value={String(subscribeInterval)}
+                          onChange={(v) => setSubscribeInterval(Number(v))}
+                          options={[14, 30, 60, 90, 180].map((d) => ({
+                            value: String(d),
+                            label: `${t("subscribe.deliverEvery")} ${d} ${t("subscribe.days")}`,
+                          }))}
+                        />
+                        {t("subscribe.tierHint")}
+                      </span>
+                    </span>
+                  </label>
+                </div>
+              )}
 
               {/* CTA row — same eye-line as the price */}
               <div className="flex flex-wrap items-center gap-3">
@@ -380,16 +487,29 @@ const ProductCard = ({ product }: CardProps) => {
                   </div>
                 )}
                 <button
-                  onClick={handleAdd}
-                  disabled={displayStock <= 0 || (displayStock > 0 && quantity >= displayStock)}
+                  onClick={purchaseMode === "subscribe" ? handleStartSubscription : handleAdd}
+                  disabled={
+                    purchaseMode === "subscribe"
+                      ? subscribing
+                      : displayStock <= 0 || (displayStock > 0 && quantity >= displayStock)
+                  }
                   className="primary-button !h-12 min-w-[11rem] flex-1 sm:flex-none"
                 >
-                  <AddShoppingCartIcon sx={{ fontSize: 18 }} />
-                  {quantity
-                    ? displayStock > 0 && quantity >= displayStock
-                      ? "Max stock reached"
-                      : t("product.addMore")
-                    : t("product.add")}
+                  {purchaseMode === "subscribe" ? (
+                    <>
+                      <AutorenewIcon sx={{ fontSize: 18 }} />
+                      {subscribing ? "…" : `${t("subscribe.cta")} · ${formatPrice(ssPrice)}`}
+                    </>
+                  ) : (
+                    <>
+                      <AddShoppingCartIcon sx={{ fontSize: 18 }} />
+                      {quantity
+                        ? displayStock > 0 && quantity >= displayStock
+                          ? "Max stock reached"
+                          : t("product.addMore")
+                        : t("product.add")}
+                    </>
+                  )}
                 </button>
                 <Tooltip title={t("product.compare")}>
                   <button
@@ -408,6 +528,28 @@ const ProductCard = ({ product }: CardProps) => {
 
               {productId && <PriceWatch productId={productId} />}
               {productId && displayStock <= 0 && <StockWatch productId={productId} />}
+
+              {/* Cartly Plus strip */}
+              {isPlus ? (
+                <div className="flex items-start gap-2 rounded-xl bg-brand-soft/50 p-3 text-xs font-semibold text-ink">
+                  <WorkspacePremiumOutlinedIcon sx={{ fontSize: 16, mt: 0.2 }} />
+                  <span>
+                    Cartly Plus: free express delivery on this order
+                    {subscribeEligible && " + boosted Subscribe & Save (10%/20%)"}.
+                  </span>
+                </div>
+              ) : (
+                <button
+                  onClick={() => navigate("/cartly-plus")}
+                  className="flex w-full items-center justify-between rounded-xl border border-dashed border-brand/50 bg-brand-soft/30 p-3 text-xs font-bold text-brand transition hover:bg-brand-soft/60"
+                >
+                  <span className="flex items-center gap-2">
+                    <WorkspacePremiumOutlinedIcon sx={{ fontSize: 16 }} />
+                    Cartly Plus — free express delivery + member-only prices
+                  </span>
+                  <span>Learn more →</span>
+                </button>
+              )}
 
               {/* delivery / trust panel */}
               <div className="divide-y divide-line border-y border-line">
@@ -445,7 +587,6 @@ const ProductCard = ({ product }: CardProps) => {
                 ))}
               </div>
             </div>
-          </div>
         </div>
 
       </div>
@@ -476,14 +617,34 @@ const ProductCard = ({ product }: CardProps) => {
           )}
 
           {tab === "Specifications" && (
-            <dl className="max-w-2xl divide-y divide-line">
-              {specs.map(([k, v]) => (
-                <div key={k} className="flex gap-6 py-3 text-sm">
-                  <dt className="w-40 shrink-0 font-semibold capitalize text-ink-soft">{k}</dt>
-                  <dd className="text-ink">{v}</dd>
-                </div>
-              ))}
-            </dl>
+            <div className="max-w-3xl space-y-8">
+              {specGroups.length > 0 ? (
+                specGroups.map((group) => (
+                  <div key={group.group}>
+                    <p className="eyebrow mb-2">{group.group}</p>
+                    <dl className="divide-y divide-line border-y border-line">
+                      {group.items.map((item) => (
+                        <div key={item.label} className="flex gap-6 py-3 text-sm">
+                          <dt className="w-44 shrink-0 font-semibold text-ink-soft">
+                            {item.label}
+                          </dt>
+                          <dd className="min-w-0 flex-1 text-ink">{item.value}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </div>
+                ))
+              ) : (
+                <dl className="max-w-2xl divide-y divide-line">
+                  {specs.map(([k, v]) => (
+                    <div key={k} className="flex gap-6 py-3 text-sm">
+                      <dt className="w-40 shrink-0 font-semibold capitalize text-ink-soft">{k}</dt>
+                      <dd className="text-ink">{v}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+            </div>
           )}
 
           {tab === "Q&A" && productId && <Questions productId={productId} />}
@@ -515,59 +676,13 @@ const ProductCard = ({ product }: CardProps) => {
         </div>
       </section>
 
-      {/* ══ Subscribe & Save (auto-reorder) ════════════════════════ */}
-      {productId && (
+      {/* ══ Subscribe & Save explainer (controls live in the buy box) ══ */}
+      {productId && subscribeEligible && (
         <section className="rounded-2xl border border-line bg-brand-soft/30 p-5">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="font-heading text-base font-extrabold text-ink">
-                {t("subscribe.title")}
-              </p>
-              <p className="mt-0.5 text-xs text-ink-soft">{t("subscribe.subtitle")}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <label className="text-xs font-semibold text-ink-soft" htmlFor="subscribe-interval">
-                {t("subscribe.every")}
-              </label>
-              <select
-                id="subscribe-interval"
-                value={subscribeInterval}
-                onChange={(e) => setSubscribeInterval(Number(e.target.value))}
-                className="h-9 rounded-lg border border-line bg-paper px-2 text-sm font-semibold text-ink outline-none focus:border-brand"
-              >
-                {[7, 14, 30, 60, 90].map((d) => (
-                  <option key={d} value={d}>
-                    {d} {t("subscribe.days")}
-                  </option>
-                ))}
-              </select>
-              <button
-                disabled={subscribing}
-                onClick={async () => {
-                  if (!user.isLogedIn) {
-                    navigate("/login", { state: { from: { pathname: `/products/${productId}` } } });
-                    return;
-                  }
-                  setSubscribing(true);
-                  try {
-                    await SubscriptionApi.createSubscription({
-                      productId,
-                      quantity: Math.max(1, quantity),
-                      intervalDays: subscribeInterval,
-                    });
-                    showSuccess(t("subscribe.success"));
-                  } catch (error: any) {
-                    showError(error?.response?.data?.message ?? t("subscribe.error"));
-                  } finally {
-                    setSubscribing(false);
-                  }
-                }}
-                className="h-9 rounded-full bg-brand px-4 text-xs font-bold text-white transition hover:bg-brand-dark disabled:opacity-60"
-              >
-                {subscribing ? "…" : t("subscribe.cta")}
-              </button>
-            </div>
-          </div>
+          <p className="font-heading text-base font-extrabold text-ink">{t("subscribe.title")}</p>
+          <p className="mt-1 text-xs text-ink-soft">
+            {t("subscribe.subtitle")} {t("subscribe.reminderNote")}
+          </p>
         </section>
       )}
 

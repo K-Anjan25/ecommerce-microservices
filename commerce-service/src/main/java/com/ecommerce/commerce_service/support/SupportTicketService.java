@@ -19,10 +19,21 @@ public class SupportTicketService {
     private static final String REF_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
     private final SupportTicketRepository repository;
+    private final com.ecommerce.commerce_service.membership.MembershipService membershipService;
     private final SecureRandom random = new SecureRandom();
 
     @Transactional
     public SupportTicket create(CreateSupportTicketRequest request, String customerId) {
+        // Cartly Plus priority support lane: members' tickets are raised HIGH
+        // so the support queue surfaces them first.
+        boolean plus = false;
+        if (customerId != null && !customerId.isBlank()) {
+            try {
+                plus = membershipService.isPlusActive(UUID.fromString(customerId.trim()));
+            } catch (IllegalArgumentException ignored) {
+                plus = false;
+            }
+        }
         SupportTicket ticket = SupportTicket.builder()
                 .ticketRef(nextTicketRef())
                 .name(request.getName().trim())
@@ -32,6 +43,7 @@ public class SupportTicketService {
                 .message(request.getMessage().trim())
                 .status(SupportTicket.STATUS_OPEN)
                 .customerId(customerId)
+                .priority(plus ? "HIGH" : "NORMAL")
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();

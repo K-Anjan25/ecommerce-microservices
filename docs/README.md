@@ -90,6 +90,22 @@ Design kit (wireframes, tokens, mock preview server): [`design/`](../design/).
 WordPress/WooCommerce theme: separate repo `cartly-wp-theme`; tokens stay
 canonical here.
 
+Recently delivered (September 2026): **real catalog photography + variant
+media model** — 24 exact products photographed from web sources
+(`tools/catalog-media/manifest.json` records every source URL); per-variant
+images + swatches + angle-tagged galleries (`product_images.variant_id/angle/
+alt_text`, `product_variants.swatch_hex/image_url`). **Subscribe & Save v2
+(Amazon parity)**: variant-level subscriptions, buy-box "One-time / Subscribe &
+Save — Save 5%" offer, 5% base / 15% when 5+ deliveries batch in one calendar
+month, ship-day floating pricing, pre-delivery reminder emails with
+skip/change/cancel links, skip-next / reschedule / pause-until / soft-cancel
+lifecycle, per-subscription OOS policy (skip/wait/cancel), hybrid renewal
+payment (saved provider token auto-charged, otherwise the order waits for
+manual payment), the "Your Subscriptions" hub, and an admin subscriptions
+console with an 8-week demand forecast. Commerce roles: `ROLE_CS`
+(customer-service agent) joins USER/MANAGER/ADMIN/SUPER_ADMIN; `ROLE_HR` is
+legacy-only — kept for old accounts, no longer assignable via the admin UI.
+
 ## Next development phases
 
 1. **P12 — Production certification** (in progress; tooling ready):
@@ -135,3 +151,26 @@ hardening (pg_trgm auto-provisioned via V3 migration + boot guard, deduped
 suggestion requests through the react-query cache, shareable `/?q=` and
 `/?category=` catalog URLs, SPA scroll restoration); optional SSR for the
 storefront.
+
+
+## Catalog media (product photography)
+
+All product photography is hotlinked from brand-owned CDNs — zero product photos live in this
+repo. Per-angle full/thumb URLs, SKUs and provenance: `tools/catalog-media/manifest.json`.
+`tools/catalog-media/generate_seed.py` bakes them into `docker/postgres/seed-catalog-data.sql`
+(`product_images.url`/`thumb_url`, `product_variants.image_url`). Slugs with no brand-CDN set
+(L'Oréal Revitalift serum, Hawkins Contura) seed the shared placeholder
+`frontend/public/images/store/product-placeholder.svg`; the storefront also falls back to it via
+`onError` in `ProductCard` when a hotlink dies.
+
+Link-rot guard — run on demand (CI-gateable, exits 1 on dead URLs):
+
+    python3 tools/catalog-media/check_images.py           # report
+    python3 tools/catalog-media/check_images.py --write   # stamp *_alive flags into the manifest
+
+## Cartly Plus & PDP depth
+
+- **Cartly Plus** (commerce-service `membership` package, `cartly_plus_memberships`, V8): MONTHLY ₹149 / ANNUAL ₹1,499, prices fixed server-side. Benefits are enforced server-side only — free express delivery (`OrderService.calculateShipping`), Subscribe & Save 10%/20% vs 5%/15% (`SubscriptionService.discountForRun`), member-only prices (`products.member_deal_percent`, applied in `OrderService.applyAuthoritativePrices`, never stacked on flash prices), 24h flash-sale early access (product-service `PlusMembershipGateway` → `/internal/memberships/active/{userId}`), priority support lane (`support_ticket.priority=HIGH`). Frontend: `/cartly-plus` page + navbar "Plus" chip + member-price badge on the PDP.
+- **Review photos**: `POST /v1/comments` accepts `images[]` (data URLs, max 8) → `comment_images` (product-service V7); the Reviews composer downscales client-side (~1200 px JPEG) and review cards render a thumbnail strip with a full-res lightbox.
+- **Grouped specifications**: `products.specifications` JSON (`[{"group","items":[{"label","value"}]}]`) seeded per product — computers get the deepest tables — rendered as grouped tables in the PDP Specifications tab.
+- **Subscribe & Save UI**: custom `StyledSelect` dropdowns everywhere (PDP cadence, subscription manager cadence/qty/OOS, payment provider) — no raw `<select>` menus remain. Pause/resume already flows through `PUT /v1/subscriptions/{id}`.

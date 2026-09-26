@@ -23,6 +23,7 @@ public class ProductMapper {
     private final CommentMapper commentMapper;
     private final InventoryRepository inventoryRepository;
     private final FlashSaleRepository flashSaleRepository;
+    private final com.ecommerce.product_service.service.PlusMembershipGateway plusMembershipGateway;
 
     private Integer stockOf(Product product) {
         if (product.getVariants() != null && !product.getVariants().isEmpty()) {
@@ -45,6 +46,26 @@ public class ProductMapper {
                 .collect(Collectors.toList());
     }
 
+    private List<ProductImageDto> imageDtos(Product product) {
+        if (product.getImages() == null || product.getImages().isEmpty()) {
+            return product.getImageUrl() == null ? List.of()
+                    : java.util.Collections.singletonList(ProductImageDto.builder()
+                            .url(product.getImageUrl()).sortOrder(0).angle("front").build());
+        }
+        return product.getImages().stream()
+                .sorted(Comparator.comparing(img -> img.getSortOrder() == null ? 0 : img.getSortOrder()))
+                .map(img -> ProductImageDto.builder()
+                        .id(img.getId())
+                        .url(img.getUrl())
+                        .thumbUrl(img.getThumbUrl())
+                        .sortOrder(img.getSortOrder())
+                        .variantId(img.getVariantId())
+                        .angle(img.getAngle() == null ? "gallery" : img.getAngle())
+                        .altText(img.getAltText())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
     private List<ProductVariantDto> variantDtos(Product product) {
         if (product.getVariants() == null) {
             return List.of();
@@ -58,6 +79,8 @@ public class ProductMapper {
                     dto.setPrice(v.getPrice());
                     dto.setQuantityInStock(v.getQuantityInStock());
                     dto.setAttributes(v.getAttributes());
+                    dto.setSwatchHex(v.getSwatchHex());
+                    dto.setImageUrl(v.getImageUrl());
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -95,19 +118,33 @@ public class ProductMapper {
         dto.setCreatedDate(product.getCreatedDate());
         dto.setImageUrl(product.getImageUrl());
         dto.setImages(imageUrls(product));
+        dto.setImageGallery(imageDtos(product));
         dto.setVariants(variantDtos(product));
+        dto.setSubscribeEligible(product.isSubscribeEligible());
         dto.setQuantityInStock(stockOf(product));
         dto.setAvgRating(avgRating(product));
         dto.setRatingCount(ratingCount(product));
         dto.setComments(product.getComments() == null ? List.of() : product.getComments().stream().map(commentMapper::commentToCommentDto).collect(Collectors.toList()));
-        
+        dto.setSpecifications(product.getSpecifications());
+        dto.setMemberDealPercent(product.getMemberDealPercent());
+
         var flashSale = flashSaleRepository.findByProductId(product.getId()).orElse(null);
         if (flashSale != null && flashSale.isActive() && flashSale.getEndsAt().isAfter(LocalDateTime.now())) {
-            dto.setFlashPrice(flashSale.getFlashPrice());
-            dto.setFlashSaleEndsAt(flashSale.getEndsAt());
-            dto.setFlashSaleActive(true);
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime startsAt = flashSale.getStartsAt();
+            boolean started = startsAt == null || !startsAt.isAfter(now);
+            // Cartly Plus 24h early access: members see the flash price from
+            // 24h before startsAt; everyone else only once the sale starts.
+            boolean earlyAccess = !started && !startsAt.isBefore(now.plusHours(0))
+                    && !startsAt.isAfter(now.plusHours(24))
+                    && plusMembershipGateway.isCurrentUserPlus();
+            if (started || earlyAccess) {
+                dto.setFlashPrice(flashSale.getFlashPrice());
+                dto.setFlashSaleEndsAt(flashSale.getEndsAt());
+                dto.setFlashSaleActive(true);
+            }
         }
-        
+
         return dto;
     }
 
@@ -126,6 +163,7 @@ public class ProductMapper {
                 .createdDate(product.getCreatedDate() == null ? null : product.getCreatedDate().toLocalDate())
                 .imageUrl(product.getImageUrl())
                 .images(imageUrls(product))
+                .subscribeEligible(product.isSubscribeEligible())
                 .quantityInStock(stockOf(product))
                 .avgRating(avgRating(product))
                 .ratingCount(ratingCount(product));
